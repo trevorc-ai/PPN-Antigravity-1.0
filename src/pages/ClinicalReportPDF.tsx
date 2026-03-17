@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { usePhase3Data, Phase3VitalsPoint, Phase3DecayPoint } from '../hooks/usePhase3Data';
 
@@ -360,6 +360,13 @@ const ClinicalReportPDF: React.FC = () => {
         ? `RPT-${new Date().toISOString().slice(0, 10).replace(/-/g, '')}-${sessionId.slice(0, 8).toUpperCase()}`
         : `RPT-${new Date().toISOString().slice(0, 10).replace(/-/g, '')}-${patientId.replace('SUB-', '').slice(0, 8)}`;
 
+    // Set a unique document title so the PDF saves with a descriptive filename
+    useEffect(() => {
+        const prev = document.title;
+        document.title = `PPN-Clinical-Outcomes-Report-${reportId}`;
+        return () => { document.title = prev; };
+    }, [reportId]);
+
     const TOTAL = 8;
 
     // Derived values with safe fallbacks
@@ -409,37 +416,34 @@ const ClinicalReportPDF: React.FC = () => {
                     PAGE 1, COVER + EXECUTIVE SUMMARY
                 ════════════════════════════════════════════════════════ */}
                 <PageShell pageNum={1} total={TOTAL} reportId={reportId} exportDate={exportDate}>
-                    <div style={{ background: 'linear-gradient(135deg,#1e3a5f 0%,#1e40af 60%,#1d4ed8 100%)', borderRadius: '12px', padding: '28px 32px', marginBottom: '24px', color: 'white', position: 'relative', overflow: 'hidden' }}>
-                        <div style={{ position: 'absolute', top: -20, right: -20, width: 140, height: 140, borderRadius: '50%', backgroundColor: 'rgba(59,130,246,0.15)' }} />
-                        <div style={{ position: 'relative' }}>
-                            <div style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.6)', marginBottom: '6px' }}>Treatment Outcomes Report</div>
-                            <h1 style={{ fontSize: '26px', fontWeight: 900, margin: '0 0 4px' }}>Clinical Summary</h1>
-                            <div style={{ fontSize: '13px', color: 'rgba(255,255,255,0.75)', marginBottom: '20px' }}>Psychedelic-Assisted Therapy</div>
-                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px' }}>
-                                {[
-                                    { l: 'Session ID', v: sessionId ? sessionId.slice(0, 8).toUpperCase() : 'PREVIEW' },
-                                    { l: 'Report ID', v: reportId },
-                                    { l: 'Generated', v: exportDate },
-                                ].map((item, i) => (
-                                    <div key={i}>
-                                        <div style={{ fontSize: '9px', color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 700 }}>{item.l}</div>
-                                        <div style={{ fontSize: '11px', fontWeight: 700, color: 'white', marginTop: '2px', fontFamily: 'monospace' }}>{item.v}</div>
-                                    </div>
-                                ))}
-                            </div>
-                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px', marginTop: '12px' }}>
-                                {[
-                                    { l: 'Clinician', v: data.clinicianName ?? 'Not provided' },
-                                    { l: 'Site Reference', v: data.sessionSiteId ? data.sessionSiteId.slice(0, 8).toUpperCase() : 'Not provided' },
-                                    { l: 'Report Version', v: 'PPN v2.2' },
-                                ].map((item, i) => (
-                                    <div key={i}>
-                                        <div style={{ fontSize: '9px', color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 700 }}>{item.l}</div>
-                                        <div style={{ fontSize: '11px', fontWeight: 700, color: 'white', marginTop: '2px', fontFamily: 'monospace' }}>{item.v}</div>
-                                    </div>
-                                ))}
-                            </div>
-
+                    {/* Cover header — print-safe: white background, bold left border */}
+                    <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderLeft: '5px solid #1e40af', borderRadius: '8px', padding: '22px 28px', marginBottom: '24px', position: 'relative' }}>
+                        <div style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#64748b', marginBottom: '5px' }}>Treatment Outcomes Report</div>
+                        <h1 style={{ fontSize: '24px', fontWeight: 900, margin: '0 0 2px', color: '#0f172a' }}>Clinical Summary</h1>
+                        <div style={{ fontSize: '12px', color: '#475569', marginBottom: '18px' }}>Psychedelic-Assisted Therapy</div>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px', borderTop: '1px solid #e2e8f0', paddingTop: '14px' }}>
+                            {[
+                                { l: 'Session ID', v: sessionId ? sessionId.slice(0, 8).toUpperCase() : 'PREVIEW' },
+                                { l: 'Report ID', v: reportId },
+                                { l: 'Generated', v: exportDate },
+                            ].map((item, i) => (
+                                <div key={i}>
+                                    <div style={{ fontSize: '8px', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 700 }}>{item.l}</div>
+                                    <div style={{ fontSize: '11px', fontWeight: 700, color: '#0f172a', marginTop: '2px', fontFamily: 'monospace' }}>{item.v}</div>
+                                </div>
+                            ))}
+                        </div>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px', marginTop: '10px' }}>
+                            {[
+                                { l: 'Clinician', v: data.clinicianName ?? 'Not provided' },
+                                { l: 'Site Reference', v: data.sessionSiteId ? data.sessionSiteId.slice(0, 8).toUpperCase() : 'Not provided' },
+                                { l: 'Report Version', v: 'PPN v2.2' },
+                            ].map((item, i) => (
+                                <div key={i}>
+                                    <div style={{ fontSize: '8px', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 700 }}>{item.l}</div>
+                                    <div style={{ fontSize: '11px', fontWeight: 700, color: '#0f172a', marginTop: '2px', fontFamily: 'monospace' }}>{item.v}</div>
+                                </div>
+                            ))}
                         </div>
                     </div>
 

@@ -5,7 +5,7 @@
  * and guidance for IRB/research submission.
  * Always accompanies the Research Data Export.
  */
-import React from 'react';
+import React, { useEffect } from 'react';
 
 const PRINT_CSS = `
 @media print {
@@ -80,6 +80,13 @@ const TwoColTable: React.FC<{ rows: [string, string][]; headerLeft?: string; hea
 );
 
 const DataPolicyPDF: React.FC = () => {
+    // Set a unique document title so the PDF saves with a descriptive filename
+    useEffect(() => {
+        const prev = document.title;
+        document.title = 'PPN-Data-Policy-Zero-PHI-Architecture-v2.2';
+        return () => { document.title = prev; };
+    }, []);
+
     return (
         <div style={{ backgroundColor: '#0a1628', minHeight: '100vh', padding: '32px 24px' }}>
             <style>{PRINT_CSS}</style>

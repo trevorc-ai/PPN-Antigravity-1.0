@@ -76,6 +76,18 @@ const SetAndSettingForm: React.FC<SetAndSettingFormProps> = ({
         return initialData.treatment_expectancy ?? 50;
     });
 
+    // true once the practitioner has moved the slider for the first time
+    // (or if the form is re-opened with a saved value).
+    const [hasTouched, setHasTouched] = useState<boolean>(() => {
+        // Pre-populated — slider already has a meaningful value.
+        if (initialData.treatment_expectancy != null) return true;
+        try {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (saved && JSON.parse(saved).treatment_expectancy != null) return true;
+        } catch { }
+        return false;
+    });
+
     const [observations, setObservations] = useState(() => {
         const defaultObs = { motivation_level: '', support_system: '', prior_experience: '' };
         try {
@@ -90,6 +102,7 @@ const SetAndSettingForm: React.FC<SetAndSettingFormProps> = ({
 
     const updateExpectancy = (val: number) => {
         setExpectancy(val);
+        setHasTouched(true);
         try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ treatment_expectancy: val, observations })); } catch { }
     };
 
@@ -105,7 +118,7 @@ const SetAndSettingForm: React.FC<SetAndSettingFormProps> = ({
         if (savedRef.current) return;
         savedRef.current = true;
         setSaving(true);
-        onSave?.({ treatment_expectancy: expectancy, observations });
+        onSave?.({ treatment_expectancy: hasTouched ? expectancy : undefined, observations });
         setTimeout(() => {
             setSaving(false);
             if (onExit) onExit();
@@ -116,7 +129,7 @@ const SetAndSettingForm: React.FC<SetAndSettingFormProps> = ({
         if (savedRef.current) return;
         savedRef.current = true;
         setSaving(true);
-        onSave?.({ treatment_expectancy: expectancy, observations });
+        onSave?.({ treatment_expectancy: hasTouched ? expectancy : undefined, observations });
         setTimeout(() => {
             setSaving(false);
             onComplete?.();
@@ -156,15 +169,18 @@ const SetAndSettingForm: React.FC<SetAndSettingFormProps> = ({
                             aria-label="Treatment expectancy score"
                         />
                         <span className="text-xs text-slate-500 w-10 flex-shrink-0">High</span>
-                        <span className="text-3xl font-black text-slate-300 w-14 text-right flex-shrink-0 tabular-nums">
-                            {expectancy}
+                        <span className="text-3xl font-black w-14 text-right flex-shrink-0 tabular-nums"
+                              style={{ color: hasTouched ? undefined : 'transparent', userSelect: 'none' }}>
+                            {hasTouched ? expectancy : <span className="text-slate-600">--</span>}
                         </span>
                     </div>
 
-                    {/* Interpretation pill */}
-                    <div className={`px-4 py-2.5 rounded-xl border text-sm font-semibold ${interpretation.color}`}>
-                        {interpretation.label}, {interpretation.desc}
-                    </div>
+                    {/* Interpretation pill — hidden until slider is touched */}
+                    {hasTouched && (
+                        <div className={`px-4 py-2.5 rounded-xl border text-sm font-semibold ${interpretation.color}`}>
+                            {interpretation.label}, {interpretation.desc}
+                        </div>
+                    )}
                 </div>
             </section>
 

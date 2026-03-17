@@ -65,6 +65,7 @@ const ClinicalReportPDF = lazy(() => import('./pages/ClinicalReportPDF'));
 const DemoClinicalReportPDF = lazy(() => import('./pages/DemoClinicalReportPDF'));
 const PatientReportPDF = lazy(() => import('./pages/PatientReportPDF'));   // Phase 3 patient wellness report
 const DataPolicyPDF = lazy(() => import('./pages/DataPolicyPDF'));         // Research export data policy
+const AuditReportPDF = lazy(() => import('./pages/AuditReportPDF'));       // Audit & Compliance Export PDF
 const ProfileEdit = lazy(() => import('./pages/ProfileEdit'));
 const WellnessJourney = lazy(() => import('./pages/WellnessJourney'));
 const PatientCompanionPage = lazy(() => import('./pages/PatientCompanionPage'));
@@ -415,6 +416,8 @@ const AppContent: React.FC = () => {
               <Route path="/patient-report-pdf" element={<PatientReportPDF />} />
               {/* Research Data Policy PDF — accompanies CSV exports */}
               <Route path="/data-policy-pdf" element={<DataPolicyPDF />} />
+              {/* Audit & Compliance Export PDF — Zero-PHI, regulator-ready */}
+              <Route path="/audit-report-pdf" element={<AuditReportPDF />} />
 
               {/* Deep Dives (Public Marketing Pages) */}
               <Route path="/deep-dives/patient-flow" element={<PatientFlowPage />} />

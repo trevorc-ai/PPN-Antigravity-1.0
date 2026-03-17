@@ -74,13 +74,13 @@ const EXPORT_PACKAGES: ExportPackage[] = [
         type: 'audit',
         title: 'Audit & Compliance Report',
         subtitle: 'Malpractice Defense Ready',
-        description: 'Full timestamped session record with all clinical decisions, vitals, adverse events, and consent documentation. Formatted for legal review.',
+        description: 'Zero-PHI visual PDF with a multi-axis clinical timeline, structured administration log, MedDRA-coded adverse events and interventions, and a SHA-256 cryptographic seal. Ready for legal review, sponsor audits, and medical board submissions.',
         icon: Shield,
         accentColor: 'text-blue-400',
         bgColor: 'bg-blue-500/10',
         borderColor: 'border-blue-500/30',
         textColor: 'text-blue-400',
-        badge: 'LEGAL GRADE',
+        badge: 'PDF PREVIEW',
         includes: [
             'Informed consent with timestamp',
             'Full vitals log (all readings)',
@@ -89,8 +89,8 @@ const EXPORT_PACKAGES: ExportPackage[] = [
             'Clinician annotations & observations',
             'Session timeline with elapsed times',
         ],
-        format: 'txt',
-        formatLabel: 'TXT',
+        format: 'pdf',
+        formatLabel: 'PDF',
     },
     {
         id: 'insurance',
@@ -267,6 +267,13 @@ const SessionExportCenter: React.FC = () => {
     const handleExport = async (pkg: ExportPackage) => {
         if (downloading) return;
 
+        // Audit & Compliance PDF — opens print-preview page in a new tab
+        if (pkg.type === 'audit') {
+            const sessionParam = selectedSession !== 'all' ? selectedSession : 'PREVIEW';
+            window.open(`#/audit-report-pdf?sessionId=${sessionParam}`, '_blank', 'noopener,noreferrer');
+            return;
+        }
+
         // Clinical PDF — opens print-preview page in a new tab
         if (pkg.type === 'clinical-pdf') {
             const sessionParam = selectedSession !== 'all' ? selectedSession : '';
@@ -293,7 +300,7 @@ const SessionExportCenter: React.FC = () => {
         setDownloading(pkg.id);
         await new Promise(r => setTimeout(r, 1200));
 
-        if (pkg.type === 'audit' || pkg.type === 'insurance') {
+        if (pkg.type === 'insurance') {
             downloadReport(MOCK_PATIENT, pkg.type as ReportType);
         } else if (pkg.type === 'research') {
             // Upgraded: MedDRA-coded CSV output

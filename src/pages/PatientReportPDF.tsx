@@ -6,7 +6,7 @@
  * Page 2: How You've Changed (Spider graph, before/after in lay terms)
  * Page 3: What Comes Next (integration summary, follow-up window)
  */
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 // ─── Print CSS ────────────────────────────────────────────────────────────────
@@ -188,6 +188,15 @@ const Heading: React.FC<{ children: React.ReactNode; color?: string }> = ({ chil
 const PatientReportPDF: React.FC = () => {
     const [searchParams] = useSearchParams();
     const sessionId = searchParams.get('sessionId') ?? 'PREVIEW';
+
+    // Set a unique document title so the PDF saves with a descriptive filename
+    useEffect(() => {
+        const prev = document.title;
+        const shortId = sessionId.slice(0, 8).toUpperCase();
+        document.title = `PPN-Patient-Wellness-Report-${shortId}`;
+        return () => { document.title = prev; };
+    }, [sessionId]);
+
     const TOTAL = 3;
     const reportDate = new Date().toLocaleDateString([], { month: 'long', day: 'numeric', year: 'numeric' });
     const QR_URL = `https://ppnportal.net/patient/${sessionId}`;
