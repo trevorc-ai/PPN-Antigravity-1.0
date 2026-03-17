@@ -366,10 +366,10 @@ const Landing: React.FC = () => {
                   Where every session makes the field smarter.
                 </p>
                 <p>
-                  PPN is not a directory. It's a professional alliance of licensed clinicians who share one goal: prove that psychedelic therapy works safely, consistently, and at scale.
+                  PPN is not a directory. It's a professional alliance of clinicians, allied health professionals, practitioners-in-training, and seasoned facilitators who share one goal: discover and map the ways in which psychedelic therapies influence clinical outcomes — safely, effectively, and methodically.
                 </p>
                 <p>
-                  By pooling de-identified outcomes data across a growing alliance of practitioners, we're building the evidence base that supports insurance coverage, reduces malpractice risk, and elevates the entire field.
+                  By pooling de-identified outcomes data across a growing global alliance, we're building the evidence base that increases protocol standardization, expands safety data through systematic session monitoring, reduces client risk, and ultimately elevates the entire field.
                 </p>
                 <p className="text-2xl sm:text-3xl font-bold text-slate-300 tracking-tight pt-4">
                   You don't have to build this alone.
