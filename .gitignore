@@ -29,6 +29,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+public/internal/*
 
 # macOS custom folder icon files (contain carriage return in filename)
 Icon?
@@ -49,3 +50,4 @@ replace_*.py
 promote_*.sql
 MINIMAL_RLS.sql
 DATABASE_STATE_REVIEW_*.txt
+
