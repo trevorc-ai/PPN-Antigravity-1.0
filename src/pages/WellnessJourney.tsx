@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useActivePatient } from '../contexts/ActivePatientContext'; // WO-B1
 import { useToast } from '../contexts/ToastContext';
 import { Target, Shield, TrendingUp, ArrowRight, Lock, CheckCircle, Brain, Info, Heart, AlertTriangle, ChevronDown, ChevronUp } from 'lucide-react';
 import { AdvancedTooltip } from '../components/ui/AdvancedTooltip';
@@ -154,6 +155,8 @@ const WellnessJourneyInternal: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const { addToast } = useToast();
+    // WO-B1: Active patient context — used to bypass modal when patientUuid is carried from another page
+    const { activePatientUuid, setActivePatient: setGlobalActivePatient } = useActivePatient();
 
     // Phase navigation state
     const [activePhase, setActivePhase] = useState<1 | 2 | 3>(1);
@@ -175,12 +178,21 @@ const WellnessJourneyInternal: React.FC = () => {
 
 
     // Patient selection gate — skipped automatically if a valid in-progress session exists
+    // WO-B1: Also skipped if activePatientUuid is provided via ActivePatientContext (set by
+    // Protocol Detail → "Open in Wellness Journey" navigation with ?patientUuid= param).
     const _initialStoredSession = readStoredSession();
     // Fix B Bug 1: Suppress modal synchronously on deep-link. Without this, the
     // Patient Selection modal renders for ~200–400ms while the async DB fetch runs,
     // and any accidental click breaks the deep-link flow.
     const [showPatientModal, setShowPatientModal] = useState<boolean>(() => {
         try {
+            // WO-B1: Skip modal if patientUuid is in the URL (carried from ProtocolDetail)
+            const hash = window.location.hash;
+            const hashQuery = hash.includes('?') ? hash.split('?')[1] : window.location.search;
+            const UUID_RE_LOCAL = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+            const patientUuidFromUrl = new URLSearchParams(hashQuery).get('patientUuid');
+            if (patientUuidFromUrl && UUID_RE_LOCAL.test(patientUuidFromUrl)) return false;
+
             // Hash router: URL is /#/wellness-journey?sessionId=...
             const search = window.location.hash.includes('?')
                 ? window.location.hash.split('?')[1]
@@ -214,6 +226,117 @@ const WellnessJourneyInternal: React.FC = () => {
         setActivePhase(stored.activePhase);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []); // run once on mount only
+
+    // WO-B1: Auto-load patient when patientUuid is carried from another page
+    // (e.g. Protocol Detail → "Open in Wellness Journey" with ?patientUuid=<uuid>).
+    // This runs once on mount when activePatientUuid is already set in context;
+    // it resolves the patient's latest session and bypasses the selection modal.
+    // If there is already a sessionId deep-link in the URL, that deep-link effect
+    // takes priority. If there is a stored active session, that takes priority too.
+    useEffect(() => {
+        if (!activePatientUuid) return;
+        // Don't override an already-loaded patient session (stored session or sessionId deep-link)
+        const stored = readStoredSession();
+        if (stored?.patientUuid === activePatientUuid) return; // already loaded
+        const hash = window.location.hash;
+        const hashQuery = hash.includes('?') ? hash.split('?')[1] : window.location.search;
+        const sessionIdInUrl = new URLSearchParams(hashQuery).get('sessionId');
+        if (sessionIdInUrl) return; // sessionId deep-link effect handles this
+
+        let cancelled = false;
+        (async () => {
+            try {
+                // WO-B2: Expanded select — include fields needed to derive phase and hydrate
+                // TreatmentPhase localStorage keys for live sessions. Previously only ('id, patient_uuid')
+                // was fetched, so active Phase 2 dosing sessions were never detected.
+                const { data: latestSession } = await supabase
+                    .from('log_clinical_records')
+                    .select('id, patient_uuid, session_type_id, session_ended_at, is_submitted, created_at, dose_administered_at')
+                    .eq('patient_uuid', activePatientUuid)
+                    .order('created_at', { ascending: false })
+                    .limit(1)
+                    .maybeSingle();
+
+                if (cancelled) return;
+
+                const sessionId = latestSession?.id ?? undefined;
+
+                // WO-B2: Derive the correct phase from session state — mirrors deep-link effect logic.
+                // Ended sessions → Phase 3, active dosing → Phase 2, else Phase 1.
+                const sessionTypeId = latestSession?.session_type_id ?? 1;
+                const hasEnded = !!(latestSession?.session_ended_at) || !!(latestSession?.is_submitted);
+                const derivedPhase: 1 | 2 | 3 = hasEnded
+                    ? 3
+                    : (sessionTypeId === 2 ? 2 : 1);
+
+                // WO-B2: Unlock completed phase tabs so navigation is available after auto-load.
+                const phasesToUnlock: number[] = derivedPhase === 3 ? [1, 2] : derivedPhase === 2 ? [1] : [];
+                if (phasesToUnlock.length > 0) {
+                    setCompletedPhases(phasesToUnlock);
+                    try { localStorage.setItem(PHASE_STORAGE_KEY, JSON.stringify(phasesToUnlock)); } catch (_) {}
+                }
+
+                // WO-B2: Hydrate TreatmentPhase localStorage keys for active (live) Phase 2 sessions.
+                // TreatmentPhase reads ppn_session_mode_<id> to determine 'pre' / 'live' / 'post'
+                // and ppn_session_start_<id> to drive the in-page elapsed timer.
+                // Without this, navigating from Sidebar 'Active Patient' to a live session always
+                // shows the SessionPrepView (mode='pre') + 00:00:00 elapsed timer.
+                if (sessionId && derivedPhase === 2 && !hasEnded) {
+                    try {
+                        const sessionModeKey = `ppn_session_mode_${sessionId}`;
+                        const sessionStartKey = `ppn_session_start_${sessionId}`;
+                        // Only write if genuinely missing — don't disturb a session already live on this device
+                        if (!localStorage.getItem(sessionModeKey)) {
+                            localStorage.setItem(sessionModeKey, 'live');
+                        }
+                        if (!localStorage.getItem(sessionStartKey)) {
+                            // dose_administered_at ?? created_at — mirrors ActiveSessionsContext
+                            const startIso = latestSession?.dose_administered_at ?? latestSession?.created_at;
+                            if (startIso) {
+                                const startMs = new Date(startIso).getTime();
+                                if (!isNaN(startMs)) {
+                                    localStorage.setItem(sessionStartKey, String(startMs));
+                                }
+                            }
+                        }
+                    } catch { /* localStorage unavailable */ }
+                }
+
+                // Resolve a display patientId from log_patient_site_links
+                let patientId = `SID-${activePatientUuid.substring(0, 8).toUpperCase()}`;
+                const { data: linkRow } = await supabase
+                    .from('log_patient_site_links')
+                    .select('patient_link_code')
+                    .eq('patient_uuid', activePatientUuid)
+                    .limit(1)
+                    .maybeSingle();
+                if (linkRow?.patient_link_code) patientId = linkRow.patient_link_code;
+
+                if (cancelled) return;
+
+                setJourney(prev => ({
+                    ...prev,
+                    patientId,
+                    patientUuid: activePatientUuid,
+                    sessionId,
+                }));
+                setActivePhase(derivedPhase);     // WO-B2: advance to correct phase (was always staying on Phase 1)
+                setShowPatientModal(false);
+                setPatientModalView('existing');
+
+                addToast({
+                    title: 'Patient Loaded',
+                    message: `${patientId} — continuing from Protocol Detail`,
+                    type: 'info',
+                });
+            } catch (err) {
+                console.warn('[WellnessJourney] WO-B1/B2 patientUuid context auto-load failed (non-fatal):', err);
+            }
+        })();
+        return () => { cancelled = true; };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [activePatientUuid]); // run when context patientUuid changes
+
 
     // Deep link: allow opening a specific session directly from elsewhere (e.g., Protocol Detail, timer chips).
     // Example: /wellness-journey?sessionId=<uuid>&phase=2
@@ -308,6 +431,8 @@ const WellnessJourneyInternal: React.FC = () => {
                 setActivePhase(derivedPhase);
                 setShowPatientModal(false);
                 setPatientModalView('existing');
+                // WO-B1: Sync global context so Sidebar + other pages know the active patient
+                if (patientUuid) setGlobalActivePatient(patientUuid, sessionRow.id);
             } catch (err) {
                 console.warn('[WellnessJourney] Deep link session load failed (non-fatal):', err);
             }
@@ -492,6 +617,8 @@ const WellnessJourneyInternal: React.FC = () => {
             demographics: isNew ? undefined : (loadedDemographics ?? prev.demographics),
         }));
         setShowPatientModal(false);
+        // WO-B1: Sync global active patient context so Sidebar + cross-page links stay in sync
+        if (patientUuid) setGlobalActivePatient(patientUuid, sessionId ?? null);
 
         // ── DEFERRED: Wipe stale session-mode keys ──────────────────────────
         // Clean up ppn_session_mode_* and ppn_session_start_* keys that contain

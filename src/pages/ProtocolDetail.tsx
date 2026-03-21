@@ -1,6 +1,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useActivePatient } from '../contexts/ActivePatientContext'; // WO-B1
 import {
   ResponsiveContainer, AreaChart, Area, ReferenceLine,
   Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
@@ -181,6 +182,9 @@ const ErrorState = ({ message, onBack }: { message: string; onBack: () => void }
 const ProtocolDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  // WO-B1: Set global patient context when this protocol is viewed
+  // so that Sidebar chips and Wellness Journey navigation carry patient UUID
+  const { setActivePatient: setGlobalActivePatient } = useActivePatient();
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -216,7 +220,11 @@ const ProtocolDetail: React.FC = () => {
         );
         if (cancelled) return;
         setSession(sessionData as SessionRecord);
-
+        // WO-B1: Register this patient in global context so navigation to Wellness Journey
+        // carries the UUID. Non-blocking — does not affect clinical data flow.
+        if (sessionData.patient_uuid) {
+          setGlobalActivePatient(sessionData.patient_uuid, sessionData.id);
+        }
         const patientUuid = sessionData.patient_uuid;
 
         // 2. Parallel fetches: substances ref + vitals + safety events + patient sessions
@@ -825,7 +833,14 @@ const ProtocolDetail: React.FC = () => {
                         </div>
                         <button
                           type="button"
-                          onClick={() => navigate(`/wellness-journey?sessionId=${s.id}`)}
+                          onClick={() => {
+                            // WO-B1: carry patientUuid so WellnessJourney skips the selection modal
+                            const puuid = session?.patient_uuid;
+                            const dest = puuid
+                              ? `/wellness-journey?sessionId=${s.id}&patientUuid=${puuid}`
+                              : `/wellness-journey?sessionId=${s.id}`;
+                            navigate(dest);
+                          }}
                           className="shrink-0 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-600 text-[10px] font-black uppercase tracking-widest text-slate-200"
                         >
                           Open
@@ -998,7 +1013,14 @@ const ProtocolDetail: React.FC = () => {
                     <div className="mt-5 grid grid-cols-1 gap-2">
                       <button
                         type="button"
-                        onClick={() => navigate(`/wellness-journey?sessionId=${s.id}`)}
+                        onClick={() => {
+                            // WO-B1: carry patientUuid so WellnessJourney skips the selection modal
+                            const puuid = session?.patient_uuid;
+                            const dest = puuid
+                              ? `/wellness-journey?sessionId=${s.id}&patientUuid=${puuid}`
+                              : `/wellness-journey?sessionId=${s.id}`;
+                            navigate(dest);
+                          }}
                         className="min-h-[44px] w-full px-4 py-2.5 rounded-xl bg-emerald-600/15 hover:bg-emerald-600/25 border border-emerald-500/30 hover:border-emerald-400/60 text-emerald-300 text-xs font-black uppercase tracking-widest transition-all"
                       >
                         Open in Wellness Journey

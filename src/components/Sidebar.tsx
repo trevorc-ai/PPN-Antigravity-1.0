@@ -1,7 +1,8 @@
 import React from 'react';
 import { NavLink, useNavigate, useLocation } from 'react-router-dom';
-import { X, QrCode, Smartphone, ArrowRight, ShieldCheck, Compass } from 'lucide-react';
+import { X, QrCode, Smartphone, ArrowRight, ShieldCheck, Compass, User } from 'lucide-react';
 import { AdvancedTooltip } from './ui/AdvancedTooltip';
+import { useActivePatient } from '../contexts/ActivePatientContext'; // WO-B1
 
 interface SidebarProps {
   isOpen: boolean;
@@ -68,6 +69,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [mobileModalState, setMobileModalState] = React.useState<{ isOpen: boolean; feature: string; title: string; }>({ isOpen: false, feature: '', title: '' });
+  // WO-B1: Show contextual link when a patient is active (navigated from Protocol Detail or Journey)
+  const { activePatientUuid } = useActivePatient();
 
   const DEMO_SESSION_ID = import.meta.env.VITE_DEMO_SESSION_ID ?? '00000000-0570-de00-0000-000000000000';
   const isDemoVisible = import.meta.env.MODE !== 'production';
@@ -112,6 +115,31 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
         {/* Navigation */}
         <nav className="flex-1 min-h-0 overflow-y-auto custom-scrollbar p-4 pb-12">
           <div className="space-y-6">
+
+            {/* WO-B1: Contextual patient chip — shown when a patient is active in context.
+                Gives one-click access back to Wellness Journey for the current patient.
+                Position: top of nav, visually distinct but not color-only (has icon + text).
+                Per UI_UX_GUARDRAILS.md: patient identity must always be visible. */}
+            {activePatientUuid && (
+              <div className="mb-2">
+                <button
+                  onClick={() => {
+                    if (window.innerWidth < 1024) onClose();
+                    navigate(`/wellness-journey?patientUuid=${activePatientUuid}`);
+                  }}
+                  aria-label="Continue current patient session"
+                  className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl border border-indigo-500/30 bg-indigo-500/08 text-indigo-300 text-sm font-bold tracking-wide hover:bg-indigo-500/15 transition-all"
+                  style={{ background: 'rgba(99,102,241,0.07)' }}
+                >
+                  <User className="w-4 h-4 shrink-0" aria-hidden="true" />
+                  <span className="truncate text-xs font-black uppercase tracking-widest">
+                    Active Patient
+                  </span>
+                  <ArrowRight className="w-3 h-3 ml-auto shrink-0" aria-hidden="true" />
+                </button>
+              </div>
+            )}
+
             {navSections.map((section) => (
               <div key={section.title || JSON.stringify(section.items.map(i => i.path))}>
                 {section.title && (

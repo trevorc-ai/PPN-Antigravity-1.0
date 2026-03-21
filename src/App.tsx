@@ -118,6 +118,7 @@ import GuidedTour from './components/GuidedTour';
 import MobileBottomNav from './components/MobileBottomNav';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { ActiveSessionsProvider } from './contexts/ActiveSessionsContext';
+import { ActivePatientProvider } from './contexts/ActivePatientContext'; // WO-B1
 import { ToastProvider } from './contexts/ToastContext';
 import { ToastContainer } from './components/ui/Toast';
 import { ThemeProvider } from './contexts/ThemeContext';
@@ -385,6 +386,11 @@ const AppContent: React.FC = () => {
         between route transitions. AuthProvider, ToastProvider, and ThemeProvider
         remain outside Suspense — they must initialize synchronously.
       */}
+        {/* WO-B1: ActivePatientProvider — must live inside <Router> so it can use
+             useLocation/useNavigate. Wraps all routes so any page can read/set
+             the active patient UUID. URL param is navigation metadata only;
+             clinical state always comes from the DB. */}
+        <ActivePatientProvider>
         <GlobalErrorBoundary>
           <Suspense fallback={<PageLoader />}>
             <Routes>
@@ -536,6 +542,7 @@ const AppContent: React.FC = () => {
             </Routes>
           </Suspense>
         </GlobalErrorBoundary>
+        </ActivePatientProvider>
       </Router>
     </>
   );

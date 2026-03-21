@@ -1024,6 +1024,66 @@ export async function createMEQ30Score(data: MEQ30ScoreData) {
  * - ekg_rhythm_id FK → ref_ekg_rhythms.id
  * - session_id FK → log_clinical_records.id
  */
+
+/**
+ * WO-B5: Resolve medication display name strings → ref_medications.id integer FKs.
+ *
+ * Called by WellnessFormRouter.handleSafetyCheckSave to populate
+ * log_phase1_safety_screen.concomitant_med_ids (int4[]).
+ *
+ * Strategy:
+ * 1. Try exact case-insensitive match on ref_medications.medication_name first.
+ * 2. Fall back to partial ilike match (e.g. "Sertraline 50mg" → "Sertraline").
+ * 3. Unresolved names are logged as warnings and excluded from the result array
+ *    (never blocked; data completeness favoured over data loss).
+ *
+ * @param medicationNames   Array of display name strings from the form / localStorage.
+ * @returns                 Array of resolved integer IDs (may be shorter than input).
+ *
+ * NOTE: This function never throws. Returns [] if input is empty or Supabase fails.
+ */
+export async function resolveMedicationIds(medicationNames: string[]): Promise<number[]> {
+    if (!medicationNames || medicationNames.length === 0) return [];
+    try {
+        const resolvedIds: number[] = [];
+        // Batch by fetching all candidates in one query and matching locally.
+        // This avoids N sequential round-trips when a patient has multiple medications.
+        const { data: allMeds, error } = await supabase
+            .from('ref_medications')
+            .select('id, medication_name')
+            .limit(2000); // ref_medications is a bounded reference table
+
+        if (error) {
+            console.warn('[clinicalLog] resolveMedicationIds: ref_medications fetch failed — returning empty. Error:', error.message);
+            return [];
+        }
+
+        const meds = allMeds ?? [];
+
+        for (const name of medicationNames) {
+            const lowerName = name.toLowerCase().trim();
+            // 1. Exact match
+            let match = meds.find(m => m.medication_name.toLowerCase() === lowerName);
+            // 2. Prefix / partial match (e.g. "Sertraline 50mg" → "Sertraline")
+            if (!match) {
+                match = meds.find(m =>
+                    lowerName.startsWith(m.medication_name.toLowerCase()) ||
+                    m.medication_name.toLowerCase().startsWith(lowerName)
+                );
+            }
+            if (match?.id != null) {
+                resolvedIds.push(match.id as number);
+            } else {
+                console.warn(`[clinicalLog] resolveMedicationIds: no ref_medications match for "${name}" — excluded from concomitant_med_ids`);
+            }
+        }
+
+        return resolvedIds;
+    } catch (err) {
+        console.warn('[clinicalLog] resolveMedicationIds: unexpected error — returning empty:', err);
+        return [];
+    }
+}
 export async function createSafetyScreen(data: SafetyScreenData) {
     try {
         const { data: { user } } = await supabase.auth.getUser();

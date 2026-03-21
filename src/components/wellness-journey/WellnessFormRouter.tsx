@@ -40,6 +40,7 @@ import {
     createMEQ30Score,
     createSafetyScreen,
     createSetAndSettingLog,
+    resolveMedicationIds,           // WO-B5: resolve med names → ref_medications integer FKs
 } from '../../services/clinicalLog';
 import type { DosingProtocolUpdateData } from '../../services/clinicalLog';
 import { FLOW_EVENT_TYPE_CODES } from '../../services/refFlowEventTypes';
@@ -697,12 +698,23 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
 
                 // Write to log_phase1_safety_screen (new authoritative table for safety screen data)
                 if (resolvedPatientId && resolvedSiteId && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(resolvedPatientId)) {
+                    // WO-B5: Resolve medication display names → ref_medications.id integer FKs.
+                    // resolveMedicationIds() batches all names in one query; unresolved names are
+                    // logged and excluded (non-blocking). Falls back to [] if DB unreachable.
+                    const concomitantMedIds = await resolveMedicationIds(medNames);
+                    if (medNames.length > 0) {
+                        console.log(
+                            `[WO-B5] resolveMedicationIds: ${medNames.length} med names → ${concomitantMedIds.length} resolved FK IDs`,
+                            { medNames, concomitantMedIds },
+                        );
+                    }
+
                     createSafetyScreen({
                         patient_uuid: resolvedPatientId,
                         session_id: sessionId ?? undefined,
                         site_id: resolvedSiteId,
                         contraindication_verdict_id,  // WO-596: resolved by engine above
-                        concomitant_med_ids: [],       // field removed from form; DB DEFAULT '{}' applies
+                        concomitant_med_ids: concomitantMedIds,  // WO-B5: resolved from medNames (was always [])
                     }).catch(err => console.warn('[SAVS-P1A] log_phase1_safety_screen write failed (non-fatal):', err));
                 }
 
