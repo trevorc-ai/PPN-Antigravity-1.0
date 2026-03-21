@@ -23,7 +23,7 @@ import { SessionVitalsTrendChart, VitalsSnapshot, SessionEventPin } from './Sess
 import { useToast } from '../../contexts/ToastContext';
 import { useActiveSessionsContext } from '../../contexts/ActiveSessionsContext';
 import { useProtocol } from '../../contexts/ProtocolContext';
-import { createSessionVital, createTimelineEvent, endDosingSession } from '../../services/clinicalLog';
+import { createSessionVital, createTimelineEvent, endDosingSession, getSessionVitals } from '../../services/clinicalLog';
 import { SessionCloseoutView } from './SessionCloseoutView';
 import { SessionHUD } from './SessionHUD';
 import { SessionPrepView } from './SessionPrepView';
@@ -698,6 +698,52 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
         tempF?: number; // reserved for future temperature field
     }
     const [updateLog, setUpdateLog] = useState<SessionUpdateEntry[]>([]);
+
+    // WO-A2: Hydrate vitalsChartData from DB on mount (page refresh recovery).
+    // Without this, vitalsChartData is built from in-memory updateLog only — blank
+    // after a refresh even if vitals were logged to log_session_vitals during this session.
+    // Guard: only runs when we have a real UUID sessionId AND updateLog is empty.
+    const UUID_RE_V = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    useEffect(() => {
+        const sessionId = journey.sessionId || journey.session?.sessionNumber?.toString();
+        if (!sessionId || !UUID_RE_V.test(sessionId)) return;
+        if (updateLog.length > 0) return; // Don't overwrite live session entries
+
+        (async () => {
+            try {
+                const result = await getSessionVitals(sessionId);
+                if (!result.success || !result.data || result.data.length === 0) return;
+
+                // Map log_session_vitals rows → SessionUpdateEntry so vitalsChartData
+                // useMemo picks them up without any schema changes.
+                const hydrated: SessionUpdateEntry[] = result.data.map((row: any, i: number) => {
+                    const hrVal = row.heart_rate != null ? String(row.heart_rate) : '';
+                    const sys = row.bp_systolic != null ? String(row.bp_systolic) : '';
+                    const dia = row.bp_diastolic != null ? String(row.bp_diastolic) : '';
+                    const bpStr = (sys || dia) ? `${sys || '?'}/${dia || '?'}` : '';
+                    const ts = row.recorded_at ? new Date(row.recorded_at) : new Date();
+                    return {
+                        timestamp: ts.toLocaleTimeString(),
+                        elapsed: '—',
+                        elapsedSec: i * 60, // fallback spacing; real elapsed unknown on refresh
+                        affect: '',
+                        responsiveness: '',
+                        comfort: '',
+                        note: '',
+                        hr: hrVal,
+                        bp: bpStr,
+                        tempF: undefined,
+                    };
+                });
+
+                setUpdateLog(hydrated);
+                console.debug(`[WO-A2] Hydrated ${hydrated.length} vitals entries from DB.`);
+            } catch (err) {
+                console.warn('[WO-A2] Vitals hydration failed (non-blocking):', err);
+            }
+        })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [journey.sessionId]);
 
     // WO-559 Issue B, Vitals pre-population helper.
     // Called when the Session Update panel opens. Finds the most recent log entry
