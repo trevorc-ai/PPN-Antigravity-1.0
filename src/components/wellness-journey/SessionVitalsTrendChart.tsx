@@ -357,7 +357,7 @@ export const SessionVitalsTrendChart: FC<SessionVitalsTrendChartProps> = ({
     const hasData = chartData.length > 0;
 
     return (
-        <div className={hideHeader ? 'w-full flex flex-col' : 'w-full bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6 shadow-xl flex flex-col gap-4'}>
+        <div className={hideHeader ? 'w-full h-full flex flex-col' : 'w-full bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6 shadow-xl flex flex-col gap-4'}>
 
             {/* ── Title row: hidden when cockpit panel provides the label ── */}
             {!hideHeader && (

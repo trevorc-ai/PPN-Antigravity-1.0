@@ -754,6 +754,54 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [journey.sessionId]);
 
+    // WO-B6b: Seed baseline vitals from ppn_dosing_protocol into the chart at T+0.
+    // Runs once after DB hydration completes (vitalsLoading=false) when the cockpit
+    // is live but updateLog is still empty (no session updates saved yet).
+    // Client-only display transformation — NO DB write.
+    useEffect(() => {
+        if (vitalsLoading) return;          // wait for WO-A2 hydration to finish
+        if (mode !== 'live') return;        // only seed during an active live session
+        if (updateLog.length > 0) return;   // real vitals already present — don't overwrite
+
+        try {
+            const cached = JSON.parse(localStorage.getItem('ppn_dosing_protocol') || '{}');
+            const hr  = cached.heart_rate    != null ? String(cached.heart_rate)    : '';
+            const sys = cached.bp_systolic   != null ? String(cached.bp_systolic)   : '';
+            const dia = cached.bp_diastolic  != null ? String(cached.bp_diastolic)  : '';
+            const bp  = (sys || dia) ? `${sys || '?'}/${dia || '?'}` : '';
+
+            if (!hr && !bp) return; // no baseline vitals available — nothing to seed
+
+            const baseline = {
+                timestamp: new Date().toLocaleTimeString(),
+                elapsed: 'T+00:00',
+                elapsedSec: 0,
+                affect: '',
+                responsiveness: '',
+                comfort: '',
+                note: 'Baseline vitals (pre-session)',
+                hr,
+                bp,
+                tempF: undefined,
+            };
+            setUpdateLog([baseline]);
+            console.debug('[WO-B6b] Seeded baseline vitals at T+0 from ppn_dosing_protocol:', { hr, bp });
+
+            // Also emit to LiveSessionTimeline so a T+00:00 entry appears there too
+            const labelParts: string[] = [];
+            if (hr)  labelParts.push(`HR ${hr}`);
+            if (sys) labelParts.push(`BP ${sys}/${dia || '?'}`);
+            window.dispatchEvent(new CustomEvent('ppn:session-event', {
+                detail: {
+                    type: 'vital_check',
+                    label: `Baseline Vitals · ${labelParts.join(' · ')}`,
+                },
+            }));
+        } catch { /* localStorage unavailable — non-blocking */ }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [vitalsLoading, mode]);
+
+
     // WO-559 Issue B, Vitals pre-population helper.
     // Called when the Session Update panel opens. Finds the most recent log entry
     // that has at least one vital recorded and pre-fills the form fields.
