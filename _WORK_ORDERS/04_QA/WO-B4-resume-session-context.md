@@ -3,8 +3,9 @@ id: WO-B4
 title: "Track B4 — Resume Session from ActiveSessionsContext"
 track: B
 priority: P3
-status: 02_TRIAGE
-created: 2026-03-21
+status: 04_QA
+completed_at: 2026-03-21
+builder_notes: "No code change required. Full verification: TopHeader chip navigates /wellness-journey?sessionId=X&phase=2. WellnessJourney modal initializer already suppresses on valid sessionId (line 200-203). Deep-link effect (line 343) reads location.search, fetches patient_uuid, hydrates localStorage mode+start keys, sets phase=2, calls setGlobalActivePatient, and clears modal. All WO-B4 required behaviors fully covered by WO-B1+B2 implementations."
 author: ANTIGRAVITY (planning), BUILDER (execution)
 depends_on: WO-B1, WO-B3
 references:

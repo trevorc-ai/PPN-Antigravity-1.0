@@ -170,28 +170,40 @@ export const SessionCloseoutView: React.FC<SessionCloseoutViewProps> = ({
                     {assessmentCompleted && <span className="text-xs font-bold text-emerald-500 px-2 py-1 bg-emerald-500/10 rounded border border-emerald-500/20">COMPLETED</span>}
                 </button>
 
-                {/* Safety events review row */}
-                <div className={`p-5 rounded-2xl flex items-center justify-between transition-all ${hasSafetyEvents
-                    ? 'bg-amber-900/10 border border-amber-700/40 cursor-pointer hover:border-amber-500/50'
-                    : 'bg-slate-800/40 border border-slate-700 opacity-50 cursor-not-allowed'
-                    }`}>
-                    <div className="flex items-center gap-4">
-                        <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center ${hasSafetyEvents ? 'border-amber-500 bg-amber-500/10' : 'border-slate-600'}`}>
-                            {hasSafetyEvents
-                                ? <CheckSquare className="w-5 h-5 text-amber-400" />
-                                : <div className="w-2 h-2 rounded-full bg-slate-600" />}
+                {/* Safety events review row — WO-B3: interactive when events exist */}
+                {hasSafetyEvents ? (
+                    <button
+                        onClick={() => setShowPostSessionTimeline(true)}
+                        className="w-full p-5 bg-amber-900/10 border border-amber-700/40 hover:border-amber-500/50 hover:bg-amber-900/20 rounded-2xl flex items-center justify-between transition-all group"
+                        aria-label="Review safety events — opens session timeline"
+                        aria-controls="post-session-timeline-panel"
+                    >
+                        <div className="flex items-center gap-4">
+                            <div className="w-8 h-8 rounded-full border-2 border-amber-500 bg-amber-500/10 flex items-center justify-center">
+                                <CheckSquare className="w-5 h-5 text-amber-400" />
+                            </div>
+                            <div className="flex flex-col items-start">
+                                <span className="font-bold text-amber-300">Review Safety Events</span>
+                                <span className="text-xs text-amber-500/70">Click to expand session timeline</span>
+                            </div>
                         </div>
-                        <span className={`font-bold ${hasSafetyEvents ? 'text-amber-300' : 'text-slate-400'}`}>
-                            Review Safety Events {hasSafetyEvents ? '' : '(0)'}
+                        <span className="text-xs font-bold border px-2 py-1 rounded text-amber-400 border-amber-700/40 bg-amber-500/10">
+                            REVIEW
+                        </span>
+                    </button>
+                ) : (
+                    <div className="p-5 bg-slate-800/40 border border-slate-700 opacity-50 rounded-2xl flex items-center justify-between">
+                        <div className="flex items-center gap-4">
+                            <div className="w-8 h-8 rounded-full border-2 border-slate-600 flex items-center justify-center">
+                                <div className="w-2 h-2 rounded-full bg-slate-600" />
+                            </div>
+                            <span className="font-bold text-slate-400">Review Safety Events (0)</span>
+                        </div>
+                        <span className="text-xs font-bold border px-2 py-1 rounded text-slate-600 border-slate-700">
+                            NO EVENTS
                         </span>
                     </div>
-                    <span className={`text-xs font-bold border px-2 py-1 rounded ${hasSafetyEvents
-                        ? 'text-amber-400 border-amber-700/40 bg-amber-500/10'
-                        : 'text-slate-600 border-slate-700'
-                        }`}>
-                        {hasSafetyEvents ? 'REVIEW' : 'NO EVENTS'}
-                    </span>
-                </div>
+                )}
             </div>
 
             {/* Submit & Close button */}

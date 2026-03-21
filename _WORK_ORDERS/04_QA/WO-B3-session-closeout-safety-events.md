@@ -3,8 +3,9 @@ id: WO-B3
 title: "Track B3 — Session Closeout: Wire endDosingSession + hasSafetyEvents"
 track: B
 priority: P2
-status: 02_TRIAGE
-created: 2026-03-21
+status: 04_QA
+completed_at: 2026-03-21
+builder_notes: "hasSafetyEvents useMemo already correct from B0 work. Safety events row in SessionCloseoutView converted from non-interactive div to conditional button/div — onClick wired to setShowPostSessionTimeline(true) so practitioners can review events in the timeline accordion, accessibility attributes added (aria-label, aria-controls)."
 author: ANTIGRAVITY (planning), BUILDER (execution)
 depends_on: WO-B1, WO-B2
 references:
