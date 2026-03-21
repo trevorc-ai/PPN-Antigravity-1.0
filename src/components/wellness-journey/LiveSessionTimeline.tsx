@@ -119,12 +119,13 @@ export const LiveSessionTimeline: FC<LiveSessionTimelineProps> = ({
     const [draftNote, setDraftNote] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    // WO-A4: Scroll-to-bottom ref — attached to the scrollable events container.
-    // Fires whenever events update so the practitioner always sees the latest entry.
-    const eventsBottomRef = useRef<HTMLDivElement | null>(null);
+    // WO-A4 (fix 2): Scroll-to-bottom — uses direct scrollTop manipulation on the
+    // scrollable container ref. scrollIntoView was causing the whole page to jump
+    // because it propagates scroll to all ancestors, not just the container.
+    const eventsListRef = useRef<HTMLDivElement | null>(null);
     useEffect(() => {
-        if (scrollToBottom && eventsBottomRef.current) {
-            eventsBottomRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
+        if (scrollToBottom && eventsListRef.current) {
+            eventsListRef.current.scrollTop = eventsListRef.current.scrollHeight;
         }
     }, [events, scrollToBottom]);
 
@@ -219,8 +220,9 @@ export const LiveSessionTimeline: FC<LiveSessionTimelineProps> = ({
             // Show real events if we have them. For TEST sessions or first real sessions,
             // DB returns empty — don't wipe optimistic/local events already in state.
             if (mappedEvents.length > 0) {
-                // Most recent first
-                setEvents(mappedEvents);
+                // DB returns newest-first; reverse to chronological (oldest top, newest bottom)
+                // so the timeline reads naturally and scroll-to-bottom shows the latest entry.
+                setEvents(mappedEvents.reverse());
             }
             // Intentionally NOT calling setEvents([]) for empty result:
             // preserves optimistic events for TEST sessions and new sessions
@@ -231,16 +233,15 @@ export const LiveSessionTimeline: FC<LiveSessionTimelineProps> = ({
     useEffect(() => {
         fetchLocalEvents();
 
+        // WO-A4 (fix 2): 60-second background poll removed. It was the trigger for the
+        // scrollIntoView → page-level auto-scroll bug. Events load:
+        //   1. On mount (above)
+        //   2. After every save (fetchLocalEvents() called in handleAddNote)
+        //   3. On ppn:session-event custom event (dose-registered listener below)
+        // No background polling needed for a single-device session. The timer, vitals
+        // chart, and timestamps are all device-based.
         if (!active) return;
-
-        // Fetch periodically or subscribe.
-        // Stabilisation sprint: reduced from 30s → 60s. Timeline is a log; 60s latency
-        // is clinically acceptable and halves query volume per open session.
-        const interval = setInterval(() => {
-            fetchLocalEvents();
-        }, 60000);
-
-        return () => clearInterval(interval);
+        // (No interval — no cleanup needed)
     }, [fetchLocalEvents, active]);
 
     // WO-559: listen for dose-registered events from DosingSessionPhase so the
@@ -328,7 +329,7 @@ export const LiveSessionTimeline: FC<LiveSessionTimelineProps> = ({
     }, [events, visible]);
 
     return (
-        <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl flex flex-col overflow-hidden shadow-xl">
+        <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl flex flex-col overflow-hidden shadow-xl h-full">
             {!hideHeader && (
                 <div className="flex items-center justify-between p-4 border-b border-slate-700/50 bg-slate-800/20">
                     <div className="flex items-center gap-3">
@@ -370,7 +371,7 @@ export const LiveSessionTimeline: FC<LiveSessionTimelineProps> = ({
                 </div>
             )}
 
-            <div className="p-3 flex-1 overflow-y-auto space-y-4 scroll-smooth">
+            <div ref={eventsListRef} className="p-3 flex-1 overflow-y-auto space-y-4 scroll-smooth">
                 {filteredEvents.length === 0 ? (
                     <div className="text-center text-slate-500 py-4 text-sm italic">
                         {events.length > 0
@@ -430,8 +431,6 @@ export const LiveSessionTimeline: FC<LiveSessionTimelineProps> = ({
                         )
                     })
                 )}
-                {/* WO-A4: Scroll-to-bottom sentinel — eventsBottomRef targets this */}
-                <div ref={eventsBottomRef} aria-hidden="true" />
             </div>
 
             {/* ── Quick-Log action strip + freetext note form ─────────────────── */}

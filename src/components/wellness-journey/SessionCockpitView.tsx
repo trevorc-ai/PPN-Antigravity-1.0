@@ -342,7 +342,7 @@ export const SessionCockpitView: React.FC<SessionCockpitViewProps> = ({
                         activePanel === 'timeline' ? 'max-h-[520px] opacity-100' : 'max-h-0 opacity-0'
                     }`}
                 >
-                    <div className="border-t border-slate-700/40 h-[380px] overflow-hidden">
+                    <div className="border-t border-slate-700/40 h-[380px]">
                         <LiveSessionTimeline
                             sessionId={journey.sessionId || journey.session?.sessionNumber?.toString() || '1'}
                             active={true}

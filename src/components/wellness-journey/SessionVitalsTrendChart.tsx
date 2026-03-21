@@ -396,7 +396,7 @@ export const SessionVitalsTrendChart: FC<SessionVitalsTrendChartProps> = ({
 
             {/* ── Chart ──────────────────────────────────────────────────── */}
             {/* position:relative anchors the absolute event tooltip overlay   */}
-            <div className="h-[220px] w-full relative">
+            <div className="h-full min-h-[220px] w-full relative">
                 {(hasData || events.length > 0) ? (
                     <ResponsiveContainer width="100%" height="100%">
                         <ComposedChart margin={{ top: 10, right: 20, bottom: 24, left: -10 }}>
