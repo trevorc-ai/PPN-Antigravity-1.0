@@ -791,7 +791,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
             const labelParts: string[] = [];
             if (hr)  labelParts.push(`HR ${hr}`);
             if (sys) labelParts.push(`BP ${sys}/${dia || '?'}`);
-            window.dispatchEvent(new CustomEvent('ppn:session-event', {
+            window.dispatchEvent(new CustomEvent('ppn:dose-registered', {
                 detail: {
                     type: 'vital_check',
                     label: `Baseline Vitals · ${labelParts.join(' · ')}`,
