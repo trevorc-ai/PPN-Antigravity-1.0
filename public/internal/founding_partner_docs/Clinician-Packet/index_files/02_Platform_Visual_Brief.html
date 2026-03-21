@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<!-- saved from url=(0151)file:///Users/trevorcalton/Desktop/PPN-Antigravity-1.0/public/internal/founding_partner_docs/Clinician-Packet/index_files/02_Platform_Visual_Brief.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PPN Portal: Platform Visual Brief - Clinician Founding Partner Program</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --accent: #7c6ff7;
+    --accent-light: #f0eeff;
+    --bg: #ffffff;
+    --bg-subtle: #f8f9fc;
+    --ink-body: #2d3450;
+    --ink-heading: #0f1117;
+    --ink-muted: #8b91a8;
+    --border-light: #e4e6f0;
+    --success: #15803d;
+    --success-light: #f0fdf4;
+  }
+
+  @media screen { body { padding: 0.6in; max-width: 8.5in; margin: 0 auto; } }
+  @media print {
+    @page { size: letter; margin: 0.75in; }
+    body { font-size: 11pt; line-height: 1.5; padding: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    h1, h2, h3 { break-after: avoid; page-break-after: avoid; }
+    p { orphans: 3; widows: 3; }
+    .feature-card, .screenshot-wrap, .metric-block, .comparison-row { break-inside: avoid; page-break-inside: avoid; }
+  }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    font-size: 9pt;
+    line-height: 1.6;
+    color: var(--ink-body);
+    background: var(--bg);
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .header {
+    border-top: 4pt solid var(--accent);
+    padding-top: 12pt; padding-bottom: 14pt;
+    border-bottom: 1px solid var(--border-light);
+    margin-bottom: 14pt;
+    display: flex; justify-content: space-between; align-items: flex-start;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+  .brand { display: flex; align-items: center; gap: 7pt; }
+  .brand-dot { width: 8pt; height: 8pt; border-radius: 50%; background: var(--accent); flex-shrink: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .brand-name { font-size: 8pt; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); }
+  .classification { font-size: 7pt; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-muted); }
+
+  .doc-num-badge {
+    display: inline-block; font-size: 7pt; font-weight: 700; color: var(--accent);
+    background: var(--accent-light); border-radius: 3pt; padding: 2pt 7pt;
+    letter-spacing: 0.06em; margin-bottom: 4pt;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+  .doc-label { font-size: 7.5pt; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); margin-bottom: 3pt; }
+  h1 { font-size: 20pt; font-weight: 800; color: var(--ink-heading); line-height: 1.1; letter-spacing: -0.02em; margin-bottom: 8pt; }
+  .cover-body { font-size: 9pt; color: var(--ink-body); margin-bottom: 5pt; max-width: 90%; }
+  .cover-note { font-style: italic; color: var(--ink-muted); font-size: 8pt; margin-bottom: 18pt; }
+
+  .time-pill {
+    display: inline-block; font-size: 7pt; font-weight: 700; letter-spacing: 0.05em;
+    text-transform: uppercase; color: var(--success);
+    background: var(--success-light); border: 1px solid #bbf7d0;
+    border-radius: 20pt; padding: 1.5pt 7pt; margin-right: 4pt; vertical-align: middle;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+
+  .sections-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 14pt;
+  }
+
+  .section {
+    border: 1px solid var(--border-light); border-radius: 5pt;
+    overflow: hidden; break-inside: avoid;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+
+  .section-img {
+    display: block; width: 100%; height: 1.55in;
+    object-fit: cover; object-position: top left;
+    background: var(--bg-subtle);
+    border-bottom: 1px solid var(--border-light);
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+
+  .section-body { padding: 9pt 11pt 10pt; }
+
+  .section-eyebrow {
+    font-size: 6.5pt; font-weight: 700; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--ink-muted); margin-bottom: 3pt;
+  }
+  .section-title {
+    font-size: 10pt; font-weight: 800; color: var(--ink-heading);
+    letter-spacing: -0.01em; margin-bottom: 7pt;
+    padding-bottom: 6pt; border-bottom: 1px solid var(--border-light);
+  }
+
+  .annotation-label {
+    font-size: 6.5pt; font-weight: 700; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--accent);
+    margin-bottom: 3pt; margin-top: 7pt;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+  .annotation-label:first-of-type { margin-top: 0; }
+  .annotation-text { font-size: 8pt; color: var(--ink-body); line-height: 1.55; }
+
+  .footer {
+    display: flex; justify-content: space-between;
+    margin-top: 14pt; padding-top: 7pt;
+    border-top: 1px solid var(--border-light);
+    font-size: 7pt; color: var(--ink-muted);
+  }
+  .footer-dot { color: var(--accent); margin: 0 3pt; }
+  strong { color: var(--ink-heading); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="brand">
+    <div class="brand-dot"></div>
+    <span class="brand-name">PPN Portal</span>
+  </div>
+  <div class="classification">Confidential: Clinician Founding Partner Program</div>
+</div>
+
+<div class="doc-num-badge">02 of 06</div>
+<div class="doc-label">Platform Capability Overview</div>
+<h1>Platform Visual Brief</h1>
+<p class="cover-body">Six views from the PPN Portal, annotated for clinic owners and their clinical staff. Every screen shown here is live infrastructure, available to Founding Partners now.</p>
+<p class="cover-note">Not mockups. Not prototypes. This is the platform your facilitators will use starting Day 14.</p>
+
+<div class="sections-grid">
+
+  <!-- 01 -->
+  <div class="section">
+    <img class="section-img" src="file:///Users/trevorcalton/Desktop/PPN-Antigravity-1.0/public/internal/founding_partner_docs/screenshots/Page-Dashboard.webp" alt="Clinical Intelligence Dashboard">
+    <div class="section-body">
+      <div class="section-eyebrow">01 of 06</div>
+      <div class="section-title">Clinic Performance Radar</div>
+      <div class="annotation-label">What Your Team Sees</div>
+      <p class="annotation-text">Real-time benchmarks for your clinic: Performance Radar across six dimensions (Efficacy, Safety, Retention, Compliance, Revenue, Speed) plotted against the anonymized network average, with Quarterly Analysis and patient outcome clustering.</p>
+      <div class="annotation-label">Why It Matters for Your Practice</div>
+      <p class="annotation-text">You now have a single view that tells you how your outcomes compare to the field, where your facilitators excel, and where you may need to intervene. No other tool in this space offers this legally.</p>
+    </div>
+  </div>
+
+  <!-- 02 -->
+  <div class="section">
+    <img class="section-img" src="file:///Users/trevorcalton/Desktop/PPN-Antigravity-1.0/public/internal/founding_partner_docs/screenshots/Page-Interaction-Checker.webp" alt="Drug Interaction Checker">
+    <div class="section-body">
+      <div class="section-eyebrow">02 of 06</div>
+      <div class="section-title">Drug Interaction Checker</div>
+      <div class="annotation-label">What Your Team Sees</div>
+      <p class="annotation-text">Pre-session contraindication screening of the selected compound against the patient's full medication list, with pharmacological pathway, severity classification, and protocol citations.</p>
+      <div class="annotation-label">Time to Value</div>
+      <p class="annotation-text"><span class="time-pill">60-Second Check</span> Facilitators run a complete interaction screen before the patient sits down. Every check is automatically timestamped and logged, creating defensible standard-of-care documentation with zero additional effort.</p>
+    </div>
+  </div>
+
+  <!-- 03 -->
+  <div class="section">
+    <img class="section-img" src="file:///Users/trevorcalton/Desktop/PPN-Antigravity-1.0/public/internal/founding_partner_docs/screenshots/Component-Efficacy-Trajectory.webp" alt="Efficacy Trajectory">
+    <div class="section-body">
+      <div class="section-eyebrow">03 of 06</div>
+      <div class="section-title">Patient Efficacy Trajectory</div>
+      <div class="annotation-label">What Your Team Sees</div>
+      <p class="annotation-text">PHQ-9 plotted from baseline through follow-up intervals for each anonymized protocol, charted against the community median and clinical remission threshold. No patient identity is attached.</p>
+      <div class="annotation-label">Why It Matters for Your Practice</div>
+      <p class="annotation-text">Your facilitators can see exactly how a patient is trending, compare to network outcomes, and make confident decisions about follow-up paths, all without opening a single additional tab or document.</p>
+    </div>
+  </div>
+
+  <!-- 04 -->
+  <div class="section">
+    <img class="section-img" src="file:///Users/trevorcalton/Desktop/PPN-Antigravity-1.0/public/internal/founding_partner_docs/screenshots/Component-Audit-logs.webp" alt="Immutable Audit Ledger">
+    <div class="section-body">
+      <div class="section-eyebrow">04 of 06</div>
+      <div class="section-title">Compliance Audit Ledger</div>
+      <div class="annotation-label">What Your Team Sees</div>
+      <p class="annotation-text">A complete, filterable ledger of every clinical event: timestamp, demographic class (no names), substance, activity, status, and a cryptographic hash verifying record integrity since creation. No record can be altered or deleted by any user.</p>
+      <div class="annotation-label">Why It Matters for Your Practice</div>
+      <p class="annotation-text">If a state licensing board or compliance auditor requests documentation, you export this in one click. Your records are already formatted to meet 21 CFR Part 11 and Oregon OHA OAR 333-333 standards.</p>
+    </div>
+  </div>
+
+  <!-- 05 -->
+  <div class="section">
+    <img class="section-img" src="file:///Users/trevorcalton/Desktop/PPN-Antigravity-1.0/public/internal/founding_partner_docs/screenshots/Page-Data-Export-Manager.webp" alt="Post-Session Sync">
+    <div class="section-body">
+      <div class="section-eyebrow">05 of 06</div>
+      <div class="section-title">Post-Session Documentation</div>
+      <div class="annotation-label">What Your Team Sees</div>
+      <p class="annotation-text">Structured post-session input: facilitators log vitals, semantic observations (from a validated structured menu), adverse events, and integration recommendations. All selections are stored as validated data, never free text.</p>
+      <div class="annotation-label">Time to Value</div>
+      <p class="annotation-text"><span class="time-pill">2-Minute Sync</span> Facilitators complete a full post-session record in under 120 seconds. No end-of-day charting, no retrospective data entry, no lost observations. Documentation happens while the session is still fresh.</p>
+    </div>
+  </div>
+
+  <!-- 06 -->
+  <div class="section">
+    <img class="section-img" src="file:///Users/trevorcalton/Desktop/PPN-Antigravity-1.0/public/internal/founding_partner_docs/screenshots/Component-Clinic-Performance-Radar.webp" alt="Clinic Performance Radar">
+    <div class="section-body">
+      <div class="section-eyebrow">06 of 06</div>
+      <div class="section-title">Network Benchmarking</div>
+      <div class="annotation-label">What Your Team Sees</div>
+      <p class="annotation-text">Quarterly benchmarking across six performance dimensions plotted against the anonymized network average, with scored breakdowns and plain-language context per dimension to guide operational decisions.</p>
+      <div class="annotation-label">Why It Matters for Your Practice</div>
+      <p class="annotation-text">For the first time, your clinic can see exactly where it stands in the broader field, without patient privacy risk. This is the operational intelligence that justifies PPN to your board, your investors, and your staff.</p>
+    </div>
+  </div>
+
+</div><!-- end sections-grid -->
+
+<div class="footer">
+  <span>PPN Portal <span class="footer-dot">·</span> ppnportal.net</span>
+  <span>Confidential &amp; Proprietary <span class="footer-dot">·</span> © 2026 PPN. All Rights Reserved.</span>
+</div>
+
+
+
+</body></html>

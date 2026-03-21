@@ -135,3 +135,8 @@ if (sessionId && UUID_REGEX.test(sessionId)) {
 ## Dependency
 
 **Complete `WO-DISCHARGE-PDF` first.** Install `jspdf` in that WO and reuse the same PDF utility patterns here.
+
+
+---
+
+> 🔴 **PARKED — 2026-03-21:** This WO is parked behind Track B item B3 (Close Integration / Open Next Cycle gate). The IntegrationPhase.tsx data pipeline this WO wires to is undefined until B3 is complete. Do not proceed until STABILIZATION_BRIEF.md Track B B3 is complete. See PIPELINE_TRIAGE_2026-03-21.md.

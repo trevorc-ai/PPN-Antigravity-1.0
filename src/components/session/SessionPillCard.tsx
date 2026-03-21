@@ -61,7 +61,7 @@ const SessionPillCard: React.FC<SessionPillCardProps> = ({
 
     const handleClick = () => {
         // Navigate to Wellness Journey with the session's patient context
-        navigate(`/wellness-journey?session=${session.id}`);
+        navigate(`/wellness-journey?sessionId=${session.id}&phase=2`);
     };
 
     if (variant === 'pill') {

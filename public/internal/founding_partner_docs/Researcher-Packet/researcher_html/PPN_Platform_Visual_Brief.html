@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PPN Portal: Platform Visual Brief - Founding Partner Program</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --accent: #7c6ff7;
+    --bg: #ffffff;
+    --bg-subtle: #f8f9fc;
+    --ink-body: #2d3450;
+    --ink-heading: #0f1117;
+    --ink-muted: #8b91a8;
+    --border-light: #e4e6f0;
+  }
+
+  @media screen { body { padding: 0.6in; max-width: 8.5in; margin: 0 auto; } }
+  @media print {
+    @page { size: letter; margin: 0.75in; }
+    body { font-size: 11pt; line-height: 1.5; padding: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    h1, h2, h3 { break-after: avoid; page-break-after: avoid; }
+    p { orphans: 3; widows: 3; }
+    .brief-card, .metric-row, .feature-grid, .comparison-table { break-inside: avoid; page-break-inside: avoid; }
+  }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    font-size: 9pt;
+    line-height: 1.6;
+    color: var(--ink-body);
+    background: var(--bg);
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* ---- COVER / HEADER ---- */
+  .header {
+    border-top: 4pt solid var(--accent);
+    padding-top: 12pt;
+    padding-bottom: 14pt;
+    border-bottom: 1px solid var(--border-light);
+    margin-bottom: 14pt;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .brand { display: flex; align-items: center; gap: 7pt; }
+  .brand-dot { width: 8pt; height: 8pt; border-radius: 50%; background: var(--accent); flex-shrink: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .brand-name { font-size: 8pt; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); }
+  .classification { font-size: 7pt; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-muted); }
+
+  .doc-label { font-size: 7.5pt; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); margin-bottom: 3pt; }
+  h1 { font-size: 20pt; font-weight: 800; color: var(--ink-heading); line-height: 1.1; letter-spacing: -0.02em; margin-bottom: 8pt; }
+  .cover-body { font-size: 9pt; color: var(--ink-body); margin-bottom: 5pt; max-width: 90%; }
+  .cover-note { font-style: italic; color: var(--ink-muted); font-size: 8pt; margin-bottom: 18pt; }
+
+  /* ---- 2-COLUMN SECTION GRID ---- */
+  .sections-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14pt;
+  }
+
+  /* Each section card */
+  .section {
+    border: 1px solid var(--border-light);
+    border-radius: 5pt;
+    overflow: hidden;
+    break-inside: avoid;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Screenshot at top of card */
+  .section-img {
+    display: block;
+    width: 100%;
+    height: 1.55in;
+    object-fit: cover;
+    object-position: top left;
+    background: var(--bg-subtle);
+    border-bottom: 1px solid var(--border-light);
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Card body */
+  .section-body { padding: 9pt 11pt 10pt; }
+
+  .section-eyebrow {
+    font-size: 6.5pt;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    margin-bottom: 3pt;
+  }
+  .section-title {
+    font-size: 10pt;
+    font-weight: 800;
+    color: var(--ink-heading);
+    letter-spacing: -0.01em;
+    margin-bottom: 7pt;
+    padding-bottom: 6pt;
+    border-bottom: 1px solid var(--border-light);
+  }
+
+  .annotation-label {
+    font-size: 6.5pt;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 3pt;
+    margin-top: 7pt;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .annotation-label:first-of-type { margin-top: 0; }
+  .annotation-text { font-size: 8pt; color: var(--ink-body); line-height: 1.55; }
+
+  /* ---- FOOTER ---- */
+  .footer {
+    display: flex; justify-content: space-between;
+    margin-top: 14pt; padding-top: 7pt;
+    border-top: 1px solid var(--border-light);
+    font-size: 7pt; color: var(--ink-muted);
+  }
+  .footer-dot { color: var(--accent); margin: 0 3pt; }
+
+  strong { color: var(--ink-heading); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="brand">
+    <div class="brand-dot"></div>
+    <span class="brand-name">PPN Portal</span>
+  </div>
+  <div class="classification">Confidential: Founding Partner Program</div>
+</div>
+
+<div class="doc-label">Platform Capability Overview</div>
+<h1>Platform Visual Brief</h1>
+<p class="cover-body">Six core views from the PPN Portal Clinical Intelligence Platform, annotated for institutional partners. Each view reflects live infrastructure, available to Founding Partners now.</p>
+<p class="cover-note">Not mockups. Not prototypes. This is the platform.</p>
+
+<!-- 2-COLUMN GRID OF ALL 6 SECTIONS -->
+<div class="sections-grid">
+
+  <!-- 01 -->
+  <div class="section">
+    <img class="section-img" src="../../../screenshots/Page-Dashboard.webp" alt="Clinical Intelligence Dashboard">
+    <div class="section-body">
+      <div class="section-eyebrow">01 of 06</div>
+      <div class="section-title">Clinical Intelligence Dashboard</div>
+      <div class="annotation-label">What You Are Seeing</div>
+      <p class="annotation-text">Real-time cross-site benchmarks: Performance Radar (six composite dimensions vs. network average), Quarterly Analysis with scored breakdowns, and Patient Galaxy outcomes clustering by Treatment Resistance and PHQ-9 severity.</p>
+      <div class="annotation-label">Why It Matters</div>
+      <p class="annotation-text">Because PPN stores no PHI, cross-site benchmarking is legally permissible. No legacy EHR can offer this without significant liability exposure.</p>
+    </div>
+  </div>
+
+  <!-- 02 -->
+  <div class="section">
+    <img class="section-img" src="../../../screenshots/Page-Interaction-Checker.webp" alt="Drug Interaction Checker">
+    <div class="section-body">
+      <div class="section-eyebrow">02 of 06</div>
+      <div class="section-title">Drug Interaction Checker</div>
+      <div class="annotation-label">What You Are Seeing</div>
+      <p class="annotation-text">Pre-session contraindication screening of the selected compound against the patient's full medication list, with pharmacological pathway, severity classification, and regulatory citations. Every check is cryptographically logged.</p>
+      <div class="annotation-label">Why It Matters</div>
+      <p class="annotation-text">Every check is timestamped automatically. Override codes and stop decisions are captured in the immutable audit ledger, creating defensible standard-of-care documentation without any additional practitioner input.</p>
+    </div>
+  </div>
+
+  <!-- 03 -->
+  <div class="section">
+    <img class="section-img" src="../../../screenshots/Component-Efficacy-Trajectory.webp" alt="Efficacy Trajectory">
+    <div class="section-body">
+      <div class="section-eyebrow">03 of 06</div>
+      <div class="section-title">Efficacy Trajectory</div>
+      <div class="annotation-label">What You Are Seeing</div>
+      <p class="annotation-text">PHQ-9 plotted from baseline through confirmed days-post-session intervals for an anonymized protocol, charted against the community median and clinical remission threshold.</p>
+      <div class="annotation-label">Why It Matters</div>
+      <p class="annotation-text">Structured real-world evidence at the individual level: clean, standardized, directly exportable to SPSS, R, or Python, with no data wrangling and no IRB exposure from identifiable records.</p>
+    </div>
+  </div>
+
+  <!-- 04 -->
+  <div class="section">
+    <img class="section-img" src="../../../screenshots/Component-Audit-logs.webp" alt="Immutable Audit Ledger">
+    <div class="section-body">
+      <div class="section-eyebrow">04 of 06</div>
+      <div class="section-title">Immutable Audit Ledger</div>
+      <div class="annotation-label">What You Are Seeing</div>
+      <p class="annotation-text">A complete, filterable ledger of every clinical and security event: timestamp, patient demographic class (no names), substance, activity type, status, and a truncated cryptographic hash verifying record integrity since creation.</p>
+      <div class="annotation-label">Why It Matters</div>
+      <p class="annotation-text">Structured for 21 CFR Part 11 compliance. Every record is hash-verified, non-editable, and exportable for regulatory submission or IRB audit. No entry can be deleted by any user.</p>
+    </div>
+  </div>
+
+  <!-- 05 -->
+  <div class="section">
+    <img class="section-img" src="../../../screenshots/Page-Data-Export-Manager.webp" alt="Data Export Manager">
+    <div class="section-body">
+      <div class="section-eyebrow">05 of 06</div>
+      <div class="section-title">Data Export Manager</div>
+      <div class="annotation-label">What You Are Seeing</div>
+      <p class="annotation-text">Four export categories: Patient and Clinical Records (Treatment Bundle, Outcomes PDF, Audit Reports), Research Data (CSV, JSON for SPSS/R), Compliance (21 CFR Part 11 Audit Logs), and Forms and Templates.</p>
+      <div class="annotation-label">Why It Matters</div>
+      <p class="annotation-text">Partners run their own queries against their own cohort data and download directly. No data engineering queue, no reformatting, no wait. The research pipeline is already built.</p>
+    </div>
+  </div>
+
+  <!-- 06 -->
+  <div class="section">
+    <img class="section-img" src="../../../screenshots/Component-Clinic-Performance-Radar.webp" alt="Clinic Performance Radar">
+    <div class="section-body">
+      <div class="section-eyebrow">06 of 06</div>
+      <div class="section-title">Clinic Performance Radar</div>
+      <div class="annotation-label">What You Are Seeing</div>
+      <p class="annotation-text">Quarterly benchmarking across six dimensions (Efficacy, Safety, Retention, Compliance, Revenue, Speed) plotted against the anonymized network average, with scored breakdowns and natural-language context per dimension.</p>
+      <div class="annotation-label">Why It Matters</div>
+      <p class="annotation-text">A network director now has a single view to understand which sites are performing, where adverse events concentrate, and how outcomes compare to the broader field. This visibility has not previously existed in this space.</p>
+    </div>
+  </div>
+
+</div><!-- end sections-grid -->
+
+<div class="footer">
+  <span>PPN Portal <span class="footer-dot">&middot;</span> ppnportal.net</span>
+  <span>Confidential &amp; Proprietary <span class="footer-dot">&middot;</span> &copy; 2026 PPN. All Rights Reserved.</span>
+</div>
+
+</body>
+</html>

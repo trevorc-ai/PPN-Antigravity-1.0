@@ -84,3 +84,8 @@ The "Patient Deliverables" card in `DownloadCenter.tsx` will surface:
 | WO-546 | `01_TRIAGE` ✅ promoted 2026-03-06 | P1 |
 | WO-547 | `01_TRIAGE` ✅ promoted 2026-03-06 | P1 |
 | WO-523 | `01_TRIAGE` ✅ promoted 2026-03-06 | P1 — last in chain |
+
+
+---
+
+> 🔴 **PARKED — 2026-03-21:** This EPIC is parked behind Track B items B2 + B3. The magic link share flow and patient report read integration session data that is currently undefined. Child WOs may be audited and revised but must not be built until STABILIZATION_BRIEF.md B2 + B3 are complete. See PIPELINE_TRIAGE_2026-03-21.md.

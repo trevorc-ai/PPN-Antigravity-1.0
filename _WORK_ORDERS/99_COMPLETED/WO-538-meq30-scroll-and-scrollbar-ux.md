@@ -2,7 +2,7 @@
 id: WO-538
 title: MEQ-30 — Keyboard Scroll & Scrollbar UX Issues
 owner: LEAD
-status: 99_COMPLETED
+status: 01_TRIAGE
 filed_by: PRODDY
 date: 2026-03-03
 priority: P3
@@ -42,8 +42,3 @@ Two UX issues observed during MEQ-30 completion via keyboard:
 - Surgical only — touch only scroll behavior and scrollbar CSS in MEQ-30 component
 - No changes to question content, scoring logic, or form data model
 - Must be applied after WO-531 so file touches don't conflict
-
----
-## INSPECTOR QA Sign-off
-**Date:** 2026-03-11
-**Verdict:** APPROVED. Code fixes verified on main branch.

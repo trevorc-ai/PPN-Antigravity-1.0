@@ -141,11 +141,14 @@ export function useSubscription(): UseSubscriptionReturn {
     useEffect(() => {
         fetchSubscription();
 
-        // Subscribe to auth changes
+        // Subscribe to auth changes — but only re-fetch on actual login/logout.
+        // TOKEN_REFRESHED fires every ~55 min and must NOT trigger a re-fetch;
+        // subscription data doesn't change on token refresh.
         const { data: authListener } = supabase.auth.onAuthStateChange((event) => {
             if (event === 'SIGNED_IN' || event === 'SIGNED_OUT') {
                 fetchSubscription();
             }
+            // Intentionally skip: TOKEN_REFRESHED, USER_UPDATED, PASSWORD_RECOVERY
         });
 
         return () => {

@@ -122,33 +122,37 @@ const FeedbackCard: React.FC<FeedbackCardProps> = ({ isOpen, onClose, triggerRef
     const handleSubmit = async () => {
         // WO-611: validate based on type
         if (type === 'feature' ? !featureFields.problem.trim() : !message.trim()) return;
+
+        // Guard: must be authenticated to submit feedback
+        if (!user?.id) {
+            setError('You must be signed in to leave feedback.');
+            return;
+        }
+
         setSubmitting(true);
         setError(null);
 
-        try {
-            const { error: insertError } = await supabase
-                .from('user_feedback')
-                .insert({
-                    user_id: user?.id,
-                    type,
-                    message: buildPayloadMessage(),        // WO-611: structured or plain
-                    page_url: window.location.hash || window.location.pathname,
-                    metadata: buildMetadata(),             // WO-611: bug context JSON
-                });
+        const { error: insertError } = await supabase
+            .from('user_feedback')
+            .insert({
+                user_id: user.id,
+                type,
+                message: buildPayloadMessage(),        // WO-611: structured or plain
+                page_url: window.location.hash || window.location.pathname,
+                metadata: buildMetadata(),             // WO-611: bug context JSON
+            });
 
-            if (insertError) throw insertError;
+        setSubmitting(false);
 
-            setSent(true);
-            setTimeout(() => handleClose(), 1800);
-        } catch (err: unknown) {
-            // Graceful degradation — table may not exist yet during migration window
-            console.warn('[FeedbackCard] Insert failed (table may be pending migration):', (err as { message?: string })?.message);
-            // Still show success to user, feedback was attempted
-            setSent(true);
-            setTimeout(() => handleClose(), 1800);
-        } finally {
-            setSubmitting(false);
+        if (insertError) {
+            // Surface the real error — do NOT show false success
+            console.error('[FeedbackCard] Insert failed:', insertError.message);
+            setError('Could not send feedback. Please try again in a moment.');
+            return;
         }
+
+        setSent(true);
+        setTimeout(() => handleClose(), 1800);
     };
 
     if (!isOpen) return null;

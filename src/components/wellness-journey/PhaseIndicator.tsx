@@ -25,7 +25,7 @@ const PHASE_CONFIG = {
     },
     2: {
         icon: Activity,
-        label: 'Dosing Session',
+        label: 'Dosing',
         activeBg: 'bg-amber-950/60',
         activeBorder: 'border-amber-500/70',
         activeText: 'text-amber-200',

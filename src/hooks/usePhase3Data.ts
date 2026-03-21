@@ -1,6 +1,7 @@
 
-import { useState, useEffect } from 'react';
+import { useMemo } from 'react';
 import { supabase } from '../supabaseClient';
+import { useDataCache } from './useDataCache';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 export type SubstanceCategory = 'psilocybin' | 'ketamine' | 'mdma' | 'ayahuasca' | 'unknown';
@@ -130,84 +131,37 @@ export function usePhase3Data(
     sessionId: string | undefined,
     patientId: string | undefined
 ): Phase3Data {
-    const [state, setState] = useState<Phase3Data>({
-        decayPoints: null,
-        baselinePhq9: null,
-        currentPhq9: null,
-        baselineGad7: null,
-        currentGad7: null,
-        pulseCheckCompliance: null,
-        phq9Compliance: null,
-        integrationSessionsAttended: null,
-        integrationSessionsScheduled: null,
-        pulseTrend: null,
-        vitalsData: null,
-        timelineEvents: null,
-        hasRealVitalsData: false,
-        hasRealTimelineData: false,
-        hasRealDecayData: false,
-        hasRealPulseData: false,
-        hasRealComplianceData: false,
-        hasRealIntegrationData: false,
-        substanceName: null,
-        substanceCategory: 'unknown',
-        accentColor: SUBSTANCE_ACCENT.unknown,
-        doseMg: null,
-        doseMgPerKg: null,
-        sessionDate: null,
-        clinicianName: null,
-        sessionSiteId: null,
-        isLoading: true,
-        error: null,
-    });
+    // Stable cache key — only changes when the actual session changes
+    const cacheKey = sessionId && patientId
+        ? `phase3-${sessionId}`
+        : 'phase3-empty';
 
-    useEffect(() => {
-        // WO-558: No real session — null signals "no data" to consumer components.
-        // Panels gate on hasRealDecayData/hasRealPulseData and show empty states.
-        // MOCK_DECAY_POINTS and MOCK_PULSE_TREND are kept for DemoDataBadge panels
-        // that are explicitly labelled as illustrative, but PHQ-9 numbers must be null.
-        if (!sessionId || !patientId) {
-            setState(prev => ({
-                ...prev,
-                decayPoints: null,
-                baselinePhq9: null,
-                currentPhq9: null,
-                baselineGad7: null,
-                currentGad7: null,
-                pulseCheckCompliance: 0,
-                phq9Compliance: 0,
-                integrationSessionsAttended: 0,
-                integrationSessionsScheduled: 0,
-                pulseTrend: null,
-                vitalsData: null,
-                timelineEvents: null,
-                hasRealVitalsData: false,
-                hasRealTimelineData: false,
-                hasRealDecayData: false,
-                hasRealPulseData: false,
-                hasRealComplianceData: false,
-                hasRealIntegrationData: false,
-                substanceName: null,
-                substanceCategory: 'unknown',
-                accentColor: SUBSTANCE_ACCENT.unknown,
-                doseMg: null,
-                doseMgPerKg: null,
-                sessionDate: null,
-                clinicianName: null,
-                sessionSiteId: null,
-                isLoading: false,
-                error: null,
-            }));
-            return;
-        }
-
-        let cancelled = false;
-
-        const fetchAll = async () => {
-            setState(prev => ({ ...prev, isLoading: true, error: null }));
+    const { data, loading } = useDataCache<Omit<Phase3Data, 'isLoading' | 'error'>>(
+        cacheKey,
+        async () => {
+            // No real session — return empty state immediately
+            if (!sessionId || !patientId) {
+                return {
+                    data: {
+                        decayPoints: null, baselinePhq9: null, currentPhq9: null,
+                        baselineGad7: null, currentGad7: null,
+                        pulseCheckCompliance: 0, phq9Compliance: 0,
+                        integrationSessionsAttended: 0, integrationSessionsScheduled: 0,
+                        pulseTrend: null, vitalsData: null, timelineEvents: null,
+                        hasRealVitalsData: false, hasRealTimelineData: false,
+                        hasRealDecayData: false, hasRealPulseData: false,
+                        hasRealComplianceData: false, hasRealIntegrationData: false,
+                        substanceName: null, substanceCategory: 'unknown' as SubstanceCategory,
+                        accentColor: SUBSTANCE_ACCENT.unknown,
+                        doseMg: null, doseMgPerKg: null, sessionDate: null,
+                        clinicianName: null, sessionSiteId: null,
+                    },
+                    error: null,
+                };
+            }
 
             try {
-                // ── 1. PHQ-9 trajectory (log_longitudinal_assessments) ─────────────────
+                // ── 1. PHQ-9 trajectory ───────────────────────────────────────────────────
                 const { data: longitudinal, error: longErr } = await supabase
                     .from('log_longitudinal_assessments')
                     .select('days_post_session, phq9_score, gad7_score')
@@ -219,39 +173,28 @@ export function usePhase3Data(
                     ? longitudinal!.map(r => ({ day: r.days_post_session, phq9: r.phq9_score }))
                     : MOCK_DECAY_POINTS;
 
-                // GAD-7 current value derived from latest longitudinal row when present.
                 const currentGad7: number | null =
                     hasRealDecayData && longitudinal && longitudinal.length > 0
                         ? (longitudinal[longitudinal.length - 1].gad7_score ?? null)
                         : null;
 
-                // ── 2. Baseline PHQ-9 (log_baseline_assessments) ───────────────────────
-                // SCHEMA FIX: column is 'patient_uuid', not 'patient_id' — phantom column was returning zero rows
+                // ── 2. Baseline PHQ-9 ──────────────────────────────────────────────────────
                 const { data: baselineRow, error: baselineErr } = await supabase
                     .from('log_baseline_assessments')
                     .select('phq9_score, gad7_score')
-                    .eq('patient_uuid', patientId)   // FIXED: was .eq('patient_id', ...)
+                    .eq('patient_uuid', patientId)
                     .order('created_at', { ascending: false })
                     .limit(1)
                     .maybeSingle();
 
-                // WO-558: null instead of 22 — empty state shown when no baseline recorded
                 const baselinePhq9: number | null =
-                    (!baselineErr && baselineRow?.phq9_score != null)
-                        ? baselineRow.phq9_score
-                        : null;
-
+                    (!baselineErr && baselineRow?.phq9_score != null) ? baselineRow.phq9_score : null;
                 const baselineGad7: number | null =
-                    (!baselineErr && (baselineRow as any)?.gad7_score != null)
-                        ? (baselineRow as any).gad7_score
-                        : null;
-
+                    (!baselineErr && (baselineRow as any)?.gad7_score != null) ? (baselineRow as any).gad7_score : null;
                 const currentPhq9 = hasRealDecayData && decayPoints.length > 0
-                    ? decayPoints[decayPoints.length - 1].phq9
-                    : null;
+                    ? decayPoints[decayPoints.length - 1].phq9 : null;
 
-                // ── 3. Pulse check compliance ──────────────────────────────────────────
-                // Get the session start date to compute days elapsed
+                // ── 3. Pulse check compliance ──────────────────────────────────────────────
                 const { data: sessionRow } = await supabase
                     .from('log_clinical_records')
                     .select('created_at, site_id')
@@ -263,68 +206,47 @@ export function usePhase3Data(
 
                 if (sessionRow?.created_at) {
                     const sessionStartMs = new Date(sessionRow.created_at).getTime();
-                    const daysSinceSession = Math.max(
-                        1,
-                        Math.floor((Date.now() - sessionStartMs) / 86_400_000)
-                    );
-                    // SCHEMA FIX: table is 'log_pulse_checks', not 'log_daily_pulse' (phantom table)
+                    const daysSinceSession = Math.max(1, Math.floor((Date.now() - sessionStartMs) / 86_400_000));
                     const { count: pulseCount, error: pulseErr } = await supabase
-                        .from('log_pulse_checks')   // FIXED: was 'log_daily_pulse'
+                        .from('log_pulse_checks')
                         .select('*', { count: 'exact', head: true })
                         .eq('session_id', sessionId);
 
                     if (!pulseErr && pulseCount != null) {
                         hasRealComplianceData = true;
-                        pulseCheckCompliance = Math.min(
-                            100,
-                            Math.round((pulseCount / daysSinceSession) * 100)
-                        );
+                        pulseCheckCompliance = Math.min(100, Math.round((pulseCount / daysSinceSession) * 100));
                     }
                 }
 
-                // PHQ-9 compliance — count longitudinal assessments vs expected weekly
                 let phq9Compliance: number = 0;
                 if (hasRealDecayData && sessionRow?.created_at) {
-                    const weeksSinceSession = Math.max(
-                        1,
-                        Math.floor((Date.now() - new Date(sessionRow.created_at).getTime()) / (7 * 86_400_000))
-                    );
-                    phq9Compliance = Math.min(
-                        100,
-                        Math.round((longitudinal!.length / weeksSinceSession) * 100)
-                    );
+                    const weeksSinceSession = Math.max(1, Math.floor((Date.now() - new Date(sessionRow.created_at).getTime()) / (7 * 86_400_000)));
+                    phq9Compliance = Math.min(100, Math.round((longitudinal!.length / weeksSinceSession) * 100));
                 }
 
-                // ── 4. Integration sessions ────────────────────────────────────────────
-                // SCHEMA FIX: log_integration_sessions has no 'status' column.
-                // Attendance is tracked via attendance_status_id (FK → ref_attendance_statuses).
-                // Count all rows with a non-null attendance_status_id as "attended".
-                const { count: attendedCount, error: intErr } = await supabase
-                    .from('log_integration_sessions')
-                    .select('*', { count: 'exact', head: true })
-                    .eq('dosing_session_id', sessionId)  // FIXED: was .eq('session_id', ...) and then .eq('status','completed')
-                    .not('attendance_status_id', 'is', null);
+                // ── 4+5. Integration sessions (combined into one count query) ──────────────
+                const [{ count: attendedCount, error: intErr }, { count: totalIntCount }] = await Promise.all([
+                    supabase.from('log_integration_sessions')
+                        .select('*', { count: 'exact', head: true })
+                        .eq('dosing_session_id', sessionId)
+                        .not('attendance_status_id', 'is', null),
+                    supabase.from('log_integration_sessions')
+                        .select('*', { count: 'exact', head: true })
+                        .eq('dosing_session_id', sessionId),
+                ]);
 
                 const hasRealIntegrationData = !intErr && attendedCount != null;
                 const integrationSessionsAttended = hasRealIntegrationData ? (attendedCount ?? 0) : 0;
-
-                // Scheduled = all rows for this dosing session (attended + pending)
-                const { count: totalIntCount } = await supabase
-                    .from('log_integration_sessions')
-                    .select('*', { count: 'exact', head: true })
-                    .eq('dosing_session_id', sessionId);  // FIXED: was .eq('session_id', ...)
                 const integrationSessionsScheduled = totalIntCount ?? integrationSessionsAttended;
 
-                // ── 5. 7-day pulse trend ───────────────────────────────────────────────
-                // SCHEMA FIX: table is 'log_pulse_checks', not 'log_daily_pulse' (phantom table)
-                // SCHEMA FIX: timestamp column is 'created_at' on log_pulse_checks, not 'submitted_at'
+                // ── 6. 7-day pulse trend ───────────────────────────────────────────────────
                 const sevenDaysAgo = new Date(Date.now() - 7 * 86_400_000).toISOString();
                 const { data: pulseRows, error: pulseTrendErr } = await supabase
-                    .from('log_pulse_checks')   // FIXED: was 'log_daily_pulse'
-                    .select('connection_level, sleep_quality, created_at') // FIXED: was 'submitted_at'
+                    .from('log_pulse_checks')
+                    .select('connection_level, sleep_quality, created_at')
                     .eq('session_id', sessionId)
-                    .gte('created_at', sevenDaysAgo)   // FIXED: was 'submitted_at'
-                    .order('created_at', { ascending: true });  // FIXED: was 'submitted_at'
+                    .gte('created_at', sevenDaysAgo)
+                    .order('created_at', { ascending: true });
 
                 let pulseTrend: Phase3PulseTrendPoint[] = MOCK_PULSE_TREND;
                 let hasRealPulseData = false;
@@ -332,7 +254,7 @@ export function usePhase3Data(
                 if (!pulseTrendErr && pulseRows && pulseRows.length > 0) {
                     hasRealPulseData = true;
                     pulseTrend = pulseRows.map(r => {
-                        const d = new Date(r.created_at);  // FIXED: was r.submitted_at
+                        const d = new Date(r.created_at);
                         return {
                             day: DAY_LABELS[d.getDay()],
                             connection: r.connection_level ?? 0,
@@ -342,11 +264,10 @@ export function usePhase3Data(
                     });
                 }
 
-                // ── 6. WO-553: Session vitals for PDF inline SVG chart ─────────────────
-                // SCHEMA FIX: columns are 'bp_systolic'/'bp_diastolic', not 'systolic_bp'/'diastolic_bp'
+                // ── 7. Session vitals ──────────────────────────────────────────────────────
                 const { data: vitalsRows, error: vitalsErr } = await supabase
                     .from('log_session_vitals')
-                    .select('recorded_at, heart_rate, bp_systolic, bp_diastolic') // FIXED: phantom column names
+                    .select('recorded_at, heart_rate, bp_systolic, bp_diastolic')
                     .eq('session_id', sessionId)
                     .order('recorded_at', { ascending: true });
 
@@ -356,43 +277,33 @@ export function usePhase3Data(
                 if (!vitalsErr && vitalsRows && vitalsRows.length > 0) {
                     hasRealVitalsData = true;
                     const sessionStartMs = vitalsRows[0]?.recorded_at
-                        ? new Date(vitalsRows[0].recorded_at).getTime()
-                        : 0;
+                        ? new Date(vitalsRows[0].recorded_at).getTime() : 0;
                     vitalsData = vitalsRows.map(r => ({
-                        elapsedMin: Math.round(
-                            (new Date(r.recorded_at).getTime() - sessionStartMs) / 60_000
-                        ),
+                        elapsedMin: Math.round((new Date(r.recorded_at).getTime() - sessionStartMs) / 60_000),
                         hr: r.heart_rate ?? null,
-                        bp_s: r.bp_systolic ?? null,   // FIXED: was r.systolic_bp
-                        bp_d: r.bp_diastolic ?? null,  // FIXED: was r.diastolic_bp
+                        bp_s: r.bp_systolic ?? null,
+                        bp_d: r.bp_diastolic ?? null,
                         recordedAt: r.recorded_at,
                     }));
                 }
 
-                // ── 7. WO-553: Timeline events for PDF event log table ─────────────────
-                // SCHEMA FIX: 'occurred_at', 'event_type', 'label' are all phantom columns.
-                // Correct: timestamp = 'event_timestamp', type resolved via join on ref_flow_event_types.
-                // This matches the pattern in clinicalLog.ts getTimelineEvents() (L745-758).
+                // ── 8. Timeline events ─────────────────────────────────────────────────────
                 const { data: tlRows, error: tlErr } = await supabase
                     .from('log_session_timeline_events')
                     .select('event_timestamp, ref_flow_event_types(event_type_code, event_type_label)')
                     .eq('session_id', sessionId)
-                    .order('event_timestamp', { ascending: true });  // FIXED: was 'occurred_at'
+                    .order('event_timestamp', { ascending: true });
 
                 let timelineEvents: Phase3TimelineEvent[] | null = null;
                 let hasRealTimelineData = false;
 
                 if (!tlErr && tlRows && tlRows.length > 0) {
                     hasRealTimelineData = true;
-                    // Supabase returns foreign key joins as arrays in its TS type.
-                    // Use Array.isArray guard + [0] to safely pick the first match row.
                     timelineEvents = (tlRows as Array<{
                         event_timestamp: string;
                         ref_flow_event_types: Array<{ event_type_code: string; event_type_label?: string }> | null;
                     }>).map(r => {
-                        const ref = Array.isArray(r.ref_flow_event_types)
-                            ? r.ref_flow_event_types[0]
-                            : r.ref_flow_event_types;
+                        const ref = Array.isArray(r.ref_flow_event_types) ? r.ref_flow_event_types[0] : r.ref_flow_event_types;
                         return {
                             occurredAt: r.event_timestamp,
                             eventType: (ref as { event_type_code?: string } | null)?.event_type_code ?? 'unknown',
@@ -403,13 +314,12 @@ export function usePhase3Data(
                     });
                 }
 
-                // ── 8. WO-602: Session metadata for PK Flight Plan PDF page ───────────
-                // SCHEMA FIX: log_dose_events has no 'occurred_at' column — correct column is 'administered_at'
+                // ── 9. Dose + substance metadata ───────────────────────────────────────────
                 const { data: doseRows } = await supabase
                     .from('log_dose_events')
                     .select('substance_id, dose_mg, dose_mg_per_kg')
                     .eq('session_id', sessionId)
-                    .order('administered_at', { ascending: true })  // FIXED: was 'occurred_at'
+                    .order('administered_at', { ascending: true })
                     .limit(1);
 
                 const dose = doseRows?.[0] ?? null;
@@ -426,9 +336,7 @@ export function usePhase3Data(
                 const sessionDate = sessionRow?.created_at ?? null;
                 const sessionSiteId = sessionRow?.site_id ?? null;
 
-                // ── 9. Clinician identity from auth session ────────────────────────────
-                // Use getSession() (local cache, no network) — returns user.user_metadata.full_name
-                // or falls back to email. Both are practitioner-account data, not PHI.
+                // ── 10. Clinician identity (local cache, no network) ───────────────────────
                 let clinicianName: string | null = null;
                 try {
                     const { data: { session: authSession } } = await supabase.auth.getSession();
@@ -436,84 +344,80 @@ export function usePhase3Data(
                         clinicianName =
                             (authSession.user.user_metadata?.full_name as string | undefined) ??
                             (authSession.user.user_metadata?.name as string | undefined) ??
-                            authSession.user.email ??
-                            null;
+                            authSession.user.email ?? null;
                     }
                 } catch { /* auth unavailable — fallback to null */ }
 
-                if (!cancelled) {
-                    setState({
-                        decayPoints,
-                        baselinePhq9,
-                        currentPhq9,
-                        baselineGad7,
-                        currentGad7,
-                        pulseCheckCompliance,
-                        phq9Compliance,
-                        integrationSessionsAttended,
-                        integrationSessionsScheduled,
-                        pulseTrend,
-                        vitalsData,
-                        timelineEvents,
-                        hasRealVitalsData,
-                        hasRealTimelineData,
-                        hasRealDecayData: !!hasRealDecayData,
-                        hasRealPulseData,
-                        hasRealComplianceData,
-                        hasRealIntegrationData,
-                        substanceName,
-                        substanceCategory,
+                return {
+                    data: {
+                        decayPoints, baselinePhq9, currentPhq9, baselineGad7, currentGad7,
+                        pulseCheckCompliance, phq9Compliance,
+                        integrationSessionsAttended, integrationSessionsScheduled,
+                        pulseTrend, vitalsData, timelineEvents,
+                        hasRealVitalsData, hasRealTimelineData,
+                        hasRealDecayData: !!hasRealDecayData, hasRealPulseData,
+                        hasRealComplianceData, hasRealIntegrationData,
+                        substanceName, substanceCategory,
                         accentColor: SUBSTANCE_ACCENT[substanceCategory],
                         doseMg: dose?.dose_mg ?? null,
                         doseMgPerKg: dose?.dose_mg_per_kg ?? null,
-                        sessionDate,
-                        clinicianName,
-                        sessionSiteId,
-                        isLoading: false,
-                        error: null,
-                    });
-                }
+                        sessionDate, clinicianName, sessionSiteId,
+                    },
+                    error: null,
+                };
             } catch (err: any) {
-                // Network / RLS failure → graceful fallback, no crash
-                console.error('[usePhase3Data] Query failed — using mock fallback:', err?.message);
-                if (!cancelled) {
-                    setState({
-                        decayPoints: null,
-                        baselinePhq9: null,
-                        currentPhq9: null,
-                        baselineGad7: null,
-                        currentGad7: null,
-                        pulseCheckCompliance: 0,
-                        phq9Compliance: 0,
-                        integrationSessionsAttended: 0,
-                        integrationSessionsScheduled: 0,
-                        pulseTrend: null,
-                        vitalsData: null,
-                        timelineEvents: null,
-                        hasRealVitalsData: false,
-                        hasRealTimelineData: false,
-                        hasRealDecayData: false,
-                        hasRealPulseData: false,
-                        hasRealComplianceData: false,
-                        hasRealIntegrationData: false,
-                        substanceName: null,
-                        substanceCategory: 'unknown',
+                console.error('[usePhase3Data] Query failed — using empty fallback:', err?.message);
+                return {
+                    data: {
+                        decayPoints: null, baselinePhq9: null, currentPhq9: null,
+                        baselineGad7: null, currentGad7: null,
+                        pulseCheckCompliance: 0, phq9Compliance: 0,
+                        integrationSessionsAttended: 0, integrationSessionsScheduled: 0,
+                        pulseTrend: null, vitalsData: null, timelineEvents: null,
+                        hasRealVitalsData: false, hasRealTimelineData: false,
+                        hasRealDecayData: false, hasRealPulseData: false,
+                        hasRealComplianceData: false, hasRealIntegrationData: false,
+                        substanceName: null, substanceCategory: 'unknown' as SubstanceCategory,
                         accentColor: SUBSTANCE_ACCENT.unknown,
-                        doseMg: null,
-                        doseMgPerKg: null,
-                        sessionDate: null,
-                        clinicianName: null,
-                        sessionSiteId: null,
-                        isLoading: false,
-                        error: 'Live data unavailable.',
-                    });
-                }
+                        doseMg: null, doseMgPerKg: null, sessionDate: null,
+                        clinicianName: null, sessionSiteId: null,
+                    },
+                    error: null,
+                };
             }
-        };
+        },
+        { ttl: 5 * 60 * 1000, enabled: true } // 5-min TTL — navigate away and back is free
+    );
 
-        fetchAll();
-        return () => { cancelled = true; };
-    }, [sessionId, patientId]);
-
-    return state;
+    // Merge cache data with isLoading/error fields consumers expect
+    return useMemo<Phase3Data>(() => ({
+        decayPoints: data?.decayPoints ?? null,
+        baselinePhq9: data?.baselinePhq9 ?? null,
+        currentPhq9: data?.currentPhq9 ?? null,
+        baselineGad7: data?.baselineGad7 ?? null,
+        currentGad7: data?.currentGad7 ?? null,
+        pulseCheckCompliance: data?.pulseCheckCompliance ?? null,
+        phq9Compliance: data?.phq9Compliance ?? null,
+        integrationSessionsAttended: data?.integrationSessionsAttended ?? null,
+        integrationSessionsScheduled: data?.integrationSessionsScheduled ?? null,
+        pulseTrend: data?.pulseTrend ?? null,
+        vitalsData: data?.vitalsData ?? null,
+        timelineEvents: data?.timelineEvents ?? null,
+        hasRealVitalsData: data?.hasRealVitalsData ?? false,
+        hasRealTimelineData: data?.hasRealTimelineData ?? false,
+        hasRealDecayData: data?.hasRealDecayData ?? false,
+        hasRealPulseData: data?.hasRealPulseData ?? false,
+        hasRealComplianceData: data?.hasRealComplianceData ?? false,
+        hasRealIntegrationData: data?.hasRealIntegrationData ?? false,
+        substanceName: data?.substanceName ?? null,
+        substanceCategory: data?.substanceCategory ?? 'unknown',
+        accentColor: data?.accentColor ?? SUBSTANCE_ACCENT.unknown,
+        doseMg: data?.doseMg ?? null,
+        doseMgPerKg: data?.doseMgPerKg ?? null,
+        sessionDate: data?.sessionDate ?? null,
+        clinicianName: data?.clinicianName ?? null,
+        sessionSiteId: data?.sessionSiteId ?? null,
+        isLoading: loading,
+        error: null,
+    }), [data, loading]);
 }

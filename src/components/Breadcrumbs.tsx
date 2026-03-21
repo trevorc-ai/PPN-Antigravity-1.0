@@ -2,12 +2,58 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { SUBSTANCES, CLINICIANS } from '../constants';
 import React from 'react';
 
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 const Breadcrumbs: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const pathnames = location.pathname.split('/').filter((x) => x);
   const hash = location.hash.replace('#', '');
   const isPortalActive = location.pathname === '/advanced-search';
+
+  // Hide entirely during a live Phase 2 dosing session — reclaim screen space
+  const isLiveSession = React.useMemo(() => {
+    if (location.pathname !== '/wellness-journey') return false;
+    try {
+      for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if (k?.startsWith('ppn_session_mode_') && localStorage.getItem(k) === 'live') return true;
+      }
+    } catch { /* localStorage unavailable */ }
+    return false;
+  }, [location.pathname]);
+
+  // Resolve dynamic patient refs for protocol pages
+  // NOTE: declared BEFORE any early return to satisfy React Rules of Hooks
+  const [patientRefs, setPatientRefs] = React.useState<Record<string, string>>({});
+
+  React.useEffect(() => {
+    if (isLiveSession) return; // skip fetch when hidden — hooks still called, just no-op
+    async function resolveDynamicLabels() {
+      for (let i = 0; i < pathnames.length; i++) {
+        const path = pathnames[i];
+        if (UUID_RE.test(path) && pathnames[i - 1] === 'protocol' && !patientRefs[path]) {
+          setPatientRefs(prev => ({ ...prev, [path]: 'Loading...' }));
+          const { supabase } = await import('../supabaseClient');
+          const { data } = await supabase
+            .from('log_clinical_records')
+            .select('patient_link_code_hash')
+            .eq('id', path)
+            .single();
+
+          if (data?.patient_link_code_hash) {
+            setPatientRefs(prev => ({ ...prev, [path]: data.patient_link_code_hash }));
+          } else {
+            setPatientRefs(prev => ({ ...prev, [path]: path.substring(0, 12).toUpperCase() }));
+          }
+        }
+      }
+    }
+    resolveDynamicLabels();
+  }, [pathnames, patientRefs, isLiveSession]);
+
+  // Early return after all hooks
+  if (isLiveSession) return null;
 
   // Labels for standard routes and landing page sections (anchors)
   // Synchronized to Master Registry
@@ -42,63 +88,26 @@ const Breadcrumbs: React.FC = () => {
     'secure-access-node': 'Node Access'
   };
 
-  const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-
   // Override hrefs for route segments where the plural route differs from the path segment
-  // e.g. /protocol/:id → segment 'protocol' should link to /protocols (MyProtocols page), not /protocol
   const hrefOverrides: Record<string, string> = {
     protocol: '/protocols',
   };
 
-  // Resolve dynamic patient refs for protocol pages
-  const [patientRefs, setPatientRefs] = React.useState<Record<string, string>>({});
-
-  React.useEffect(() => {
-    async function resolveDynamicLabels() {
-      for (let i = 0; i < pathnames.length; i++) {
-        const path = pathnames[i];
-        if (UUID_RE.test(path) && pathnames[i - 1] === 'protocol' && !patientRefs[path]) {
-          // Prevent multiple fetches in a row
-          setPatientRefs(prev => ({ ...prev, [path]: 'Loading...' }));
-          const { supabase } = await import('../supabaseClient');
-          const { data } = await supabase
-            .from('log_clinical_records')
-            .select('patient_link_code_hash')
-            .eq('id', path)
-            .single();
-
-          if (data?.patient_link_code_hash) {
-            setPatientRefs(prev => ({ ...prev, [path]: data.patient_link_code_hash }));
-          } else {
-            // Fallback generated ID if hash missing
-            setPatientRefs(prev => ({ ...prev, [path]: path.substring(0, 12).toUpperCase() }));
-          }
-        }
-      }
-    }
-    resolveDynamicLabels();
-  }, [pathnames, patientRefs]);
-
   const getLabel = (path: string, index: number) => {
-    // Resolve specific clinical entity names from IDs for deep links
     if (index > 0 && pathnames[index - 1] === 'monograph') {
       const sub = SUBSTANCES.find(s => s.id === path);
       return sub ? sub.name : path;
     }
-
     if (index > 0 && pathnames[index - 1] === 'clinician') {
       const clin = CLINICIANS.find(c => c.id === path);
       return clin ? clin.name : path;
     }
-
-    // UUID segments (e.g. /protocol/:id) — show a human label, not the raw ID
     if (UUID_RE.test(path)) {
       if (index > 0 && pathnames[index - 1] === 'protocol') {
         return patientRefs[path] || 'Clinical Record';
       }
       return 'Record';
     }
-
     return labels[path] || path.charAt(0).toUpperCase() + path.slice(1);
   };
 
@@ -123,11 +132,9 @@ const Breadcrumbs: React.FC = () => {
         <Link
           to="/advanced-search"
           style={{ color: isPortalActive ? undefined : 'rgb(203, 213, 225)' }}
-          className={`flex items-center gap-2 text-xs font-black tracking-widest uppercase transition-all group ${isPortalActive ? 'text-primary' : 'hover:text-primary'
-            }`}
+          className={`flex items-center gap-2 text-xs font-black tracking-widest uppercase transition-all group ${isPortalActive ? 'text-primary' : 'hover:text-primary'}`}
         >
-          <div className={`size-5 rounded-md flex items-center justify-center transition-colors ${isPortalActive ? 'bg-primary/20 text-primary' : 'bg-slate-800 group-hover:bg-primary/20 group-hover:text-primary'
-            }`}>
+          <div className={`size-5 rounded-md flex items-center justify-center transition-colors ${isPortalActive ? 'bg-primary/20 text-primary' : 'bg-slate-800 group-hover:bg-primary/20 group-hover:text-primary'}`}>
             <span className="material-symbols-outlined text-[16px]">home</span>
           </div>
           Portal
@@ -139,7 +146,6 @@ const Breadcrumbs: React.FC = () => {
           const to = hrefOverrides[value] ?? `/${pathnames.slice(0, index + 1).join('/')}`;
           const label = getLabel(value, index);
 
-          // Skip internal routing keys that are part of a compound path but not meaningful labels on their own
           if ((value === 'monograph' || value === 'clinician' || value === 'detail' || value === 'billing') && !last) return null;
           if (value === 'billing') return null;
 

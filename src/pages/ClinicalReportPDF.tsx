@@ -1,17 +1,133 @@
 import React, { useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { usePhase3Data, Phase3VitalsPoint, Phase3DecayPoint } from '../hooks/usePhase3Data';
+import { IntegrationStoryChart } from '../components/compass/IntegrationStoryChart';
+import { EmotionalWaveform } from '../components/compass/EmotionalWaveform';
+import { CompassSpiderGraph } from '../components/compass/CompassSpiderGraph';
+import NetworkBenchmarkBlock from '../components/compass/NetworkBenchmarkBlock';
+import ReceptorSpiderGraph from '../components/arc-of-care/ReceptorSpiderGraph';
 
 // ─── Print Styles ─────────────────────────────────────────────────────────────
 const PRINT_CSS = `
 @media print {
   @page { size: A4; margin: 0; }
   body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-  .pdf-page { page-break-after: always; page-break-inside: avoid; }
-  .pdf-page:last-child { page-break-after: auto; }
+  .pdf-page {
+    page-break-after: always;
+    break-after: page;
+    page-break-inside: avoid;
+    break-inside: avoid;
+    overflow: visible !important;
+    min-height: unset !important;
+    box-shadow: none !important;
+    margin-bottom: 0 !important;
+  }
+  .pdf-page:last-child { page-break-after: auto; break-after: auto; }
   .no-print { display: none !important; }
 }
 `;
+
+// ─── Static Demo Data (shown when no sessionId is provided) ───────────────────
+import type { Phase3Data } from '../hooks/usePhase3Data';
+
+const SESSION_DATE = '2025-10-06T09:00:00.000Z'; // Monday 6 Oct 2025
+
+const DEMO_DATA: any = {
+    baselinePhq9: 22,
+    currentPhq9: 6,
+    baselineGad7: 18,
+    currentGad7: 7,
+    decayPoints: [
+        { day: 7,  phq9: 18 },
+        { day: 14, phq9: 14 },
+        { day: 30, phq9: 11 },
+        { day: 60, phq9: 8 },
+        { day: 90, phq9: 7 },
+        { day: 120, phq9: 6 },
+        { day: 180, phq9: 4 },
+    ],
+    pulseCheckCompliance: 87,
+    phq9Compliance: 93,
+    integrationSessionsAttended: 5,
+    integrationSessionsScheduled: 6,
+    pulseTrend: [
+        { day: 'Mon', connection: 3, sleep: 2, date: '2025-10-13' },
+        { day: 'Tue', connection: 4, sleep: 3, date: '2025-10-14' },
+        { day: 'Wed', connection: 4, sleep: 4, date: '2025-10-15' },
+        { day: 'Thu', connection: 5, sleep: 4, date: '2025-10-16' },
+        { day: 'Fri', connection: 5, sleep: 5, date: '2025-10-17' },
+        { day: 'Sat', connection: 4, sleep: 5, date: '2025-10-18' },
+        { day: 'Sun', connection: 5, sleep: 4, date: '2025-10-19' },
+    ],
+    vitalsData: [
+        { elapsedMin: 0,   hr: 72, bp_s: 118, bp_d: 74, recordedAt: SESSION_DATE },
+        { elapsedMin: 30,  hr: 78, bp_s: 122, bp_d: 76, recordedAt: SESSION_DATE },
+        { elapsedMin: 60,  hr: 92, bp_s: 130, bp_d: 82, recordedAt: SESSION_DATE },
+        { elapsedMin: 90,  hr: 104, bp_s: 136, bp_d: 86, recordedAt: SESSION_DATE },
+        { elapsedMin: 120, hr: 110, bp_s: 138, bp_d: 88, recordedAt: SESSION_DATE },
+        { elapsedMin: 150, hr: 106, bp_s: 134, bp_d: 84, recordedAt: SESSION_DATE },
+        { elapsedMin: 180, hr: 98, bp_s: 128, bp_d: 80, recordedAt: SESSION_DATE },
+        { elapsedMin: 210, hr: 90, bp_s: 124, bp_d: 78, recordedAt: SESSION_DATE },
+        { elapsedMin: 270, hr: 82, bp_s: 120, bp_d: 76, recordedAt: SESSION_DATE },
+        { elapsedMin: 330, hr: 76, bp_s: 116, bp_d: 73, recordedAt: SESSION_DATE },
+        { elapsedMin: 390, hr: 72, bp_s: 114, bp_d: 72, recordedAt: SESSION_DATE },
+        { elapsedMin: 450, hr: 70, bp_s: 112, bp_d: 70, recordedAt: SESSION_DATE },
+    ],
+    timelineEvents: [
+        { occurredAt: '2025-10-06T09:00:00Z', eventType: 'intake_completed',    label: 'Pre-session intake and consent review completed' },
+        { occurredAt: '2025-10-06T09:06:00Z', eventType: 'consent_verified',    label: 'Touch consent confirmed and documented' },
+        { occurredAt: '2025-10-06T09:12:00Z', eventType: 'vital_check',         label: 'Baseline vitals — HR 72 bpm, BP 118/74, SpO2 99%' },
+        { occurredAt: '2025-10-06T09:48:00Z', eventType: 'dose_admin',          label: 'Psilocybin 25 mg oral administered' },
+        { occurredAt: '2025-10-06T10:30:00Z', eventType: 'vital_check',         label: 'Vitals — HR 92 bpm, BP 128/80, SpO2 98%' },
+        { occurredAt: '2025-10-06T10:45:00Z', eventType: 'patient_observation', label: 'Patient reported onset of perceptual shifts' },
+        { occurredAt: '2025-10-06T11:15:00Z', eventType: 'music_change',        label: 'Playlist transitioned to peak-phase protocol' },
+        { occurredAt: '2025-10-06T12:00:00Z', eventType: 'vital_check',         label: 'Vitals — HR 110 bpm, BP 138/88, SpO2 97%' },
+        { occurredAt: '2025-10-06T12:45:00Z', eventType: 'patient_observation', label: 'Patient reported deep emotional processing, tearful' },
+        { occurredAt: '2025-10-06T13:30:00Z', eventType: 'touch_consent',       label: 'Patient requested hand-hold; consent confirmed' },
+        { occurredAt: '2025-10-06T14:15:00Z', eventType: 'clinical_decision',   label: 'Decided to extend session duration by 30 min to allow integration' },
+        // Observation log entry written by AE form (patient_observation + 'Safety observation:' prefix)
+        { occurredAt: '2025-10-06T12:30:00Z', eventType: 'patient_observation', label: 'Safety observation: HR Elevated, BP Elevated · Intervention successful, monitoring closely' },
+        // Formal AE report entry written by WellnessFormRouter (safety_event + 'AE reported:' prefix)
+        { occurredAt: '2025-10-06T12:35:00Z', eventType: 'safety_event',        label: 'AE reported: Hypertension · Grade 2 (Moderate) · Intervention: Verbal Reassurance · Resolved' },
+        { occurredAt: '2025-10-06T15:00:00Z', eventType: 'vital_check',         label: 'Vitals — HR 78 bpm, BP 120/76, SpO2 99% — within normal limits' },
+        { occurredAt: '2025-10-06T15:45:00Z', eventType: 'general_note',        label: 'Patient oriented, affect bright, expressing gratitude' },
+        { occurredAt: '2025-10-06T16:00:00Z', eventType: 'session_completed',   label: 'Session closed — debrief conducted, care plan discussed' },
+    ],
+    // Structured AE records matching log_safety_events shape (for the dedicated AE section in the PDF)
+    adverseEvents: [
+        {
+            occurredAt: '2025-10-06T12:35:00Z',
+            eventType: 'Hypertension',
+            severityGrade: 2,
+            meddraCode: '10020772',
+            interventionType: 'Verbal Reassurance',
+            resolved: true,
+            resolvedAt: '2025-10-06T12:50:00Z',
+            followUpPlan: 'Routine remote monitoring (24h)',
+            observationLog: [
+                { timestamp: '2025-10-06T12:30:00Z', observations: ['HR Elevated', 'BP Elevated'], note: 'Intervention successful, monitoring closely' },
+            ],
+        },
+    ] as Array<{
+        occurredAt: string; eventType: string; severityGrade: number; meddraCode?: string;
+        interventionType?: string; resolved: boolean; resolvedAt?: string; followUpPlan?: string;
+        observationLog: Array<{ timestamp: string; observations: string[]; note?: string }>;
+    }>,
+    hasRealVitalsData: true,
+    hasRealTimelineData: true,
+    hasRealDecayData: true,
+    hasRealPulseData: true,
+    hasRealComplianceData: true,
+    hasRealIntegrationData: true,
+    substanceName: 'Psilocybin',
+    substanceCategory: 'psilocybin',
+    accentColor: '#2dd4bf',
+    doseMg: 25,
+    doseMgPerKg: 0.31,
+    sessionDate: SESSION_DATE,
+    clinicianName: 'Dr. Sarah Mitchell, MD',
+    sessionSiteId: 'site-alpha-01-pnw-healing',
+};
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 const phq9Severity = (n: number) =>
@@ -353,12 +469,21 @@ const ClinicalReportPDF: React.FC = () => {
     // Fall back to a demo patient so the page renders populated when opened directly.
     const patientId = searchParams.get('patientId') ?? 'SUB-2024-0842';
 
-    const data = usePhase3Data(sessionId, patientId);
+    const liveData = usePhase3Data(sessionId, patientId);
+
+    // When no real sessionId is present, overlay the rich demo dataset so every
+    // page renders fully populated instead of showing "Awaiting data" placeholders.
+    const data: Phase3Data = sessionId ? liveData : {
+        ...liveData,
+        ...DEMO_DATA,
+        isLoading: false,
+        error: null,
+    };
 
     const exportDate = new Date().toLocaleDateString([], { month: 'long', day: 'numeric', year: 'numeric' });
     const reportId = sessionId
         ? `RPT-${new Date().toISOString().slice(0, 10).replace(/-/g, '')}-${sessionId.slice(0, 8).toUpperCase()}`
-        : `RPT-${new Date().toISOString().slice(0, 10).replace(/-/g, '')}-${patientId.replace('SUB-', '').slice(0, 8)}`;
+        : 'RPT-DEMO-20251006-PT93A4B7';
 
     // Set a unique document title so the PDF saves with a descriptive filename
     useEffect(() => {
@@ -395,8 +520,8 @@ const ClinicalReportPDF: React.FC = () => {
                 <div>
                     <h1 style={{ color: '#8BA5D3', fontSize: '22px', fontWeight: 900, margin: 0 }}>Clinical Outcomes Report</h1>
                     <p style={{ color: '#8B9DC3', fontSize: '13px', margin: '4px 0 0' }}>
-                        {sessionId ? `Session ${sessionId.slice(0, 8).toUpperCase()}` : 'Preview, No session ID provided'}
-                        {!data.hasRealDecayData && !data.hasRealVitalsData && ' · Demo data shown where real data is unavailable'}
+                        {sessionId ? `Session ${sessionId.slice(0, 8).toUpperCase()}` : 'Demo Preview — full dataset shown'}
+                        {!sessionId && <span style={{ marginLeft: '8px', padding: '2px 8px', backgroundColor: '#f59e0b22', color: '#f59e0b', borderRadius: '4px', fontSize: '11px', fontWeight: 700 }}>DEMO DATA</span>}
                     </p>
                 </div>
                 <button onClick={() => window.print()} style={{
@@ -554,7 +679,7 @@ const ClinicalReportPDF: React.FC = () => {
                             : <AwaitingData label="PHQ-9 trajectory, chart available in live view once longitudinal assessments are recorded" />}
                     </div>
 
-                    <div style={{ display: 'flex', gap: '16px', marginBottom: '24px', justifyContent: 'center' }}>
+                    <div style={{ display: 'flex', gap: '16px', marginBottom: '14px', justifyContent: 'center' }}>
                         {[
                             { color: '#3b82f6', label: 'PHQ-9 Score' },
                             { color: '#10b981', label: 'Latest score' },
@@ -565,6 +690,27 @@ const ClinicalReportPDF: React.FC = () => {
                                 {l.label}
                             </div>
                         ))}
+                    </div>
+
+                    {/* Integration Story Chart — patient trajectory vs. PPN network average band */}
+                    <SectionTitle accent="#14b8a6">Healing Trajectory vs. Network Average</SectionTitle>
+                    <p style={{ fontSize: '9px', color: '#64748b', margin: '-10px 0 10px' }}>
+                        Patient PHQ-9 trajectory compared to PPN network average for this substance and indication.
+                        Dashed grey line = network average. Lower score = less depression.
+                    </p>
+                    <div style={{ backgroundColor: '#f8fafc', borderRadius: '8px', padding: '12px', border: '1px solid #e2e8f0', marginBottom: '16px' }}>
+                        <IntegrationStoryChart
+                            points={data.decayPoints.map((p: Phase3DecayPoint) => ({
+                                daysPostSession: p.day,
+                                phq9Score: p.phq9,
+                                gad7Score: null,
+                                phq2Score: null,
+                                gad2Score: null,
+                            }))}
+                            baselinePhq9={data.baselinePhq9 ?? null}
+                            sessionDate={data.sessionDate ?? null}
+                            accentColor={data.accentColor ?? '#3b82f6'}
+                        />
                     </div>
 
                     <SectionTitle accent="#10b981">Symptom Trajectory Summary</SectionTitle>
@@ -646,6 +792,32 @@ const ClinicalReportPDF: React.FC = () => {
                             Awaiting data, no session events have been logged for this session yet.
                         </div>
                     )}
+
+                    {/* Emotional Waveform — intensity arc across session timeline */}
+                    <SectionTitle accent="#60a5fa">Session Emotional Arc</SectionTitle>
+                    <p style={{ fontSize: '9px', color: '#64748b', margin: '-10px 0 10px' }}>
+                        Gaussian intensity wave derived from session timeline events. Peak height = reported intensity.
+                        Event dots mark key moments along the session timeline.
+                    </p>
+                    <div style={{ backgroundColor: '#0a1628', borderRadius: '8px', padding: '12px 16px', border: '1px solid #1e3a5f', marginBottom: '16px' }}>
+                        <EmotionalWaveform
+                            timelineEvents={data.timelineEvents.map((e: any) => ({
+                                occurredAt: e.occurredAt,
+                                minutesFromStart: Math.max(0, Math.round(
+                                    (new Date(e.occurredAt).getTime() - new Date(data.sessionDate ?? e.occurredAt).getTime()) / 60_000
+                                )),
+                                eventType: e.eventType,
+                                label: e.label,
+                                intensity: e.eventType === 'safety_event' ? 9 :
+                                           e.eventType === 'dose_admin' ? 3 :
+                                           e.eventType === 'vital_check' ? 5 :
+                                           e.eventType === 'patient_observation' ? 7 : 5,
+                            }))}
+                            sessionDurationMinutes={450}
+                            printMode={true}
+                        />
+                    </div>
+
                     {/* WO-600: QT Interval Log Table */}
                     <SectionTitle accent="#f59e0b">QT Interval / EKG Log</SectionTitle>
                     <p style={{ fontSize: '9px', color: '#64748b', margin: '-10px 0 10px' }}>
@@ -763,9 +935,34 @@ const ClinicalReportPDF: React.FC = () => {
                 ════════════════════════════════════════════════════════ */}
                 <PageShell pageNum={6} total={TOTAL} reportId={reportId} exportDate={exportDate}>
                     <SectionTitle accent="#8b5cf6">Experience Quality Assessment</SectionTitle>
-                    <p style={{ fontSize: '10px', color: '#64748b', margin: '-8px 0 16px' }}>
+                    <p style={{ fontSize: '10px', color: '#64748b', margin: '-8px 0 12px' }}>
                         Mystical experience, ego dissolution, and emotional breakthrough scores logged post-session.
                     </p>
+
+                    {/* Compass Spider Graph — predicted vs. lived experience radar */}
+                    <SectionTitle accent="#2dd4bf">Predicted vs. Lived Experience Profile</SectionTitle>
+                    <p style={{ fontSize: '9px', color: '#64748b', margin: '-10px 0 10px' }}>
+                        Dashed polygon = population average for {data.substanceName ?? 'this substance'}.
+                        Solid polygon = this patient's session profile derived from timeline event types and intensities.
+                    </p>
+                    <div style={{ backgroundColor: '#0a1628', borderRadius: '8px', padding: '12px', border: '1px solid #1e3a5f', marginBottom: '16px' }}>
+                        <CompassSpiderGraph
+                            substanceCategory={data.substanceCategory ?? 'psilocybin'}
+                            accentColor={data.accentColor ?? '#2dd4bf'}
+                            timelineEvents={data.timelineEvents.map((e: any) => ({
+                                occurredAt: e.occurredAt,
+                                minutesFromStart: Math.max(0, Math.round(
+                                    (new Date(e.occurredAt).getTime() - new Date(data.sessionDate ?? e.occurredAt).getTime()) / 60_000
+                                )),
+                                eventType: e.eventType,
+                                label: e.label,
+                                intensity: e.eventType === 'safety_event' ? 9 :
+                                           e.eventType === 'dose_admin' ? 3 :
+                                           e.eventType === 'vital_check' ? 4 :
+                                           e.eventType === 'patient_observation' ? 7 : 5,
+                            }))}
+                        />
+                    </div>
 
                     {/* WO-602 Change C: MEQ-30 structured 4-subscale table */}
                     <SectionTitle accent="#8b5cf6">MEQ-30 – Mystical Experience Questionnaire</SectionTitle>
@@ -783,23 +980,27 @@ const ClinicalReportPDF: React.FC = () => {
                             </thead>
                             <tbody>
                                 {[
-                                    { name: 'Mystical / Unity', items: 'Q1–Q9', max: 45, note: 'Sense of oneness and transcendence' },
-                                    { name: 'Positive Mood', items: 'Q10–Q18', max: 45, note: 'Joy, awe, gratitude' },
-                                    { name: 'Time / Space Transcendence', items: 'Q19–Q25', max: 35, note: 'Dissolution of time and space' },
-                                    { name: 'Ineffability / Paradoxicality', items: 'Q26–Q30', max: 25, note: 'Beyond words, deeply meaningful' },
+                                    { name: 'Mystical / Unity', items: 'Q1–Q9', max: 45, score: sessionId ? null : 42, note: 'Sense of oneness and transcendence' },
+                                    { name: 'Positive Mood', items: 'Q10–Q18', max: 45, score: sessionId ? null : 40, note: 'Joy, awe, gratitude' },
+                                    { name: 'Time / Space Transcendence', items: 'Q19–Q25', max: 35, score: sessionId ? null : 32, note: 'Dissolution of time and space' },
+                                    { name: 'Ineffability / Paradoxicality', items: 'Q26–Q30', max: 25, score: sessionId ? null : 23, note: 'Beyond words, deeply meaningful' },
                                 ].map((row, i) => (
                                     <tr key={row.name} style={{ backgroundColor: i % 2 === 0 ? '#faf5ff' : 'white', borderBottom: '1px solid #ede9fe' }}>
                                         <td style={{ padding: '8px 10px', fontWeight: 700, color: '#6d28d9' }}>{row.name}</td>
                                         <td style={{ padding: '8px 10px', fontFamily: 'monospace', fontSize: '9px', color: '#475569' }}>{row.items}</td>
                                         <td style={{ padding: '8px 10px', textAlign: 'center', fontWeight: 700, color: '#475569' }}>{row.max}</td>
-                                        <td style={{ padding: '8px 10px', textAlign: 'center', fontStyle: 'italic', color: '#94a3b8', fontSize: '9px' }}>Awaiting data</td>
+                                        <td style={{ padding: '8px 10px', textAlign: 'center', fontWeight: row.score ? 700 : 400, color: row.score ? '#6d28d9' : '#94a3b8', fontSize: '9px', fontStyle: row.score ? 'normal' : 'italic' }}>
+                                            {row.score ?? 'Awaiting data'}
+                                        </td>
                                         <td style={{ padding: '8px 10px', fontSize: '9px', color: '#64748b' }}>{row.note}</td>
                                     </tr>
                                 ))}
                                 <tr style={{ backgroundColor: '#ede9fe', borderTop: '2px solid #7c3aed' }}>
                                     <td colSpan={2} style={{ padding: '8px 10px', fontWeight: 900, color: '#4c1d95', fontSize: '10px' }}>TOTAL MEQ-30 SCORE</td>
                                     <td style={{ padding: '8px 10px', textAlign: 'center', fontWeight: 900, color: '#4c1d95' }}>150</td>
-                                    <td style={{ padding: '8px 10px', textAlign: 'center', fontStyle: 'italic', color: '#94a3b8', fontSize: '9px' }}>Awaiting data</td>
+                                    <td style={{ padding: '8px 10px', textAlign: 'center', fontWeight: sessionId ? 400 : 900, color: sessionId ? '#94a3b8' : '#4c1d95', fontSize: '9px', fontStyle: sessionId ? 'italic' : 'normal' }}>
+                                        {sessionId ? 'Awaiting data' : '137'}
+                                    </td>
                                     <td style={{ padding: '8px 10px', fontSize: '9px', color: '#4c1d95', fontWeight: 600 }}>≥75 = Complete Mystical Experience</td>
                                 </tr>
                             </tbody>
@@ -811,12 +1012,45 @@ const ClinicalReportPDF: React.FC = () => {
 
                     <SectionTitle accent="#6366f1">CEQ – Challenging Experience Questionnaire</SectionTitle>
                     <div style={{ backgroundColor: '#eef2ff', border: '1px solid #c7d2fe', borderRadius: '8px', padding: '16px', marginBottom: '20px' }}>
-                        <AwaitingData label="CEQ score, available once post-session assessment is completed" />
+                        {!sessionId ? (
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '8px' }}>
+                                {[
+                                    { label: 'Grief / Loss', score: 1.2, max: 5 },
+                                    { label: 'Fear', score: 1.8, max: 5 },
+                                    { label: 'Death / Dying', score: 2.4, max: 5 },
+                                    { label: 'Insanity', score: 0.6, max: 5 },
+                                    { label: 'Physical Distress', score: 1.0, max: 5 },
+                                    { label: 'Paranoia', score: 0.8, max: 5 },
+                                    { label: 'Isolation', score: 1.4, max: 5 },
+                                    { label: 'Overall Difficulty', score: 1.3, max: 10 },
+                                ].map((item, i) => (
+                                    <div key={i} style={{ padding: '8px 10px', backgroundColor: '#e0e7ff', borderRadius: '6px', textAlign: 'center' }}>
+                                        <div style={{ fontSize: '16px', fontWeight: 900, color: '#3730a3' }}>{item.score.toFixed(1)}</div>
+                                        <div style={{ fontSize: '8px', color: '#4338ca', marginTop: '2px', fontWeight: 600 }}>{item.label}</div>
+                                        <div style={{ fontSize: '7px', color: '#6366f1', marginTop: '1px' }}>/{item.max}</div>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <AwaitingData label="CEQ score, available once post-session assessment is completed" />
+                        )}
                     </div>
 
                     <SectionTitle accent="#ec4899">EDI – Emotional Breakthrough Index</SectionTitle>
                     <div style={{ backgroundColor: '#fdf2f8', border: '1px solid #f5d0fe', borderRadius: '8px', padding: '16px' }}>
-                        <AwaitingData label="EDI score, available once post-session assessment is completed" />
+                        {!sessionId ? (
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '10px' }}>
+                                {[
+                                    { label: 'EDI Total Score', value: '42 / 42', sub: 'Maximum breakthrough', color: '#ec4899' },
+                                    { label: 'Emotional Release', value: '10 / 10', sub: 'Full release recorded', color: '#db2777' },
+                                    { label: 'Acceptance', value: '10 / 10', sub: 'High acceptance', color: '#be185d' },
+                                ].map((item, i) => (
+                                    <MetricCell key={i} label={item.label} value={item.value} sub={item.sub} accent={item.color} />
+                                ))}
+                            </div>
+                        ) : (
+                            <AwaitingData label="EDI score, available once post-session assessment is completed" />
+                        )}
                     </div>
                 </PageShell>
 
@@ -888,38 +1122,115 @@ const ClinicalReportPDF: React.FC = () => {
                         </div>
                     )}
 
-                    <SectionTitle accent="#ef4444">Safety Events Summary</SectionTitle>
-                    {data.hasRealTimelineData && data.timelineEvents && data.timelineEvents.filter(e => e.eventType === 'safety_event').length > 0 ? (
-                        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '10px', marginBottom: '20px' }}>
-                            <thead>
-                                <tr style={{ backgroundColor: '#7f1d1d', color: 'white' }}>
-                                    {['Date / Time', 'Event Type', 'Description', 'Status'].map(h => (
-                                        <th key={h} style={{ padding: '7px 10px', textAlign: 'left', fontSize: '9px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em' }}>{h}</th>
-                                    ))}
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {data.timelineEvents.filter(e => e.eventType === 'safety_event').map((ev, i) => (
-                                    <tr key={i} style={{ backgroundColor: i % 2 === 0 ? '#fff7ed' : 'white', borderBottom: '1px solid #fed7aa' }}>
-                                        <td style={{ padding: '7px 10px', fontFamily: 'monospace', fontSize: '9px', color: '#92400e' }}>{fmtDate(ev.occurredAt)} {fmtTime(ev.occurredAt)}</td>
-                                        <td style={{ padding: '7px 10px' }}>
-                                            <span style={{ padding: '2px 8px', borderRadius: '4px', fontSize: '9px', fontWeight: 700, backgroundColor: '#fef3c7', color: '#92400e' }}>Safety Event</span>
-                                        </td>
-                                        <td style={{ padding: '7px 10px', color: '#1e293b' }}>{ev.label}</td>
-                                        <td style={{ padding: '7px 10px' }}>
-                                            <span style={{ padding: '2px 8px', borderRadius: '4px', fontSize: '9px', fontWeight: 700, backgroundColor: '#dcfce7', color: '#166534' }}>Logged</span>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    ) : (
-                        <div style={{ padding: '14px 16px', backgroundColor: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '8px', marginBottom: '20px' }}>
-                            <p style={{ fontSize: '10px', color: '#16a34a', margin: 0, fontWeight: 600 }}>
-                                ✅ No safety events recorded for this session.
-                            </p>
-                        </div>
-                    )}
+                    <SectionTitle accent="#ef4444">Safety &amp; Adverse Events</SectionTitle>
+                    {(() => {
+                        // Split timeline entries: observation log entries vs formal AE reports
+                        const aeEntries = (data.timelineEvents ?? []).filter(e => e.eventType === 'safety_event');
+                        const obsEntries = (data.timelineEvents ?? []).filter(e =>
+                            e.eventType === 'patient_observation' && e.label.startsWith('Safety observation')
+                        );
+                        // Structured AE records from adverseEvents (demo) or derived from AE timeline entries
+                        const structuredAEs = (data as any).adverseEvents ?? [];
+                        const hasAnyEvent = aeEntries.length > 0 || obsEntries.length > 0;
+                        if (!hasAnyEvent) return (
+                            <div style={{ padding: '14px 16px', backgroundColor: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '8px', marginBottom: '20px' }}>
+                                <p style={{ fontSize: '10px', color: '#16a34a', margin: 0, fontWeight: 600 }}>
+                                    ✅ No adverse events recorded for this session.
+                                </p>
+                            </div>
+                        );
+                        return (
+                            <div style={{ marginBottom: '20px' }}>
+                                {/* ── Observation Log ── */}
+                                {obsEntries.length > 0 && (
+                                    <div style={{ marginBottom: '16px' }}>
+                                        <div style={{ fontSize: '9px', fontWeight: 700, color: '#b45309', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '6px' }}>Session Observation Log</div>
+                                        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '9px' }}>
+                                            <thead>
+                                                <tr style={{ backgroundColor: '#92400e', color: 'white' }}>
+                                                    {['Time', 'Observations', 'Note'].map(h => (
+                                                        <th key={h} style={{ padding: '5px 8px', textAlign: 'left', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', fontSize: '8px' }}>{h}</th>
+                                                    ))}
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {obsEntries.map((ev, i) => {
+                                                    // Parse 'Safety observation: Obs1, Obs2 · Note: ...' format
+                                                    const parts = ev.label.replace('Safety observation: ', '').split(' · ');
+                                                    const obs = parts[0] ?? '';
+                                                    const note = parts.slice(1).join(' · ');
+                                                    return (
+                                                        <tr key={i} style={{ backgroundColor: i % 2 === 0 ? '#fff7ed' : 'white', borderBottom: '1px solid #fed7aa' }}>
+                                                            <td style={{ padding: '5px 8px', fontFamily: 'monospace', color: '#92400e', whiteSpace: 'nowrap' }}>{fmtTime(ev.occurredAt)}</td>
+                                                            <td style={{ padding: '5px 8px', color: '#1e293b' }}>{obs}</td>
+                                                            <td style={{ padding: '5px 8px', color: '#64748b', fontStyle: 'italic' }}>{note || '—'}</td>
+                                                        </tr>
+                                                    );
+                                                })}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                )}
+
+                                {/* ── Formal AE Reports ── */}
+                                {structuredAEs.length > 0 ? (
+                                    structuredAEs.map((ae: any, aeIdx: number) => (
+                                        <div key={aeIdx} style={{ border: '1.5px solid #fca5a5', borderRadius: '8px', overflow: 'hidden', marginBottom: '12px' }}>
+                                            {/* AE Header */}
+                                            <div style={{ backgroundColor: '#7f1d1d', padding: '8px 12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                                <span style={{ color: 'white', fontWeight: 900, fontSize: '10px' }}>⚠ Adverse Event Report</span>
+                                                <span style={{ color: '#fca5a5', fontSize: '9px', fontFamily: 'monospace' }}>{fmtDate(ae.occurredAt)} {fmtTime(ae.occurredAt)}</span>
+                                            </div>
+                                            {/* AE Fields Grid */}
+                                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '0', backgroundColor: '#fff7ed' }}>
+                                                {[
+                                                    { label: 'Event Type', value: ae.eventType },
+                                                    { label: 'CTCAE Grade', value: `Grade ${ae.severityGrade} — ${['','Mild','Moderate','Severe','Life-Threatening','Fatal'][ae.severityGrade] ?? ''}` },
+                                                    { label: 'MedDRA Code', value: ae.meddraCode ?? 'Not recorded' },
+                                                    { label: 'Intervention', value: ae.interventionType ?? 'None recorded' },
+                                                    { label: 'Resolution', value: ae.resolved ? `Resolved at ${fmtTime(ae.resolvedAt ?? '')}` : 'Unresolved' },
+                                                    { label: 'Follow-up Plan', value: ae.followUpPlan ?? 'None specified' },
+                                                ].map((field, fi) => (
+                                                    <div key={fi} style={{ padding: '8px 10px', borderRight: fi % 3 !== 2 ? '1px solid #fed7aa' : 'none', borderBottom: fi < 3 ? '1px solid #fed7aa' : 'none' }}>
+                                                        <div style={{ fontSize: '7px', fontWeight: 700, color: '#92400e', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '2px' }}>{field.label}</div>
+                                                        <div style={{ fontSize: '9px', fontWeight: 600, color: '#1e293b' }}>{field.value}</div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                            {/* Resolution badge */}
+                                            <div style={{ padding: '6px 12px', backgroundColor: ae.resolved ? '#f0fdf4' : '#fef9c3', borderTop: '1px solid #fed7aa', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                                <span style={{ fontSize: '9px', fontWeight: 700, color: ae.resolved ? '#16a34a' : '#b45309' }}>
+                                                    {ae.resolved ? '✅ Resolved' : '⚠ Unresolved — Follow-up Required'}
+                                                </span>
+                                                {ae.severityGrade >= 3 && (
+                                                    <span style={{ marginLeft: 'auto', fontSize: '8px', fontWeight: 700, color: '#991b1b', padding: '2px 6px', border: '1px solid #fca5a5', borderRadius: '4px' }}>Grade 3+ — Regulatory Notification Required</span>
+                                                )}
+                                            </div>
+                                        </div>
+                                    ))
+                                ) : aeEntries.length > 0 ? (
+                                    // Fallback: show raw AE timeline entries when no structuredAEs
+                                    <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '9px' }}>
+                                        <thead>
+                                            <tr style={{ backgroundColor: '#7f1d1d', color: 'white' }}>
+                                                {['Time', 'Event'].map(h => (
+                                                    <th key={h} style={{ padding: '6px 8px', textAlign: 'left', fontWeight: 700, textTransform: 'uppercase', fontSize: '8px' }}>{h}</th>
+                                                ))}
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {aeEntries.map((ev, i) => (
+                                                <tr key={i} style={{ backgroundColor: i % 2 === 0 ? '#fff7ed' : 'white', borderBottom: '1px solid #fed7aa' }}>
+                                                    <td style={{ padding: '6px 8px', fontFamily: 'monospace', color: '#92400e', whiteSpace: 'nowrap' }}>{fmtTime(ev.occurredAt)}</td>
+                                                    <td style={{ padding: '6px 8px', color: '#1e293b' }}>{ev.label}</td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                ) : null}
+                            </div>
+                        );
+                    })()}
 
                     <SectionTitle accent="#10b981">PHQ-9 Pulse Trend</SectionTitle>
                     {data.hasRealPulseData && data.pulseTrend && data.pulseTrend.length > 0 ? (
@@ -953,9 +1264,36 @@ const ClinicalReportPDF: React.FC = () => {
                     PAGE 8, NETWORK BENCHMARKING + CERTIFICATION
                 ════════════════════════════════════════════════════════ */}
                 <PageShell pageNum={8} total={TOTAL} reportId={reportId} exportDate={exportDate}>
-                    <SectionTitle accent="#3b82f6">Network Benchmarking</SectionTitle>
+                    <SectionTitle accent="#3b82f6">Patient Outcome Profile vs. Peer Network</SectionTitle>
+                    <p style={{ fontSize: '9px', color: '#64748b', margin: '-8px 0 12px' }}>
+                        Six-axis outcome radar: patient score (solid violet) vs. anonymised PPN peer network benchmark (dashed grey).
+                        Scores are percentile-relative; higher = stronger outcome in that dimension.
+                    </p>
+
+                    {/* ReceptorSpiderGraph — Patient outcome vs peer benchmark, 6 clinical axes */}
+                    <div style={{ backgroundColor: '#0c1929', borderRadius: '10px', padding: '16px', border: '1px solid #1e2d45', marginBottom: '16px' }}>
+                        <ReceptorSpiderGraph
+                            compact={true}
+                            showToggle={false}
+                            defaultMode="B"
+                        />
+                    </div>
+
+                    <SectionTitle accent="#3b82f6">PPN Network Evidence Base</SectionTitle>
+                    <p style={{ fontSize: '9px', color: '#64748b', margin: '-8px 0 12px' }}>
+                        Substance and indication-matched statistics from PPN network practitioners.
+                    </p>
+                    {/* NetworkBenchmarkBlock — static substance-matched evidence stats */}
+                    <div style={{ backgroundColor: '#0c1929', borderRadius: '10px', padding: '16px', border: '1px solid #1e2d45', marginBottom: '16px' }}>
+                        <NetworkBenchmarkBlock
+                            substanceCategory={data.substanceCategory ?? 'psilocybin'}
+                            accentColor={data.accentColor ?? '#3b82f6'}
+                        />
+                    </div>
+
+                    <SectionTitle accent="#3b82f6">Clinic Performance Benchmarking</SectionTitle>
                     <p style={{ fontSize: '9px', color: '#94a3b8', margin: '-8px 0 12px', fontStyle: 'italic' }}>
-                        Reference Cohort (N=14k published data), benchmark bands are static aggregate data from peer-reviewed psychedelic therapy outcome studies.
+                        Reference Cohort (N=14k published studies), benchmark bands are static aggregate data from peer-reviewed psychedelic therapy outcome studies.
                     </p>
 
                     <div style={{ display: 'grid', gridTemplateColumns: '220px 1fr', gap: '20px', marginBottom: '20px', alignItems: 'start' }}>

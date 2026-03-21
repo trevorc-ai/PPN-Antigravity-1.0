@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../supabaseClient';
+import { useDataCache } from './useDataCache';
 
 interface SafetyAlert {
     id: string;
@@ -14,44 +14,32 @@ interface SafetyAlert {
     status: 'active' | 'acknowledged' | 'resolved';
 }
 
+interface SafetyAlertsResult {
+    alertCount: number;
+    alerts: SafetyAlert[];
+}
+
 export const useSafetyAlerts = () => {
     const { user } = useAuth();
-    const [alertCount, setAlertCount] = useState(0);
-    const [alerts, setAlerts] = useState<SafetyAlert[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
 
-    useEffect(() => {
-        if (!user) {
-            setAlertCount(0);
-            setAlerts([]);
-            setLoading(false);
-            return;
-        }
+    const { data, loading, error } = useDataCache<SafetyAlertsResult>(
+        user ? `safety-alerts-${user.id}` : 'safety-alerts-empty',
+        async () => {
+            if (!user) return { data: { alertCount: 0, alerts: [] }, error: null };
 
-        const fetchAlerts = async () => {
             try {
-                setLoading(true);
-                setError(null);
-
-                // Get user's site_id from user_sites
+                // Get user's site_id
                 const { data: userSites, error: userSitesError } = await supabase
                     .from('log_user_sites')
                     .select('site_id')
                     .eq('user_id', user.id)
                     .single();
 
-                if (userSitesError) throw userSitesError;
-
-                if (!userSites) {
-                    setAlertCount(0);
-                    setAlerts([]);
-                    setLoading(false);
-                    return;
+                if (userSitesError || !userSites) {
+                    return { data: { alertCount: 0, alerts: [] }, error: null };
                 }
 
-                // For MVP: Generate mock alerts based on recent safety events
-                // In production, this would query a real safety_alerts table
+                // For MVP: derive alerts from recent high-severity safety events
                 const { data: safetyEvents, error: safetyError } = await supabase
                     .from('log_safety_events')
                     .select('*')
@@ -61,10 +49,9 @@ export const useSafetyAlerts = () => {
 
                 if (safetyError) throw safetyError;
 
-                // Convert safety events to alerts (MVP mock)
                 const mockAlerts: SafetyAlert[] = (safetyEvents || [])
-                    .filter(event => event.severity_grade_id && event.severity_grade_id >= 3)
-                    .map((event, index) => ({
+                    .filter((event: any) => event.severity_grade_id && event.severity_grade_id >= 3)
+                    .map((event: any, index: number) => ({
                         id: `alert-${event.id || index}`,
                         site_id: userSites.site_id,
                         substance_id: event.substance_id || 0,
@@ -73,32 +60,23 @@ export const useSafetyAlerts = () => {
                         alert_type: 'adverse_event',
                         message: `High severity safety event detected`,
                         created_at: event.created_at || new Date().toISOString(),
-                        status: 'active'
+                        status: 'active',
                     }));
 
-                setAlerts(mockAlerts);
-                setAlertCount(mockAlerts.filter(a => a.status === 'active').length);
-            } catch (err) {
+                const alertCount = mockAlerts.filter((a) => a.status === 'active').length;
+                return { data: { alertCount, alerts: mockAlerts }, error: null };
+            } catch (err: any) {
                 console.error('Error fetching safety alerts:', err);
-                setError(err instanceof Error ? err.message : 'Failed to fetch safety alerts');
-                setAlertCount(0);
-                setAlerts([]);
-            } finally {
-                setLoading(false);
+                return { data: { alertCount: 0, alerts: [] }, error: err.message };
             }
-        };
+        },
+        { ttl: 5 * 60 * 1000, enabled: !!user } // 5-minute TTL — alerts are MVP, fetch-once is sufficient
+    );
 
-        fetchAlerts();
-
-        // Real-time subscription removed (WO-096 fix) — was triggering fetchAlerts()
-        // on every postgres_changes event, causing Supabase ThrottleException.
-        // Safety alerts are MVP/mock — fetch-once on mount is sufficient.
-        // Re-enable with proper debounce when safety_alerts table is production-ready.
-
-        return () => {
-            // no subscription to clean up
-        };
-    }, [user]);
-
-    return { alertCount, alerts, loading, error };
+    return {
+        alertCount: data?.alertCount ?? 0,
+        alerts: data?.alerts ?? [],
+        loading,
+        error,
+    };
 };

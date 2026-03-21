@@ -63,3 +63,34 @@ This document supersedes all other instructions. All agents MUST abide by these 
 - Any agent found creating an unauthorized branch: set WO to `98_HOLD`, alert USER.
 
 *Rationale: 16 stale branches and 7 stale stashes were identified as the root cause of dozens of intentional deletions being undone. This policy prevents recurrence.*
+
+## 5. 🔒 ZERO-UNAUTHORIZED-CHANGES POLICY (ALL AGENTS — IMMUTABLE)
+
+**NO agent may make ANY deletion, addition, or change — to code, UI, data, copy,
+logic, routing, styling, or configuration — without the USER's express written approval.**
+
+### What Requires Approval (Everything)
+- Adding, removing, or renaming any file, component, route, or function
+- Changing any button label, navigation target, or user-facing copy
+- Changing any business logic, state management, or data flow
+- Adding any feature, CTA, flow, or UI element not explicitly requested
+- "Improving", "cleaning up", or "refactoring" anything not listed in the approved scope
+- Fixing a bug adjacent to the requested bug if not explicitly approved
+
+### The Required Artefact Gate
+Before writing a SINGLE LINE of code, every agent MUST:
+1. Create an `implementation_plan.md` in the task's brain directory
+2. Present it to the USER via `notify_user` with `BlockedOnUser: true`
+3. Receive explicit written approval ("approved", "go", "yes", or equivalent) in chat
+4. Only then enter EXECUTION mode
+
+### Violations
+Any agent that writes code, modifies files, or changes behaviour without an approved
+plan is considered a **rogue agent**. The USER will:
+- Roll back all changes via `git revert`
+- Flag the incident in the Work Order as a governance violation
+- Require a full re-plan before the work is re-attempted
+
+*Rationale: Rogue agents making unauthorized UI and logic changes have repeatedly
+introduced illogical flows, contradicted clinical workflow requirements, and eroded
+practitioner trust in the platform. This rule is non-negotiable.*

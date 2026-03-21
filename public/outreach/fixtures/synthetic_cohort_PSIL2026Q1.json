@@ -1,0 +1,58 @@
+{
+  "_comment": "Synthetic research cohort fixture for researcher outreach materials. Shared by WO-647 and WO-648. ZERO PHI — all data is fabricated for demonstration purposes only.",
+  "cohort_id": "PSIL-2026-Q1",
+  "study_title": "Psilocybin-Assisted Therapy for Treatment-Resistant MDD: Multi-Site Real-World Evidence Registry",
+  "sites": 3,
+  "n": 24,
+  "data_cutoff_date": "2026-03-01",
+  "document_id": "RES-2026Q1-PSIL",
+  "diagnosis": {
+    "primary": "Treatment-Resistant Major Depressive Disorder",
+    "icd10": "F33.2",
+    "snomed_ct": "35489007",
+    "criteria": "Failed >= 2 adequate antidepressant trials"
+  },
+  "protocol": {
+    "substance": "Psilocybin",
+    "rxnorm_cui": "10600",
+    "dose_mg_range": [25, 30],
+    "session_type": "Individual Assisted Therapy",
+    "num_sessions": 2,
+    "integration_sessions_min": 4
+  },
+  "ontologies_enforced": ["RxNorm", "MedDRA", "SNOMED CT", "CTCAE v5.0"],
+  "audit_standard": "21 CFR Part 11",
+  "phi_architecture": "Zero-PHI — Cryptographic Subject_ID. No identifiable data stored.",
+  "primary_outcome": {
+    "measure": "PHQ-9",
+    "baseline_mean": 22.4,
+    "endpoint_mean_8wk": 9.1,
+    "mean_reduction": 13.3,
+    "pct_reduction": 59.4,
+    "responders_pct": 75.0,
+    "remitters_pct": 54.2,
+    "endpoint_weeks_post_final_session": 8
+  },
+  "secondary_outcomes": {
+    "gad7_baseline_mean": 16.8,
+    "gad7_endpoint_mean": 7.2,
+    "pcl5_baseline_mean": 49.2,
+    "pcl5_endpoint_mean": 24.1
+  },
+  "adverse_events": {
+    "total_events": 6,
+    "grade_1": 5,
+    "grade_2": 1,
+    "grade_3": 0,
+    "grade_4_or_5": 0,
+    "most_common_ae_meddra_pt": "Nausea",
+    "serious_adverse_events": 0
+  },
+  "data_compatibility": {
+    "spss_ready": true,
+    "r_ready": true,
+    "python_ready": true,
+    "manual_cleaning_required": false
+  },
+  "document_classification": "SYNTHETIC — For demonstration purposes only. Not a real research dataset."
+}

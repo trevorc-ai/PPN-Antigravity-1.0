@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Founding Partner Charter - PPN Clinician Program</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --slate-900: #0f1117;
+    --ink-light: #d1d5e8;
+    --ink-muted: #8b91a8;
+    --accent: #7c6ff7;
+    --border: rgba(255,255,255,0.1);
+    --bg: #ffffff;
+    --bg-subtle: #f8f9fc;
+    --ink-body: #2d3450;
+    --ink-heading: #0f1117;
+    --border-light: #e4e6f0;
+  }
+
+  @media screen { body { padding: 0.6in; max-width: 8.5in; margin: 0 auto; } }
+  @media print {
+    @page { size: letter; margin: 0.75in; }
+    body { font-size: 11pt; line-height: 1.5; padding: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    h1, h2, h3 { break-after: avoid; page-break-after: avoid; }
+    p { orphans: 3; widows: 3; }
+    .charter-callout, .fee-block, .term-row, .signature-block { break-inside: avoid; page-break-inside: avoid; }
+  }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    font-size: 9pt;
+    line-height: 1.65;
+    color: var(--ink-body);
+    background: var(--bg);
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .header {
+    border-top: 4pt solid var(--accent);
+    padding-top: 12pt; padding-bottom: 14pt;
+    border-bottom: 1px solid var(--border-light);
+    margin-bottom: 16pt;
+    display: flex; justify-content: space-between; align-items: flex-start;
+  }
+  .brand { display: flex; align-items: center; gap: 7pt; }
+  .brand-dot { width: 8pt; height: 8pt; border-radius: 50%; background: var(--accent); flex-shrink: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .brand-name { font-size: 8pt; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); }
+  .classification { font-size: 7pt; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-muted); }
+
+  .doc-num-badge {
+    display: inline-block; font-size: 7pt; font-weight: 700; color: var(--accent);
+    background: #ede9ff; border-radius: 3pt; padding: 2pt 7pt;
+    letter-spacing: 0.06em; margin-bottom: 4pt;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+  .title-block { margin-bottom: 10pt; }
+  .doc-label { font-size: 7.5pt; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); margin-bottom: 4pt; }
+  h1 { font-size: 19pt; font-weight: 800; color: var(--ink-heading); line-height: 1.1; letter-spacing: -0.025em; }
+
+  .parties-block {
+    display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10pt;
+    margin: 12pt 0; padding: 12pt; background: var(--bg-subtle);
+    border: 1px solid var(--border-light); border-radius: 6pt;
+  }
+  .party-label { font-size: 7pt; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-muted); margin-bottom: 3pt; }
+  .party-value { font-size: 9pt; color: var(--ink-heading); font-weight: 500; }
+  .party-blank { font-size: 9pt; color: var(--ink-muted); border-bottom: 1px solid #c0c5d8; padding-bottom: 1pt; font-style: italic; }
+
+  h2 {
+    font-size: 9pt; font-weight: 700; color: var(--ink-heading);
+    margin-top: 10pt; margin-bottom: 5pt;
+    padding: 5pt 10pt 5pt 14pt;
+    background: var(--bg-subtle); border-left: 3px solid var(--accent);
+    border-radius: 0 4pt 4pt 0;
+    break-after: avoid;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+
+  p { margin-bottom: 7pt; color: var(--ink-body); font-size: 9pt; }
+  strong { color: var(--ink-heading); }
+
+  .deliverables { list-style: none; margin: 5pt 0 7pt 0; }
+  .deliverables li {
+    padding: 5pt 0; border-bottom: 1px solid var(--border-light);
+    display: flex; gap: 9pt; align-items: flex-start; font-size: 9pt; color: var(--ink-body);
+  }
+  .bullet-dot { width: 7pt; height: 7pt; border-radius: 50%; background: var(--accent); flex-shrink: 0; margin-top: 3pt; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+  .financial-block { display: grid; grid-template-columns: 1fr 1fr; gap: 10pt; margin: 9pt 0; break-inside: avoid; }
+  .financial-card { border: 1px solid var(--border-light); border-radius: 6pt; padding: 10pt 12pt; }
+  .financial-card-label { font-size: 7.5pt; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-muted); margin-bottom: 4pt; }
+  .financial-card-value { font-size: 16pt; font-weight: 800; color: var(--accent); margin-bottom: 4pt; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .financial-card-note { font-size: 8pt; color: var(--ink-body); }
+
+  .charter-callout {
+    background: #ede9ff; border: 1px solid #c5b8ff; border-radius: 6pt; padding: 11pt 14pt; margin: 10pt 0;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+  .charter-callout p { color: var(--ink-body); font-style: italic; font-size: 9pt; margin: 0; }
+  .charter-callout strong { color: var(--ink-heading); }
+
+  .onboarding-table { width: 100%; border-collapse: collapse; margin: 9pt 0; font-size: 8.5pt; }
+  .onboarding-table thead tr { background: #ede9ff; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .onboarding-table th { color: #3730a3; font-size: 7.5pt; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 7pt 10pt; text-align: left; }
+  .onboarding-table td { padding: 6.5pt 10pt; border-bottom: 1px solid var(--border-light); vertical-align: middle; }
+  .onboarding-table tr:nth-child(even) td { background: var(--bg-subtle); }
+  .step-num {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 17pt; height: 17pt; border-radius: 50%;
+    background: var(--accent); color: #fff; font-size: 8pt; font-weight: 700;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+  .timeline-cell { color: var(--ink-muted); font-style: italic; font-size: 8pt; }
+
+  .sig-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20pt; margin: 13pt 0; break-inside: avoid; }
+  .sig-block { border-top: 1px solid #9499b0; padding-top: 8pt; }
+  .sig-party-name { font-size: 9pt; font-weight: 700; color: var(--ink-heading); margin-bottom: 14pt; }
+  .sig-field { margin-bottom: 12pt; }
+  .sig-label { font-size: 7.5pt; color: var(--ink-muted); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 2pt; }
+  .sig-line { border-bottom: 1px solid var(--border-light); height: 16pt; }
+
+  .legal-note { background: var(--bg-subtle); border: 1px solid var(--border-light); border-radius: 4pt; padding: 8pt 12pt; font-size: 8pt; color: var(--ink-muted); font-style: italic; margin-top: 10pt; }
+
+  .footer { display: flex; justify-content: space-between; margin-top: 14pt; padding-top: 7pt; border-top: 1px solid var(--border-light); font-size: 7pt; color: var(--ink-muted); }
+  .footer-dot { color: var(--accent); margin: 0 3pt; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="brand">
+      <div class="brand-dot"></div>
+      <span class="brand-name">PPN Portal</span>
+    </div>
+  </div>
+  <div>
+    <div class="classification">Confidential: Clinician Founding Partner Program</div>
+  </div>
+</div>
+
+<div class="doc-num-badge">04 of 06</div>
+<div class="title-block">
+  <div class="doc-label">Agreement</div>
+  <h1>Clinician Founding Partner Charter</h1>
+</div>
+
+<div class="parties-block">
+  <div>
+    <div class="party-label">Effective Date</div>
+    <div class="party-blank">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+  </div>
+  <div>
+    <div class="party-label">Provider (PPN)</div>
+    <div class="party-value">PPN Portal</div>
+  </div>
+  <div>
+    <div class="party-label">Founding Partner Clinic</div>
+    <div class="party-blank">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+  </div>
+</div>
+
+<h2>1 - The Clinician Founding Partner Relationship</h2>
+<p>This Charter establishes your clinic as a member of PPN's inaugural clinician cohort. This is not a standard software subscription. Clinician Founding Partners are selected for their clinical commitment, their community influence, and their alignment with the platform's mission to make psychedelic therapy safer and more evidence-based for every practitioner in the field.</p>
+<p>In exchange for early adoption and participation in the network, your clinic secures a <strong>permanently locked-in institutional rate</strong>, direct influence over the product roadmap, and access to the clinical intelligence network that no standard EHR can provide.</p>
+
+<h2>2 - PPN's Commitments (12-Month Term)</h2>
+<ul class="deliverables">
+  <li><span class="bullet-dot"></span><span><strong>Dedicated Clinic Instance:</strong> A fully partitioned registry instance configured for your clinical workflows. Your patient data is logically isolated and never commingled with other clinics without explicit consent.</span></li>
+  <li><span class="bullet-dot"></span><span><strong>Phantom Shield (Zero-PHI Architecture):</strong> Clinical infrastructure to log every session, track longitudinal outcomes, and document protocols without ever capturing, storing, or transmitting a patient's identity. Full subpoena resistance by design.</span></li>
+  <li><span class="bullet-dot"></span><span><strong>Network Benchmarking Access:</strong> Real-time anonymized benchmarks from the PPN network. See how your clinic's efficacy, safety, and retention outcomes compare to the broader field, legally and automatically.</span></li>
+  <li><span class="bullet-dot"></span><span><strong>Patient Integration Reports:</strong> One-click generation of the Patient Integration Story, a clinical deliverable your facilitators hand to patients at their integration session showing their healing trajectory.</span></li>
+  <li><span class="bullet-dot"></span><span><strong>White-Glove Onboarding:</strong> PPN-led staff training, workflow alignment, and 24/7 dedicated support channel. Your team is operational within 14 days of signing. No workflow downtime. No IT burden.</span></li>
+  <li><span class="bullet-dot"></span><span><strong>Direct Roadmap Input:</strong> Quarterly access to the PPN product team. Clinician Founding Partner requests are documented and carry formal weight in roadmap prioritization.</span></li>
+</ul>
+
+<h2>3 - Financial Terms</h2>
+<div class="financial-block">
+  <div class="financial-card">
+    <div class="financial-card-label">Founding Partner Fee (Year 1)</div>
+    <div class="financial-card-value">$____________</div>
+    <div class="financial-card-note">Single upfront payment. Activates your dedicated clinic instance, onboarding, and network access. Significant discount from post-launch institutional rate.</div>
+  </div>
+  <div class="financial-card">
+    <div class="financial-card-label">Renewal Rate Lock</div>
+    <div class="financial-card-value">Guaranteed</div>
+    <div class="financial-card-note">Your Year 1 rate is permanently capped for the life of the relationship, regardless of future pricing changes or platform expansions to the network.</div>
+  </div>
+</div>
+
+<div class="charter-callout">
+  <p><strong>The Data Guild Incentive:</strong> If your clinic submits a minimum of <strong style="border-bottom: 1.5px solid #7c6ff7; padding-bottom: 1px; min-width: 40px; display: inline-block; color: #7c6ff7;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</strong> valid, anonymized clinical records per month in Year 2 and beyond, PPN will waive the renewal subscription fee for that month. Your clinical documentation has real, tangible value to the network, and we recognize it accordingly.</p>
+</div>
+
+<h2>4 - Data Sovereignty</h2>
+<p>Your clinic retains <strong>100% ownership</strong> of your clinical records at all times. PPN acts solely as a secure, structured registry. No partner data is shared with third parties or used commercially without explicit written consent. Upon termination, all data is fully exportable and, upon request, purged from PPN infrastructure.</p>
+
+<h2>5 - Confidentiality &amp; Term</h2>
+<p>Both parties agree to keep the terms of this Charter and commercial pricing confidential. This Charter is effective for 12 months from the Effective Date, renewing annually unless either party provides 60 days' written notice.</p>
+
+<h2>What Happens Next</h2>
+<table class="onboarding-table">
+  <thead><tr><th>Step</th><th>Action</th><th>Timeline</th></tr></thead>
+  <tbody>
+    <tr><td><span class="step-num">1</span></td><td>Countersigned Charter returned to PPN</td><td class="timeline-cell">Within 5 business days of execution</td></tr>
+    <tr><td><span class="step-num">2</span></td><td>Invoice issued and payment confirmed</td><td class="timeline-cell">Upon Charter return</td></tr>
+    <tr><td><span class="step-num">3</span></td><td>Dedicated clinic instance provisioned</td><td class="timeline-cell">Within 48 hours of payment</td></tr>
+    <tr><td><span class="step-num">4</span></td><td>Onboarding kick-off call with PPN team</td><td class="timeline-cell">Within first 7 days</td></tr>
+    <tr><td><span class="step-num">5</span></td><td>60-minute virtual staff training conducted</td><td class="timeline-cell">Within 14 days of execution</td></tr>
+    <tr><td><span class="step-num">6</span></td><td>Full go-live with 24/7 dedicated Slack channel support</td><td class="timeline-cell">Day 30</td></tr>
+  </tbody>
+</table>
+
+<h2>Signatures</h2>
+<div class="sig-grid">
+  <div class="sig-block">
+    <div class="sig-party-name">For PPN Portal</div>
+    <div class="sig-field"><div class="sig-label">Signature</div><div class="sig-line"></div></div>
+    <div class="sig-field"><div class="sig-label">Name</div><div class="sig-line"></div></div>
+    <div class="sig-field"><div class="sig-label">Title</div><div class="sig-line"></div></div>
+    <div class="sig-field"><div class="sig-label">Date</div><div class="sig-line"></div></div>
+  </div>
+  <div class="sig-block">
+    <div class="sig-party-name">For Founding Partner Clinic</div>
+    <div class="sig-field"><div class="sig-label">Signature</div><div class="sig-line"></div></div>
+    <div class="sig-field"><div class="sig-label">Name</div><div class="sig-line"></div></div>
+    <div class="sig-field"><div class="sig-label">Title</div><div class="sig-line"></div></div>
+    <div class="sig-field"><div class="sig-label">Date</div><div class="sig-line"></div></div>
+  </div>
+</div>
+
+<div class="legal-note">
+  This is a summary agreement intended to establish the Clinician Founding Partner relationship efficiently. A full Master Service Agreement (MSA) with standard legal provisions, including IP, indemnification, liability caps, and governing law, is available upon request and may be substituted for this Charter at either party's election.
+</div>
+
+<div class="footer">
+  <span>PPN Portal <span class="footer-dot">&middot;</span> ppnportal.net</span>
+  <span>Confidential &amp; Proprietary <span class="footer-dot">&middot;</span> &copy; 2026 PPN. All Rights Reserved.</span>
+</div>
+
+</body>
+</html>

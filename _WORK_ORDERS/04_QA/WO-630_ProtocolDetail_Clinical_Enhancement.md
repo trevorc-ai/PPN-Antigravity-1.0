@@ -99,3 +99,8 @@ A gap analysis against `public/internal/admin_uploads/research/Session-research.
 **Routing Decision:** All changes are contained to `ProtocolDetail.tsx`. The most complex item is AC #4 (PHQ-9/GAD-7 trajectory) which depends on a live schema check — BUILDER must run the schema query first and branch accordingly. AC #1–3 and #5 are safe to implement in parallel. Ship as a single commit: `feat(WO-630): protocol detail clinical decision-support enhancements`.
 
 **Reference:** `public/internal/admin_uploads/research/Session-research.md` — CANMAT BP thresholds (section: "Screening tools and practical thresholds"), PHQ-9 severity bands (section: "Recommended measurement-based intake"), session monitoring timepoints (section: "Ketamine clinic measurement schedule").
+
+
+---
+
+> 🔴 **PARKED — 2026-03-21:** This WO is parked behind Track B item B1 (ActivePatientContext). The patient_uuid join problem this WO documents is the same gap that B1 is solving. Do not proceed until STABILIZATION_BRIEF.md Track B B1 is complete and committed. See PIPELINE_TRIAGE_2026-03-21.md.

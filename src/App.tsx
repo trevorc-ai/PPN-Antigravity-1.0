@@ -66,6 +66,14 @@ const DemoClinicalReportPDF = lazy(() => import('./pages/DemoClinicalReportPDF')
 const PatientReportPDF = lazy(() => import('./pages/PatientReportPDF'));   // Phase 3 patient wellness report
 const DataPolicyPDF = lazy(() => import('./pages/DataPolicyPDF'));         // Research export data policy
 const AuditReportPDF = lazy(() => import('./pages/AuditReportPDF'));       // Audit & Compliance Export PDF
+// WO-643: Polished PDF Report Suite
+const AEReportPDF       = lazy(() => import('./pages/AEReportPDF'));       // WO-643-B: Adverse Event Report
+const SessionTimelinePDF = lazy(() => import('./pages/SessionTimelinePDF')); // WO-643-C: Session Timeline
+const SafetyPlanPDF     = lazy(() => import('./pages/SafetyPlanPDF'));     // WO-643-D: Safety Plan
+const TransportPlanPDF  = lazy(() => import('./pages/TransportPlanPDF'));  // WO-643-E: Transport Plan
+const ResearchReportPDF = lazy(() => import('./pages/ResearchReportPDF')); // WO-643-F: Research Export
+const InsuranceReportPDF = lazy(() => import('./pages/InsuranceReportPDF')); // WO-643-G: Insurance / Letter of Medical Necessity
+const ConsentPlanPDF    = lazy(() => import('./pages/ConsentPlanPDF'));    // WO-643-H: Informed Consent Record
 const ProfileEdit = lazy(() => import('./pages/ProfileEdit'));
 const WellnessJourney = lazy(() => import('./pages/WellnessJourney'));
 const PatientCompanionPage = lazy(() => import('./pages/PatientCompanionPage'));
@@ -109,6 +117,7 @@ import Footer from './components/Footer';
 import GuidedTour from './components/GuidedTour';
 import MobileBottomNav from './components/MobileBottomNav';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { ActiveSessionsProvider } from './contexts/ActiveSessionsContext';
 import { ToastProvider } from './contexts/ToastContext';
 import { ToastContainer } from './components/ui/Toast';
 import { ThemeProvider } from './contexts/ThemeContext';
@@ -260,7 +269,7 @@ const SignUpGuard: React.FC = () => {
   const isInvited = new URLSearchParams(location.search).get('invited') === 'true';
 
   if (user && isInvited) return <SignUp />;
-  if (user && !isInvited) return <Navigate to="/search" replace />;
+  if (user && !isInvited) return <Navigate to="/dashboard" replace />;
   return <SignUp />;
 };
 
@@ -380,7 +389,7 @@ const AppContent: React.FC = () => {
           <Suspense fallback={<PageLoader />}>
             <Routes>
               {/* Public Routes */}
-              <Route path="/" element={user ? <Navigate to="/search" replace /> : <Navigate to="/landing" replace />} />
+              <Route path="/" element={user ? <Navigate to="/dashboard" replace /> : <Navigate to="/landing" replace />} />
               <Route path="/landing" element={<Landing />} />
               <Route path="/about" element={<About />} />
               <Route path="/waitlist" element={<Waitlist />} />
@@ -398,7 +407,7 @@ const AppContent: React.FC = () => {
               <Route path="/meq30" element={<MEQ30Page />} />
               <Route path="/patient-form/:formId" element={<PatientFormPage />} />
               <Route path="/assessment" element={<AdaptiveAssessmentPage />} />
-              <Route path="/login" element={user ? <Navigate to="/search" replace /> : <Login />} />
+              <Route path="/login" element={user ? <Navigate to="/dashboard" replace /> : <Login />} />
               <Route path="/signup" element={<SignUpGuard />} />
               <Route path="/forgot-password" element={<ForgotPassword />} />
               <Route path="/reset-password" element={<ResetPassword />} />
@@ -418,6 +427,14 @@ const AppContent: React.FC = () => {
               <Route path="/data-policy-pdf" element={<DataPolicyPDF />} />
               {/* Audit & Compliance Export PDF — Zero-PHI, regulator-ready */}
               <Route path="/audit-report-pdf" element={<AuditReportPDF />} />
+              {/* WO-643: Polished PDF Report Suite — public routes, no auth required */}
+              <Route path="/ae-report-pdf"          element={<AEReportPDF />} />
+              <Route path="/session-timeline-pdf"   element={<SessionTimelinePDF />} />
+              <Route path="/safety-plan-pdf"         element={<SafetyPlanPDF />} />
+              <Route path="/transport-plan-pdf"      element={<TransportPlanPDF />} />
+              <Route path="/research-report-pdf"     element={<ResearchReportPDF />} />
+              <Route path="/insurance-report-pdf"    element={<InsuranceReportPDF />} />
+              <Route path="/consent-plan-pdf"        element={<ConsentPlanPDF />} />
 
               {/* Deep Dives (Public Marketing Pages) */}
               <Route path="/deep-dives/patient-flow" element={<PatientFlowPage />} />
@@ -450,7 +467,7 @@ const AppContent: React.FC = () => {
                     setShowTour={setShowTour}
                   />
                 }>
-                  <Route path="/search" element={<SimpleSearch onStartTour={() => setShowTour(true)} />} />
+                  <Route path="/search" element={<Navigate to="/dashboard" replace />} />
                   <Route path="/dashboard" element={<Dashboard />} />
                   <Route path="/analytics" element={<Analytics />} />
                   <Route path="/news" element={<News />} />
@@ -527,12 +544,14 @@ const AppContent: React.FC = () => {
 const App = () => {
   return (
     <AuthProvider>
-      <ToastProvider>
-        <ThemeProvider>
-          <AppContent />
-          <ToastContainer />
-        </ThemeProvider>
-      </ToastProvider>
+      <ActiveSessionsProvider>
+        <ToastProvider>
+          <ThemeProvider>
+            <AppContent />
+            <ToastContainer />
+          </ThemeProvider>
+        </ToastProvider>
+      </ActiveSessionsProvider>
     </AuthProvider>
   );
 };

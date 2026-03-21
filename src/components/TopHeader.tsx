@@ -1,6 +1,4 @@
-
-
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import InstantConnectModal from './modals/InstantConnectModal';
 import FeedbackCard from './FeedbackCard';
@@ -9,9 +7,8 @@ import { CLINICIANS } from '../constants';
 import { supabase } from '../supabaseClient';
 import { useToast } from '../contexts/ToastContext';
 import { useAuth } from '../contexts/AuthContext';
-import { ThemeToggle } from './ui/ThemeToggle';
-import { CockpitModeTour, useCockpitModeTour } from './help/CockpitModeTour';
-import { useTheme } from '../contexts/ThemeContext';
+import { useActiveSessionsContext } from '../contexts/ActiveSessionsContext';
+
 
 
 interface TopHeaderProps {
@@ -73,129 +70,26 @@ const TopHeader: React.FC<TopHeaderProps> = ({ onMenuClick, onLogout, onStartTou
   const navigate = useNavigate();
   const location = useLocation();
   const { addToast } = useToast();
-  const { signOut, userRole } = useAuth();
-  const { theme } = useTheme();
+  const { signOut, userRole, user: authUser, userProfile } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
-  const [userProfile, setUserProfile] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
   const [isInstantConnectOpen, setIsInstantConnectOpen] = useState(false);
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
   const feedbackTriggerRef = useRef<HTMLButtonElement>(null);
-  const { showTour, triggerIfNew, closeTour } = useCockpitModeTour();
-  const prevThemeRef = useRef(theme);
+  const loading = !authUser; // derive from auth state — no local fetch needed
 
-  // Fire tour the first time user switches to cockpit mode
-  useEffect(() => {
-    if (prevThemeRef.current !== 'cockpit' && theme === 'cockpit') {
-      triggerIfNew();
-    }
-    prevThemeRef.current = theme;
-  }, [theme, triggerIfNew]);
 
-  // WO-524: Active session timer chips
-  // Migration 079: patient_link_code dropped — use patient_link_code_hash or id for display
-  interface ActiveChip { sessionId: string; subjectId: string; startedAt: string; }
-  const [activeChips, setActiveChips] = useState<ActiveChip[]>([]);
-  const fetchActiveChipsInFlight = useRef(false);
-
-  const fetchActiveChips = useCallback(async () => {
-    if (!isAuthenticated) return;
-    if (fetchActiveChipsInFlight.current) return;
-    fetchActiveChipsInFlight.current = true;
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-      const { data: mySite } = await supabase
-        .from('log_user_sites').select('site_id')
-        .eq('user_id', user.id).eq('is_active', true).single();
-      if (!mySite) return;
-      const { data: sessions, error } = await supabase
-        .from('log_clinical_records')
-        .select('id, patient_link_code_hash, session_started_at')
-        .eq('site_id', mySite.site_id)
-        .eq('session_date', new Date().toISOString().split('T')[0])
-        .not('session_started_at', 'is', null)
-        .is('session_ended_at', null);
-      if (error) {
-        console.warn('[TopHeader] fetchActiveChips:', error.message);
-        return;
-      }
-      setActiveChips((sessions ?? []).map((s: any) => ({
-        sessionId: s.id,
-        subjectId: String(s.patient_link_code_hash ?? s.id).slice(0, 6).toUpperCase(),
-        startedAt: s.session_started_at,
-      })));
-    } catch (err) { console.warn('[TopHeader] fetchActiveChips:', err); }
-    finally {
-      fetchActiveChipsInFlight.current = false;
-    }
-  }, [isAuthenticated]);
-
-  useEffect(() => {
-    if (!isAuthenticated) return;
-    fetchActiveChips();
-    const interval = setInterval(fetchActiveChips, 60000);
-    return () => clearInterval(interval);
-  }, [isAuthenticated, fetchActiveChips]);
+  // WO-524: Active session timer chips — consumed from singleton context (no independent poll)
+  const { sessions: activeSessions } = useActiveSessionsContext();
+  const activeChips = activeSessions.map(s => ({
+    sessionId: s.id,
+    subjectId: String(s.patientLinkCodeHash).slice(0, 6).toUpperCase(),
+    startedAt: s.startedAt,
+  }));
 
   const isLanding = location.pathname === '/';
 
-  // Fetch user profile data
-  useEffect(() => {
-    const fetchUserProfile = async () => {
-      try {
-        const { data: { user }, error: authError } = await supabase.auth.getUser();
-
-        // If there's an auth error or no user, just set loading to false and return
-        if (authError || !user) {
-          console.log('No authenticated user found');
-          setLoading(false);
-          return;
-        }
-
-        // Try to fetch profile, but don't crash if it fails
-        try {
-          const { data: profile, error: profileError } = await supabase
-            .from('log_user_profiles')
-            .select('*')
-            .eq('user_id', user.id)
-            .single();
-
-          if (!profileError && profile) {
-            setUserProfile({
-              ...profile,
-              email: user.email,
-              id: user.id
-            });
-          } else {
-            // Set minimal profile if fetch fails
-            setUserProfile({
-              email: user.email,
-              id: user.id
-            });
-          }
-        } catch (profileError) {
-          console.log('Profile fetch failed, using minimal user data:', profileError);
-          setUserProfile({
-            email: user.email,
-            id: user.id
-          });
-        }
-      } catch (error) {
-        console.log('Auth check failed (expected on public pages):', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (isAuthenticated) {
-      fetchUserProfile();
-    } else {
-      setLoading(false);
-    }
-  }, [isAuthenticated]);
-
+  // Profile is now provided by AuthContext — fetched once on login, no DB call here.
 
 
   // Handle click outside  // Close menu when clicking outside
@@ -315,7 +209,7 @@ const TopHeader: React.FC<TopHeaderProps> = ({ onMenuClick, onLogout, onStartTou
                   {activeChips.slice(0, 3).map(chip => (
                     <button
                       key={chip.sessionId}
-                      onClick={() => navigate(`/wellness-journey?session=${chip.sessionId}`)}
+                      onClick={() => navigate(`/wellness-journey?sessionId=${chip.sessionId}&phase=2`)}
                       className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/30 hover:border-emerald-400/60 hover:bg-emerald-500/20 rounded-xl transition-all text-xs font-bold text-emerald-300 active:scale-95"
                       aria-label={`Active session ${chip.subjectId} — navigate to session`}
                     >
@@ -338,10 +232,7 @@ const TopHeader: React.FC<TopHeaderProps> = ({ onMenuClick, onLogout, onStartTou
 
               <div className="flex items-center gap-3">
 
-                {/* Cockpit Mode Toggle — desktop only */}
-                <div className="hidden lg:block">
-                  <ThemeToggle />
-                </div>
+
 
                 {/* Feedback — Hidden on mobile, visible via dropdown */}
                 <div className="hidden lg:block relative group/tooltip flex flex-col items-center gap-1">
@@ -399,9 +290,9 @@ const TopHeader: React.FC<TopHeaderProps> = ({ onMenuClick, onLogout, onStartTou
                     <div className="size-10 rounded-full bg-gradient-to-br from-primary to-blue-600 border-2 border-primary/40 group-hover:border-primary transition-all shadow-[0_0_15px_rgba(43,116,243,0.2)] flex items-center justify-center">
                       <span className="text-slate-300 font-bold text-sm">
                         {loading ? '…' : (
-                          userProfile?.display_name?.[0] ||
-                          userProfile?.user_first_name?.[0] ||
-                          userProfile?.email?.[0] ||
+                          (userProfile?.display_name as string | null | undefined)?.[0] ||
+                          (userProfile?.first_name as string | null | undefined)?.[0] ||
+                          authUser?.email?.[0]?.toUpperCase() ||
                           'U'
                         )}
                       </span>
@@ -411,9 +302,10 @@ const TopHeader: React.FC<TopHeaderProps> = ({ onMenuClick, onLogout, onStartTou
                   <div className="hidden lg:flex flex-col">
                     <p className="text-[12px] font-black text-slate-300 leading-none mb-1 group-hover:text-primary transition-colors">
                       {loading ? 'Loading...' : (
-                        userProfile?.display_name ||
-                        userProfile?.user_first_name ||
-                        userProfile?.email?.split('@')[0] ||
+                        (userProfile?.display_name as string | null | undefined) ||
+                        (userProfile?.first_name as string | null | undefined) ||
+                        (userProfile?.email as string | null | undefined)?.split('@')[0] ||
+                        authUser?.email?.split('@')[0] ||
                         'User'
                       )}
                     </p>
@@ -429,7 +321,7 @@ const TopHeader: React.FC<TopHeaderProps> = ({ onMenuClick, onLogout, onStartTou
                   <div className="absolute right-0 mt-3 w-56 bg-[#0c0f16] border border-white/10 rounded-2xl shadow-2xl py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-200 backdrop-blur-3xl">
                     <div className="px-4 py-3 border-b border-white/5 mb-2">
                       <p className="text-[12px] font-black text-slate-300 tracking-widest leading-none mb-1">Signed In As</p>
-                      <p className="text-sm font-bold text-slate-300 truncate">{userProfile?.email || 'user@ppnportal.net'}</p>
+                      <p className="text-sm font-bold text-slate-300 truncate">{(userProfile?.email as string | null | undefined) || authUser?.email || 'user@ppnportal.net'}</p>
                     </div>
 
                     <button
@@ -500,8 +392,7 @@ const TopHeader: React.FC<TopHeaderProps> = ({ onMenuClick, onLogout, onStartTou
         onClose={() => setIsInstantConnectOpen(false)}
       />
 
-      {/* Cockpit Mode guided tour — fires once on first activation */}
-      {showTour && <CockpitModeTour onClose={closeTour} />}
+
     </header>
   );
 };

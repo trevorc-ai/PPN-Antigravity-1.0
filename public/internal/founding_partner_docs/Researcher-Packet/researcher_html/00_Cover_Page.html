@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PPN RWE Registry — The Infrastructure Gap in Psychedelic Research</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --accent: #7c6ff7;
+    --accent-light: #ede9ff;
+    --ink-heading: #0f1117;
+    --ink-body: #2d3450;
+    --ink-muted: #8b91a8;
+    --border-light: #e4e6f0;
+    --bg: #ffffff;
+    --bg-subtle: #f8f9fc;
+  }
+
+  /* ── Print configuration ── */
+  @media screen { body { padding: 0.75in; max-width: 8.5in; margin: 0 auto; } }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    font-size: 9pt;
+    line-height: 1.65;
+    color: var(--ink-body);
+    background: var(--bg);
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* ── Print rules ── */
+  @media print {
+    body { font-size: 11pt; line-height: 1.5; padding: 0; }
+    h1, h2, h3 { break-after: avoid; page-break-after: avoid; }
+    p { orphans: 3; widows: 3; }
+    .meta-block, .three-props, .prop { break-inside: avoid; page-break-inside: avoid; }
+  }
+
+  /* Header */
+  .header {
+    border-top: 4pt solid var(--accent);
+    padding-top: 12pt; padding-bottom: 14pt;
+    border-bottom: 1px solid var(--border-light);
+    margin-bottom: 0;
+    display: flex; justify-content: space-between; align-items: flex-start;
+    break-inside: avoid;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+  .brand { display: flex; align-items: center; gap: 7pt; }
+  .brand-dot {
+    width: 8pt; height: 8pt; border-radius: 50%; background: var(--accent); flex-shrink: 0;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+  .brand-name { font-size: 8pt; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); }
+  .brand-division { font-size: 7pt; color: var(--ink-muted); letter-spacing: 0.06em; text-transform: uppercase; margin-top: 2pt; }
+  .doc-id { font-size: 7pt; color: var(--ink-muted); letter-spacing: 0.06em; text-align: right; line-height: 1.7; }
+
+  /* Cover hero section */
+  .cover-hero {
+    padding: 44pt 0 36pt;
+    break-inside: avoid;
+  }
+
+  .eyebrow {
+    font-size: 7.5pt; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 14pt;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+
+  h1 {
+    font-size: 32pt; font-weight: 800; color: var(--ink-heading);
+    line-height: 1.05; letter-spacing: -0.03em; margin-bottom: 16pt;
+    break-after: avoid; page-break-after: avoid;
+  }
+
+  .sub-title {
+    font-size: 11pt; font-weight: 300; color: var(--ink-body);
+    line-height: 1.6; max-width: 5.6in;
+    border-left: 3pt solid var(--accent-light);
+    padding-left: 14pt; margin-bottom: 0;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+
+  /* Three-prop row */
+  .three-props {
+    display: grid; grid-template-columns: 1fr 1fr 1fr;
+    gap: 0; margin-top: 28pt;
+    border-top: 1px solid var(--border-light);
+    border-bottom: 1px solid var(--border-light);
+    break-inside: avoid; page-break-inside: avoid;
+  }
+  .prop {
+    padding: 14pt 16pt;
+    border-right: 1px solid var(--border-light);
+    break-inside: avoid; page-break-inside: avoid;
+  }
+  .prop:last-child { border-right: none; }
+  .prop:first-child { padding-left: 0; }
+  .prop-label {
+    font-size: 6.5pt; font-weight: 700; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--ink-muted); margin-bottom: 5pt;
+  }
+  .prop-value { font-size: 8.5pt; color: var(--ink-body); line-height: 1.6; }
+  .prop-value strong { color: var(--ink-heading); }
+
+  /* Meta block */
+  .meta-rule {
+    border: none; border-top: 1px solid var(--border-light);
+    margin-top: 28pt; margin-bottom: 0;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+  .meta-block {
+    display: grid; grid-template-columns: 1fr 1fr 1fr;
+    gap: 0; padding: 14pt 0 0;
+    break-inside: avoid; page-break-inside: avoid;
+  }
+  .meta-item {
+    padding-right: 20pt; border-right: 1px solid var(--border-light);
+    padding-left: 16pt;
+  }
+  .meta-item:first-child { padding-left: 0; }
+  .meta-label {
+    font-size: 6.5pt; font-weight: 600; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--ink-muted); margin-bottom: 5pt;
+  }
+  .meta-value { font-size: 8.5pt; color: var(--ink-body); }
+  .meta-blank {
+    border-bottom: 1px solid var(--border-light);
+    padding-bottom: 2pt; font-size: 8.5pt; color: transparent;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+
+  /* Footer */
+  .footer {
+    display: flex; justify-content: space-between;
+    margin-top: 28pt; padding-top: 8pt;
+    border-top: 1px solid var(--border-light);
+    font-size: 7pt; color: var(--ink-muted);
+    break-before: avoid;
+  }
+  .footer-dot { color: var(--accent); margin: 0 3pt; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="brand">
+      <div class="brand-dot"></div>
+      <span class="brand-name">PPN Portal</span>
+    </div>
+    <div class="brand-division">Real-World Evidence Registry &nbsp;&middot;&nbsp; Institutional Research Division</div>
+  </div>
+  <div class="doc-id">Document ID: PPN-RWE-2026-V1<br>Classification: Confidential &amp; Proprietary</div>
+</div>
+
+<div class="cover-hero">
+  <div class="eyebrow">Psychedelic-Assisted Therapy Infrastructure &nbsp;&middot;&nbsp; Institutional Research Briefing</div>
+
+  <h1>The Infrastructure Gap<br>in Psychedelic Research</h1>
+
+  <p class="sub-title">
+    A Real-World Evidence Registry purpose-built for longitudinal PAT studies &mdash;
+    Zero PHI, full interoperability, and immediate IRB alignment
+    for multi-site psychedelic clinical research.
+  </p>
+
+  <div class="three-props">
+    <div class="prop">
+      <div class="prop-label">The Problem</div>
+      <div class="prop-value">Fragmented EMR silos and PHI regulations make cross-site psychedelic outcome data legally inaccessible for meta-analysis.</div>
+    </div>
+    <div class="prop">
+      <div class="prop-label">The Architecture</div>
+      <div class="prop-value"><strong>Zero-PHI by design.</strong> Cryptographic Subject IDs eliminate breach liability and subpoena risk at the host institution level.</div>
+    </div>
+    <div class="prop">
+      <div class="prop-label">The Outcome</div>
+      <div class="prop-value">Longitudinal PAT telemetry immediately compatible with SPSS, R, and Python. No data wrangling. No IRB exposure from identifiable records.</div>
+    </div>
+  </div>
+</div>
+
+<hr class="meta-rule">
+<div class="meta-block">
+  <div class="meta-item">
+    <div class="meta-label">Prepared For</div>
+    <div class="meta-blank">_</div>
+  </div>
+  <div class="meta-item">
+    <div class="meta-label">Document ID</div>
+    <div class="meta-value">PPN-RWE-2026-V1</div>
+  </div>
+  <div class="meta-item">
+    <div class="meta-label">Date</div>
+    <div class="meta-blank">_</div>
+  </div>
+</div>
+
+<div class="footer">
+  <span>PPN Portal<span class="footer-dot">&middot;</span>ppnportal.net<span class="footer-dot">&middot;</span>Institutional Research Division</span>
+  <span>&copy; 2026 PPN. All Rights Reserved. Unauthorized distribution prohibited.</span>
+</div>
+
+</body>
+</html>

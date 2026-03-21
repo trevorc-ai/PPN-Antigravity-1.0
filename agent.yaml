@@ -104,3 +104,4 @@ settings:
 context_files:
   - "docs/GLOBAL_CONSTITUTION.md"
   - "docs/SURGICAL_PLAN_TEMPLATE.md"
+  - ".agent/skills/ppn-ui-standards/SKILL.md" 

@@ -52,7 +52,7 @@ const PHASES: {
         {
             id: 2,
             short: 'Dosing',
-            full: 'Dosing Session',
+            full: 'Dosing',
             icon: 'medication',
             color: {
                 active: 'text-amber-200',

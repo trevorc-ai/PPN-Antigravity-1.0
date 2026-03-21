@@ -12,11 +12,11 @@
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '../../supabaseClient';
 import { useAuth } from '../../contexts/AuthContext';
 import {
-    Bug, Sparkles, MessageSquare, ChevronDown, ChevronRight,
+    Bug, Sparkles, MessageSquare, ChevronRight,
     RefreshCw, ExternalLink, Lock, Crown, Users,
     LayoutDashboard, Map, Activity, AlertCircle, CheckCircle, Clock,
 } from 'lucide-react';
@@ -42,7 +42,8 @@ interface UserRow {
     user_id: string;
     display_name: string | null;
     email: string | null;
-    role: UserRole;
+    role_id: number;
+    role_code: string; // sourced from ref_user_roles.role_code via FK
     created_at: string;
 }
 
@@ -209,23 +210,47 @@ const UserManagement: React.FC = () => {
 
     useEffect(() => {
         (async () => {
+            // Join ref_user_roles to get role_code — live schema uses role_id FK, not text role
             const { data } = await supabase
                 .from('log_user_profiles')
-                .select('user_id, display_name, email, role, created_at')
+                .select('user_id, display_name, email, role_id, created_at, ref_user_roles!inner(role_code)')
                 .order('created_at', { ascending: false });
-            setUsers((data ?? []) as UserRow[]);
+            const rows: UserRow[] = (data ?? []).map((r: any) => ({
+                user_id: r.user_id,
+                display_name: r.display_name,
+                email: r.email,
+                role_id: r.role_id,
+                role_code: r.ref_user_roles?.role_code ?? 'practitioner',
+                created_at: r.created_at,
+            }));
+            setUsers(rows);
             setLoading(false);
         })();
     }, []);
 
-    const handleRoleChange = async (userId: string, newRole: UserRole) => {
+    const handleRoleChange = async (userId: string, newRoleCode: string) => {
         setRoleError(null);
         if (userId === currentUser?.id) {
             setRoleError('You cannot change your own admin role.');
             return;
         }
-        await supabase.from('log_user_profiles').update({ role: newRole }).eq('user_id', userId);
-        setUsers(prev => prev.map(u => u.user_id === userId ? { ...u, role: newRole } : u));
+        // Look up the role_id for the chosen role_code
+        const { data: roleRow } = await supabase
+            .from('ref_user_roles')
+            .select('id')
+            .eq('role_code', newRoleCode)
+            .single();
+        if (!roleRow) {
+            setRoleError(`Unknown role: ${newRoleCode}`);
+            return;
+        }
+        await supabase
+            .from('log_user_profiles')
+            .update({ role_id: roleRow.id })
+            .eq('user_id', userId);
+        setUsers(prev => prev.map(u =>
+            u.user_id === userId ? { ...u, role_id: roleRow.id, role_code: newRoleCode } : u
+        ));
     };
 
     const filtered = users.filter(u => {
@@ -272,8 +297,8 @@ const UserManagement: React.FC = () => {
                                     </td>
                                     <td className="px-4 py-3">
                                         <select
-                                            value={u.role}
-                                            onChange={e => handleRoleChange(u.user_id, e.target.value as UserRole)}
+                                            value={u.role_code}
+                                            onChange={e => handleRoleChange(u.user_id, e.target.value)}
                                             className="px-3 py-1.5 rounded-xl bg-slate-800 border border-slate-700 text-slate-300 text-sm focus:outline-none focus:border-indigo-500/60 transition-all min-h-[44px] cursor-pointer"
                                         >
                                             <option value="practitioner">Practitioner</option>
@@ -389,7 +414,12 @@ const SITE_MAP = [
 ];
 
 const SiteNavigator: React.FC = () => {
-    const navigate = useNavigate();
+    const openInNewTab = (path: string) => {
+        // Construct the full URL using the app's hash-based routing
+        const base = window.location.origin + window.location.pathname;
+        window.open(`${base}#${path}`, '_blank', 'noopener,noreferrer');
+    };
+
     return (
         <div className="space-y-3">
             {SITE_MAP.map(({ group, icon, auth, admin, routes }) => (
@@ -409,10 +439,11 @@ const SiteNavigator: React.FC = () => {
                                     <span className="ppn-meta text-slate-600 text-xs">(requires ID)</span>
                                 ) : (
                                     <button
-                                        onClick={() => navigate(path)}
+                                        onClick={() => openInNewTab(path)}
+                                        aria-label={`Open ${path} in new tab`}
                                         className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold text-indigo-400 hover:text-indigo-300 hover:bg-indigo-500/10 border border-transparent hover:border-indigo-500/20 transition-all min-h-[44px]"
                                     >
-                                        Go <ExternalLink className="w-3 h-3" />
+                                        Open <ExternalLink className="w-3 h-3" />
                                     </button>
                                 )}
                             </div>
@@ -499,8 +530,20 @@ const TABS: { id: TabId; label: string; Icon: React.FC<{ className?: string }> }
     { id: 'platform',  label: 'Platform',       Icon: ({ className }) => <Activity className={className} /> },
 ];
 
+const VALID_TABS: TabId[] = ['feedback', 'users', 'sitemap', 'platform'];
+
 const AdminDashboard: React.FC = () => {
-    const [activeTab, setActiveTab] = useState<TabId>('feedback');
+    const location = useLocation();
+    const navigate = useNavigate();
+
+    // Derive active tab from URL search param (?tab=) for deep-link & back-button support
+    const tabFromUrl = new URLSearchParams(location.search).get('tab') as TabId | null;
+    const activeTab: TabId = (tabFromUrl && VALID_TABS.includes(tabFromUrl)) ? tabFromUrl : 'feedback';
+
+    const setActiveTab = (id: TabId) => {
+        // Update URL without pushing a new history entry so native Back still works correctly
+        navigate({ search: `?tab=${id}` }, { replace: true });
+    };
 
     return (
         <div className="p-4 sm:p-6 lg:p-8 max-w-6xl mx-auto space-y-6">
@@ -511,10 +554,14 @@ const AdminDashboard: React.FC = () => {
             </div>
 
             {/* Tab bar — horizontally scrollable on mobile */}
-            <div className="flex overflow-x-auto gap-1 border-b border-white/10 pb-0 -mb-px no-scrollbar">
+            <div className="flex overflow-x-auto gap-1 border-b border-white/10 pb-0 -mb-px no-scrollbar" role="tablist" aria-label="Admin console tabs">
                 {TABS.map(({ id, label, Icon }) => (
                     <button
                         key={id}
+                        role="tab"
+                        aria-selected={activeTab === id}
+                        aria-controls={`tabpanel-${id}`}
+                        id={`tab-${id}`}
                         onClick={() => setActiveTab(id)}
                         className={`
                             flex items-center gap-2 px-4 py-3 whitespace-nowrap text-sm font-black border-b-2 transition-all min-h-[44px]
@@ -524,14 +571,14 @@ const AdminDashboard: React.FC = () => {
                             }
                         `}
                     >
-                        <Icon className="w-4 h-4" />
+                        <Icon className="w-4 h-4" aria-hidden="true" />
                         {label}
                     </button>
                 ))}
             </div>
 
             {/* Tab panels */}
-            <div>
+            <div role="tabpanel" id={`tabpanel-${activeTab}`} aria-labelledby={`tab-${activeTab}`}>
                 {activeTab === 'feedback'  && <FeedbackInbox />}
                 {activeTab === 'users'     && <UserManagement />}
                 {activeTab === 'sitemap'   && <SiteNavigator />}

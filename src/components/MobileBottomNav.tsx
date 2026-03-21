@@ -49,16 +49,18 @@ export const MobileBottomNav: React.FC = () => {
     return (
         <nav
             aria-label="Primary mobile navigation"
-            className="fixed bottom-0 left-0 right-0 z-50 lg:hidden"
+            className="fixed bottom-0 left-0 right-0 z-40 lg:hidden"
         >
-            {/* Glass bar */}
-            <div className="relative bg-[#0a1628]/92 backdrop-blur-xl border-t border-slate-800/80 flex items-end justify-around pb-[env(safe-area-inset-bottom,0px)]">
+            {/* Icon + label row — always exactly 60px, never clipped */}
+            <div className="relative bg-[#0a1628]/92 backdrop-blur-xl border-t border-slate-800/80 h-[68px] flex items-center justify-around pb-2">
 
             {/* All 5 nav items rendered uniformly */}
                 {NAV_ITEMS.map((item) => (
                     <NavItem key={item.path} item={item} />
                 ))}
             </div>
+            {/* Safe-area spacer — fills the home-indicator zone on notched devices */}
+            <div className="bg-[#0a1628]/92" style={{ height: 'env(safe-area-inset-bottom, 0px)' }} />
         </nav>
     );
 };
@@ -92,7 +94,7 @@ const NavItem: React.FC<{ item: NavItem }> = ({ item }) => (
                 </motion.span>
 
                 <span
-                    className={`text-[10px] font-bold tracking-wide transition-colors truncate max-w-full text-center ${isActive ? ACTIVE_LABEL : IDLE_LABEL
+                    className={`text-[10px] tracking-wide transition-colors truncate max-w-full text-center ${isActive ? ACTIVE_LABEL : IDLE_LABEL
                         }`}
                 >
                     {item.label}

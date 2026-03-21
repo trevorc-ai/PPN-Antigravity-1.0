@@ -42,6 +42,10 @@ interface SessionVitalsTrendChartProps {
      * can pass the same visible state to LiveSessionTimeline.
      */
     onVisibilityChange?: (visible: Record<string, boolean>) => void;
+    /** When true, hides the inner chart header (icon, title, subtitle, series toggles) */
+    hideHeader?: boolean;
+    /** When true, hides the static series legend at the bottom */
+    hideLegend?: boolean;
 }
 
 // ── Thresholds ────────────────────────────────────────────────────────────────
@@ -297,6 +301,8 @@ export const SessionVitalsTrendChart: FC<SessionVitalsTrendChartProps> = ({
     events = [],
     sessionDurationSec = 0,
     onVisibilityChange,
+    hideHeader = false,
+    hideLegend = false,
 }) => {
     const [visible, setVisible] = useState<Record<SeriesKey, boolean>>({
         hr: true, bp: true, temp: true, events: true,
@@ -344,10 +350,10 @@ export const SessionVitalsTrendChart: FC<SessionVitalsTrendChartProps> = ({
     const hasData = chartData.length > 0;
 
     return (
-        <div className="w-full bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6 shadow-xl flex flex-col gap-4">
+        <div className={hideHeader ? 'w-full flex flex-col' : 'w-full bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6 shadow-xl flex flex-col gap-4'}>
 
-            {/* ── Header ─────────────────────────────────────────────────── */}
-            <div className="flex items-center justify-between gap-3 flex-wrap">
+            {/* ── Title row: hidden when cockpit panel provides the label ── */}
+            {!hideHeader && (
                 <div className="flex items-center gap-3">
                     <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-indigo-500/20 flex items-center justify-center">
                         <HeartPulse className="w-5 h-5 text-indigo-400" />
@@ -359,38 +365,38 @@ export const SessionVitalsTrendChart: FC<SessionVitalsTrendChartProps> = ({
                         </p>
                     </div>
                 </div>
+            )}
 
-                {/* ── Series toggles ─────────────────────────────────────── */}
-                <div className="flex flex-wrap gap-2">
-                    {SERIES.map(s => (
-                        <button
-                            key={s.key}
-                            onClick={() => toggle(s.key)}
-                            aria-pressed={visible[s.key]}
-                            aria-label={`${visible[s.key] ? 'Hide' : 'Show'} ${s.label}`}
-                            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-xs font-bold uppercase tracking-wide transition-all ${visible[s.key]
-                                ? 'border-opacity-60 shadow-sm'
-                                : 'bg-slate-800/60 border-slate-700/40 text-slate-500'
-                                }`}
-                            style={visible[s.key] ? {
-                                backgroundColor: `${s.color}25`,
-                                borderColor: `${s.color}80`,
-                                color: s.color,
-                            } : {}}
-                        >
-                            <span
-                                className="w-2 h-2 rounded-full flex-shrink-0"
-                                style={{ backgroundColor: visible[s.key] ? s.color : '#475569' }}
-                            />
-                            {s.label}
-                        </button>
-                    ))}
-                </div>
+            {/* ── Series toggles — always visible ── */}
+            <div className="flex flex-wrap gap-2 px-1">
+                {SERIES.map(s => (
+                    <button
+                        key={s.key}
+                        onClick={() => toggle(s.key)}
+                        aria-pressed={visible[s.key]}
+                        aria-label={`${visible[s.key] ? 'Hide' : 'Show'} ${s.label}`}
+                        className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-xs font-bold uppercase tracking-wide transition-all ${visible[s.key]
+                            ? 'border-opacity-60 shadow-sm'
+                            : 'bg-slate-800/60 border-slate-700/40 text-slate-500'
+                            }`}
+                        style={visible[s.key] ? {
+                            backgroundColor: `${s.color}25`,
+                            borderColor: `${s.color}80`,
+                            color: s.color,
+                        } : {}}
+                    >
+                        <span
+                            className="w-2 h-2 rounded-full flex-shrink-0"
+                            style={{ backgroundColor: visible[s.key] ? s.color : '#475569' }}
+                        />
+                        {s.label}
+                    </button>
+                ))}
             </div>
 
             {/* ── Chart ──────────────────────────────────────────────────── */}
             {/* position:relative anchors the absolute event tooltip overlay   */}
-            <div className="h-[300px] w-full relative">
+            <div className="h-[220px] w-full relative">
                 {(hasData || events.length > 0) ? (
                     <ResponsiveContainer width="100%" height="100%">
                         <ComposedChart margin={{ top: 10, right: 20, bottom: 24, left: -10 }}>
@@ -571,7 +577,8 @@ export const SessionVitalsTrendChart: FC<SessionVitalsTrendChartProps> = ({
                 })()}
             </div>
 
-            {/* ── Legend ──────────────────────────────────────────────────── */}
+            {/* ── Legend: hidden when cockpit panel provides visibility toggles ── */}
+            {!hideLegend && (
             <div className="flex flex-wrap gap-4 justify-center">
                 {SERIES.map(s => (
                     <div key={s.key} className={`flex items-center gap-1.5 transition-opacity ${visible[s.key] ? 'opacity-100' : 'opacity-25'}`}>
@@ -592,6 +599,7 @@ export const SessionVitalsTrendChart: FC<SessionVitalsTrendChartProps> = ({
                     </div>
                 ))}
             </div>
+            )}
         </div>
     );
 };

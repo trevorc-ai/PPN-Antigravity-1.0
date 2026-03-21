@@ -1,6 +1,10 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext } from 'react';
 
-type Theme = 'clinical' | 'cockpit';
+// Cockpit mode theme removed. ThemeContext is kept as a no-op stub
+// so any remaining useTheme() call sites do not break at runtime.
+// The only active theme is 'clinical'.
+
+type Theme = 'clinical';
 
 interface ThemeContextType {
     theme: Theme;
@@ -11,29 +15,16 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const [theme, setThemeState] = useState<Theme>('clinical');
+    // Clear any stale 'cockpit' value left in localStorage from previous sessions
+    if (typeof window !== 'undefined') {
+        localStorage.removeItem('ppn-theme');
+        document.documentElement.removeAttribute('data-theme');
+    }
 
-    useEffect(() => {
-        const savedTheme = localStorage.getItem('ppn-theme') as Theme;
-        if (savedTheme === 'clinical' || savedTheme === 'cockpit') {
-            setThemeState(savedTheme);
-            document.documentElement.setAttribute('data-theme', savedTheme);
-        }
-    }, []);
-
-    const setTheme = (newTheme: Theme) => {
-        setThemeState(newTheme);
-        localStorage.setItem('ppn-theme', newTheme);
-        document.documentElement.setAttribute('data-theme', newTheme);
-    };
-
-    const toggleTheme = () => {
-        const newTheme = theme === 'clinical' ? 'cockpit' : 'clinical';
-        setTheme(newTheme);
-    };
+    const noop = () => {};
 
     return (
-        <ThemeContext.Provider value={{ theme, setTheme, toggleTheme }}>
+        <ThemeContext.Provider value={{ theme: 'clinical', setTheme: noop, toggleTheme: noop }}>
             {children}
         </ThemeContext.Provider>
     );

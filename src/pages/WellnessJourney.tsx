@@ -19,7 +19,7 @@ import { RiskIndicators } from '../components/risk';
 import { useRiskDetection } from '../hooks/useRiskDetection';
 import { SafetyTimeline, type SafetyEvent } from '../components/safety';
 
-import { Phase1Tour, Phase2Tour, Phase3Tour, CompassTourButton } from '../components/arc-of-care/PhaseTours';
+import { Phase1Tour, Phase2Tour, Phase3Tour } from '../components/arc-of-care/PhaseTours';
 import { ExportReportButton } from '../components/export/ExportReportButton';
 import { downloadReport, type PatientReportData } from '../services/reportGenerator';
 import { PatientSelectModal } from '../components/wellness-journey/PatientSelectModal';
@@ -169,16 +169,27 @@ const WellnessJourneyInternal: React.FC = () => {
     const { config } = useProtocol();
 
     // Tour state
-    const [showTour1, setShowTour1] = useState(false);
-    const [showTour2, setShowTour2] = useState(false);
-    const [showTour3, setShowTour3] = useState(false);
+
 
     // Onboarding state
 
 
     // Patient selection gate — skipped automatically if a valid in-progress session exists
     const _initialStoredSession = readStoredSession();
-    const [showPatientModal, setShowPatientModal] = useState(true); // WO-577: always show modal; stored session surfaces as Resume card inside
+    // Fix B Bug 1: Suppress modal synchronously on deep-link. Without this, the
+    // Patient Selection modal renders for ~200–400ms while the async DB fetch runs,
+    // and any accidental click breaks the deep-link flow.
+    const [showPatientModal, setShowPatientModal] = useState<boolean>(() => {
+        try {
+            // Hash router: URL is /#/wellness-journey?sessionId=...
+            const search = window.location.hash.includes('?')
+                ? window.location.hash.split('?')[1]
+                : window.location.search;
+            const sid = new URLSearchParams(search).get('sessionId');
+            const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+            return !(sid && UUID_RE.test(sid)); // false = hidden if valid deep-link present
+        } catch { return true; }
+    });
     // Stored session used to show the Resume card in PatientSelectModal
     const [storedActiveSession, setStoredActiveSession] = useState(_initialStoredSession);
     // Controls which view the modal opens to: 'choose' (Phase 1) or 'existing' (Phase 2/3)
@@ -204,8 +215,8 @@ const WellnessJourneyInternal: React.FC = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []); // run once on mount only
 
-    // Deep link: allow opening a specific session directly from elsewhere (e.g., Protocol Detail).
-    // Example: /wellness-journey?sessionId=<uuid>
+    // Deep link: allow opening a specific session directly from elsewhere (e.g., Protocol Detail, timer chips).
+    // Example: /wellness-journey?sessionId=<uuid>&phase=2
     useEffect(() => {
         const params = new URLSearchParams(location.search);
         const sessionIdFromUrl = params.get('sessionId');
@@ -214,12 +225,17 @@ const WellnessJourneyInternal: React.FC = () => {
             return;
         }
 
+        // Optional explicit phase override from URL (e.g. &phase=2 from timer chip one-click flow)
+        const phaseFromUrl = params.get('phase');
+        const explicitPhase: 1 | 2 | 3 | null =
+            phaseFromUrl === '2' ? 2 : phaseFromUrl === '3' ? 3 : phaseFromUrl === '1' ? 1 : null;
+
         let cancelled = false;
         (async () => {
             try {
                 const { data: sessionRow, error: sErr } = await supabase
                     .from('log_clinical_records')
-                    .select('id, patient_uuid, session_type_id, session_ended_at, is_submitted')
+                    .select('id, patient_uuid, session_type_id, session_ended_at, is_submitted, created_at, dose_administered_at')
                     .eq('id', sessionIdFromUrl)
                     .maybeSingle();
                 if (sErr || !sessionRow?.id || cancelled) return;
@@ -237,15 +253,51 @@ const WellnessJourneyInternal: React.FC = () => {
                     if (linkRow?.patient_link_code) patientId = linkRow.patient_link_code;
                 }
 
-                // Derive phase for deep-linked sessions:
-                // - Completed / ended sessions open in Integration (Phase 3) for review.
-                // - Active dosing sessions (type 2) open in Phase 2.
-                // - Everything else falls back to Phase 1.
+                // Derive phase:
+                // - Explicit ?phase= param wins (used by timer chip one-click flow).
+                // - Otherwise: ended sessions → Phase 3, active dosing → Phase 2, else Phase 1.
                 const sessionTypeId = sessionRow.session_type_id ?? 1;
                 const hasEnded = !!sessionRow.session_ended_at || !!sessionRow.is_submitted;
-                const derivedPhase: 1 | 2 | 3 = hasEnded
+                const derivedPhase: 1 | 2 | 3 = explicitPhase ?? (hasEnded
                     ? 3
-                    : (sessionTypeId === 2 ? 2 : 1);
+                    : (sessionTypeId === 2 ? 2 : 1));
+
+                // Unlock phase tabs so the user can navigate once deep-linked into Phase 2/3
+                const phasesToUnlock: number[] = derivedPhase === 3 ? [1, 2] : derivedPhase === 2 ? [1] : [];
+                if (phasesToUnlock.length > 0) {
+                    setCompletedPhases(phasesToUnlock);
+                    localStorage.setItem(PHASE_STORAGE_KEY, JSON.stringify(phasesToUnlock));
+                }
+
+                // ── Hydrate TreatmentPhase localStorage keys for active sessions ──────────
+                // TreatmentPhase reads ppn_session_mode_<sessionId> and ppn_session_start_<sessionId>
+                // to determine whether the session is 'pre' / 'live' / 'post' and to drive the
+                // in-page elapsed timer. When navigating via a timer chip these keys don't exist
+                // in the current browser context, so the component always initialises as 'pre'
+                // and shows 00:00:00. We stamp them here from the DB session's created_at so the
+                // displayed timer picks up from the correct start time.
+                if (derivedPhase === 2 && !hasEnded) {
+                    try {
+                        const sessionModeKey = `ppn_session_mode_${sessionRow.id}`;
+                        const sessionStartKey = `ppn_session_start_${sessionRow.id}`;
+                        // Only write if the key is genuinely missing — don't disturb a session
+                        // the practitioner already started on this device.
+                        if (!localStorage.getItem(sessionModeKey)) {
+                            localStorage.setItem(sessionModeKey, 'live');
+                        }
+                        if (!localStorage.getItem(sessionStartKey)) {
+                            // Use dose_administered_at ?? created_at — mirrors ActiveSessionsContext
+                            // so the in-page timer shows the same elapsed time as the header chip.
+                            const startIso = (sessionRow as any).dose_administered_at ?? sessionRow.created_at;
+                            if (startIso) {
+                                const startMs = new Date(startIso).getTime();
+                                if (!isNaN(startMs)) {
+                                    localStorage.setItem(sessionStartKey, String(startMs));
+                                }
+                            }
+                        }
+                    } catch { /* localStorage unavailable */ }
+                }
 
                 setJourney(prev => ({
                     ...prev,
@@ -264,23 +316,23 @@ const WellnessJourneyInternal: React.FC = () => {
         return () => { cancelled = true; };
     }, [location.search]);
 
+
     const handlePatientSelect = useCallback(async (patientId: string, isNew: boolean, phase: string) => {
-        // ── STEP 0: Clear previous patient's session data from localStorage ──────
-        // Without this, stale substance/medication/dosage data from the previous
-        // patient bleeds into the new session causing phantom contraindication
-        // warnings and incorrect form pre-population.
+        // ── STEP 0: Clear per-patient cache keys immediately ──────────────────
+        // These contain data (meds, vitals, dosing cache) that belongs to one patient
+        // and must not bleed into the new patient's session.
         const SESSION_CACHE_KEYS = [
             'ppn_dosing_protocol',
             'mock_patient_medications_names',
-            'ppn_patient_medications_names', // WO-638: cleared on patient switch to prevent stale safety-check meds
+            'ppn_patient_medications_names',
             'ppn_latest_vitals',
-            // Timer contamination fix: clear the 'demo' session keys that DosingSessionPhase
-            // uses when journey.sessionId is undefined (page load before patient select).
-            // Without this, a stale 'live' mode or start time bleeds into the next session.
-            'ppn_session_mode_demo',
-            'ppn_session_start_demo',
         ];
         SESSION_CACHE_KEYS.forEach(k => { try { localStorage.removeItem(k); } catch (_) { } });
+        // NOTE: ppn_session_mode_* and ppn_session_start_* are NOT cleared here.
+        // They are cleared AFTER the incoming sessionId is known (below) so we can
+        // preserve the new patient's live-session keys. Clearing them here would wipe
+        // Patient A's 'live' flag when returning to them after visiting Patient B.
+        // (BUG-3 fix — patient-selection modal re-entry regression).
 
         // Create or resume a session:
         // - New patient → always create a new log_clinical_records session row (unless TEST).
@@ -437,13 +489,67 @@ const WellnessJourneyInternal: React.FC = () => {
             patientId,
             patientUuid,
             sessionId,
-            // FIXED: use demographics loaded from DB for existing patients; undefined for new
-            // patients (demographics will be populated after ProtocolConfiguratorModal completes).
             demographics: isNew ? undefined : (loadedDemographics ?? prev.demographics),
         }));
         setShowPatientModal(false);
+
+        // ── DEFERRED: Wipe stale session-mode keys ──────────────────────────
+        // Clean up ppn_session_mode_* and ppn_session_start_* keys that contain
+        // stale 'pre' or 'post' data from previous sessions. We must NOT wipe
+        // 'live' session keys from any patient — doing so would cause Patient A's
+        // session to be lost when the practitioner temporarily switches to Patient B.
+        //
+        // Rule: only remove a session_mode key if its value is 'pre' or 'post'
+        //       AND it does not belong to the incoming session or deep-link session.
+        //       Never remove a key whose value is 'live'.
+        try {
+            const deepLinkSearch = window.location.hash.includes('?')
+                ? window.location.hash.split('?')[1]
+                : window.location.search;
+            const deepLinkedId = new URLSearchParams(deepLinkSearch).get('sessionId') ?? '';
+            const idsToAlwaysPreserve = new Set([sessionId, deepLinkedId].filter(Boolean));
+            const keysToRemove: string[] = [];
+            for (let i = 0; i < localStorage.length; i++) {
+                const k = localStorage.key(i);
+                if (!k) continue;
+                if (k.startsWith('ppn_session_mode_')) {
+                    const suffix = k.replace('ppn_session_mode_', '');
+                    if (idsToAlwaysPreserve.has(suffix)) continue; // always preserve incoming session
+                    const val = localStorage.getItem(k);
+                    if (val === 'live') continue; // NEVER wipe live sessions (multi-patient support)
+                    keysToRemove.push(k);
+                } else if (k.startsWith('ppn_session_start_')) {
+                    const suffix = k.replace('ppn_session_start_', '');
+                    if (idsToAlwaysPreserve.has(suffix)) continue; // always preserve incoming session
+                    // Only remove the start key if the paired mode key is also not live
+                    const pairedModeKey = `ppn_session_mode_${suffix}`;
+                    const pairedModeVal = localStorage.getItem(pairedModeKey);
+                    if (pairedModeVal === 'live') continue; // preserve start key for live sessions
+                    keysToRemove.push(k);
+                }
+            }
+            keysToRemove.forEach(k => localStorage.removeItem(k));
+        } catch (_) { }
         setPatientModalView(isNew ? 'choose' : 'existing');
-        const targetPhase = isNew ? 1 : (PHASE_TAB_MAP[phase] ?? 1);
+
+        // Auto-promote to Phase 2 if the incoming patient has an active live session in localStorage.
+        // This handles the "modal re-entry" path: the modal's DB-derived phase string may say
+        // 'Preparation' (if session_type_id doesn't map to a dosing session), but localStorage
+        // already has ppn_session_mode_{sessionId}='live' from when the session was started.
+        // We trust localStorage over the DB-derived phase string for the tab selection here,
+        // because the DB write is async and may not have landed yet.
+        let resolvedTargetPhase: 1 | 2 | 3 = isNew ? 1 : (PHASE_TAB_MAP[phase] ?? 1);
+        if (!isNew && sessionId) {
+            try {
+                const sessionModeKey = `ppn_session_mode_${sessionId}`;
+                const liveMode = localStorage.getItem(sessionModeKey);
+                if (liveMode === 'live') {
+                    resolvedTargetPhase = 2;
+                    console.debug('[WellnessJourney] Auto-promoted to Phase 2 — active session detected in localStorage for', sessionId);
+                }
+            } catch (_) { }
+        }
+        const targetPhase = resolvedTargetPhase;
         setActivePhase(targetPhase);
 
         // Ensure UI tabs are unlocked for existing patients already in later phases
@@ -826,6 +932,23 @@ const WellnessJourneyInternal: React.FC = () => {
         setStoredActiveSession(payload);
     }, [journey.patientId, journey.sessionId, journey.patientUuid, activePhase]);
 
+    // ── Live session: strip main's pb-28 and scroll to bottom so action buttons are immediately visible ──
+    useEffect(() => {
+        const main = document.querySelector('main');
+        if (!main) return;
+        const isLive = activePhase === 2 && !!journey.sessionId;
+        if (isLive) {
+            main.classList.add('!pb-0');
+            const t = setTimeout(() => main.scrollTo({ top: main.scrollHeight, behavior: 'smooth' }), 150);
+            return () => {
+                clearTimeout(t);
+                main.classList.remove('!pb-0');
+            };
+        } else {
+            main.classList.remove('!pb-0');
+        }
+    }, [activePhase, journey.sessionId]);
+
     // WO-558: patientCharacteristics removed, was hardcoded dummy data, never displayed from real source.
 
     // WO-558: totalImprovement only meaningful when baseline was actually recorded.
@@ -941,9 +1064,7 @@ const WellnessJourneyInternal: React.FC = () => {
 
 
             {/* Phase Tours */}
-            {showTour1 && <Phase1Tour onClose={() => setShowTour1(false)} />}
-            {showTour2 && <Phase2Tour onClose={() => setShowTour2(false)} />}
-            {showTour3 && <Phase3Tour onClose={() => setShowTour3(false)} />}
+
 
             {/* WO-113: SlideOut Clinical Form Panel */}
             <SlideOutPanel
@@ -980,9 +1101,10 @@ const WellnessJourneyInternal: React.FC = () => {
             </SlideOutPanel>
 
             {/* WO-604: pb-20 ensures bottom nav (mobile) cannot overlay the last row of buttons */}
-            <div className="max-w-6xl mx-auto space-y-4 sm:space-y-6 pb-20 md:pb-4">
+            <div className={`max-w-6xl mx-auto space-y-4 sm:space-y-6 ${activePhase === 2 && !!journey.sessionId ? 'pb-2' : 'pb-20 md:pb-4'}`}>
 
-                {/* ─── Page Heading ─── */}
+                {/* ─── Page Heading — hidden during live dosing session ─── */}
+                {!(activePhase === 2 && !!journey.sessionId) && (
                 <div className="px-1">
                     <h1 className="ppn-page-title">Wellness Journey</h1>
                     {/* Subtitle hidden on mobile — Phase2LiveBar/MobilePhaseBar show context */}
@@ -998,6 +1120,7 @@ const WellnessJourneyInternal: React.FC = () => {
                         {activePhase === 3 && 'Phase 3 · Integration'}
                     </p>
                 </div>
+                )}
 
                 {/* ─── Patient Context Bar ─── */}
                 {/* Mobile: compact single-row horizontal scroll strip + live-session collapse */}
@@ -1028,15 +1151,10 @@ const WellnessJourneyInternal: React.FC = () => {
                     <div className={`${patientBarCollapsed ? 'hidden sm:flex' : 'flex'} flex-col sm:flex-row sm:items-center justify-between gap-4 w-full`}>
 
                         {/* Left: Patient identity + demographics pills */}
-                        <div className="flex items-center gap-3 overflow-x-auto no-scrollbar pb-0.5 sm:pb-0">
-                            <CompassTourButton phase={activePhase} onClick={() => {
-                                if (activePhase === 1) setShowTour1(true);
-                                if (activePhase === 2) setShowTour2(true);
-                                if (activePhase === 3) setShowTour3(true);
-                            }} />
+                        <div className="flex flex-col items-start gap-1 min-w-0">
+                            <div className="flex items-center gap-2 flex-wrap">
                             <div className="flex items-center gap-2 flex-nowrap shrink-0">
                                 {/* Patient ID */}
-                                <span className="text-xs sm:text-sm font-semibold text-slate-500 uppercase tracking-wide shrink-0">Patient</span>
                                 <span className="text-sm sm:text-2xl font-bold sm:font-black text-white font-mono tracking-wide shrink-0">{journey.patientId}</span>
                                 {/* TEST MODE badge */}
                                 {journey.patientId.startsWith('TEST-') && (
@@ -1087,33 +1205,10 @@ const WellnessJourneyInternal: React.FC = () => {
                                 >
                                     {activePhase === 1 ? 'Edit Config' : 'Lookup'}
                                 </button>
-                                {/* QA Fast-Forward Button (DEV ONLY) — hidden on mobile */}
-                                {import.meta.env.DEV && (
-                                    <button
-                                        type="button"
-                                        onClick={() => {
-                                            const allForms = [
-                                                'consent', 'structured-safety', 'set-and-setting', 'mental-health', 'dosing-protocol',
-                                                'session-vitals', 'session-observations', 'safety-and-adverse-event', 'rescue-protocol'
-                                            ];
-                                            setCompletedForms(new Set(allForms));
-                                            setCompletedPhases([1, 2]);
-                                            setActivePhase(3);
-                                            addToast({
-                                                title: 'QA Fast-Forward',
-                                                message: 'Injected Phase 1 & 2 mock data. Jumping to Phase 3 Analytics.',
-                                                type: 'success'
-                                            });
-                                        }}
-                                        className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-fuchsia-500/20 rounded-lg border border-fuchsia-500/50 text-[12px] sm:text-sm font-bold text-fuchsia-300 hover:text-white hover:border-fuchsia-400 hover:bg-fuchsia-600/40 transition-all shadow-sm group shrink-0"
-                                        title="QA Tool: Auto-complete Phase 1 & 2 forms and jump to Phase 3"
-                                    >
-                                        <span className="material-symbols-outlined text-sm group-hover:animate-pulse">fast_forward</span>
-                                        QA Skip to Ph3
-                                    </button>
-                                )}
                             </div>
-                            <p className="text-xs sm:text-sm mt-0 sm:mt-0.5 shrink-0 hidden sm:block" style={{ color: '#8B9DC3' }}>
+                            </div>
+                            {/* Session status — own row, never truncated */}
+                            <p className="text-xs sm:text-sm hidden sm:block" style={{ color: '#8B9DC3' }}>
                                 {activePhase === 1 && 'Pre-treatment preparation, complete baseline assessments before session'}
                                 {activePhase === 2 && `Dosing session in progress · ${journey.sessionDate} · Session #${journey.session.sessionNumber}`}
                                 {activePhase === 3 && `Integration phase · ${journey.daysPostSession} days post-session · Monitoring recovery`}
@@ -1252,6 +1347,44 @@ const WellnessJourneyInternal: React.FC = () => {
                                                 {/* WO-602B: Removed redundant "Integration Work" WorkflowActionCard grid.
                                                     IntegrationPhase above (steps 3-5) already renders
                                                     structured-integration, behavioral-tracker, and longitudinal-assessment. */}
+
+                                                {/* Phase 3 primary CTA — matches Phase 1 (green) and Phase 2 (blue) wide button style */}
+                                                <div className="flex flex-col items-center pt-6 mt-4 border-t border-teal-900/40">
+                                                    <button
+                                                        onClick={() => {
+                                                            // Clear stale session storage for this patient so future sessions start clean.
+                                                            // Do NOT reset UI state or re-open the modal — navigate directly to the
+                                                            // Protocol Detail page so the practitioner can verify the record was saved.
+                                                            try {
+                                                                localStorage.removeItem(ACTIVE_SESSION_KEY);
+                                                                localStorage.removeItem(PHASE_STORAGE_KEY);
+                                                                const keysToRemove: string[] = [];
+                                                                for (let i = 0; i < localStorage.length; i++) {
+                                                                    const k = localStorage.key(i);
+                                                                    if (k && (
+                                                                        k.startsWith('ppn_session_mode_') ||
+                                                                        k.startsWith('ppn_session_start_') ||
+                                                                        k.startsWith('ppn_phase2_assessment_')
+                                                                    )) keysToRemove.push(k);
+                                                                }
+                                                                keysToRemove.forEach(k => localStorage.removeItem(k));
+                                                            } catch { /* ignore */ }
+                                                            // Navigate to Protocol Detail to confirm the session was recorded correctly.
+                                                            const sid = journey.sessionId;
+                                                            if (sid) {
+                                                                navigate(`/protocol/${sid}`);
+                                                            } else {
+                                                                navigate('/protocols');
+                                                            }
+                                                        }}
+                                                        className="w-full md:w-2/3 py-5 rounded-2xl font-black text-xl tracking-wide shadow-lg bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-500 hover:to-emerald-500 text-white shadow-teal-900/40 cursor-pointer hover:scale-[1.01] active:scale-[0.99] transition-all flex items-center justify-center gap-4"
+                                                        aria-label="Close session and view protocol detail record"
+                                                    >
+                                                        <CheckCircle className="w-6 h-6" />
+                                                        CLOSE SESSION — VIEW PROTOCOL RECORD
+                                                    </button>
+                                                    <p className="text-sm text-slate-500 mt-3 font-medium">Verify the session was correctly recorded in the patient's protocol</p>
+                                                </div>
                                             </>
                                         </Phase2ErrorBoundary>
                                     )}
@@ -1295,11 +1428,13 @@ const WellnessJourneyInternal: React.FC = () => {
                     );
                 })()}
 
-                {/* WO-113: Quick Actions FAB */}
-                <QuickActionsMenu
-                    currentPhase={activePhase === 1 ? 'phase1' : activePhase === 2 ? 'phase2' : 'phase3'}
-                    onActionSelect={handleQuickAction}
-                />
+                {/* WO-113: Quick Actions FAB — hidden during live dosing session */}
+                {!(activePhase === 2 && !!journey.sessionId) && (
+                    <QuickActionsMenu
+                        currentPhase={activePhase === 1 ? 'phase1' : activePhase === 2 ? 'phase2' : 'phase3'}
+                        onActionSelect={handleQuickAction}
+                    />
+                )}
             </div>
         </div>
     );

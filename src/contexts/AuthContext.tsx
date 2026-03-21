@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import { supabase } from '../supabaseClient';
 import { User, Session } from '@supabase/supabase-js';
 import { clearDataCache } from '../hooks/useDataCache';
@@ -15,12 +15,33 @@ import { clearDataCache } from '../hooks/useDataCache';
 
 type UserRole = 'admin' | 'partner' | 'user' | null;
 
+/**
+ * UserProfile — the fetched row from log_user_profiles.
+ * Kept intentionally minimal: only surface what components actually consume.
+ * Always augmented with email + id from the auth user object.
+ */
+export interface UserProfile {
+    id: string;
+    email: string | undefined;
+    first_name?: string | null;
+    last_name?: string | null;
+    display_name?: string | null;
+    avatar_url?: string | null;
+    role?: string | null;
+    license_type?: string | null;
+    license_number?: string | null;
+    location_city?: string | null;
+    location_country?: string | null;
+    [key: string]: unknown; // allow arbitrary extra columns without breaking TS
+}
+
 interface AuthContextType {
     user: User | null;
     session: Session | null;
     loading: boolean;
     userRole: UserRole;
     isPartner: boolean;
+    userProfile: UserProfile | null;
     signOut: () => Promise<void>;
 }
 
@@ -31,6 +52,34 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const [session, setSession] = useState<Session | null>(null);
     const [loading, setLoading] = useState(true);
     const [userRole, setUserRole] = useState<UserRole>(null);
+    const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+
+    /**
+     * Fetch the practitioner's profile row from log_user_profiles.
+     * Called once on login / page refresh — result is held in context for the
+     * lifetime of the session, so NO component needs to re-fetch it.
+     */
+    const fetchUserProfile = useCallback(async (authUser: User) => {
+        try {
+            const { data: profile, error } = await supabase
+                .from('log_user_profiles')
+                .select(
+                    'user_id, first_name, last_name, display_name, avatar_url, role, ' +
+                    'license_type, license_number, location_city, location_country'
+                )
+                .eq('user_id', authUser.id)
+                .single();
+
+            if (!error && profile) {
+                setUserProfile({ ...(profile as unknown as Record<string, unknown>), email: authUser.email, id: authUser.id } as UserProfile);
+            } else {
+                // Profile row doesn't exist yet (new user) — use minimal data
+                setUserProfile({ email: authUser.email, id: authUser.id });
+            }
+        } catch {
+            setUserProfile({ email: authUser.email, id: authUser.id });
+        }
+    }, []);
 
     useEffect(() => {
         // Get initial session (handles page refresh — session is already in storage)
@@ -39,6 +88,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             setUser(session?.user ?? null);
             setUserRole((session?.user?.app_metadata?.role as UserRole) ?? null);
             setLoading(false);
+
+            // Fetch profile once on page load if already logged in
+            if (session?.user) {
+                fetchUserProfile(session.user);
+            }
         });
 
         // Listen for auth state changes
@@ -50,7 +104,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             setUserRole((session?.user?.app_metadata?.role as UserRole) ?? null);
             setLoading(false);
 
-            if (!session || typeof window === 'undefined') return;
+            if (!session || typeof window === 'undefined') {
+                // User signed out — clear profile
+                setUserProfile(null);
+                return;
+            }
 
             // ── PASSWORD_RECOVERY: Forgot-password link was clicked ──────────
             // Supabase emits this event when a reset email link is processed.
@@ -78,12 +136,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 return;
             }
 
+            // ── Normal SIGNED_IN: fetch profile once ─────────────────────────
+            // TOKEN_REFRESHED is explicitly excluded — the profile doesn't change
+            // on token refresh, so we skip the fetch entirely.
+            if (event === 'SIGNED_IN') {
+                fetchUserProfile(session.user);
+            }
+
             // All other SIGNED_IN events are normal logins — do NOT redirect.
             // Navigation after login is handled by Login.tsx's navigate(from) call.
         });
 
         return () => subscription.unsubscribe();
-    }, []);
+    }, [fetchUserProfile]);
 
     const signOut = async () => {
         console.log('[AuthContext] signOut called');
@@ -99,6 +164,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             console.log('[AuthContext] Supabase signOut successful');
             setUser(null);
             setSession(null);
+            setUserProfile(null);
             clearDataCache();        // wipe useDataCache session cache
             localStorage.clear();
             sessionStorage.clear();
@@ -110,6 +176,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             // Still clear local state even if Supabase call fails
             setUser(null);
             setSession(null);
+            setUserProfile(null);
             localStorage.clear();
             sessionStorage.clear();
             window.location.href = '/';
@@ -118,7 +185,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
 
     return (
-        <AuthContext.Provider value={{ user, session, loading, userRole, isPartner: userRole === 'partner', signOut }}>
+        <AuthContext.Provider value={{ user, session, loading, userRole, isPartner: userRole === 'partner', userProfile, signOut }}>
             {children}
         </AuthContext.Provider>
     );
@@ -131,5 +198,3 @@ export const useAuth = () => {
     }
     return context;
 };
-
-

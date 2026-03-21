@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<!-- saved from url=(0150)file:///Users/trevorcalton/Desktop/PPN-Antigravity-1.0/public/internal/founding_partner_docs/Clinician-Packet/index_files/03_Compliance_Assurance.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PPN Portal: Compliance Assurance - Clinician Founding Partner Program</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Roboto+Mono:wght@400;500&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --accent: #7c6ff7;
+    --accent-light: #ede9ff;
+    --ink-heading: #0f1117;
+    --ink-body: #2d3450;
+    --ink-muted: #8b91a8;
+    --border-light: #e4e6f0;
+    --bg: #ffffff;
+    --bg-subtle: #f8f9fc;
+    --success: #15803d;
+    --success-light: #f0fdf4;
+    --mono: 'Roboto Mono', ui-monospace, monospace;
+  }
+
+  @media screen { body { padding: 0.6in; max-width: 8.5in; margin: 0 auto; } }
+  @media print {
+    @page { size: letter; margin: 0.75in; }
+    body { font-size: 11pt; line-height: 1.5; padding: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    h1, h2, h3 { break-after: avoid; page-break-after: avoid; }
+    p { orphans: 3; widows: 3; }
+    .compliance-card, .checklist-block, .audit-row { break-inside: avoid; page-break-inside: avoid; }
+  }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    font-size: 9pt;
+    line-height: 1.6;
+    color: var(--ink-body);
+    background: var(--bg);
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .header {
+    border-top: 4pt solid var(--accent);
+    padding-top: 12pt; padding-bottom: 14pt;
+    border-bottom: 1px solid var(--border-light);
+    margin-bottom: 18pt;
+    display: flex; justify-content: space-between; align-items: flex-start;
+  }
+  .brand { display: flex; align-items: center; gap: 7pt; }
+  .brand-dot { width: 8pt; height: 8pt; border-radius: 50%; background: var(--accent); flex-shrink: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .brand-name { font-size: 8pt; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); }
+  .classification { font-size: 7pt; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-muted); }
+
+  .doc-num-badge {
+    display: inline-block; font-size: 7pt; font-weight: 700; color: var(--accent);
+    background: var(--accent-light); border-radius: 3pt; padding: 2pt 7pt;
+    letter-spacing: 0.06em; margin-bottom: 5pt;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+  .doc-label { font-size: 7.5pt; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); margin-bottom: 4pt; }
+  h1 { font-size: 22pt; font-weight: 800; color: var(--ink-heading); line-height: 1.1; letter-spacing: -0.025em; margin-bottom: 4pt; }
+  .subtitle { font-size: 10pt; color: var(--ink-muted); font-weight: 400; margin-bottom: 18pt; }
+
+  h2 {
+    font-size: 8.5pt; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--ink-heading); margin-top: 16pt; margin-bottom: 7pt;
+    padding-bottom: 5pt; border-bottom: 1.5px solid var(--border-light);
+    display: flex; align-items: center; gap: 7pt; break-after: avoid;
+  }
+  h2::before {
+    content: ''; display: inline-block; width: 3pt; height: 11pt;
+    background: var(--accent); border-radius: 2pt; flex-shrink: 0;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+
+  p { margin-bottom: 8pt; }
+
+  /* Compliance cards */
+  .compliance-grid { display: grid; grid-template-columns: 1fr; gap: 8pt; margin: 8pt 0; }
+  .compliance-card {
+    border: 1px solid var(--border-light); border-left: 4pt solid var(--accent);
+    border-radius: 0 5pt 5pt 0; padding: 10pt 14pt; break-inside: avoid;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+  .compliance-card-scope { font-size: 7pt; font-weight: 700; color: var(--accent); letter-spacing: 0.09em; text-transform: uppercase; margin-bottom: 3pt; }
+  .compliance-card-title { font-size: 10pt; font-weight: 800; color: var(--ink-heading); margin-bottom: 4pt; }
+  .compliance-card-body { font-size: 8.5pt; color: var(--ink-body); line-height: 1.55; }
+
+  /* Audit scenario table */
+  .audit-table { width: 100%; border-collapse: collapse; margin: 10pt 0; font-size: 8.5pt; }
+  .audit-table thead tr { background: var(--accent-light); -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .audit-table th { color: #3730a3; font-size: 7.5pt; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 7pt 10pt; text-align: left; }
+  .audit-table td { padding: 7pt 10pt; border-bottom: 1px solid var(--border-light); vertical-align: top; font-size: 8.5pt; }
+  .audit-table tr:nth-child(even) td { background: var(--bg-subtle); -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .audit-table td:first-child { font-weight: 600; color: var(--ink-heading); }
+  .td-auto { color: var(--success); font-weight: 700; font-size: 8pt; }
+
+  /* Callout */
+  .callout {
+    background: var(--accent-light); border-left: 3pt solid var(--accent);
+    border-radius: 0 4pt 4pt 0; padding: 11pt 14pt; margin-top: 16pt;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+  .callout p { color: var(--ink-body); margin: 0; font-style: italic; font-size: 9pt; }
+  .callout strong { color: var(--ink-heading); }
+
+  .footer {
+    display: flex; justify-content: space-between;
+    margin-top: 20pt; padding-top: 7pt; border-top: 1px solid var(--border-light);
+    font-size: 7pt; color: var(--ink-muted);
+  }
+  .footer-dot { color: var(--accent); margin: 0 3pt; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="brand">
+      <div class="brand-dot"></div>
+      <span class="brand-name">PPN Portal</span>
+    </div>
+  </div>
+  <div>
+    <div class="classification">Confidential: Clinician Founding Partner Program</div>
+  </div>
+</div>
+
+<div class="doc-num-badge">03 of 06</div>
+<div class="doc-label">Regulatory Compliance Reference</div>
+<h1>Compliance Assurance</h1>
+<div class="subtitle">How PPN Survives a State Audit on Your Behalf, Automatically</div>
+
+<p>Psychedelic therapy operates in one of the most heavily scrutinized regulatory environments in healthcare. State licensing boards, DEA inquiries, and HIPAA enforcement actions are a fact of life for clinics in this space. What separates clinics that survive these audits from those that don't is rarely the quality of their care. It is the quality of their documentation infrastructure.</p>
+
+<p>PPN was designed to make your clinic audit-ready from Day 1, without adding any administrative burden to your facilitators or clinical staff. Every compliance deliverable below is generated automatically by the platform as a byproduct of normal documentation.</p>
+
+<h2>Federal and State Compliance Coverage</h2>
+
+<div class="compliance-grid">
+  <div class="compliance-card">
+    <div class="compliance-card-scope">Electronic Records &amp; Signatures</div>
+    <div class="compliance-card-title">21 CFR Part 11 Compliance</div>
+    <div class="compliance-card-body">All clinical events are hash-verified, timestamped, and immutable at the moment of creation. No record can be altered or deleted by any user, including administrators. The full audit ledger is exportable as a signed CSV for regulatory submission. This is the same standard used in FDA-regulated clinical trials.</div>
+  </div>
+  <div class="compliance-card">
+    <div class="compliance-card-scope">Protected Health Information</div>
+    <div class="compliance-card-title">HIPAA: Not Applicable by Architecture</div>
+    <div class="compliance-card-body">PPN captures zero PHI by design. No patient names, dates of birth, addresses, or identifying information are ever entered or stored. HIPAA enforcement requires the existence of PHI to trigger. By capturing none, your clinic is architecturally exempt from HIPAA breach liability on PPN data. This is not a legal workaround. It is the design.</div>
+  </div>
+  <div class="compliance-card">
+    <div class="compliance-card-scope">Oregon Psilocybin Services Act</div>
+    <div class="compliance-card-title">OHA OAR 333-333 Protocol Alignment</div>
+    <div class="compliance-card-body">PPN's contraindication alert system references OHA OAR 333-333 and the MAPS Phase 3 Protocol Manual in all issued warnings and override audit records. If your facilitator proceeds past a contraindication, the override decision is automatically captured with a required reason code and clinical rationale, creating a defensible record of clinical judgment.</div>
+  </div>
+</div>
+
+<h2>What Happens During a State Audit</h2>
+
+<table class="audit-table">
+  <thead>
+    <tr><th>Auditor Requests</th><th>What PPN Produces</th><th>How It's Generated</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Session documentation for a specific date range</td>
+      <td>Complete filterable ledger of all session events with timestamps and clinical structured data</td>
+      <td class="td-auto">Automatic ✓</td>
+    </tr>
+    <tr>
+      <td>Contraindication screening evidence</td>
+      <td>Timestamped log of every interaction check run, with compound, alert severity, and facilitator action</td>
+      <td class="td-auto">Automatic ✓</td>
+    </tr>
+    <tr>
+      <td>Adverse event records</td>
+      <td>MedDRA-coded adverse event log with CTCAE severity grades and resolution notes</td>
+      <td class="td-auto">Automatic ✓</td>
+    </tr>
+    <tr>
+      <td>Facilitator credentials and training records</td>
+      <td>Practitioner account log with certification level, active session count, and protocol compliance rate</td>
+      <td class="td-auto">Automatic ✓</td>
+    </tr>
+    <tr>
+      <td>Patient consent and protocol alignment</td>
+      <td>Anonymized treatment bundle showing compound, dose, protocol, and integration schedule per Subject ID</td>
+      <td class="td-auto">Automatic ✓</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Your front desk does not need to search through paper files. Your operations manager does not need to rebuild data from email threads. You export the requested records from the platform in one click, already formatted to regulatory specification.</p>
+
+<div class="callout">
+  <p><strong>For your compliance officer or legal counsel:</strong> PPN's full technical specifications, including interoperability standards, audit schema, and cryptographic verification methodology, are available upon request. These documents are designed for technical due diligence and map to 21 CFR Part 11, HIPAA, and Oregon OAR 333-333 in explicit detail.</p>
+</div>
+
+<div class="footer">
+  <span>PPN Portal <span class="footer-dot">·</span> ppnportal.net</span>
+  <span>Confidential &amp; Proprietary <span class="footer-dot">·</span> © 2026 PPN. All Rights Reserved.</span>
+</div>
+
+
+
+</body></html>

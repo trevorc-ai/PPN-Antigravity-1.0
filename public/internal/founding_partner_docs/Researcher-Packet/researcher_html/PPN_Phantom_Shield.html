@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Phantom Shield - PPN Founding Partner Program</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --slate-900: #0f1117;
+    --accent: #7c6ff7;
+    --accent-light: #f0eeff;
+    --danger: #dc2626;
+    --success: #15803d;
+    --ink-heading: #0f1117;
+    --ink-body: #2d3450;
+    --ink-muted: #6b7280;
+    --border: #e4e6f0;
+    --bg: #ffffff;
+    --bg-subtle: #f8f9fc;
+  }
+
+  @media screen { body { padding: 0.6in; max-width: 8.5in; margin: 0 auto; } }
+  @media print {
+    @page { size: letter; margin: 0.75in; }
+    body { font-size: 11pt; line-height: 1.5; padding: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    h1, h2, h3 { break-after: avoid; page-break-after: avoid; }
+    p { orphans: 3; widows: 3; }
+    .shield-card, .matrix-grid, .faq-block, .stat-row { break-inside: avoid; page-break-inside: avoid; }
+  }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    font-size: 9.5pt;
+    line-height: 1.65;
+    color: var(--ink-body);
+    background: var(--bg);
+
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Header: white background, accent border top only */
+  .header {
+    border-top: 4pt solid var(--accent);
+    padding-top: 12pt;
+    padding-bottom: 14pt;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 20pt;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+  .brand { display: flex; align-items: center; gap: 7pt; }
+  .brand-dot { width: 8pt; height: 8pt; border-radius: 50%; background: var(--accent); flex-shrink: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .brand-name { font-size: 8pt; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); }
+  .classification { font-size: 7pt; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-muted); margin-top: 1pt; }
+
+  /* Title block */
+  .title-block { margin-bottom: 22pt; }
+  .doc-label { font-size: 7.5pt; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); margin-bottom: 5pt; }
+  h1 { font-size: 26pt; font-weight: 800; color: var(--ink-heading); line-height: 1.1; letter-spacing: -0.03em; margin-bottom: 4pt; }
+  .subtitle { font-size: 11pt; color: var(--ink-muted); font-weight: 400; }
+
+  /* Section headings */
+  h2 {
+    font-size: 8.5pt;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-heading);
+    margin-top: 16pt;
+    margin-bottom: 6pt;
+    padding-bottom: 5pt;
+    border-bottom: 1.5px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 7pt;
+    break-after: avoid;
+  }
+  h2::before {
+    content: '';
+    display: inline-block;
+    width: 3pt;
+    height: 11pt;
+    background: var(--accent);
+    border-radius: 2pt;
+    flex-shrink: 0;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  p { margin-bottom: 8pt; }
+
+  /* Risk table - dark headers only */
+  .risk-table { width: 100%; border-collapse: collapse; margin: 10pt 0; font-size: 9pt; }
+  .risk-table thead tr {
+    background: var(--accent-light);
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .risk-table th { color: #3730a3; font-size: 7.5pt; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 8pt 12pt; text-align: left; }
+  .risk-table td { padding: 8pt 12pt; border-bottom: 1px solid var(--border); vertical-align: middle; }
+  .risk-table td:first-child { font-weight: 500; color: var(--ink-heading); }
+  .risk-table tr:nth-child(even) td { background: var(--bg-subtle); }
+  .td-danger { color: var(--danger); font-weight: 700; }
+
+  /* Pillar cards */
+  .pillars { display: flex; gap: 10pt; margin: 12pt 0; break-inside: avoid; }
+  .pillar {
+    flex: 1;
+    border: 1px solid var(--border);
+    border-top: 3pt solid var(--accent);
+    border-radius: 4pt;
+    padding: 12pt 13pt;
+    break-inside: avoid;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .pillar-num { font-size: 20pt; font-weight: 800; color: var(--accent); opacity: 0.3; line-height: 1; margin-bottom: 5pt; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .pillar-title { font-size: 9.5pt; font-weight: 700; color: var(--ink-heading); margin-bottom: 5pt; }
+  .pillar-body { font-size: 8.5pt; color: var(--ink-body); line-height: 1.55; }
+
+  /* Comparison table - dark headers only */
+  .compare-table { width: 100%; border-collapse: collapse; margin: 12pt 0; font-size: 9pt; }
+  .compare-table thead tr {
+    background: var(--accent-light);
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .compare-table th { color: #3730a3; font-size: 7.5pt; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 8pt 12pt; text-align: left; }
+  .compare-table td { padding: 7.5pt 12pt; border-bottom: 1px solid var(--border); vertical-align: middle; }
+  .compare-table td:first-child { font-weight: 500; color: var(--ink-heading); }
+  .compare-table tr:nth-child(even) td { background: var(--bg-subtle); }
+  .td-yes { color: var(--success); font-weight: 700; }
+  .td-no  { color: var(--danger); font-weight: 700; }
+  .td-high { color: var(--danger); font-weight: 700; }
+  .td-none { color: var(--success); font-weight: 700; }
+
+  /* Closing callout - accent left border, light bg only */
+  .callout {
+    background: var(--accent-light);
+    border-left: 3pt solid var(--accent);
+    border-radius: 0 4pt 4pt 0;
+    padding: 12pt 15pt;
+    margin-top: 18pt;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .callout p { color: var(--ink-body); margin: 0; font-style: italic; font-size: 9.5pt; }
+  .callout strong { color: var(--ink-heading); }
+
+  /* Footer */
+  .footer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 24pt;
+    padding-top: 7pt;
+    border-top: 1px solid var(--border);
+    font-size: 7pt;
+    color: var(--ink-muted);
+    letter-spacing: 0.04em;
+  }
+  .footer-dot { color: var(--accent); margin: 0 4pt; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="brand">
+      <div class="brand-dot"></div>
+      <span class="brand-name">PPN Portal</span>
+    </div>
+  </div>
+  <div style="text-align:right;">
+    <div class="classification">Confidential: Founding Partner Program</div>
+  </div>
+</div>
+
+<div class="title-block">
+  <div class="doc-label">Clinical Architecture Brief</div>
+  <h1>The Phantom Shield</h1>
+  <div class="subtitle">Clinical Intelligence Without Liability</div>
+</div>
+
+<h2>The Problem: Patient Data as a Liability Asset</h2>
+
+<p>Most healthcare documentation systems were built for a different era, and a different regulatory context. Applying them to psychedelic-assisted therapy creates a liability exposure that practitioners and institutions have largely accepted as unavoidable, when it isn't.</p>
+
+<p>The moment any documentation system stores a patient's name, date of birth, or address alongside a Schedule I substance protocol, the institution assumes significant legal and financial risk, regardless of how the session goes.</p>
+
+<table class="risk-table">
+  <thead>
+    <tr><th>Risk Category</th><th>Estimated Exposure</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Average cost of a healthcare data breach</td><td class="td-danger">&#9888; $10.8 Million</td></tr>
+    <tr><td>Annual HIPAA compliance infrastructure (minimum)</td><td class="td-danger">&#9888; $500,000+ per year</td></tr>
+    <tr><td>Regulatory subpoena exposure (Schedule I protocols)</td><td class="td-danger">&#9888; Unlimited civil and criminal liability</td></tr>
+  </tbody>
+</table>
+
+<p>These systems were not designed with this clinical context in mind. The gap between their identity-linked architecture and the regulatory landscape of this therapy class is a real liability risk, and most institutions carrying it are unaware of its full scope.</p>
+
+<h2>The PPN Architecture: Zero-Knowledge by Design</h2>
+
+<p>PPN Portal is <strong>not an EHR</strong>. It was built from the ground up as a clinical intelligence platform, and a core design principle was to store zero Protected Health Information. This was not a constraint to work around; it was the point.</p>
+
+<p>Every patient record in the PPN registry is assigned a <strong>cryptographically generated, synthetic Subject ID</strong> at the moment of entry. No patient names, dates of birth, addresses, or identifying notes are ever entered, stored, or transmitted. This is not anonymization applied after the fact: it is a zero-knowledge design enforced from the start.</p>
+
+<h2>Three Pillars of Protection</h2>
+
+<div class="pillars">
+  <div class="pillar">
+    <div class="pillar-num">01</div>
+    <div class="pillar-title">Subpoena Immunity</div>
+    <div class="pillar-body">If a regulatory body or law enforcement agency subpoenas the PPN database, the only data available for production is aggregate, anonymized metrics. Patient identity cannot be disclosed from a system that never recorded it.</div>
+  </div>
+  <div class="pillar">
+    <div class="pillar-num">02</div>
+    <div class="pillar-title">Breach Liability: $0</div>
+    <div class="pillar-body">Human error accounts for the majority of healthcare data breaches. By capturing no identifying information at the point of entry, PPN removes that exposure entirely. If the system were ever breached, there would be nothing of value to take.</div>
+  </div>
+  <div class="pillar">
+    <div class="pillar-num">03</div>
+    <div class="pillar-title">Legal Cross-Site Benchmarking</div>
+    <div class="pillar-body">PHI regulations prevent standard EHRs from enabling outcome comparisons across institutions. Because PPN stores no PHI, it is the only platform in this space that can legally benchmark outcomes across an entire clinical network.</div>
+  </div>
+</div>
+
+<h2>PPN vs. Standard EHR</h2>
+
+<table class="compare-table">
+  <thead>
+    <tr><th>Capability</th><th>Standard EHR</th><th>PPN Portal</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Schedule I protocol documentation</td><td class="td-yes">Yes &#10003;</td><td class="td-yes">Yes &#10003;</td></tr>
+    <tr><td>Zero stored PHI</td><td class="td-no">No &#10007;</td><td class="td-yes">Yes &#10003;</td></tr>
+    <tr><td>Subpoena-resistant architecture</td><td class="td-no">No &#10007;</td><td class="td-yes">Yes &#10003;</td></tr>
+    <tr><td>Legal cross-site benchmarking</td><td class="td-no">No &#10007;</td><td class="td-yes">Yes &#10003;</td></tr>
+    <tr><td>HIPAA breach liability</td><td class="td-high">High &#9888;</td><td class="td-none">None &#10003;</td></tr>
+    <tr><td>Longitudinal RWE export (structured)</td><td class="td-no">Limited &#10007;</td><td class="td-yes">Full &#10003;</td></tr>
+  </tbody>
+</table>
+
+<div class="callout">
+  <p>Storing zero PHI was not a product decision made reluctantly. It was a deliberate commitment to <strong>protect your institution's license, your practitioners, and your patients</strong>, and to give everyone involved the confidence to document treatment fully and honestly.</p>
+</div>
+
+<div class="footer">
+  <span>PPN Portal <span class="footer-dot">·</span> ppnportal.net</span>
+  <span>Confidential &amp; Proprietary <span class="footer-dot">·</span> &copy; 2026 PPN. All Rights Reserved.</span>
+</div>
+
+</body>
+</html>

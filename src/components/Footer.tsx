@@ -16,7 +16,7 @@ const Footer: React.FC = () => {
   };
 
   return (
-    <footer className="bg-[#020408] border-t border-white/5 py-4 mt-8">
+    <footer className="hidden lg:block bg-[#020408] border-t border-white/5 py-4 mt-8">
       <div className="max-w-[1600px] mx-auto px-6 sm:px-10 flex flex-col sm:flex-row items-center justify-between gap-3">
 
         {/* Left: brand + copyright */}

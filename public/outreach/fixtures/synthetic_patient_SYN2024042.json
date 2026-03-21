@@ -1,0 +1,55 @@
+{
+  "_comment": "Synthetic patient fixture for outreach materials. Shared by WO-645, WO-647, and future outreach documents. ZERO PHI — all data is fabricated for demonstration purposes only.",
+  "subject_id": "SYN-2024-042",
+  "cohort_id": null,
+  "clinic": {
+    "name": "Horizon Integrative Health (Demo)",
+    "location": "Portland, OR",
+    "practitioner": "Dr. J. Meridian, MD (Demo)"
+  },
+  "demographics": {
+    "age": 44,
+    "sex": "Female",
+    "ethnicity": "Caucasian"
+  },
+  "diagnosis": {
+    "primary": "Treatment-Resistant PTSD",
+    "icd10": "F43.10",
+    "snomed_ct": "47505003",
+    "failed_treatments": [
+      { "medication": "Sertraline 200mg", "duration_months": 18, "outcome": "Partial response, discontinued" },
+      { "medication": "Fluoxetine 60mg", "duration_months": 12, "outcome": "Insufficient response" },
+      { "medication": "Venlafaxine 225mg", "duration_months": 9, "outcome": "Intolerable side effects" }
+    ]
+  },
+  "protocol": {
+    "substance": "Psilocybin",
+    "rxnorm_cui": "10600",
+    "dose_mg": 25,
+    "dose_weight_based_mg_kg": null,
+    "session_type": "Individual Assisted Therapy",
+    "num_sessions_completed": 2,
+    "integration_sessions_completed": 6
+  },
+  "baseline_scores": {
+    "phq9": 21,
+    "gad7": 18,
+    "pcl5": 52,
+    "dass21_depression": 34
+  },
+  "endpoint_scores": {
+    "phq9": 6,
+    "gad7": 7,
+    "pcl5": 22,
+    "dass21_depression": 11,
+    "weeks_post_final_session": 8
+  },
+  "outcome_classification": {
+    "phq9_responder": true,
+    "phq9_remission": true,
+    "pcl5_responder": true
+  },
+  "adverse_events": [],
+  "discharge_date": "2024-09-15",
+  "document_classification": "SYNTHETIC — For demonstration purposes only. Not a real patient record."
+}

@@ -1,19 +1,33 @@
-import React, { Component, useState, useEffect, useMemo, useCallback, useRef } from 'react';
-import {
-    Activity, Sparkles, CheckCircle, ChevronRight, ChevronUp, ChevronDown, X, Info, Clock, Download,
-    Heart, Play, AlertTriangle, FileText, Lock, CheckSquare, ArrowRight,
-    CheckCircle2, Edit3, AlertCircle, Pill, ShieldAlert, ClipboardList, Save
-} from 'lucide-react';
+/**
+ * DosingSessionPhase.tsx — Phase 2 orchestrator.
+ *
+ * Stabilisation Sprint Track 2 — Component Split.
+ *
+ * This file is now a THIN ORCHESTRATOR. It owns all React state and side-effect
+ * hooks for the Phase 2 dosing session and delegates rendering to four
+ * presentational child components:
+ *
+ *   SessionCloseoutView  — post-session closeout (mode === 'post')
+ *   SessionHUD           — sticky timer + vitals strip (pre + live)
+ *   SessionPrepView      — step cards, contraindication alerts, action grid
+ *   SessionCockpitView   — 3-panel live cockpit + companion overlay
+ *
+ * RULE: Never add render JSX to this file. All UI lives in the child components.
+ */
+
+import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
+import { Heart } from 'lucide-react';
 import { runContraindicationEngine } from '../../services/contraindicationEngine';
-import { AdvancedTooltip } from '../ui/AdvancedTooltip';
-import { WorkflowActionCard } from './WorkflowCards';
-import AdaptiveAssessmentPage from '../../pages/AdaptiveAssessmentPage';
 import { WellnessFormId } from './WellnessFormRouter';
-import { LiveSessionTimeline, QUICK_ACTIONS } from './LiveSessionTimeline';
 import { SessionVitalsTrendChart, VitalsSnapshot, SessionEventPin } from './SessionVitalsTrendChart';
 import { useToast } from '../../contexts/ToastContext';
+import { useActiveSessionsContext } from '../../contexts/ActiveSessionsContext';
 import { useProtocol } from '../../contexts/ProtocolContext';
 import { createSessionVital, createTimelineEvent, endDosingSession } from '../../services/clinicalLog';
+import { SessionCloseoutView } from './SessionCloseoutView';
+import { SessionHUD } from './SessionHUD';
+import { SessionPrepView } from './SessionPrepView';
+import { SessionCockpitView } from './SessionCockpitView';
 
 // ── Error Boundary: catches render crashes in Phase 2 sub-trees ────────────────
 // Prevents the entire WellnessJourney page from going blank on a sub-component error.
@@ -246,6 +260,10 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
 
     const { addToast } = useToast();
     const { config } = useProtocol();
+    const { refresh: refreshActiveSessions, sessions: activeSessions } = useActiveSessionsContext();
+
+    // WO-QA: Force-close confirmation state for stuck sessions
+    const [forceCloseConfirm, setForceCloseConfirm] = useState(false);
     const SESSION_KEY = `ppn_session_mode_${journey.session?.sessionId ?? journey.sessionId ?? 'demo'}`;
     const SESSION_START_KEY = `ppn_session_start_${journey.session?.sessionId ?? journey.sessionId ?? 'demo'}`;
 
@@ -415,22 +433,103 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
         return () => window.removeEventListener('ppn:session-event', handleSessionEvent);
     }, [getElapsedSec]);
 
-    // Restore mode from localStorage on mount (survives companion-page navigation)
+    // Restore mode from localStorage on mount (survives companion-page navigation).
+    // BUG-1 guard: if localStorage says 'live' but SESSION_START_KEY is absent, the
+    // key was resolved from a stale or colliding 'demo' entry — treat as 'pre'.
     const [mode, setMode] = useState<SessionMode>(() => {
-        try { return (localStorage.getItem(SESSION_KEY) as SessionMode) ?? 'pre'; } catch { return 'pre'; }
+        try {
+            const stored = localStorage.getItem(SESSION_KEY) as SessionMode | null;
+            if (stored === 'live' && !localStorage.getItem(SESSION_START_KEY)) return 'pre';
+            return stored ?? 'pre';
+        } catch { return 'pre'; }
     });
+
+    // SESSION_KEY HYDRATION FIX (BUG-3): When journey.sessionId is undefined on the
+    // first render, SESSION_KEY is 'ppn_session_mode_demo' and the lazy initializer
+    // above reads the wrong localStorage slot → mode defaults to 'pre' even if the
+    // session is live. This effect re-syncs mode from localStorage the first time
+    // SESSION_KEY resolves to a real UUID.
+    //
+    // Covers the "patient-selection modal re-entry" path (Regression Scenarios 1+3):
+    //   1. Patient A starts session → mode='live', ppn_session_mode_<uuidA>='live'
+    //   2. User opens Patient B via modal → component unmounts
+    //   3. User returns to Patient A → component remounts, but if sessionId hydrates
+    //      one render late, the lazy initializer reads 'demo' key → mode='pre'
+    //   4. This effect fires when SESSION_KEY updates to the real UUID, reads 'live',
+    //      and calls setMode('live') to correct the in-memory state.
+    const UUID_RE_H = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    useEffect(() => {
+        // Only act when we have a real UUID in the key (not 'demo')
+        const keyUUID = SESSION_KEY.replace('ppn_session_mode_', '');
+        if (!UUID_RE_H.test(keyUUID)) return;
+        try {
+            const stored = localStorage.getItem(SESSION_KEY) as SessionMode | null;
+            if (!stored) return; // Nothing stored — leave mode as-is
+            const startKeyPresent = !!localStorage.getItem(SESSION_START_KEY);
+            const correctedMode: SessionMode =
+                stored === 'live' && !startKeyPresent ? 'pre' : stored;
+            setMode(prev => {
+                if (prev !== correctedMode) {
+                    console.debug('[BUG-3] SESSION_KEY resolved — correcting mode from', prev, '→', correctedMode);
+                    return correctedMode;
+                }
+                return prev;
+            });
+        } catch { /* quota exceeded */ }
+    // SESSION_KEY changes whenever journey.sessionId hydrates — that's the trigger we want.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [SESSION_KEY]);
+
+
+    // Recovery guard — if localStorage was cleared (logout/hard-refresh) but
+    // the DB session is still open (session_ended_at IS NULL), restore 'live' mode.
+    //
+    // BUG-2 FIX: The guard must distinguish two legitimate 'pre' states:
+    //   A) Genuine recovery  — SESSION_START_KEY is absent (localStorage was wiped)
+    //   B) Normal navigation — SESSION_START_KEY is present but practitioner hasn't
+    //      tapped Start yet (e.g., arrived via header timer chip deep-link).
+    // Previously only case A should auto-restore, but both were treated identically,
+    // causing the timer to flip to 'live' the moment activeSessions updated on
+    // any navigation into Phase 2. We now gate restoration on case A only.
+    useEffect(() => {
+        const resolvedId = journey.sessionId ?? journey.session?.sessionId;
+        const UUID_RE_R = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+        if (!resolvedId || !UUID_RE_R.test(resolvedId)) return;
+        const isConfirmedActive = activeSessions.some(s => s.id === resolvedId);
+        if (isConfirmedActive && mode === 'pre') {
+            // BUG-2 guard: if a start key already exists, the session is not stuck —
+            // the practitioner simply navigated in before tapping Start. Do not restore.
+            const hasLocalStartKey = !!localStorage.getItem(SESSION_START_KEY);
+            if (hasLocalStartKey) return;
+            // No start key + DB session open = genuine hard-refresh recovery. Restore.
+            console.warn('[WO-QA] Session', resolvedId, 'is open in DB, no local start key — genuine recovery to live');
+            setMode('live');
+            try {
+                localStorage.setItem(SESSION_KEY, 'live');
+                const activeSession = activeSessions.find(s => s.id === resolvedId);
+                if (activeSession?.startedAt) {
+                    localStorage.setItem(SESSION_START_KEY, String(new Date(activeSession.startedAt).getTime()));
+                }
+            } catch { /* quota exceeded */ }
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [activeSessions, journey]);
 
     const setAndPersistMode = (nextMode: SessionMode) => {
         setMode(nextMode);
+        // BUG-1 guard: if session ID resolved to 'demo' (race condition during mount),
+        // writing to localStorage would share the key across all demo/un-hydrated sessions,
+        // causing timer carry-over. We still update in-memory mode (setMode above) but
+        // skip localStorage persistence until a real UUID is confirmed.
+        const resolvedId = journey.session?.sessionId ?? journey.sessionId;
+        const UUID_RE_P = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+        if (!resolvedId || !UUID_RE_P.test(resolvedId)) return;
         try {
             localStorage.setItem(SESSION_KEY, nextMode);
             if (nextMode === 'live') {
-                // SAFETY FIX: Always stamp a fresh start time when going live.
-                // The previous "only write if not already set" guard caused timer
-                // carry-over from prior sessions that used the same localStorage key
-                // (particularly sessions that resolved to the 'demo' fallback).
-                // A practitioner starting a new dosing session must always see 00:00:00.
-                localStorage.removeItem(SESSION_START_KEY);   // clear any stale value first
+                // Always stamp a fresh start time. removeItem first prevents any stale
+                // value from the same key surviving across hard-refresh sequences.
+                localStorage.removeItem(SESSION_START_KEY);
                 localStorage.setItem(SESSION_START_KEY, String(Date.now()));
             } else if (nextMode === 'pre') {
                 localStorage.removeItem(SESSION_START_KEY);
@@ -813,1009 +912,242 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
         }
     };
 
-    // ── POST-SESSION VIEW ──────────────────────────────────────────────────────────
+
+    // ── Resolve session ID for downstream calls ────────────────────────────────
+    const resolvedSessionId = journey.sessionId ?? journey.session?.sessionId;
+    const UUID_RE_CHECK = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    const hasRealUUID = !!(resolvedSessionId && UUID_RE_CHECK.test(resolvedSessionId));
+
+    // ── Force-close: end session without completing the Pre steps ─────────────
+    // Used to recover from stuck sessions (timer running, UI lost).
+    const handleForceClose = async () => {
+        if (!hasRealUUID) return;
+        try {
+            await endDosingSession(resolvedSessionId);
+            localStorage.removeItem(SESSION_KEY);
+            localStorage.removeItem(SESSION_START_KEY);
+            setMode('post');
+            setForceCloseConfirm(false);
+            addToast({ title: 'Session Closed', message: 'Session was force-closed and saved.', type: 'info' });
+        } catch (err) {
+            addToast({ title: 'Force Close Failed', message: String(err), type: 'error' });
+        }
+    };
+
+    // ── Restore stuck session in live mode ────────────────────────────────────
+    const handleRestoreSession = () => {
+        setMode('live');
+        if (hasRealUUID) {
+            localStorage.setItem(SESSION_KEY, 'live');
+            const activeSession = activeSessions.find(s => s.id === resolvedSessionId);
+            if (activeSession?.startedAt) {
+                localStorage.setItem(SESSION_START_KEY, String(new Date(activeSession.startedAt).getTime()));
+            }
+        }
+    };
+
+    // ── isStuckInPre: timer running in DB, but UI mode is 'pre' with no start key
+    const isStuckInPre = mode === 'pre'
+        && hasRealUUID
+        && activeSessions.some(s => s.id === resolvedSessionId)
+        && !localStorage.getItem(SESSION_START_KEY);
+
+    // ── End session handler ────────────────────────────────────────────────────
+    const handleEndSession = async () => {
+        if (!hasRealUUID) { setAndPersistMode('post'); return; }
+        try {
+            await endDosingSession(resolvedSessionId);
+            setAndPersistMode('post');
+            refreshActiveSessions();
+            addToast({ title: 'Dosing Session Ended', message: 'Session data saved. Proceed to closeout.', type: 'success' });
+        } catch (err) {
+            addToast({ title: 'Error ending session', message: String(err), type: 'error' });
+        }
+    };
+
+    // ── Start session handler ──────────────────────────────────────────────────
+    const handleStartSession = async () => {
+        setAndPersistMode('live');
+
+        // Build a rich initial-dose description from the Dosing Protocol cache
+        // (same pattern as additional_dose in handleDosingSaved above)
+        let dosingDesc = 'Initial dose administered — Session started';
+        try {
+            const cached = JSON.parse(localStorage.getItem('ppn_dosing_protocol') || '{}');
+            const parts: string[] = ['Initial Dose'];
+            if (cached.dosage_amount && cached.dosage_unit)
+                parts.push(`${cached.dosage_amount}${cached.dosage_unit}`);
+            else if (cached.dosage_amount)
+                parts.push(`${cached.dosage_amount}`);
+            if (cached.substance_name) parts.push(cached.substance_name);
+            if (cached.route_of_administration) parts.push(cached.route_of_administration);
+            parts.push('T+00:00:00');
+            if (parts.length > 1) dosingDesc = parts.join(' · ');
+        } catch { /* localStorage unavailable, keep default */ }
+
+        // Stamp a chart event pin at T=0 so the vitals chart shows the dose marker
+        setEventLog(prev => [
+            ...prev,
+            {
+                id: `dose-start-${Date.now()}`,
+                elapsedSec: 0,
+                type: 'dose_admin',
+                label: dosingDesc,
+            } satisfies SessionEventPin,
+        ]);
+
+        // Fire ppn:dose-registered → LiveSessionTimeline adds an optimistic entry
+        // immediately (before the 60-sec DB poll) so the ledger is never blank at start
+        window.dispatchEvent(new CustomEvent('ppn:dose-registered', {
+            detail: { type: 'dose_admin', label: dosingDesc, elapsedSec: 0 }
+        }));
+
+        if (hasRealUUID) {
+            // Write dose_admin (valid ref_flow_event_types code) — NOT 'session_started'
+            // which does not exist in ref_flow_event_types and causes a silent FK failure.
+            createTimelineEvent({
+                session_id: resolvedSessionId,
+                event_timestamp: new Date().toISOString(),
+                event_type_code: 'dose_admin',
+                metadata: { event_description: dosingDesc },
+            }).then(() => refreshActiveSessions())
+              .catch(err => console.warn('[DosingSessionPhase] dose_admin timeline write failed:', err));
+        }
+    };
+
+    // ── Phase 2 prep steps (derived from completedForms) ──────────────────────
+    type Phase2Step = { id: WellnessFormId | '__start__'; label: string; icon: string; isComplete: boolean };
+    const PHASE2_STEPS: Phase2Step[] = [
+        { id: 'dosing-protocol', label: 'Dosing Protocol', icon: 'medication', isComplete: completedForms.has('dosing-protocol') },
+        ...(config.enabledFeatures.includes('session-vitals')
+            ? [{ id: 'session-vitals' as WellnessFormId, label: 'Baseline Vitals', icon: 'monitor_heart', isComplete: completedForms.has('session-vitals') }]
+            : []),
+        { id: '__start__', label: 'Launch Session', icon: 'play_circle', isComplete: isLive },
+    ];
+    const currentStepIdx = PHASE2_STEPS.findIndex(s => !s.isComplete);
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // ── POST MODE: delegates to SessionCloseoutView ────────────────────────────
     if (mode === 'post') {
+        const handleSubmitAndClose = async () => {
+            if (hasRealUUID) {
+                await createTimelineEvent({
+                    session_id: resolvedSessionId,
+                    event_timestamp: new Date().toISOString(),
+                    event_type_code: 'session_completed' as any,
+                    metadata: {
+                        event_description: `Session submitted and closed. Post-session assessment scores — MEQ: ${assessmentScores?.meq ?? '—'}, EDI: ${assessmentScores?.edi ?? '—'}, CEQ: ${assessmentScores?.ceq ?? '—'}.`,
+                    },
+                }).catch(err => console.warn('[SAVS-GAP4] Session close DB write failed:', err));
+            }
+            onCompletePhase();
+        };
         return (
-            <div className="space-y-6 animate-in fade-in slide-in-from-bottom-8 duration-500">
-
-                {/* WO-548: Collapsible accordion, session chart + ledger during closeout */}
-                <div className="bg-slate-900/40 border border-slate-700/40 rounded-2xl overflow-hidden">
-                    <button
-                        onClick={() => setShowPostSessionTimeline(v => !v)}
-                        className="w-full flex items-center justify-between px-5 py-3.5 hover:bg-slate-800/30 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500"
-                        aria-expanded={showPostSessionTimeline}
-                        aria-controls="post-session-timeline-panel"
-                    >
-                        <div className="flex items-center gap-2.5">
-                            <Activity className="w-4 h-4 text-amber-400" aria-hidden="true" />
-                            <span className="text-sm font-black text-slate-400 uppercase tracking-widest">View Session Timeline &amp; Ledger</span>
-                        </div>
-                        {showPostSessionTimeline
-                            ? <ChevronUp className="w-4 h-4 text-slate-500" />
-                            : <ChevronDown className="w-4 h-4 text-slate-500" />}
-                    </button>
-                    {showPostSessionTimeline && (
-                        <div id="post-session-timeline-panel" className="px-5 pb-5 pt-2 space-y-5 border-t border-slate-700/40 animate-in slide-in-from-top-2 duration-200">
-                            {config.enabledFeatures.includes('session-vitals') && (
-                                <SessionVitalsTrendChart
-                                    sessionId={journey.sessionId || journey.session?.sessionNumber?.toString() || '1'}
-                                    substance={journey.session?.substance}
-                                    onThresholdViolation={() => { }}
-                                    data={vitalsChartData}
-                                    events={eventLog}
-                                    sessionDurationSec={sessionDurationSec}
-                                    onVisibilityChange={v => setChartVisible(v as { hr: boolean; bp: boolean; temp: boolean; events: boolean })}
-                                />
-                            )}
-                            <LiveSessionTimeline
-                                sessionId={journey.sessionId || journey.session?.sessionNumber?.toString() || '1'}
-                                active={false}
-                                visible={chartVisible}
-                                sessionStartMs={sessionStartMs}
-                            />
-                        </div>
-                    )}
-                </div>
-                <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-3xl p-8 shadow-2xl">
-                    <div className="flex items-start justify-between mb-8">
-                        <div>
-                            <h2 className="text-2xl font-black text-[#A8B5D1]">Session Closeout</h2>
-                            <p className="text-slate-400 mt-1">Complete mandatory post-session documentation.</p>
-                        </div>
-                        <div className="px-3 py-1 bg-blue-500/10 border border-blue-500/20 text-blue-400 rounded-full text-xs font-bold uppercase tracking-wider">
-                            Phase 2: Closeout
-                        </div>
-                    </div>
-
-                    <div className="space-y-4 mb-8">
-                        <div className="p-5 bg-emerald-900/10 border border-emerald-900/30 rounded-2xl flex items-center justify-between">
-                            <div className="flex items-center gap-4">
-                                <div className="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-500">
-                                    <CheckSquare className="w-5 h-5" />
-                                </div>
-                                <span className="text-[#A8B5D1] font-bold line-through decoration-emerald-500/50 decoration-2">Session End Time Recorded</span>
-                            </div>
-                            <span className="text-xs font-mono text-emerald-600 font-bold px-2 py-1 bg-emerald-500/10 rounded">AUTO</span>
-                        </div>
-
-                        <button
-                            onClick={() => setShowAssessmentModal(true)}
-                            className="w-full p-5 bg-slate-800/40 border border-slate-700 hover:border-blue-500/50 hover:bg-slate-800/60 rounded-2xl flex items-center justify-between transition-all group"
-                        >
-                            <div className="flex items-center gap-4">
-                                {assessmentCompleted ? (
-                                    <div className="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-500">
-                                        <CheckSquare className="w-5 h-5" />
-                                    </div>
-                                ) : (
-                                    <div className="w-8 h-8 rounded-full border-2 border-slate-600 flex items-center justify-center group-hover:border-blue-400 transition-colors">
-                                        <div className="w-2 h-2 rounded-full bg-slate-600 group-hover:bg-blue-400 transition-colors opacity-0 group-hover:opacity-100" />
-                                    </div>
-                                )}
-                                <div className="flex flex-col items-start">
-                                    <span className={assessmentCompleted ? 'text-[#A8B5D1] font-bold line-through opacity-50' : 'text-[#A8B5D1] font-bold'}>
-                                        Post-Session Assessments
-                                    </span>
-                                    <span className="text-xs text-slate-400">MEQ-30, EDI, CEQ (Standard Battery)</span>
-                                </div>
-                            </div>
-                            {assessmentCompleted && <span className="text-xs font-bold text-emerald-500 px-2 py-1 bg-emerald-500/10 rounded border border-emerald-500/20">COMPLETED</span>}
-                        </button>
-
-                        <div className={`p-5 rounded-2xl flex items-center justify-between transition-all ${hasSafetyEvents
-                            ? 'bg-amber-900/10 border border-amber-700/40 cursor-pointer hover:border-amber-500/50'
-                            : 'bg-slate-800/40 border border-slate-700 opacity-50 cursor-not-allowed'
-                            }`}>
-                            <div className="flex items-center gap-4">
-                                <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center ${hasSafetyEvents ? 'border-amber-500 bg-amber-500/10' : 'border-slate-600'
-                                    }`}>
-                                    {hasSafetyEvents
-                                        ? <CheckSquare className="w-5 h-5 text-amber-400" />
-                                        : <div className="w-2 h-2 rounded-full bg-slate-600" />}
-                                </div>
-                                <span className={`font-bold ${hasSafetyEvents ? 'text-amber-300' : 'text-slate-400'
-                                    }`}>
-                                    Review Safety Events {hasSafetyEvents ? '' : '(0)'}
-                                </span>
-                            </div>
-                            <span className={`text-xs font-bold border px-2 py-1 rounded ${hasSafetyEvents
-                                ? 'text-amber-400 border-amber-700/40 bg-amber-500/10'
-                                : 'text-slate-600 border-slate-700'
-                                }`}>
-                                {hasSafetyEvents ? 'REVIEW' : 'NO EVENTS'}
-                            </span>
-                        </div>
-                    </div>
-
-                    <div className="flex flex-col items-center pt-8 border-t border-slate-800">
-                        <button
-                            disabled={!assessmentCompleted}
-                            onClick={async () => {
-                                // SAVS GAP #4 fix: persist session close + captured scores to DB ledger
-                                const _sidC = journey.sessionId ?? journey.session?.sessionId;
-                                if (_sidC && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(_sidC)) {
-                                    await createTimelineEvent({
-                                        session_id: _sidC,
-                                        event_timestamp: new Date().toISOString(),
-                                        event_type_code: 'session_completed',
-                                        metadata: {
-                                            event_description: `Session submitted and closed. Post-session assessment scores — MEQ: ${assessmentScores?.meq ?? '—'}, EDI: ${assessmentScores?.edi ?? '—'}, CEQ: ${assessmentScores?.ceq ?? '—'}.`,
-                                        },
-                                    }).catch(err => console.warn('[SAVS-GAP4] Session close DB write failed:', err));
-                                }
-                                onCompletePhase();
-                            }}
-                            className={`w-full md:w-2/3 py-5 rounded-2xl font-black text-xl tracking-wide shadow-lg transition-all flex items-center justify-center gap-4 ${assessmentCompleted
-                                ? 'bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white shadow-blue-900/40 cursor-pointer hover:scale-[1.01] active:scale-[0.99]'
-                                : 'bg-slate-800 text-slate-600 cursor-not-allowed border border-slate-700'
-                                }`}
-                        >
-                            <Lock className="w-5 h-5" />
-                            SUBMIT & CLOSE SESSION
-                        </button>
-                        {!assessmentCompleted && (
-                            <div className="flex items-center gap-2 mt-4 text-red-400/80 bg-red-950/20 px-3 py-1 rounded-full border border-red-900/30">
-                                <AlertTriangle className="w-3 h-3" />
-                                <span className="text-xs font-bold">Pending: Post-Session Assessments</span>
-                            </div>
-                        )}
-                    </div>
-                </div>
-
-                {showAssessmentModal && (
-                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
-                        <div className="relative w-full max-w-5xl max-h-[90vh] overflow-y-auto bg-[#0a1628] rounded-2xl shadow-2xl border border-slate-700">
-                            <button
-                                onClick={() => setShowAssessmentModal(false)}
-                                className="absolute top-4 right-4 z-10 w-10 h-10 flex items-center justify-center bg-slate-800/80 hover:bg-slate-700 rounded-full transition-colors border border-slate-700 hover:border-slate-500"
-                            >
-                                <X className="w-5 h-5 text-slate-300" />
-                            </button>
-                            <div className="p-6">
-                                <AdaptiveAssessmentPage
-                                    showBackButton={false}
-                                    onComplete={(scores) => {
-                                        setAssessmentScores(scores);
-                                        setAssessmentCompleted(true);
-                                        // WO-545: persist so Phase 3 Session Snapshot can read across render boundary
-                                        try {
-                                            const sessionKey = journey.session?.sessionId ?? journey.sessionId ?? 'demo';
-                                            localStorage.setItem(
-                                                `ppn_phase2_assessment_${sessionKey}`,
-                                                JSON.stringify(scores)
-                                            );
-                                        } catch { /* quota exceeded, non-critical */ }
-                                    }}
-                                    onClose={() => setShowAssessmentModal(false)}
-                                />
-                            </div>
-                        </div>
-                    </div>
-                )}
-            </div>
+            <Phase2ErrorBoundary onReset={() => setMode('pre')}>
+                <SessionCloseoutView
+                    journey={journey}
+                    assessmentCompleted={assessmentCompleted}
+                    assessmentScores={assessmentScores}
+                    hasSafetyEvents={hasSafetyEvents}
+                    showAssessmentModal={showAssessmentModal}
+                    setShowAssessmentModal={setShowAssessmentModal}
+                    showPostSessionTimeline={showPostSessionTimeline}
+                    setShowPostSessionTimeline={setShowPostSessionTimeline}
+                    sessionStartMs={sessionStartMs}
+                    chartVisible={chartVisible}
+                    vitalsChartData={vitalsChartData}
+                    eventLog={eventLog}
+                    sessionDurationSec={sessionDurationSec}
+                    config={config}
+                    setAssessmentCompleted={setAssessmentCompleted}
+                    setAssessmentScores={setAssessmentScores}
+                    onCompletePhase={onCompletePhase}
+                    onSubmitAndClose={handleSubmitAndClose}
+                />
+            </Phase2ErrorBoundary>
         );
     }
 
-    // ── BUILD STEP CARDS (pre + live) ──────────────────────────────────────────────
-    const PHASE2_STEPS: Array<{ id: WellnessFormId | '__start__'; label: string; icon: string; isComplete: boolean }> = [
-        {
-            id: 'dosing-protocol',
-            label: 'Dosing Protocol',
-            icon: 'medication',
-            isComplete: isDosingProtocolComplete,
-        },
-        ...(config.enabledFeatures.includes('session-vitals') ? [{
-            id: 'session-vitals' as WellnessFormId,
-            label: 'Baseline Vitals',
-            icon: 'monitor_heart',
-            isComplete: isVitalsComplete,
-        }] : []),
-        {
-            id: '__start__',
-            label: 'Start Session',
-            icon: 'play_arrow',
-            isComplete: isLive,
-        },
-    ];
-
-
-    const currentStepIdx = isLive ? -1 : PHASE2_STEPS.findIndex(s => !s.isComplete);
-
+    // ═══════════════════════════════════════════════════════════════════════════
+    // ── PRE + LIVE MODES: delegates to SessionHUD, SessionPrepView, SessionCockpitView
     return (
-        <>
-            <div className="space-y-4 animate-in fade-in duration-500">
+        <Phase2ErrorBoundary onReset={() => setAndPersistMode('pre')}>
+            <div className="space-y-4">
 
-                {/* ── Section Label + Progress ─────────────────────────────────────── */}
-                <div className="flex items-center justify-between px-1">
-                    <h2 className="ppn-label" style={{ color: '#FBBF24' }}>
-                        {isLive ? 'Session Active' : 'Session Preparation'} · {PHASE2_STEPS.length} Steps
-                    </h2>
-                    <div className="flex items-center gap-3">
-                        <div className="w-28 h-1.5 bg-slate-800 rounded-full overflow-hidden">
-                            <div
-                                className="h-full bg-gradient-to-r from-amber-700 to-amber-400 rounded-full transition-all duration-700"
-                                style={{ width: `${(PHASE2_STEPS.filter(s => s.isComplete).length / PHASE2_STEPS.length) * 100}%` }}
-                                role="progressbar"
-                                aria-valuenow={PHASE2_STEPS.filter(s => s.isComplete).length}
-                                aria-valuemax={PHASE2_STEPS.length}
-                                aria-label="Session preparation progress"
-                            />
-                        </div>
-                        <span className="text-sm font-semibold text-slate-400">
-                            {PHASE2_STEPS.filter(s => s.isComplete).length}/{PHASE2_STEPS.length}
-                        </span>
-                    </div>
-                </div>
+                {/* 1. Session HUD — sticky timer + live vitals strip */}
+                <SessionHUD
+                    isLive={isLive}
+                    elapsedTime={elapsedTime}
+                    updateLog={updateLog}
+                    liveVitals={liveVitals}
+                />
 
-                {/* ── Step Cards: full cards pre-session, compact pills when live ─── */}
-                {isLive ? (
-                    /* Collapsed pill row — visible glanceable status when timer is running */
-                    <div className="flex items-center gap-2 flex-wrap">
-                        {PHASE2_STEPS.map((step, index) => (
-                            <div
-                                key={step.id}
-                                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-bold ${step.isComplete
-                                    ? 'bg-amber-900/30 border-amber-600/40 text-amber-300'
-                                    : 'bg-slate-800/40 border-slate-700/40 text-slate-500'
-                                    }`}
-                            >
-                                {step.isComplete
-                                    ? <CheckCircle2 className="w-3 h-3 text-amber-400" aria-hidden="true" />
-                                    : <span className="material-symbols-outlined text-[12px]">{step.icon}</span>}
-                                <span>Step {index + 1}</span>
-                                <span className="text-[10px] opacity-60 hidden sm:inline">{step.label}</span>
-                            </div>
-                        ))}
-                    </div>
-                ) : (
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                        {PHASE2_STEPS.map((step, index) => {
-                            const isStart = step.id === '__start__';
-                            const isCurrent = !isLive && index === currentStepIdx;
-
-                            return (
-                                <div
-                                    key={step.id}
-                                    className={[
-                                        'relative flex flex-col rounded-xl transition-all duration-300 overflow-hidden',
-                                        step.isComplete
-                                            ? 'bg-amber-900/20'
-                                            : isCurrent
-                                                ? 'bg-amber-950/60 shadow-lg shadow-amber-950/60'
-                                                : 'bg-slate-800/20 hover:bg-slate-800/35',
-                                    ].join(' ')}
-                                >
-                                    {/* Top accent stripe */}
-                                    <div className={[
-                                        'h-0.5 w-full',
-                                        step.isComplete ? 'bg-amber-600/60' : isCurrent ? 'bg-amber-400' : 'bg-slate-700/40',
-                                    ].join(' ')} aria-hidden="true" />
-
-                                    <div className="flex flex-col flex-1 p-4 gap-3">
-                                        {/* Step label + decorative icon badge (top-right) */}
-                                        <div className="flex items-center justify-between gap-1">
-                                            <span className={`font-['Manrope',sans-serif] text-xl font-extrabold tracking-tight leading-none ${step.isComplete ? 'text-amber-300/80' : isCurrent ? 'text-amber-200/90' : 'text-slate-400/80'}`}>
-                                                Step {index + 1}
-                                            </span>
-                                            {step.isComplete ? (
-                                                <CheckCircle2 className="w-4 h-4 text-amber-400 flex-shrink-0" aria-label="Complete" />
-                                            ) : (
-                                                <div className={[
-                                                    'w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0',
-                                                    isCurrent ? 'bg-amber-500/25' : 'bg-slate-700/30',
-                                                ].join(' ')} aria-hidden="true">
-                                                    <span className={`material-symbols-outlined text-[16px] ${isCurrent ? 'text-amber-300' : 'text-slate-500'}`}>
-                                                        {step.icon}
-                                                    </span>
-                                                </div>
-                                            )}
-                                        </div>
-
-                                        {/* Card title — left-justified, larger */}
-                                        <h4 className={`text-xl font-black leading-snug ${step.isComplete ? 'text-amber-200' : isCurrent ? 'text-[#A8B5D1]' : 'text-slate-400'}`}>
-                                            {step.label}
-                                        </h4>
-
-                                        {/* CTA area */}
-                                        <div className="mt-auto pt-2">
-                                            {step.isComplete ? (
-                                                <div className="flex flex-col items-center gap-1 mt-2">
-                                                    {/* Dosage HUD, only for dosing-protocol step */}
-                                                    {step.id === 'dosing-protocol' && (() => {
-                                                        try {
-                                                            const raw = localStorage.getItem('ppn_dosing_protocol');
-                                                            if (!raw) return null;
-                                                            const p = JSON.parse(raw);
-                                                            const name = p.substance_name || p.substance;
-                                                            const dose = p.dosage_amount;
-                                                            const unit = p.dosage_unit || 'mg';
-                                                            const route = p.route_of_administration;
-                                                            if (!name) return null;
-                                                            return (
-                                                                <div className="w-full mb-2 px-3 py-2 bg-amber-950/40 border border-amber-700/30 rounded-xl text-center">
-                                                                    <p className="text-base font-black text-amber-200 uppercase tracking-widest leading-tight">{name}</p>
-                                                                    <div className="flex items-center justify-center gap-3 mt-1 text-sm font-bold text-amber-300/80">
-                                                                        {dose && <span>{dose}{unit}</span>}
-                                                                        {dose && route && <span className="text-amber-700">·</span>}
-                                                                        {route && <span>{route}</span>}
-                                                                    </div>
-                                                                </div>
-                                                            );
-                                                        } catch { return null; }
-                                                    })()}
-                                                    <span className="flex items-center gap-1.5 text-sm font-black uppercase tracking-widest text-amber-400">
-                                                        <CheckCircle2 className="w-4 h-4" /> COMPLETED
-                                                    </span>
-                                                    {!isStart && (
-                                                        <button
-                                                            onClick={() => onOpenForm(step.id as import('./WellnessFormRouter').WellnessFormId)}
-                                                            className="w-full flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-slate-400 hover:text-amber-300 transition-all"
-                                                            aria-label={`Amend ${step.label}`}
-                                                        >
-                                                            <Edit3 className="w-3.5 h-3.5" aria-hidden="true" /> Amend
-                                                        </button>
-                                                    )}
-                                                </div>
-                                            ) : isStart ? (
-                                                /* Start Session CTA */
-                                                <button
-                                                    onClick={canStartSession ? () => {
-                                                        setAndPersistMode('live');
-                                                        // SAVS GAP #1 fix: persist session start to DB ledger
-                                                        const _sidS = journey.sessionId ?? journey.session?.sessionId;
-                                                        if (_sidS && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(_sidS)) {
-                                                            createTimelineEvent({
-                                                                session_id: _sidS,
-                                                                event_timestamp: new Date().toISOString(),
-                                                                event_type_code: 'intake_completed',
-                                                                metadata: { event_description: 'Dosing session timer started by practitioner.' },
-                                                            }).catch(err => console.warn('[SAVS-GAP1] Session start DB write failed:', err));
-                                                        }
-                                                    } : undefined}
-                                                    disabled={!canStartSession}
-                                                    className={`w-full flex items-center justify-center gap-2 px-4 py-2.5 font-black text-sm rounded-xl transition-all active:scale-95 ${canStartSession
-                                                        ? 'bg-amber-600 hover:bg-amber-500 text-white shadow-md shadow-amber-950/50'
-                                                        : 'bg-slate-800/30 text-slate-600 cursor-not-allowed border border-slate-700/50'
-                                                        }`}
-                                                    aria-label="Start dosing session"
-                                                >
-                                                    {canStartSession ? (
-                                                        <><Play className="w-4 h-4 fill-white" aria-hidden="true" /> Start</>
-                                                    ) : (
-                                                        <><Lock className="w-4 h-4" aria-hidden="true" /> Locked</>
-                                                    )}
-                                                </button>
-                                            ) : isCurrent ? (
-                                                <button
-                                                    onClick={() => onOpenForm(step.id as import('./WellnessFormRouter').WellnessFormId)}
-                                                    className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-amber-600/40 hover:bg-amber-600/60 text-amber-100 font-black text-sm rounded-xl transition-all active:scale-95 shadow-md shadow-amber-950/50"
-                                                >
-                                                    Open
-                                                </button>
-                                            ) : (
-                                                <button
-                                                    onClick={() => onOpenForm(step.id as import('./WellnessFormRouter').WellnessFormId)}
-                                                    className="w-full flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg border border-slate-700/50 bg-slate-800/30 text-sm font-semibold text-slate-500 hover:text-slate-300 hover:bg-slate-700/40 hover:border-slate-600/50 transition-all"
-                                                >
-                                                    Open
-                                                </button>
-                                            )}
-                                        </div>
-                                    </div>
-                                </div>
-                            );
-                        })}
-                    </div>
-                )} {/* end isLive ? pill row : full cards */}
-
-                {/* ── Contraindication Alert ─────────────────────────────────────── */}
-                {contraindicationResults && contraindicationResults.absoluteFlags.length > 0 ? (
-                    /* ══ ABSOLUTE CONTRAINDICATION, Full-width emergency alert ══ */
-                    <div className="relative rounded-2xl overflow-hidden border-2 border-red-500 shadow-[0_0_40px_rgba(239,68,68,0.35)] animate-pulse-border">
-                        {/* Pulsing background glow */}
-                        <div className="absolute inset-0 bg-gradient-to-br from-red-950/80 via-red-900/60 to-red-950/80 pointer-events-none" />
-                        {/* Animated top stripe */}
-                        <div className="relative bg-red-600 px-5 py-3 flex items-center gap-3">
-                            <AlertTriangle className="w-6 h-6 text-white flex-shrink-0 animate-bounce" />
-                            <span className="text-white font-black text-lg uppercase tracking-[0.2em]">⚠ ABSOLUTE CONTRAINDICATION, DO NOT ADMINISTER</span>
-                        </div>
-                        <div className="relative p-5 space-y-4">
-                            {/* Drug pair callout: meds ✕ substance with functional clear button */}
-                            <div className="flex items-center justify-center gap-4 flex-wrap">
-                                {patientMeds.map((med, i) => (
-                                    <span key={i} className="px-4 py-2 bg-red-900/60 border border-red-400/60 rounded-xl text-red-200 font-black text-base">
-                                        {med}
-                                    </span>
-                                ))}
-                                <span className="text-red-400 font-black text-2xl" aria-hidden="true">✕</span>
-                                {/* Substance pill with clear button */}
-                                <div className="flex items-center gap-1 px-4 py-2 bg-red-900/60 border border-red-400/60 rounded-xl">
-                                    <span className="text-red-200 font-black text-base">
-                                        {journey.session?.substance || 'Selected Substance'}
-                                    </span>
-                                    <button
-                                        onClick={handleClearSubstance}
-                                        aria-label={isLive ? 'Change substance (opens form, change will be timestamped)' : 'Clear substance selection'}
-                                        title={isLive ? 'Change substance, will log a timestamped amendment' : 'Clear, re-select substance'}
-                                        className="ml-2 w-5 h-5 flex items-center justify-center rounded-full bg-red-700/60 hover:bg-red-600 border border-red-500/60 hover:border-red-400 text-red-200 hover:text-white transition-all flex-shrink-0"
-                                    >
-                                        <X className="w-3 h-3" />
-                                    </button>
-                                </div>
-                            </div>
-                            {/* Flag details, uses ContraindicationFlag.headline + .detail */}
-                            <div className="space-y-2">
-                                {contraindicationResults.absoluteFlags.map((flag: any, i: number) => {
-                                    const sourceLinks = flag.regulatoryBasis ? getRegulatoryLinks(flag.regulatoryBasis) : [];
-                                    return (
-                                        <div key={i} className="flex items-start gap-3 p-3 bg-red-950/50 rounded-xl border border-red-800/50">
-                                            <AlertTriangle className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" />
-                                            <div className="flex-1 min-w-0">
-                                                <p className="text-red-200 font-black text-sm uppercase tracking-wide">{flag.headline || 'Contraindicated Combination'}</p>
-                                                <p className="text-red-300/80 text-sm mt-0.5 leading-relaxed">{flag.detail || 'This combination carries serious risk of adverse events. Session must not proceed.'}</p>
-                                                {/* Clickable source links */}
-                                                {sourceLinks.length > 0 && (
-                                                    <div className="flex flex-wrap gap-2 mt-2">
-                                                        {sourceLinks.map((link, li) => (
-                                                            <a
-                                                                key={li}
-                                                                href={link.url}
-                                                                target="_blank"
-                                                                rel="noopener noreferrer"
-                                                                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-red-900/50 border border-red-600/40 text-red-300 hover:text-white hover:bg-red-800/60 hover:border-red-500/60 transition-colors text-xs font-semibold"
-                                                                aria-label={`Read source: ${link.label}`}
-                                                            >
-                                                                <span className="material-symbols-outlined text-[12px]">open_in_new</span>
-                                                                {link.label}
-                                                            </a>
-                                                        ))}
-                                                    </div>
-                                                )}
-                                                {/* Fallback: raw citation if no URL matched */}
-                                                {sourceLinks.length === 0 && flag.regulatoryBasis && (
-                                                    <p className="text-red-500/60 text-xs mt-1 font-mono">{flag.regulatoryBasis}</p>
-                                                )}
-                                            </div>
-                                        </div>
-                                    );
-                                })}
-                            </div>
-                            {/* Current meds footer */}
-                            <div className="pt-3 border-t border-red-800/40 flex items-center gap-2 flex-wrap">
-                                <span className="text-[10px] uppercase tracking-widest font-bold text-red-500">Patient Medications:</span>
-                                {patientMeds.map((med, i) => (
-                                    <span key={i} className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-red-900/40 border border-red-700/40 text-red-300 text-xs font-semibold">
-                                        <Pill className="w-3 h-3" />{med}
-                                    </span>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-                ) : contraindicationResults && contraindicationResults.relativeFlags.length > 0 ? (
-                    /* ══ RELATIVE CONTRAINDICATION, Amber warning ══ */
-                    <div className="rounded-2xl border-2 border-amber-500/70 bg-gradient-to-br from-amber-950/60 to-amber-900/40 shadow-[0_0_20px_rgba(245,158,11,0.2)]">
-                        <div className="bg-amber-600/90 px-5 py-3 flex items-center gap-3 rounded-t-xl">
-                            <AlertCircle className="w-5 h-5 text-white flex-shrink-0" />
-                            <span className="text-white font-black text-base uppercase tracking-[0.15em]">⚠ RELATIVE CONTRAINDICATION, Proceed with Caution</span>
-                        </div>
-                        <div className="p-5 space-y-3">
-                            {contraindicationResults.relativeFlags.map((flag: any, i: number) => {
-                                const sourceLinks = flag.regulatoryBasis ? getRegulatoryLinks(flag.regulatoryBasis) : [];
-                                return (
-                                    <div key={i} className="flex items-start gap-3 p-3 bg-amber-950/40 rounded-xl border border-amber-700/40">
-                                        <AlertCircle className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" />
-                                        <div className="flex-1 min-w-0">
-                                            <p className="text-amber-200 font-black text-sm uppercase tracking-wide">{flag.headline || 'Caution Required'}</p>
-                                            <p className="text-amber-300/80 text-sm mt-0.5 leading-relaxed">{flag.detail || 'Proceed only with senior clinical oversight and documented risk acknowledgement.'}</p>
-                                            {sourceLinks.length > 0 && (
-                                                <div className="flex flex-wrap gap-2 mt-2">
-                                                    {sourceLinks.map((link, li) => (
-                                                        <a
-                                                            key={li}
-                                                            href={link.url}
-                                                            target="_blank"
-                                                            rel="noopener noreferrer"
-                                                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-900/50 border border-amber-600/40 text-amber-300 hover:text-white hover:bg-amber-800/60 hover:border-amber-500/60 transition-colors text-xs font-semibold"
-                                                            aria-label={`Read source: ${link.label}`}
-                                                        >
-                                                            <span className="material-symbols-outlined text-[12px]">open_in_new</span>
-                                                            {link.label}
-                                                        </a>
-                                                    ))}
-                                                </div>
-                                            )}
-                                            {sourceLinks.length === 0 && flag.regulatoryBasis && (
-                                                <p className="text-amber-500/60 text-xs mt-1 font-mono">{flag.regulatoryBasis}</p>
-                                            )}
-                                        </div>
-                                    </div>
-                                );
-                            })}
-                            <div className="pt-2 border-t border-amber-800/40 flex items-center gap-2 flex-wrap">
-                                <span className="text-[10px] uppercase tracking-widest font-bold text-amber-500">Current Medications:</span>
-                                {patientMeds.map((med, i) => (
-                                    <span key={i} className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-900/40 border border-amber-700/40 text-amber-300 text-xs font-semibold">
-                                        <Pill className="w-3 h-3" />{med}
-                                    </span>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-                ) : (
-                    /* ══ ALL CLEAR or no substance yet, compact strip ══ */
-                    <div className="flex items-center gap-3 p-4 rounded-2xl bg-slate-900/40 border border-slate-800/40">
-                        <div className="flex-1 min-w-0">
-                            <p className="text-[10px] uppercase tracking-widest font-bold text-slate-500 mb-2">Current Medications</p>
-                            <div className="flex flex-wrap gap-1.5">
-                                {patientMeds.map((med, i) => (
-                                    <span key={i} className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-800/60 border border-slate-700/50 text-slate-300 text-xs font-semibold">
-                                        <Pill className="w-3 h-3 text-slate-500" />{med}
-                                    </span>
-                                ))}
-                            </div>
-                        </div>
-                        {contraindicationResults && (
-                            <div className="flex-shrink-0">
-                                <span className="flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-950/40 border border-emerald-600/40 text-emerald-300 text-sm font-black uppercase tracking-wider">
-                                    <CheckCircle2 className="w-5 h-5 text-emerald-400" />
-                                    ALL CLEAR, No Contraindications
-                                </span>
-                            </div>
-                        )}
-                    </div>
-                )}
-
-                {/* ── Session HUD (sticky when live), shows timer + most recent vitals ── */}
-                <div className={`rounded-2xl border transition-all duration-500 ${isLive ? 'sticky top-2 z-30 bg-[#061115]/95 border-emerald-900/40 shadow-lg shadow-emerald-950/30 backdrop-blur-xl'
-                    : 'bg-slate-900/30 border-slate-800/40 opacity-50 select-none'
-                    }`}>
-                    <div className="flex items-center justify-between px-5 py-4 gap-4 flex-wrap">
-
-                        {/* ── Left: Session status + elapsed timer ── */}
-                        <div className="flex items-center gap-5">
-                            <div>
-                                <p className="text-[10px] uppercase tracking-[0.2em] text-emerald-600/80 font-bold mb-0.5">
-                                    {isLive ? 'Session Active' : 'Session Timer'}
-                                </p>
-                                <p className="text-2xl font-black text-emerald-50/90 font-mono tracking-tight leading-none tabular-nums">
-                                    {elapsedTime}
-                                </p>
-                            </div>
-
-                            {/* ── Most recently logged vitals from Session Updates ── */}
-                            {isLive && (() => {
-                                // Pull the most recent update entry that has vitals
-                                const lastWithVitals = updateLog.find(e => e.hr || e.bp);
-                                const latestHr = lastWithVitals?.hr || liveVitals.hr.toString();
-                                const latestBp = lastWithVitals?.bp || liveVitals.bp;
-                                const latestSpo2 = liveVitals.spo2;
-                                const lastTime = lastWithVitals?.timestamp;
-                                return (
-                                    <div className="flex items-stretch gap-0 bg-[#040C0E]/60 rounded-xl border border-[#14343B]/40 overflow-hidden">
-                                        <div className="px-4 py-2.5 text-center border-r border-[#14343B]/40">
-                                            <p className="text-[10px] uppercase tracking-widest text-[#507882] font-semibold mb-1">HR</p>
-                                            <div className="flex items-center gap-1 justify-center">
-                                                <Heart className="w-3 h-3 text-rose-500/80 fill-rose-500/30 animate-pulse" />
-                                                <p className="text-xl font-black text-emerald-100 leading-none tabular-nums">{latestHr}</p>
-                                                <p className="text-[10px] text-slate-600 font-semibold self-end mb-0.5">bpm</p>
-                                            </div>
-                                        </div>
-                                        <div className="px-4 py-2.5 text-center border-r border-[#14343B]/40">
-                                            <p className="text-[10px] uppercase tracking-widest text-[#507882] font-semibold mb-1">BP</p>
-                                            <p className="text-xl font-black text-emerald-100 leading-none tabular-nums">{latestBp}</p>
-                                        </div>
-                                        <div className="px-4 py-2.5 text-center border-r border-[#14343B]/40">
-                                            <p className="text-[10px] uppercase tracking-widest text-[#507882] font-semibold mb-1">SpO2</p>
-                                            <p className={`text-xl font-black leading-none tabular-nums ${latestSpo2 < 95 ? 'text-amber-400' : 'text-emerald-100'
-                                                }`}>{latestSpo2}%</p>
-                                        </div>
-                                        <div className="px-3 py-2.5 flex flex-col justify-center">
-                                            <p className="text-[9px] uppercase tracking-widest text-[#507882] font-semibold">Last logged</p>
-                                            <p className="text-[11px] font-mono text-slate-500 leading-tight mt-0.5">
-                                                {lastTime ?? '— not yet recorded'}
-                                            </p>
-                                        </div>
-                                    </div>
-                                );
-                            })()}
-                        </div>
-
-                    </div>
-                </div>
-
-                {/* ══ THREE-PANEL COCKPIT (State A / B / C) ══════════════════════════ */}
+                {/* 2. Live cockpit — graph, timeline, chip row (visible in live mode only, ABOVE action grid) */}
                 {isLive && (
-                    <div className="space-y-1">
-
-                        {/* ── Panel A: Session Vitals Graph ── */}
-                        <div className="rounded-2xl overflow-hidden border border-slate-700/50 bg-slate-900/60">
-                            {/* Header — always visible, click to toggle */}
-                            <button
-                                onClick={() => setActivePanel(p => p === 'graph' ? 'graph' : 'graph')}
-                                className="w-full flex items-center justify-between px-4 py-3 hover:bg-slate-800/30 transition-colors"
-                                aria-expanded={activePanel === 'graph'}
-                                aria-controls="cockpit-graph"
-                            >
-                                <div className="flex items-center gap-2">
-                                    <Activity className="w-4 h-4 text-indigo-400" aria-hidden="true" />
-                                    <span className="text-sm font-bold text-[#A8B5D1] uppercase tracking-widest">Session Vitals Trend</span>
-                                    {activePanel !== 'graph' && (
-                                        <span className="text-[10px] text-slate-600 font-semibold">— collapsed</span>
-                                    )}
-                                </div>
-                                <ChevronDown
-                                    className={`w-4 h-4 text-slate-500 transition-transform duration-200 ${activePanel === 'graph' ? '' : '-rotate-90'}`}
-                                    aria-hidden="true"
-                                />
-                            </button>
-                            {/* Content */}
-                            {activePanel === 'graph' && (
-                                <div id="cockpit-graph" className="border-t border-slate-700/40">
-                                    {config.enabledFeatures.includes('session-vitals') ? (
-                                        <SessionVitalsTrendChart
-                                            sessionId={journey.sessionId || journey.session?.sessionNumber?.toString() || '1'}
-                                            substance={journey.session?.substance}
-                                            onThresholdViolation={(vital, value) => {
-                                                addToast({
-                                                    title: `[ALERT] ${vital} threshold exceeded`,
-                                                    message: `${vital}: ${value}, review immediately`,
-                                                    type: 'error',
-                                                    persistent: true
-                                                });
-                                            }}
-                                            data={vitalsChartData}
-                                            events={eventLog}
-                                            sessionDurationSec={sessionDurationSec}
-                                            onVisibilityChange={v => setChartVisible(v as { hr: boolean; bp: boolean; temp: boolean; events: boolean })}
-                                        />
-                                    ) : (
-                                        <p className="text-center text-slate-600 text-sm py-6">Vitals chart not enabled.</p>
-                                    )}
-                                </div>
-                            )}
-                        </div>
-
-                        {/* ── Panel B: Live Session Timeline ── */}
-                        <div className="rounded-2xl overflow-hidden border border-slate-700/50 bg-slate-900/60">
-                            <div
-                                role="button"
-                                tabIndex={0}
-                                onClick={() => setActivePanel(p => p === 'timeline' ? 'graph' : 'timeline')}
-                                onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setActivePanel(p => p === 'timeline' ? 'graph' : 'timeline'); } }}
-                                className="w-full flex items-center justify-between px-4 py-3 hover:bg-slate-800/30 transition-colors cursor-pointer select-none"
-                                aria-expanded={activePanel === 'timeline'}
-                                aria-controls="cockpit-timeline"
-                            >
-                                <div className="flex items-center gap-2">
-                                    <Clock className="w-4 h-4 text-indigo-400" aria-hidden="true" />
-                                    <span className="text-sm font-bold text-[#A8B5D1] uppercase tracking-widest">Live Session Timeline</span>
-                                    <span className="relative flex h-2 w-2" aria-hidden="true">
-                                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                                        <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                                    </span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    {/* Filter toggles — always visible in header for quick access */}
-                                    {(['hr', 'bp', 'temp', 'events'] as const).map(key => (
-                                        <button
-                                            key={key}
-                                            onClick={e => { e.stopPropagation(); setChartVisible(prev => ({ ...prev, [key]: !prev[key] })); }}
-                                            className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider transition-colors border ${chartVisible[key]
-                                                ? key === 'hr' ? 'bg-rose-500/20 border-rose-500/40 text-rose-300'
-                                                    : key === 'bp' ? 'bg-blue-500/20 border-blue-500/40 text-blue-300'
-                                                        : key === 'temp' ? 'bg-amber-500/20 border-amber-500/40 text-amber-300'
-                                                            : 'bg-indigo-500/20 border-indigo-500/40 text-indigo-300'
-                                                : 'bg-slate-800/40 border-slate-700/40 text-slate-600 line-through'
-                                                }`}
-                                            aria-pressed={chartVisible[key]}
-                                            aria-label={`Toggle ${key} entries`}
-                                        >{key}</button>
-                                    ))}
-                                    <ChevronDown
-                                        className={`w-4 h-4 text-slate-500 transition-transform duration-200 ${activePanel === 'timeline' ? '' : '-rotate-90'}`}
-                                        aria-hidden="true"
-                                    />
-                                </div>
-                            </div>
-                            {activePanel === 'timeline' && (
-                                <div id="cockpit-timeline" className="border-t border-slate-700/40">
-                                    <LiveSessionTimeline
-                                        sessionId={journey.sessionId || journey.session?.sessionNumber?.toString() || '1'}
-                                        active={true}
-                                        visible={chartVisible}
-                                        sessionStartMs={sessionStartMs}
-                                        hideHeader={true}
-                                        hideActions={true}
-                                    />
-                                </div>
-                            )}
-                        </div>
-
-                        {/* ── Panel C: Session Update ── */}
-                        <div ref={sessionUpdatePanelRef} className="rounded-2xl overflow-hidden border border-emerald-900/40 bg-slate-900/60">
-                            <button
-                                onClick={() => setActivePanel(p => p === 'update' ? 'graph' : 'update')}
-                                className="w-full flex items-center justify-between px-4 py-3 hover:bg-emerald-950/20 transition-colors"
-                                aria-expanded={activePanel === 'update'}
-                                aria-controls="cockpit-update"
-                            >
-                                <div className="flex items-center gap-2">
-                                    <ClipboardList className="w-4 h-4 text-emerald-400" aria-hidden="true" />
-                                    <span className="text-sm font-bold text-emerald-300/80 uppercase tracking-widest">Session Update</span>
-                                    {activePanel === 'update' && (
-                                        <span className="text-[10px] text-slate-500">T+{elapsedTime} · {new Date().toLocaleTimeString()}</span>
-                                    )}
-                                </div>
-                                <ChevronDown
-                                    className={`w-4 h-4 text-slate-500 transition-transform duration-200 ${activePanel === 'update' ? '' : '-rotate-90'}`}
-                                    aria-hidden="true"
-                                />
-                            </button>
-                            {activePanel === 'update' && (
-                                <div id="cockpit-update" className="border-t border-emerald-900/30 p-4 space-y-4 animate-in slide-in-from-top-1 duration-150">
-                                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                                        <div>
-                                            <label className="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-1.5">Patient Affect</label>
-                                            <select value={updateAffect} onChange={e => setUpdateAffect(e.target.value)}
-                                                className="w-full px-3 py-2 bg-slate-800/60 border border-slate-700/50 rounded-xl text-slate-200 text-sm focus:outline-none transition-all">
-                                                <option value="">— Select —</option>
-                                                <option>Calm</option><option>Anxious</option><option>Euphoric</option>
-                                                <option>Dissociative</option><option>Tearful</option><option>Processing (internal)</option>
-                                            </select>
-                                        </div>
-                                        <div>
-                                            <label className="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-1.5">Responsiveness</label>
-                                            <select value={updateResponsiveness} onChange={e => setUpdateResponsiveness(e.target.value)}
-                                                className="w-full px-3 py-2 bg-slate-800/60 border border-slate-700/50 rounded-xl text-slate-200 text-sm focus:outline-none transition-all">
-                                                <option value="">— Select —</option>
-                                                <option>Fully responsive</option><option>Partially responsive</option>
-                                                <option>Eyes closed, calm</option><option>Eyes closed, distressed</option>
-                                                <option>Unresponsive (monitor)</option>
-                                            </select>
-                                        </div>
-                                        <div>
-                                            <label className="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-1.5">Physical Comfort</label>
-                                            <select value={updateComfort} onChange={e => setUpdateComfort(e.target.value)}
-                                                className="w-full px-3 py-2 bg-slate-800/60 border border-slate-700/50 rounded-xl text-slate-200 text-sm focus:outline-none transition-all">
-                                                <option value="">— Select —</option>
-                                                <option>Normal, no complaints</option><option>Restless</option>
-                                                <option>Nausea reported</option><option>Requesting blanket</option>
-                                                <option>Position adjusted</option><option>Other</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div className="grid grid-cols-3 gap-3">
-                                        <div>
-                                            <label className="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-1.5">HR (bpm), optional</label>
-                                            <input type="number" min="30" max="220" placeholder="e.g. 88" value={updateHR} onChange={e => setUpdateHR(e.target.value)}
-                                                className="w-full px-3 py-2 bg-slate-800/60 border border-slate-700/50 rounded-xl text-slate-200 text-sm placeholder-slate-600 focus:outline-none transition-all" />
-                                        </div>
-                                        <div>
-                                            <label className="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-1.5">Systolic, optional</label>
-                                            <input type="number" placeholder="e.g. 120" value={updateBPSys} onChange={e => setUpdateBPSys(e.target.value)}
-                                                className="w-full px-3 py-2 bg-slate-800/60 border border-slate-700/50 rounded-xl text-slate-200 text-sm placeholder-slate-600 focus:outline-none transition-all" />
-                                        </div>
-                                        <div>
-                                            <label className="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-1.5">Diastolic, optional</label>
-                                            <input type="number" placeholder="e.g. 80" value={updateBPDia} onChange={e => setUpdateBPDia(e.target.value)}
-                                                className="w-full px-3 py-2 bg-slate-800/60 border border-slate-700/50 rounded-xl text-slate-200 text-sm placeholder-slate-600 focus:outline-none transition-all" />
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-1.5">Session Note, optional</label>
-                                        {/* ZERO-PHI POLICY: Free-text input is not permitted in clinical timeline records.
-                                            Use structured pre-approved notes only. Any entry here is persisted to
-                                            log_session_timeline_events.metadata.event_description. */}
-                                        <select
-                                            value={updateNote}
-                                            onChange={e => setUpdateNote(e.target.value)}
-                                            className="w-full px-3 py-2 bg-slate-800/60 border border-slate-700/50 rounded-xl text-slate-200 text-sm focus:outline-none transition-all appearance-none"
-                                        >
-                                            <option value="">Select a note (optional)…</option>
-                                            <option value="Patient appears calm and stable">Patient appears calm and stable</option>
-                                            <option value="Patient requested brief pause">Patient requested brief pause in session</option>
-                                            <option value="Monitoring closely, no intervention required">Monitoring closely, no intervention required</option>
-                                            <option value="Verbal grounding administered">Verbal grounding administered</option>
-                                            <option value="Music adjusted per patient preference">Music adjusted per patient preference</option>
-                                            <option value="Position change offered">Position change offered</option>
-                                            <option value="Environmental factors adjusted">Environmental factors adjusted</option>
-                                            <option value="Consulting with presiding physician">Consulting with presiding physician</option>
-                                            <option value="Symptoms escalating, increased monitoring">Symptoms escalating, increased monitoring</option>
-                                            <option value="Post-dose observation, no concerns">Post-dose observation, no concerns</option>
-                                        </select>
-                                        <p className="text-xs text-slate-600 mt-1 italic">Affect, responsiveness, and vitals are persisted to the clinical record.</p>
-                                    </div>
-                                    <button onClick={handleSaveUpdate}
-                                        className="w-full flex items-center justify-center gap-2 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-black rounded-xl transition-all active:scale-95">
-                                        <Save className="w-4 h-4" /> Save Update
-                                    </button>
-                                </div>
-                            )}
-                        </div>
-
-                        {/* Chips row: P.Spoke · Music · Decision + Companion + End Session */}
-                        <div className="flex items-center gap-2 flex-wrap pt-1">
-                            {QUICK_ACTIONS.map(action => {
-                                const IconComp = action.icon;
-                                return (
-                                    <button
-                                        key={action.type}
-                                        onClick={() => {
-                                            const sid = journey.sessionId ?? journey.session?.sessionId;
-                                            if (sid) {
-                                                createTimelineEvent({
-                                                    session_id: sid,
-                                                    event_timestamp: new Date().toISOString(),
-                                                    event_type_code: action.type as import('../../services/refFlowEventTypes').FlowEventTypeCode,
-                                                    metadata: { event_description: action.desc },
-                                                }).catch(err => console.warn('[chips] write failed:', err));
-                                            }
-                                            // WO-641: open and scroll to Session Update panel after logging the chip action
-                                            openAndScrollToUpdatePanel();
-                                        }}
-                                        aria-label={`Log: ${action.label}`}
-                                        className={`flex items-center gap-1.5 px-3 py-2 rounded-xl border text-xs font-bold min-h-[36px] transition-colors active:scale-95 ${action.color}`}
-                                    >
-                                        <IconComp className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
-                                        {action.label}
-                                    </button>
-                                );
-                            })}
-                            <div className="flex-1" />
-                            <button
-                                onClick={() => setShowCompanion(true)}
-                                className="px-4 py-2 bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-300 font-semibold rounded-xl border border-indigo-500/30 transition-colors uppercase tracking-widest text-xs flex items-center gap-1.5"
-                                aria-label="Open patient companion view"
-                            >
-                                <Sparkles className="w-3.5 h-3.5" />
-                                Companion
-                            </button>
-                            <button
-                                onClick={async () => {
-                                    try {
-                                        const _sidE = journey.sessionId ?? journey.session?.sessionId;
-                                        if (_sidE && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(_sidE)) {
-                                            createTimelineEvent({
-                                                session_id: _sidE,
-                                                event_timestamp: new Date().toISOString(),
-                                                event_type_code: 'session_completed',
-                                                metadata: { event_description: `Dosing session ended by practitioner at T+${elapsedTime}.` },
-                                            }).catch(err => console.warn('[SAVS-GAP3] Session end DB write failed:', err));
-                                            endDosingSession(_sidE).catch(err =>
-                                                console.warn('[WO-577] endDosingSession failed (non-fatal):', err)
-                                            );
-                                        }
-                                        setAndPersistMode('post');
-                                    } catch (e) {
-                                        console.error('[TreatmentPhase] mode transition failed:', e);
-                                        onCompletePhase();
-                                    }
-                                }}
-                                className="px-5 py-2 bg-[#0A1F24] hover:bg-[#0E292E] text-[#6E9CA8] hover:text-[#A3C7D2] font-semibold rounded-xl border border-[#14343B] transition-colors uppercase tracking-[0.15em] text-xs flex items-center gap-2 group"
-                            >
-                                End Dosing Session
-                                <ArrowRight className="w-3.5 h-3.5 opacity-50 group-hover:translate-x-0.5 transition-transform" />
-                            </button>
-                        </div>
-                    </div>
+                    <SessionCockpitView
+                        journey={journey}
+                        elapsedTime={elapsedTime}
+                        activePanel={activePanel}
+                        setActivePanel={setActivePanel}
+                        sessionUpdatePanelRef={sessionUpdatePanelRef}
+                        updateLog={updateLog}
+                        vitalsChartData={vitalsChartData}
+                        eventLog={eventLog}
+                        sessionDurationSec={sessionDurationSec}
+                        chartVisible={chartVisible}
+                        setChartVisible={setChartVisible}
+                        showCompanion={showCompanion}
+                        setShowCompanion={setShowCompanion}
+                        updateAffect={updateAffect}
+                        setUpdateAffect={setUpdateAffect}
+                        updateResponsiveness={updateResponsiveness}
+                        setUpdateResponsiveness={setUpdateResponsiveness}
+                        updateComfort={updateComfort}
+                        setUpdateComfort={setUpdateComfort}
+                        updateNote={updateNote}
+                        setUpdateNote={setUpdateNote}
+                        updateHR={updateHR}
+                        setUpdateHR={setUpdateHR}
+                        updateBPSys={updateBPSys}
+                        setUpdateBPSys={setUpdateBPSys}
+                        updateBPDia={updateBPDia}
+                        setUpdateBPDia={setUpdateBPDia}
+                        liveVitals={liveVitals}
+                        sessionStartMs={sessionStartMs}
+                        config={config}
+                        onOpenForm={onOpenForm}
+                        onSaveUpdate={handleSaveUpdate}
+                        onEndSession={handleEndSession}
+                        openAndScrollToUpdatePanel={openAndScrollToUpdatePanel}
+                    />
                 )}
 
-                {/* ── Action Buttons ────────────────────────────────────────────── */}
-                <div className="grid grid-cols-2 gap-3">
-                    <button onClick={isLive ? () => {
-                        // WO-641: scroll to and expand Session Update panel
-                        openAndScrollToUpdatePanel();
-                    } : undefined} disabled={!isLive}
-                        className={`flex flex-col items-center justify-center gap-2 px-4 py-5 rounded-2xl font-black text-sm tracking-wide transition-all active:scale-95 border ${isLive ? (activePanel === 'update' ? 'bg-emerald-600/30 border-emerald-400/60 text-emerald-100' : 'bg-gradient-to-br from-emerald-900/60 to-teal-900/40 hover:from-emerald-800/70 border-emerald-500/40 hover:border-emerald-400/60 text-emerald-100') : 'bg-slate-800/20 border-slate-700/30 text-slate-600 cursor-not-allowed'} shadow-lg`}
-                        aria-label="Log session update">
-                        <ClipboardList className={`w-5 h-5 ${isLive ? 'text-emerald-300' : 'text-slate-600'}`} />
-                        <span>Session Update</span>
-                    </button>
-                    {/* WO-559: Additional Dose, reuses the existing Dosing Protocol slideout.
-                        Sets isLiveRedoseRef before opening so the ppn:dosing-updated handler
-                        knows to emit additional_dose (orange) instead of dose_admin (emerald). */}
-                    <button onClick={isLive ? () => {
-                        isLiveRedoseRef.current = true;
-                        onOpenForm('dosing-protocol');
-                    } : undefined} disabled={!isLive}
-                        className={`flex flex-col items-center justify-center gap-2 px-4 py-5 rounded-2xl font-black text-sm tracking-wide transition-all active:scale-95 border ${isLive ? 'bg-gradient-to-br from-orange-900/60 to-amber-900/40 hover:from-orange-800/70 border-orange-500/40 hover:border-orange-400/60 text-orange-100 shadow-lg shadow-orange-950/30' : 'bg-slate-800/20 border-slate-700/30 text-slate-600 cursor-not-allowed'}`}
-                        aria-label="Log additional dose">
-                        <Pill className={`w-5 h-5 ${isLive ? 'text-orange-300' : 'text-slate-600'}`} />
-                        <span>Additional Dose</span>
-                    </button>
-                    <button onClick={isLive ? async () => {
-                        const elapsedNow = getElapsedSec();
-                        // WO-528: stamp rescue event pin on the chart immediately
-                        setEventLog(prev => [...prev, {
-                            id: `rescue-${Date.now()}`,
-                            elapsedSec: elapsedNow,
-                            type: 'rescue-protocol',
-                            label: 'Rescue Protocol',
-                        } satisfies SessionEventPin]);
-                        // WO-547: persist rescue protocol activation to log_session_timeline_events
-                        const UUID_RE2 = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-                        const sid = journey.sessionId ?? journey.session?.sessionId;
-                        if (sid && UUID_RE2.test(sid)) {
-                            // Timeline: no ref_flow_event_types code for rescue; skip DB write.
-                        }
-                        onOpenForm('rescue-protocol');
-                    } : undefined} disabled={!isLive}
-                        className={`flex flex-col items-center justify-center gap-2 px-4 py-5 rounded-2xl font-black text-sm tracking-wide transition-all active:scale-95 border ${isLive ? 'bg-gradient-to-br from-purple-900/60 to-fuchsia-900/40 hover:from-purple-800/70 border-purple-500/40 hover:border-purple-400/60 text-purple-100 shadow-lg shadow-purple-950/40' : 'bg-slate-800/20 border-slate-700/30 text-slate-600 cursor-not-allowed'}`}
-                        aria-label="Log rescue protocol">
-                        <span className={`material-symbols-outlined text-[20px] ${isLive ? 'text-purple-300' : 'text-slate-600'}`}>emergency</span>
-                        <span>Rescue Protocol</span>
-                    </button>
-                    <button onClick={isLive ? async () => {
-                        const elapsedNow2 = getElapsedSec();
-                        // WO-528: stamp adverse event pin on the chart immediately
-                        setEventLog(prev => [...prev, {
-                            id: `adverse-${Date.now()}`,
-                            elapsedSec: elapsedNow2,
-                            type: 'safety-and-adverse-event',
-                            label: 'Adverse Event',
-                        } satisfies SessionEventPin]);
-                        // WO-547: persist adverse event activation to log_session_timeline_events
-                        const UUID_RE3 = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-                        const sid2 = journey.sessionId ?? journey.session?.sessionId;
-                        if (sid2 && UUID_RE3.test(sid2)) {
-                            // Timeline: no ref_flow_event_types code for safety_event; skip DB write.
-                        }
-                        onOpenForm('safety-and-adverse-event');
-                    } : undefined} disabled={!isLive}
-                        className={`flex flex-col items-center justify-center gap-2 px-4 py-5 rounded-2xl font-black text-sm tracking-wide transition-all active:scale-95 border ${isLive ? 'bg-gradient-to-br from-red-900/60 to-rose-900/40 hover:from-red-800/70 border-red-500/40 hover:border-red-400/60 text-red-100 shadow-lg shadow-red-950/40' : 'bg-slate-800/20 border-slate-700/30 text-slate-600 cursor-not-allowed'}`}
-                        aria-label="Log adverse reaction">
-                        <AlertTriangle className={`w-5 h-5 ${isLive ? 'text-red-300' : 'text-slate-600'}`} />
-                        <span>Adverse Event</span>
-                    </button>
-                </div>
-
-                {/* ── Session Update Panel ───────────────────────────────────────────── */}
-                {/* Session Update panel moved to three-panel accordion above */}
-
-                {/* Live graph and timeline are now rendered above action buttons — removed from here */}
-
-                {/* Keyboard shortcuts hint */}
-                {isLive && (
-                    <div className="flex items-center justify-center gap-4 px-4 py-2.5 bg-slate-900/40 border border-slate-800/50 rounded-xl">
-                        <p className="text-xs font-bold uppercase tracking-widest text-slate-600">Quick Keys:</p>
-                        {[{ key: 'U', label: 'Update' }, { key: 'V', label: 'Vitals' }, { key: 'A', label: 'Adverse' }].map(({ key, label }) => (
-                            <div key={key} className="flex items-center gap-1.5">
-                                <kbd className="inline-flex items-center justify-center w-5 h-5 rounded bg-slate-800 border border-slate-700 text-xs font-mono font-bold text-slate-400">{key}</kbd>
-                                <span className="text-xs text-slate-600">{label}</span>
-                            </div>
-                        ))}
-                    </div>
-                )}
+                {/* 3. Prep steps (pre-session only) + medications + action grid + quick keys */}
+                <SessionPrepView
+                    journey={journey}
+                    isLive={isLive}
+                    isStuckInPre={isStuckInPre}
+                    forceCloseConfirm={forceCloseConfirm}
+                    resolvedSessionId={resolvedSessionId}
+                    PHASE2_STEPS={PHASE2_STEPS}
+                    currentStepIdx={currentStepIdx}
+                    canStartSession={canStartSession}
+                    contraindicationResults={contraindicationResults}
+                    patientMeds={patientMeds}
+                    isLiveRedoseRef={isLiveRedoseRef}
+                    onOpenForm={onOpenForm}
+                    onStartSession={handleStartSession}
+                    onRestoreSession={handleRestoreSession}
+                    onForceClose={handleForceClose}
+                    setForceCloseConfirm={setForceCloseConfirm}
+                    onClearSubstance={handleClearSubstance}
+                    openAndScrollToUpdatePanel={openAndScrollToUpdatePanel}
+                    getElapsedSec={getElapsedSec}
+                    setEventLog={setEventLog}
+                    elapsedTime={elapsedTime}
+                />
             </div>
-
-            {/* ── Companion Overlay: fixed layer, timer stays running ─────────── */}
-            {
-                showCompanion && (
-                    <div className="fixed inset-0 z-50 bg-black flex flex-col overflow-hidden selection:bg-transparent">
-
-                        {/* Close, absolute top-right, above everything */}
-                        <button
-                            onClick={() => setShowCompanion(false)}
-                            className="absolute top-4 right-4 z-50 w-10 h-10 flex items-center justify-center rounded-full bg-white/8 border border-white/15 text-white/35 hover:bg-white/15 hover:text-white/60 backdrop-blur-md transition-all"
-                            aria-label="Return to session"
-                        >
-                            <X className="w-4 h-4" />
-                        </button>
-                        <div className="absolute top-4 right-16 z-50 flex items-center h-10">
-                            <span className="text-[10px] font-bold tracking-widest text-white/25 uppercase">Return to session</span>
-                        </div>
-
-                        {/* Full-screen flex-col: video fills top, buttons at bottom */}
-                        <div className="flex flex-col flex-1 min-h-0 pt-14">
-                            <CompanionVideo />
-                            <CompanionButtonGrid
-                                sessionId={journey.sessionId || 'demo-1'}
-                            />
-                        </div>
-
-                    </div>
-                )
-            }
-        </>
+        </Phase2ErrorBoundary>
     );
 };
+

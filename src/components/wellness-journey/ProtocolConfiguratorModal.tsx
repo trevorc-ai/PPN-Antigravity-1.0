@@ -257,19 +257,12 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
                                     {stepDone.condition ? <CheckCircle className="w-4 h-4" /> : '1'}
                                 </div>
                                 <label className="form-label" style={{ color: '#A8B5D1' }}>
-                                    What are you treating? <span className="text-indigo-400">*</span>
+                                    What are you primarily treating? <span className="text-indigo-400">*</span>
                                 </label>
                             </div>
                             <div className="flex flex-wrap gap-2">
                                 {CONDITIONS.map(c => (
-                                    <AdvancedTooltip
-                                        key={c.label}
-                                        content={c.tooltip}
-                                        tier="standard"
-                                        type="info"
-                                        side="bottom"
-                                        width="w-[320px]"
-                                    >
+                                    <div key={c.label} className="inline-flex items-center gap-1">
                                         <button
                                             type="button"
                                             onClick={() => setCondition(c.label)}
@@ -280,7 +273,21 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
                                         >
                                             {c.label}
                                         </button>
-                                    </AdvancedTooltip>
+                                        <AdvancedTooltip
+                                            tier="guide"
+                                            type="clinical"
+                                            title={c.label}
+                                            content={c.tooltip}
+                                            side="bottom"
+                                            width="w-[360px]"
+                                        >
+                                            <Info
+                                                size={13}
+                                                aria-label={`Learn more about ${c.label}`}
+                                                className="text-slate-500 hover:text-indigo-400 cursor-help transition-colors print:hidden flex-shrink-0"
+                                            />
+                                        </AdvancedTooltip>
+                                    </div>
                                 ))}
                             </div>
                         </div>

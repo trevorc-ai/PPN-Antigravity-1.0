@@ -45,6 +45,15 @@ import { CompassInsightLine } from '../components/compass/CompassInsightLine';
 import { IntegrationStoryChart } from '../components/compass/IntegrationStoryChart';
 import { NetworkBenchmarkBlock } from '../components/compass/NetworkBenchmarkBlock';
 
+// ═══ Arc-of-Care Components (Phase 1, 2 & 3) ═══
+import ReceptorSpiderGraph from '../components/arc-of-care/ReceptorSpiderGraph';
+import SymptomMoodHeatmap from '../components/arc-of-care/SymptomMoodHeatmap';
+import PulseCheckTrendChart from '../components/arc-of-care/PulseCheckTrendChart';
+import SymptomDecayCurveChart from '../components/arc-of-care/SymptomDecayCurveChart';
+import PHQ9SeverityZones from '../components/arc-of-care/PHQ9SeverityZones';
+import GAD7SeverityZones from '../components/arc-of-care/GAD7SeverityZones';
+import PCL5SeverityZones from '../components/arc-of-care/PCL5SeverityZones';
+
 // Compass mock data
 const MOCK_TIMELINE = [
     { id: '1', sessionId: 'mock', occurredAt: new Date(Date.now() - 9 * 3600000 + 30 * 60000).toISOString(), eventType: 'feeling', label: 'Anxiety', minutesFromStart: 30, intensity: 4, displayMinutes: '30m', intensityLabel: 'Low' },
@@ -79,9 +88,13 @@ const ComponentShowcase: React.FC = () => {
 
         <PageContainer className="!max-w-7xl space-y-12 pb-20 pt-8">
             {/* READ-ONLY WARNING BANNER */}
-            <div className="bg-amber-500/20 border-2 border-amber-500/50 rounded-xl px-6 py-3 -mt-4">
-                <p className="text-amber-300 text-sm font-bold text-center">
-                    ⚠️ READ-ONLY SHOWCASE - Do not modify without express user permission
+            <div
+                role="alert"
+                aria-label="Read-only showcase warning"
+                className="bg-amber-500/20 border-2 border-amber-500/50 rounded-xl px-6 py-3 -mt-4"
+            >
+                <p className="text-amber-300 text-base font-bold text-center">
+                    ⚠️ READ-ONLY SHOWCASE — Do not modify without express user permission
                 </p>
             </div>
 
@@ -191,7 +204,7 @@ const ComponentShowcase: React.FC = () => {
                             <span className="font-semibold text-slate-300">What this shows:</span> Think of this like a report card for your clinic, displayed as a spider-web shape. Each point on the web represents a different area, patient safety, session completion rates, follow-up compliance, and more. The bigger and more balanced your web is, the stronger your clinic's overall performance. The dotted line shows how other clinics in the network are doing, so you can see where you stand.
                         </p>
                     </div>
-                    <GlassmorphicCard className="h-[500px] relative overflow-hidden">
+                    <GlassmorphicCard className="min-h-[500px] relative">
                         <ClinicPerformanceRadar />
                     </GlassmorphicCard>
                 </div>
@@ -205,7 +218,7 @@ const ComponentShowcase: React.FC = () => {
                             <span className="font-semibold text-slate-300">What this shows:</span> Each dot in this chart is a patient (shown anonymously). Dots that are close together had similar outcomes, for example, a group of patients who all showed major improvement in anxiety scores will cluster together. This helps clinicians spot patterns: "What do our best outcomes have in common?" It's like finding constellations, individual points that together reveal a bigger picture.
                         </p>
                     </div>
-                    <GlassmorphicCard className="h-[500px] relative overflow-hidden">
+                    <GlassmorphicCard className="min-h-[500px] relative">
                         <PatientConstellation />
                     </GlassmorphicCard>
                 </div>
@@ -219,7 +232,7 @@ const ComponentShowcase: React.FC = () => {
                             <span className="font-semibold text-slate-300">What this shows:</span> This chart compares how different treatment protocols perform financially. It answers the question: "For every dollar spent on this protocol, how much clinical outcome do we get back?" A protocol with high-cost and poor outcomes will look very different from one that's cost-effective and produces strong results. Helps clinic operators decide where to invest their resources.
                         </p>
                     </div>
-                    <GlassmorphicCard className="h-[500px] relative overflow-hidden">
+                    <GlassmorphicCard className="min-h-[500px] relative">
                         <ProtocolEfficiency />
                     </GlassmorphicCard>
                 </div>
@@ -233,7 +246,7 @@ const ComponentShowcase: React.FC = () => {
                             <span className="font-semibold text-slate-300">What this shows:</span> Every psychedelic substance works by attaching to specific receptors in the brain, like a key fitting into a lock. This chart shows which "locks" each substance prefers, and how strongly it binds. Understanding this helps clinicians predict how a substance will affect a patient's mood, perception, and heart rate before they ever administer it.
                         </p>
                     </div>
-                    <GlassmorphicCard className="h-[500px] relative overflow-hidden">
+                    <GlassmorphicCard className="min-h-[500px] relative">
                         <MolecularPharmacology />
                     </GlassmorphicCard>
                 </div>
@@ -247,7 +260,7 @@ const ComponentShowcase: React.FC = () => {
                             <span className="font-semibold text-slate-300">What this shows:</span> Your liver uses a family of enzymes called CYP450 to break down medications. Some people's genes cause their liver to process drugs faster or slower than average, which changes how long a substance stays in their system. This gauge shows how a patient's genetic profile affects their risk level, helping the clinical team adjust dosing to avoid dangerous drug build-up.
                         </p>
                     </div>
-                    <GlassmorphicCard className="h-[500px] relative overflow-hidden">
+                    <GlassmorphicCard className="min-h-[500px] relative">
                         <MetabolicRiskGauge />
                     </GlassmorphicCard>
                 </div>
@@ -285,7 +298,7 @@ const ComponentShowcase: React.FC = () => {
                             <span className="font-semibold text-slate-300">What this shows:</span> The rules around psychedelic therapy vary dramatically depending on where you are, what's legal in Oregon may be completely restricted in another state. This mosaic gives a visual overview of the regulatory environment across different regions and substances, so practitioners always know what's allowed where they practice. Think of it as a legal weather map for the field.
                         </p>
                     </div>
-                    <GlassmorphicCard className="h-[500px] relative overflow-hidden">
+                    <GlassmorphicCard className="min-h-[500px] relative">
                         <RegulatoryMosaic />
                     </GlassmorphicCard>
                 </div>
@@ -299,7 +312,7 @@ const ComponentShowcase: React.FC = () => {
                             <span className="font-semibold text-slate-300">What this shows:</span> A bird's-eye view of a single patient's entire treatment timeline, from their first intake appointment, through the dosing session, all the way into their follow-up integration work. Each milestone is marked so the care team can see at a glance where the patient is in their journey and what's coming next. It's like a travel itinerary for the patient's healing process.
                         </p>
                     </div>
-                    <GlassmorphicCard className="h-[500px] relative overflow-hidden">
+                    <GlassmorphicCard className="min-h-[500px] relative">
                         <PatientJourneySnapshot />
                     </GlassmorphicCard>
                 </div>
@@ -313,7 +326,7 @@ const ComponentShowcase: React.FC = () => {
                             <span className="font-semibold text-slate-300">What this shows:</span> A deep look at where your clinic's money is coming from, and where it's leaking out. This view breaks revenue down by service type, time period, and patient category, then highlights unusual patterns worth investigating. If a certain protocol is generating much less revenue than expected, or costs have spiked, this chart will surface it. It's a financial magnifying glass for practice operators.
                         </p>
                     </div>
-                    <GlassmorphicCard className="h-[500px] relative overflow-hidden">
+                    <GlassmorphicCard className="min-h-[500px] relative">
                         <RevenueForensics />
                     </GlassmorphicCard>
                 </div>
@@ -327,7 +340,7 @@ const ComponentShowcase: React.FC = () => {
                             <span className="font-semibold text-slate-300">What this shows:</span> When we project how a patient's outcomes might improve over time, there's always some uncertainty, the future isn't guaranteed. The "cone" shape on this chart shows the most likely path (the center line) alongside the range of possible outcomes (the wide part of the cone). A narrow cone means we're confident in the prediction. A wide cone means there's more uncertainty. It's an honest picture of what the data can and can't tell us.
                         </p>
                     </div>
-                    <GlassmorphicCard className="h-[500px] relative overflow-hidden">
+                    <GlassmorphicCard className="min-h-[500px] relative">
                         <ConfidenceCone />
                     </GlassmorphicCard>
                 </div>
@@ -341,7 +354,7 @@ const ComponentShowcase: React.FC = () => {
                             <span className="font-semibold text-slate-300">What this shows:</span> This is a grid that plots potential risks on two axes: how likely something is to happen, and how serious it would be if it did. A risk in the top-right corner (very likely AND very serious) demands immediate attention. A risk in the bottom-left corner (rare AND minor) can be monitored. This helps care teams prioritize which risks to prepare for first, the same framework hospitals use for patient safety planning.
                         </p>
                     </div>
-                    <GlassmorphicCard className="h-[500px] relative overflow-hidden">
+                    <GlassmorphicCard className="min-h-[500px] relative">
                         <SafetyRiskMatrix />
                     </GlassmorphicCard>
                 </div>
@@ -355,7 +368,7 @@ const ComponentShowcase: React.FC = () => {
                             <span className="font-semibold text-slate-300">What this shows:</span> This flow chart tracks where patients go after each stage of treatment. The width of each stream tells you how many patients moved forward vs. dropped off. If a large number of patients complete the dosing session but don't show up for integration follow-ups, that gap will be clearly visible here. It's a retention funnel, like water flowing through pipes, showing you exactly where the leaks are.
                         </p>
                     </div>
-                    <GlassmorphicCard className="h-[500px] relative overflow-hidden">
+                    <GlassmorphicCard className="min-h-[500px] relative">
                         <PatientFlowSankey />
                     </GlassmorphicCard>
                 </div>
@@ -425,7 +438,7 @@ const ComponentShowcase: React.FC = () => {
 
                 {/* Group A: Wonder Layer */}
                 <div style={{ background: '#050c1a', borderRadius: 20, padding: '28px 32px', marginBottom: 28, border: '1px solid rgba(45,212,191,0.08)' }}>
-                    <h3 className="text-lg font-black text-teal-400 mb-6 uppercase tracking-widest" style={{ fontSize: 12 }}>A1 · CompassSpiderGraph</h3>
+                    <h3 className="text-sm font-black text-teal-400 mb-6 uppercase tracking-widest" aria-label="Component A1: CompassSpiderGraph">A1 · CompassSpiderGraph</h3>
                     <CompassSpiderGraph
                         substanceCategory="psilocybin"
                         accentColor="#2dd4bf"
@@ -508,6 +521,69 @@ const ComponentShowcase: React.FC = () => {
                         emaPoints={MOCK_EMA}
                         streak={3}
                     />
+                </div>
+            </Section>
+
+            {/* ─── Arc-of-Care Components ─────────────────────────────────── */}
+            <Section spacing="default">
+                <h2 style={{ fontSize: 20, fontWeight: 900, color: '#e2e8f0', letterSpacing: '0.05em', marginBottom: 8 }}>Arc-of-Care Components</h2>
+                <p style={{ fontSize: 13, color: '#475569', marginBottom: 28 }}>Phase 1 screening visualizations, Phase 2 session charts, and Phase 3 integration trackers. These components are used throughout the Arc-of-Care and clinical report PDFs.</p>
+
+                {/* E1: ReceptorSpiderGraph */}
+                <div style={{ background: '#050c1a', borderRadius: 20, padding: '28px 32px', marginBottom: 28, border: '1px solid rgba(139,92,246,0.15)' }}>
+                    <h3 style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#8b5cf6', marginBottom: 8 }}>E1 · ReceptorSpiderGraph — Patient Outcome vs. Peer Network</h3>
+                    <p style={{ fontSize: 12, color: '#475569', marginBottom: 16 }}>Dual-mode radar (plain-English receptor labels vs. clinical metrics). <strong style={{color:'#8b5cf6'}}>This component has a compact prop designed for PDF embedding.</strong> Two polygons: patient outcome (violet) vs. peer network benchmark (dashed grey). Toggle between patient-friendly and clinical view modes.</p>
+                    <ReceptorSpiderGraph defaultMode="B" showToggle={true} compact={false} />
+                </div>
+
+                {/* E2: SymptomMoodHeatmap */}
+                <div style={{ background: '#050c1a', borderRadius: 20, padding: '28px 32px', marginBottom: 28, border: '1px solid rgba(59,130,246,0.15)' }}>
+                    <h3 style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#60a5fa', marginBottom: 8 }}>E2 · SymptomMoodHeatmap — 90-Day Daily PRO Severity Grid</h3>
+                    <p style={{ fontSize: 12, color: '#475569', marginBottom: 16 }}>Day-by-day color-coded severity heatmap. Rows: Mood Elevation, Sleep Quality, Depressive Symptoms, Anxiety Level. Columns: Days 1–90 (paginated). Light blue = improvement, dark navy = high severity. Gaps show missed check-ins. Interactive hover for day detail.</p>
+                    <SymptomMoodHeatmap />
+                </div>
+
+                {/* E3: PulseCheckTrendChart */}
+                <div style={{ background: '#050c1a', borderRadius: 20, padding: '28px 32px', marginBottom: 28, border: '1px solid rgba(52,211,153,0.15)' }}>
+                    <h3 style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#34d399', marginBottom: 8 }}>E3 · PulseCheckTrendChart — 90-Day Connection, Sleep & Mood</h3>
+                    <p style={{ fontSize: 12, color: '#475569', marginBottom: 16 }}>Multi-series line chart tracking daily Pulse Check submissions over 90 days. Series: Feeling Connected (violet), Sleeping Well (blue), Overall Mood (green). Gap segments show missed check-in days. Toggle series visibility. Interactive crosshair tooltip.</p>
+                    <PulseCheckTrendChart />
+                </div>
+
+                {/* E4: SymptomDecayCurveChart */}
+                <div style={{ background: '#050c1a', borderRadius: 20, padding: '28px 32px', marginBottom: 28, border: '1px solid rgba(139,92,246,0.15)' }}>
+                    <h3 style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#a78bfa', marginBottom: 8 }}>E4 · SymptomDecayCurveChart — PHQ-9 Trajectory with Severity Zones</h3>
+                    <p style={{ fontSize: 12, color: '#475569', marginBottom: 16 }}>PHQ-9 depression score over time, with colored background zone bands (Minimal / Mild / Moderate / Severe). Shows baseline vs. current score, improvement delta, afterglow period annotation (Days 0–14), and trend indicator (Improving / Stable / Declining).</p>
+                    <SymptomDecayCurveChart
+                        patientId="showcase-patient"
+                        sessionId={1}
+                        sessionDate={new Date(Date.now() - 30 * 86400000)}
+                        data={[
+                            { day: 0,   phq9Score: 18, assessmentDate: new Date(Date.now() - 30 * 86400000).toISOString() },
+                            { day: 7,   phq9Score: 14, assessmentDate: new Date(Date.now() - 23 * 86400000).toISOString() },
+                            { day: 14,  phq9Score: 11, assessmentDate: new Date(Date.now() - 16 * 86400000).toISOString() },
+                            { day: 30,  phq9Score: 7,  assessmentDate: new Date(Date.now() - 0  * 86400000).toISOString() },
+                        ]}
+                    />
+                </div>
+
+                {/* E5–E7: Severity Zone components */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 24, marginBottom: 28 }}>
+                    <div style={{ background: '#050c1a', borderRadius: 20, padding: '24px 28px', border: '1px solid rgba(239,68,68,0.12)' }}>
+                        <h3 style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#f87171', marginBottom: 8 }}>E5 · PHQ9SeverityZones</h3>
+                        <p style={{ fontSize: 12, color: '#475569', marginBottom: 16 }}>PHQ-9 score (0–27) with 4 severity zones, position indicator, and clinical recommendation.</p>
+                        <PHQ9SeverityZones score={12} />
+                    </div>
+                    <div style={{ background: '#050c1a', borderRadius: 20, padding: '24px 28px', border: '1px solid rgba(245,158,11,0.12)' }}>
+                        <h3 style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#fbbf24', marginBottom: 8 }}>E6 · GAD7SeverityZones</h3>
+                        <p style={{ fontSize: 12, color: '#475569', marginBottom: 16 }}>GAD-7 score (0–21) with 4 anxiety severity zones, position indicator, and clinical recommendation.</p>
+                        <GAD7SeverityZones score={9} />
+                    </div>
+                    <div style={{ background: '#050c1a', borderRadius: 20, padding: '24px 28px', border: '1px solid rgba(251,113,133,0.12)' }}>
+                        <h3 style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#fb7185', marginBottom: 8 }}>E7 · PCL5SeverityZones</h3>
+                        <p style={{ fontSize: 12, color: '#475569', marginBottom: 16 }}>PCL-5 PTSD score (0–80) with 4 severity zones. Score ≥33 = probable PTSD flag automatically surfaced.</p>
+                        <PCL5SeverityZones score={38} />
+                    </div>
                 </div>
             </Section>
 

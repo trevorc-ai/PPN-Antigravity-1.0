@@ -1,4 +1,4 @@
-import React, { FC, useState, useEffect, useCallback } from 'react';
+import React, { FC, useState, useEffect, useCallback, useRef } from 'react';
 import { Pill, Activity, Mountain, Shield, CheckCircle, Diamond, Download, Clock, Mic, Music, AlertTriangle, Send } from 'lucide-react';
 import { getTimelineEvents, createTimelineEvent } from '../../services/clinicalLog';
 import { getEventTypeIdByCode, type FlowEventTypeCode } from '../../services/refFlowEventTypes';
@@ -144,7 +144,7 @@ export const LiveSessionTimeline: FC<LiveSessionTimelineProps> = ({
             description,
             author: 'Clinician',
         };
-        setEvents(prev => [optimisticEvent, ...prev]);
+        setEvents(prev => [...prev, optimisticEvent]);
 
         setIsSubmitting(true);
         const eventTimestamp = new Date().toISOString();
@@ -205,7 +205,7 @@ export const LiveSessionTimeline: FC<LiveSessionTimelineProps> = ({
             // DB returns empty — don't wipe optimistic/local events already in state.
             if (mappedEvents.length > 0) {
                 // Most recent first
-                setEvents(mappedEvents.reverse());
+                setEvents(mappedEvents);
             }
             // Intentionally NOT calling setEvents([]) for empty result:
             // preserves optimistic events for TEST sessions and new sessions
@@ -218,10 +218,12 @@ export const LiveSessionTimeline: FC<LiveSessionTimelineProps> = ({
 
         if (!active) return;
 
-        // Fetch periodically or subscribe
+        // Fetch periodically or subscribe.
+        // Stabilisation sprint: reduced from 30s → 60s. Timeline is a log; 60s latency
+        // is clinically acceptable and halves query volume per open session.
         const interval = setInterval(() => {
             fetchLocalEvents();
-        }, 30000);
+        }, 60000);
 
         return () => clearInterval(interval);
     }, [fetchLocalEvents, active]);
@@ -240,11 +242,13 @@ export const LiveSessionTimeline: FC<LiveSessionTimelineProps> = ({
                 description: label ?? type,
                 author: 'Clinician',
             };
-            setEvents(prev => [optimistic, ...prev]);
+            setEvents(prev => [...prev, optimistic]);
         };
         window.addEventListener('ppn:dose-registered', handleDoseRegistered);
         return () => window.removeEventListener('ppn:dose-registered', handleDoseRegistered);
     }, []);
+
+
 
 
     const handleExportLog = () => {

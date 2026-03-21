@@ -130,131 +130,146 @@ export function generateDischargeSummaryText(data: DischargeSummaryData): string
 // ─── PDF Generator ────────────────────────────────────────────────────────────
 
 export function generateDischargeSummaryPDF(data: DischargeSummaryData): jsPDF {
-    const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+    const doc = new jsPDF({ orientation: 'portrait', unit: 'in', format: 'letter' });
 
-    // ── Color palette ──────────────────────────────────────────────────────────
-    const SLATE_900 = [15, 23, 42] as const;
-    const SLATE_700 = [51, 65, 85] as const;
-    const SLATE_500 = [100, 116, 139] as const;
-    const SLATE_300 = [148, 163, 184] as const;
-    const INDIGO    = [99, 102, 241] as const;
-    const TEAL      = [20, 184, 166] as const;
-    const AMBER     = [245, 158, 11] as const;
-    const WHITE     = [255, 255, 255] as const;
+    // ── Color palette (print-safe, ppn-ui-standards Rule 5) ────────────────────
+    const SLATE_800      = [30, 41, 59]   as const; // dark text on white
+    const SLATE_600      = [71, 85, 105]  as const; // secondary text
+    const SLATE_400      = [148, 163, 184] as const; // muted / footer
+    const SLATE_100      = [241, 245, 249] as const; // light bg
+    const INDIGO_HEADER  = [237, 233, 255] as const; // #ede9ff table header fill
+    const INDIGO_TEXT    = [55, 48, 163]   as const; // #3730a3 table header text
+    const INDIGO_ACCENT  = [55, 48, 163]   as const; // #3730a3 section accent
+    const TEAL           = [20, 184, 166]  as const;
+    const AMBER          = [245, 158, 11]  as const;
+    const RED            = [239, 68, 68]   as const;
+    const WHITE          = [255, 255, 255] as const;
+    const NEAR_WHITE     = [248, 250, 252] as const; // #f8fafc
 
-    const PAGE_W = 210;
-    const PAGE_H = 297;
-    const MARGIN = 16;
+    const PAGE_W   = 8.5;  // inches
+    const PAGE_H   = 11;   // inches
+    const MARGIN   = 0.6;  // inches
     const CONTENT_W = PAGE_W - MARGIN * 2;
     let y = 0;
 
-    // ── Header band ────────────────────────────────────────────────────────────
-    doc.setFillColor(...SLATE_900);
-    doc.rect(0, 0, PAGE_W, 36, 'F');
+    // ── Gradient accent bar (6pt = 0.083in) ───────────────────────────────────
+    // jsPDF cannot do linear gradients; approximate with 3 adjacent rects
+    const BAR_H = 0.083;
+    const third = PAGE_W / 3;
+    doc.setFillColor(30, 58, 95);     // #1e3a5f navy
+    doc.rect(0, 0, third, BAR_H, 'F');
+    doc.setFillColor(59, 130, 246);   // #3b82f6 blue
+    doc.rect(third, 0, third, BAR_H, 'F');
+    doc.setFillColor(16, 185, 129);   // #10b981 teal
+    doc.rect(third * 2, 0, third, BAR_H, 'F');
 
-    // Accent bar
-    doc.setFillColor(...INDIGO);
-    doc.rect(0, 0, 4, 36, 'F');
+    // ── Header band (#f8fafc) ─────────────────────────────────────────────────
+    const HDR_H = 0.55;
+    doc.setFillColor(...NEAR_WHITE);
+    doc.rect(0, BAR_H, PAGE_W, HDR_H, 'F');
+    doc.setDrawColor(226, 232, 240);
+    doc.setLineWidth(0.005);
+    doc.line(0, BAR_H + HDR_H, PAGE_W, BAR_H + HDR_H);
 
-    // Title
+    // Logo mark
+    doc.setFillColor(30, 58, 95);
+    doc.roundedRect(MARGIN, BAR_H + 0.1, 0.28, 0.28, 0.04, 0.04, 'F');
     doc.setFont('helvetica', 'bold');
-    doc.setFontSize(14);
+    doc.setFontSize(11);
     doc.setTextColor(...WHITE);
-    doc.text('CLINICAL DISCHARGE SUMMARY', MARGIN + 4, 12);
+    doc.text('P', MARGIN + 0.14, BAR_H + 0.27, { align: 'center' });
 
-    // Subtitle
-    doc.setFont('helvetica', 'normal');
+    // Branding
+    doc.setFont('helvetica', 'bold');
     doc.setFontSize(8);
-    doc.setTextColor(...SLATE_300);
-    doc.text('PSYCHEDELIC PRACTITIONER NETWORK  ·  CONFIDENTIAL CLINICAL RECORD', MARGIN + 4, 18);
+    doc.setTextColor(...INDIGO_ACCENT);
+    doc.text('PPN PORTAL', MARGIN + 0.38, BAR_H + 0.22);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(7);
+    doc.setTextColor(...SLATE_400);
+    doc.text('Clinical Discharge Summary, CONFIDENTIAL', MARGIN + 0.38, BAR_H + 0.35);
 
     // Right-side metadata
     const today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(7);
+    doc.setTextColor(...SLATE_600);
+    doc.text(`Date: ${today}`, PAGE_W - MARGIN, BAR_H + 0.22, { align: 'right' });
     doc.setFont('helvetica', 'normal');
-    doc.setFontSize(8);
-    doc.setTextColor(...SLATE_300);
-    doc.text(`Date: ${today}`, PAGE_W - MARGIN, 12, { align: 'right' });
-    doc.text(`Patient ID: ${data.patientId}`, PAGE_W - MARGIN, 18, { align: 'right' });
-    doc.text(`Site: ${data.siteId}`, PAGE_W - MARGIN, 23, { align: 'right' });
+    doc.setFontSize(7);
+    doc.setTextColor(...SLATE_400);
+    doc.text(`Patient ID: ${data.patientId}`, PAGE_W - MARGIN, BAR_H + 0.35, { align: 'right' });
+    doc.text(`Site: ${data.siteId}`, PAGE_W - MARGIN, BAR_H + 0.46, { align: 'right' });
 
-    // Divider
-    doc.setDrawColor(...INDIGO);
-    doc.setLineWidth(0.5);
-    doc.line(MARGIN, 30, PAGE_W - MARGIN, 30);
-
-    y = 44;
+    y = BAR_H + HDR_H + 0.35;
 
     // ── Helper: Section header ─────────────────────────────────────────────────
-    function sectionHeader(title: string, color: readonly [number, number, number] = INDIGO) {
-        if (y > PAGE_H - 40) { doc.addPage(); y = 20; }
-        doc.setFillColor(...color, 0.12);
+    function sectionHeader(title: string, color: readonly [number, number, number] = INDIGO_ACCENT) {
+        if (y > PAGE_H - 1.5) { doc.addPage(); y = 0.8; }
+        // Left accent bar
         doc.setFillColor(color[0], color[1], color[2]);
-        // Tinted background pill
-        doc.setFillColor(color[0], color[1], color[2]);
-        doc.roundedRect(MARGIN, y - 4, CONTENT_W, 10, 2, 2, 'F');
-        // Make it very subtle
-        doc.setGState(doc.GState({ opacity: 0.12 }));
-        doc.setFillColor(color[0], color[1], color[2]);
-        doc.roundedRect(MARGIN, y - 4, CONTENT_W, 10, 2, 2, 'F');
-        doc.setGState(doc.GState({ opacity: 1 }));
-
+        doc.rect(MARGIN, y - 0.08, 0.03, 0.16, 'F');
+        // Header text
         doc.setFont('helvetica', 'bold');
         doc.setFontSize(8);
         doc.setTextColor(color[0], color[1], color[2]);
-        doc.text(title.toUpperCase(), MARGIN + 4, y + 3);
-        y += 12;
+        doc.text(title.toUpperCase(), MARGIN + 0.08, y + 0.06);
+        // Rule
+        doc.setDrawColor(226, 232, 240);
+        doc.setLineWidth(0.005);
+        doc.line(MARGIN + 0.08 + doc.getTextWidth(title.toUpperCase()) + 0.08, y + 0.02, PAGE_W - MARGIN, y + 0.02);
+        y += 0.25;
     }
 
     // ── Helper: Key-value row ──────────────────────────────────────────────────
     function kv(label: string, value: string, indent = 0) {
-        if (y > PAGE_H - 20) { doc.addPage(); y = 20; }
+        if (y > PAGE_H - 0.5) { doc.addPage(); y = 0.8; }
         doc.setFont('helvetica', 'bold');
-        doc.setFontSize(8);
-        doc.setTextColor(...SLATE_500);
+        doc.setFontSize(7);
+        doc.setTextColor(...SLATE_600);
         doc.text(label, MARGIN + indent, y);
 
         doc.setFont('helvetica', 'normal');
         doc.setFontSize(9);
-        doc.setTextColor(30, 41, 59); // slate-800 for readability on white
-        const lines = doc.splitTextToSize(value, CONTENT_W - 50 - indent);
-        doc.text(lines, MARGIN + 55 + indent, y);
-        y += Math.max(6, lines.length * 5);
+        doc.setTextColor(...SLATE_800);
+        const lines = doc.splitTextToSize(value, CONTENT_W - 1.5 - indent);
+        doc.text(lines, MARGIN + 1.5 + indent, y);
+        y += Math.max(0.15, lines.length * 0.14);
     }
 
-    function spacer(h = 4) { y += h; }
-    function hrule(color: readonly [number, number, number] = SLATE_700) {
-        if (y > PAGE_H - 20) { doc.addPage(); y = 20; }
-        doc.setDrawColor(...color);
-        doc.setLineWidth(0.2);
+    function spacer(h = 0.12) { y += h; }
+    function hrule() {
+        if (y > PAGE_H - 0.5) { doc.addPage(); y = 0.8; }
+        doc.setDrawColor(226, 232, 240);
+        doc.setLineWidth(0.005);
         doc.line(MARGIN, y, PAGE_W - MARGIN, y);
-        y += 4;
+        y += 0.1;
     }
 
     // ── Badge helper ───────────────────────────────────────────────────────────
     function badge(text: string, color: readonly [number, number, number], x: number, by: number) {
-        doc.setFillColor(color[0], color[1], color[2]);
-        doc.setGState(doc.GState({ opacity: 0.15 }));
-        doc.roundedRect(x, by - 4, 28, 7, 1.5, 1.5, 'F');
-        doc.setGState(doc.GState({ opacity: 1 }));
+        const badgeW = 0.9;
+        doc.setFillColor(...INDIGO_HEADER);
+        doc.roundedRect(x, by - 0.1, badgeW, 0.2, 0.03, 0.03, 'F');
         doc.setDrawColor(color[0], color[1], color[2]);
-        doc.setLineWidth(0.4);
-        doc.roundedRect(x, by - 4, 28, 7, 1.5, 1.5, 'S');
+        doc.setLineWidth(0.005);
+        doc.roundedRect(x, by - 0.1, badgeW, 0.2, 0.03, 0.03, 'S');
         doc.setFont('helvetica', 'bold');
         doc.setFontSize(7);
         doc.setTextColor(color[0], color[1], color[2]);
-        doc.text(text, x + 14, by + 0.5, { align: 'center' });
+        doc.text(text, x + badgeW / 2, by + 0.04, { align: 'center' });
     }
 
     // ── Section 1: Patient & Treatment Summary ─────────────────────────────────
-    sectionHeader('1 — Patient & Treatment Summary', INDIGO);
+    sectionHeader('1 — Patient & Treatment Summary', INDIGO_ACCENT);
     kv('Clinician ID', data.clinicianId);
-    kv('Treatment Dates', `${data.treatmentStart || 'Not recorded'} → ${data.treatmentEnd || 'Not recorded'}`);
+    kv('Treatment Dates', `${data.treatmentStart || 'Not recorded'} to ${data.treatmentEnd || 'Not recorded'}`);
     kv('Dosing Sessions', String(data.dosingSessionsCount));
     kv('Integration Sessions', String(data.integrationSessionsCount));
     kv('Substance & Dose', `${data.substanceName} ${data.substanceDose}`);
     kv('Protocol', data.protocolName);
     kv('Diagnosis', data.diagnosis);
-    spacer(4);
+    spacer();
 
     // ── Section 2: Outcome Metrics ─────────────────────────────────────────────
     sectionHeader('2 — Outcome Metrics', TEAL);
@@ -262,19 +277,21 @@ export function generateDischargeSummaryPDF(data: DischargeSummaryData): jsPDF {
     if (data.clinicalMetricsEnabled === false || !data.baseline || !data.final) {
         doc.setFont('helvetica', 'italic');
         doc.setFontSize(9);
-        doc.setTextColor(...SLATE_500);
+        doc.setTextColor(...SLATE_400);
         doc.text('Clinical outcome tracking not utilized under this session protocol.', MARGIN, y);
-        y += 8;
+        y += 0.2;
     } else {
-        // Table header
+        // Table header row — ppn-ui-standards compliant: #ede9ff fill + #3730a3 text
+        doc.setFillColor(...INDIGO_HEADER);
+        doc.rect(MARGIN, y - 0.08, CONTENT_W, 0.22, 'F');
         doc.setFont('helvetica', 'bold');
-        doc.setFontSize(8);
-        doc.setTextColor(...SLATE_500);
-        doc.text('MEASURE', MARGIN, y);
-        doc.text('BASELINE', MARGIN + 55, y);
-        doc.text('FINAL', MARGIN + 90, y);
-        doc.text('CHANGE', MARGIN + 130, y);
-        hrule(SLATE_700);
+        doc.setFontSize(7);
+        doc.setTextColor(...INDIGO_TEXT);
+        doc.text('MEASURE', MARGIN + 0.08, y + 0.08);
+        doc.text('BASELINE', MARGIN + 1.6, y + 0.08);
+        doc.text('FINAL', MARGIN + 2.5, y + 0.08);
+        doc.text('CHANGE', MARGIN + 3.5, y + 0.08);
+        y += 0.28;
 
         const metrics: Array<{ label: string; b: number | null; f: number | null }> = [
             { label: 'PHQ-9', b: data.baseline.phq9, f: data.final.phq9 },
@@ -282,110 +299,115 @@ export function generateDischargeSummaryPDF(data: DischargeSummaryData): jsPDF {
             { label: 'CAPS-5', b: data.baseline.caps5, f: data.final.caps5 },
         ];
 
-        for (const m of metrics) {
-            if (y > PAGE_H - 20) { doc.addPage(); y = 20; }
+        metrics.forEach((m, i) => {
+            if (y > PAGE_H - 0.5) { doc.addPage(); y = 0.8; }
+            doc.setFillColor(i % 2 === 0 ? 248 : 255, i % 2 === 0 ? 250 : 255, i % 2 === 0 ? 252 : 255);
+            doc.rect(MARGIN, y - 0.06, CONTENT_W, 0.18, 'F');
             doc.setFont('helvetica', 'bold');
             doc.setFontSize(9);
-            doc.setTextColor(30, 41, 59);
-            doc.text(m.label, MARGIN, y);
-
+            doc.setTextColor(...SLATE_800);
+            doc.text(m.label, MARGIN + 0.08, y + 0.06);
             doc.setFont('helvetica', 'normal');
-            doc.text(nr(m.b), MARGIN + 55, y);
-            doc.text(nr(m.f), MARGIN + 90, y);
+            doc.text(nr(m.b), MARGIN + 1.6, y + 0.06);
+            doc.text(nr(m.f), MARGIN + 2.5, y + 0.06);
             if (m.b != null && m.f != null) {
                 const chg = delta(m.b, m.f);
-                const color = m.f < m.b ? TEAL : m.f > m.b ? [239, 68, 68] as const : SLATE_500;
+                const color = m.f < m.b ? TEAL : m.f > m.b ? RED : SLATE_600;
                 doc.setTextColor(color[0], color[1], color[2]);
-                doc.text(`${chg} (${pct(m.b, m.f)})`, MARGIN + 130, y);
-                doc.setTextColor(30, 41, 59);
+                doc.text(`${chg} (${pct(m.b, m.f)})`, MARGIN + 3.5, y + 0.06);
+                doc.setTextColor(...SLATE_800);
             } else {
-                doc.text('Not recorded', MARGIN + 130, y);
+                doc.text('Not recorded', MARGIN + 3.5, y + 0.06);
             }
-            y += 7;
-        }
+            y += 0.2;
+        });
 
-        // MEQ-30
         kv('MEQ-30 Peak', data.meq30Peak != null ? `${data.meq30Peak}/100` : 'Not recorded');
-        spacer(2);
+        spacer(0.1);
 
         // Response/Remission badges
         doc.setFont('helvetica', 'bold');
-        doc.setFontSize(8);
-        doc.setTextColor(...SLATE_500);
+        doc.setFontSize(7);
+        doc.setTextColor(...SLATE_600);
         doc.text('RESPONSE ACHIEVED', MARGIN, y);
-        doc.text('REMISSION ACHIEVED', MARGIN + 80, y);
-        y += 5;
-        badge(data.responseAchieved === 'YES (>=50% reduction)' ? 'YES ≥50%' : data.responseAchieved, data.responseAchieved.startsWith('YES') ? TEAL : AMBER, MARGIN, y);
-        badge(data.remissionAchieved, data.remissionAchieved === 'YES' ? TEAL : AMBER, MARGIN + 80, y);
-        y += 10;
+        doc.text('REMISSION ACHIEVED', MARGIN + 2.2, y);
+        y += 0.14;
+        badge(
+            data.responseAchieved === 'YES (>=50% reduction)' ? 'YES >=50%' : data.responseAchieved,
+            data.responseAchieved.startsWith('YES') ? TEAL : AMBER, MARGIN, y
+        );
+        badge(data.remissionAchieved, data.remissionAchieved === 'YES' ? TEAL : AMBER, MARGIN + 2.2, y);
+        y += 0.3;
     }
 
-    spacer(4);
+    spacer();
 
     // ── Section 3: Safety Summary ──────────────────────────────────────────────
     sectionHeader('3 — Safety Summary', AMBER);
     kv('Adverse Events Logged', String(data.adverseEventsCount));
     kv('Grade 3+ Events', String(data.grade3EventsCount));
     kv('Chemical Rescue Used', data.chemicalRescueUsed);
-    spacer(4);
+    spacer();
 
     // ── Section 4: Ongoing Care Plan ──────────────────────────────────────────
-    sectionHeader('4 — Ongoing Care Plan', INDIGO);
+    sectionHeader('4 — Ongoing Care Plan', INDIGO_ACCENT);
     kv('Ongoing Vulnerabilities', data.ongoingVulnerabilities || 'Not recorded');
     kv('Referral', data.referralName || 'Pending');
     kv('Follow-up Schedule', `${data.followUpWeeks} weeks`);
     kv('Emergency Plan', data.emergencyPlanSummary || 'Not recorded');
     kv('Self-care Instructions', data.selfCareSummary || 'Not recorded');
-    spacer(4);
+    spacer();
 
     // ── Section 5: Clinician Sign-Off ─────────────────────────────────────────
-    sectionHeader('5 — Clinician Sign-Off', SLATE_700);
-    if (y > PAGE_H - 55) { doc.addPage(); y = 20; }
+    sectionHeader('5 — Clinician Sign-Off', SLATE_600);
+    if (y > PAGE_H - 1.8) { doc.addPage(); y = 0.8; }
 
-    // Clinician statement box
-    doc.setFillColor(241, 245, 249); // slate-100
-    doc.roundedRect(MARGIN, y, CONTENT_W, 20, 2, 2, 'F');
+    doc.setFillColor(...SLATE_100);
+    doc.roundedRect(MARGIN, y, CONTENT_W, 0.7, 0.06, 0.06, 'F');
     doc.setFont('helvetica', 'italic');
-    doc.setFontSize(8.5);
-    doc.setTextColor(30, 41, 59);
-    const claimLines = doc.splitTextToSize(data.clinicianStatement || 'Clinician statement pending.', CONTENT_W - 8);
-    doc.text(claimLines, MARGIN + 4, y + 6);
-    y += 24;
+    doc.setFontSize(9);
+    doc.setTextColor(...SLATE_800);
+    const claimLines = doc.splitTextToSize(data.clinicianStatement || 'Clinician statement pending.', CONTENT_W - 0.25);
+    doc.text(claimLines, MARGIN + 0.12, y + 0.2);
+    y += 0.8;
 
     kv('Clinician ID', data.clinicianId);
     kv('Date Printed', today);
-    spacer(6);
+    spacer(0.2);
 
     // Signature line
-    doc.setDrawColor(...SLATE_700);
-    doc.setLineWidth(0.5);
-    doc.line(MARGIN, y, MARGIN + 80, y);
+    doc.setDrawColor(...SLATE_600);
+    doc.setLineWidth(0.01);
+    doc.line(MARGIN, y, MARGIN + 2.5, y);
     doc.setFont('helvetica', 'normal');
-    doc.setFontSize(8);
-    doc.setTextColor(...SLATE_500);
-    doc.text('Signature', MARGIN, y + 4);
-    spacer(10);
+    doc.setFontSize(7);
+    doc.setTextColor(...SLATE_400);
+    doc.text('Signature', MARGIN, y + 0.12);
+    spacer(0.35);
 
     // Disclaimer
     doc.setFont('helvetica', 'italic');
-    doc.setFontSize(7.5);
-    doc.setTextColor(...SLATE_500);
+    doc.setFontSize(7);
+    doc.setTextColor(...SLATE_400);
     doc.text(
         'Auto-generated by PPN Portal. Clinician review required before patient distribution.',
         MARGIN, y, { maxWidth: CONTENT_W }
     );
 
     // ── Footer on every page ────────────────────────────────────────────────────
-    const totalPages = doc.internal.pages.length - 1;
+    const totalPages = (doc.internal as any).pages.length - 1;
     for (let i = 1; i <= totalPages; i++) {
         doc.setPage(i);
-        doc.setFillColor(...SLATE_900);
-        doc.rect(0, PAGE_H - 10, PAGE_W, 10, 'F');
+        doc.setFillColor(...NEAR_WHITE);
+        doc.rect(0, PAGE_H - 0.3, PAGE_W, 0.3, 'F');
+        doc.setDrawColor(226, 232, 240);
+        doc.setLineWidth(0.005);
+        doc.line(0, PAGE_H - 0.3, PAGE_W, PAGE_H - 0.3);
         doc.setFont('helvetica', 'normal');
         doc.setFontSize(7);
-        doc.setTextColor(...SLATE_500);
-        doc.text(`PPN PORTAL  ·  CONFIDENTIAL  ·  Patient: ${data.patientId}`, MARGIN, PAGE_H - 3.5);
-        doc.text(`Page ${i} of ${totalPages}`, PAGE_W - MARGIN, PAGE_H - 3.5, { align: 'right' });
+        doc.setTextColor(...SLATE_400);
+        doc.text(`PPN PORTAL  ·  CONFIDENTIAL  ·  Patient: ${data.patientId}`, MARGIN, PAGE_H - 0.1);
+        doc.text(`Page ${i} of ${totalPages}`, PAGE_W - MARGIN, PAGE_H - 0.1, { align: 'right' });
     }
 
     return doc;

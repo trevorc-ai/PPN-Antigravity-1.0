@@ -182,3 +182,8 @@ No blocking database concerns. Ticket is safe to route to BUILDER.
 > ⚠️ INSPECTOR NOTE: The design spec references `log_integration_notes` as a future table for session notes (already flagged in the component's own code comment). This is explicitly **out of scope** for this WO and requires its own schema ticket before BUILDER should implement any write functionality for it. The DESIGNER's replacement (using `patientSessions` instead) correctly avoids this dependency.
 
 ==== INSPECTOR (SQL Pre-Flight) ====
+
+
+---
+
+> 🔴 **PARKED — 2026-03-21:** This WO is parked behind Track B items B1 + B5 (ActivePatientContext + Phase 3 visualization wiring). Analytics components must not be wired before the cycle data model exists. Do not proceed until STABILIZATION_BRIEF.md Track B B5 is complete. See PIPELINE_TRIAGE_2026-03-21.md.
