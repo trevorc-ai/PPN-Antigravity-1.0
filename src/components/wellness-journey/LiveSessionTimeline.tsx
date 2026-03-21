@@ -31,6 +31,12 @@ interface LiveSessionTimelineProps {
     visible?: { hr: boolean; bp: boolean; temp: boolean; events: boolean };
     /** Timestamp (ms since epoch) when the dosing session started. Used to compute T+ header. */
     sessionStartMs?: number;
+    /**
+     * WO-A4: When true, the events list auto-scrolls to the bottom whenever events change
+     * (new entry added) and on initial load. Newest entries are always visible without
+     * the practitioner needing to manually scroll. Used by the cockpit panel (Panel B).
+     */
+    scrollToBottom?: boolean;
 }
 
 // WO-528: exported so SessionVitalsTrendChart can reuse the same palette
@@ -107,11 +113,20 @@ function formatTimeAMPM(date: Date): string {
 }
 
 export const LiveSessionTimeline: FC<LiveSessionTimelineProps> = ({
-    sessionId, active, hideHeader = false, hideActions = false, visible, sessionStartMs
+    sessionId, active, hideHeader = false, hideActions = false, visible, sessionStartMs, scrollToBottom = false
 }) => {
     const [events, setEvents] = useState<TimelineEvent[]>([]);
     const [draftNote, setDraftNote] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
+
+    // WO-A4: Scroll-to-bottom ref — attached to the scrollable events container.
+    // Fires whenever events update so the practitioner always sees the latest entry.
+    const eventsBottomRef = useRef<HTMLDivElement | null>(null);
+    useEffect(() => {
+        if (scrollToBottom && eventsBottomRef.current) {
+            eventsBottomRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
+        }
+    }, [events, scrollToBottom]);
 
     // WO-576 Sub-task D: T+ elapsed timer
     const [tPlus, setTPlus] = useState<string | null>(null);
@@ -355,7 +370,7 @@ export const LiveSessionTimeline: FC<LiveSessionTimelineProps> = ({
                 </div>
             )}
 
-            <div className="p-3 max-h-[280px] overflow-y-auto space-y-4 scroll-smooth">
+            <div className="p-3 flex-1 overflow-y-auto space-y-4 scroll-smooth">
                 {filteredEvents.length === 0 ? (
                     <div className="text-center text-slate-500 py-4 text-sm italic">
                         {events.length > 0
@@ -415,6 +430,8 @@ export const LiveSessionTimeline: FC<LiveSessionTimelineProps> = ({
                         )
                     })
                 )}
+                {/* WO-A4: Scroll-to-bottom sentinel — eventsBottomRef targets this */}
+                <div ref={eventsBottomRef} aria-hidden="true" />
             </div>
 
             {/* ── Quick-Log action strip + freetext note form ─────────────────── */}

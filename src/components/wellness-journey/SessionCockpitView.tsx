@@ -257,28 +257,30 @@ export const SessionCockpitView: React.FC<SessionCockpitViewProps> = ({
                         aria-hidden="true"
                     />
                 </button>
-                {/* Animated expand */}
+                {/* Animated expand — fixed height matches Panel C so action buttons never move */}
                 <div
                     id="cockpit-graph"
                     className={`overflow-hidden transition-all duration-300 ease-in-out ${
                         activePanel === 'graph' ? 'max-h-[520px] opacity-100' : 'max-h-0 opacity-0'
                     }`}
                 >
-                    <div className="border-t border-slate-700/40 min-h-[256px]">
+                    <div className="border-t border-slate-700/40 h-[380px] overflow-y-auto">
                         {config.enabledFeatures.includes('session-vitals') ? (
-                            <SessionVitalsTrendChart
-                                sessionId={journey.sessionId || journey.session?.sessionNumber?.toString() || '1'}
-                                substance={journey.session?.substance}
-                                onThresholdViolation={(vital, value) => {
-                                    console.warn(`[SessionCockpit] Vitals threshold: ${vital}=${value}`);
-                                }}
-                                data={vitalsChartData}
-                                events={eventLog}
-                                sessionDurationSec={sessionDurationSec}
-                                onVisibilityChange={v => setChartVisible(v as { hr: boolean; bp: boolean; temp: boolean; events: boolean })}
-                                hideHeader={true}
-                                hideLegend={true}
-                            />
+                            <div className="h-full">
+                                <SessionVitalsTrendChart
+                                    sessionId={journey.sessionId || journey.session?.sessionNumber?.toString() || '1'}
+                                    substance={journey.session?.substance}
+                                    onThresholdViolation={(vital, value) => {
+                                        console.warn(`[SessionCockpit] Vitals threshold: ${vital}=${value}`);
+                                    }}
+                                    data={vitalsChartData}
+                                    events={eventLog}
+                                    sessionDurationSec={sessionDurationSec}
+                                    onVisibilityChange={v => setChartVisible(v as { hr: boolean; bp: boolean; temp: boolean; events: boolean })}
+                                    hideHeader={true}
+                                    hideLegend={true}
+                                />
+                            </div>
                         ) : (
                             <p className="text-center text-slate-600 text-sm py-6">Vitals chart not enabled.</p>
                         )}
@@ -333,14 +335,14 @@ export const SessionCockpitView: React.FC<SessionCockpitViewProps> = ({
                         />
                     </div>
                 </div>
-                {/* Animated expand */}
+                {/* Animated expand — fixed height matches Panel C so action buttons never move */}
                 <div
                     id="cockpit-timeline"
                     className={`overflow-hidden transition-all duration-300 ease-in-out ${
                         activePanel === 'timeline' ? 'max-h-[520px] opacity-100' : 'max-h-0 opacity-0'
                     }`}
                 >
-                    <div className="border-t border-slate-700/40 min-h-[256px]">
+                    <div className="border-t border-slate-700/40 h-[380px] overflow-hidden">
                         <LiveSessionTimeline
                             sessionId={journey.sessionId || journey.session?.sessionNumber?.toString() || '1'}
                             active={true}
@@ -348,6 +350,7 @@ export const SessionCockpitView: React.FC<SessionCockpitViewProps> = ({
                             sessionStartMs={sessionStartMs}
                             hideHeader={true}
                             hideActions={true}
+                            scrollToBottom={true}
                         />
                     </div>
                 </div>

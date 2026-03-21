@@ -2,7 +2,7 @@
 owner: BUILDER
 status: 00_INBOX
 authored_by: INSPECTOR
-priority: P2
+priority: P1
 track: A
 track_item: A4
 stabilization_brief: STABILIZATION_BRIEF.md v1.2
@@ -11,7 +11,7 @@ created: 2026-03-21
 depends_on: WO-A3 (must be complete and stable before this begins)
 ---
 
-# WO-A4: Cosmetic UI Regressions and Clarity Improvements
+# WO-A4: Live Cockpit UI Regressions — Panel Height, Vitals Graph, Timeline Order
 
 ## Context
 
