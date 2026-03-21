@@ -698,6 +698,10 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
         tempF?: number; // reserved for future temperature field
     }
     const [updateLog, setUpdateLog] = useState<SessionUpdateEntry[]>([]);
+    // WO-B0c: tracks whether the async DB vitals hydration on mount is still in-flight.
+    // Starts true so the chart shows a loading skeleton instead of the empty-state placeholder.
+    // Flips to false once the useEffect resolves (success or failure).
+    const [vitalsLoading, setVitalsLoading] = useState<boolean>(true);
 
     // WO-A2: Hydrate vitalsChartData from DB on mount (page refresh recovery).
     // Without this, vitalsChartData is built from in-memory updateLog only — blank
@@ -712,7 +716,10 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
         (async () => {
             try {
                 const result = await getSessionVitals(sessionId);
-                if (!result.success || !result.data || result.data.length === 0) return;
+                if (!result.success || !result.data || result.data.length === 0) {
+                    setVitalsLoading(false); // WO-B0c: no data, stop loading
+                    return;
+                }
 
                 // Map log_session_vitals rows → SessionUpdateEntry so vitalsChartData
                 // useMemo picks them up without any schema changes.
@@ -740,6 +747,8 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                 console.debug(`[WO-A2] Hydrated ${hydrated.length} vitals entries from DB.`);
             } catch (err) {
                 console.warn('[WO-A2] Vitals hydration failed (non-blocking):', err);
+            } finally {
+                setVitalsLoading(false); // WO-B0c: always clear loading flag
             }
         })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -824,6 +833,10 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
         if (updateAffect)          descParts.push(`Affect: ${updateAffect}`);
         if (updateResponsiveness)  descParts.push(`Responsiveness: ${updateResponsiveness}`);
         if (updateComfort)         descParts.push(`Comfort: ${updateComfort}`);
+        // WO-B0b: include vitals in ledger description so the timeline entry shows HR/BP
+        if (updateHR)              descParts.push(`HR: ${updateHR} bpm`);
+        if (updateBPSys && updateBPDia) descParts.push(`BP: ${updateBPSys}/${updateBPDia}`);
+        else if (updateBPSys)      descParts.push(`BP Sys: ${updateBPSys}`);
         if (updateNote.trim())     descParts.push(updateNote.trim());
         const sessionUpdateDesc = descParts.join(' · ') || 'Session update logged';
 
@@ -850,6 +863,16 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                 console.warn('[Session Update] Failed to sync clinical vital:', err);
             }
         }
+
+        // WO-B0b: dispatch ppn:session-event so LiveSessionTimeline updates immediately
+        // without waiting for the 60-sec DB poll (fixes Session Update real-time gap).
+        window.dispatchEvent(new CustomEvent('ppn:session-event', {
+            detail: {
+                type: 'session_update',
+                label: sessionUpdateDesc,
+                timestamp: new Date().toISOString(),
+            },
+        }));
 
         // Reset fields
         setUpdateAffect(''); setUpdateResponsiveness(''); setUpdateComfort('');
@@ -1140,6 +1163,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                         vitalsChartData={vitalsChartData}
                         eventLog={eventLog}
                         sessionDurationSec={sessionDurationSec}
+                        vitalsLoading={vitalsLoading}
                         chartVisible={chartVisible}
                         setChartVisible={setChartVisible}
                         showCompanion={showCompanion}

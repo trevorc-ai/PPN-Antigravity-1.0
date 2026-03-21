@@ -139,6 +139,8 @@ export interface SessionCockpitViewProps {
     vitalsChartData: VitalsSnapshot[];
     eventLog: SessionEventPin[];
     sessionDurationSec: number;
+    /** WO-B0c: true while async DB vitals hydration is in-flight on mount */
+    vitalsLoading: boolean;
     chartVisible: { hr: boolean; bp: boolean; temp: boolean; events: boolean };
     setChartVisible: React.Dispatch<React.SetStateAction<{ hr: boolean; bp: boolean; temp: boolean; events: boolean }>>;
     showCompanion: boolean;
@@ -202,6 +204,7 @@ export const SessionCockpitView: React.FC<SessionCockpitViewProps> = ({
     vitalsChartData,
     eventLog,
     sessionDurationSec,
+    vitalsLoading,
     chartVisible,
     setChartVisible,
     showCompanion,
@@ -279,6 +282,7 @@ export const SessionCockpitView: React.FC<SessionCockpitViewProps> = ({
                                     onVisibilityChange={v => setChartVisible(v as { hr: boolean; bp: boolean; temp: boolean; events: boolean })}
                                     hideHeader={true}
                                     hideLegend={true}
+                                    isLoading={vitalsLoading}
                                 />
                             </div>
                         ) : (
@@ -481,14 +485,24 @@ export const SessionCockpitView: React.FC<SessionCockpitViewProps> = ({
                             key={action.type}
                             onClick={() => {
                                 const sid = journey.sessionId ?? journey.session?.sessionId;
+                                const eventTimestamp = new Date().toISOString();
                                 if (sid) {
                                     createTimelineEvent({
                                         session_id: sid,
-                                        event_timestamp: new Date().toISOString(),
+                                        event_timestamp: eventTimestamp,
                                         event_type_code: action.type as import('../../services/refFlowEventTypes').FlowEventTypeCode,
                                         metadata: { event_description: action.desc },
                                     }).catch(err => console.warn('[chips] write failed:', err));
                                 }
+                                // WO-B0: Dispatch ppn:session-event so LiveSessionTimeline
+                                // updates immediately without waiting for the 60-sec DB poll.
+                                window.dispatchEvent(new CustomEvent('ppn:session-event', {
+                                    detail: {
+                                        type: action.type,
+                                        label: action.desc,
+                                        timestamp: eventTimestamp,
+                                    },
+                                }));
                                 openAndScrollToUpdatePanel();
                             }}
                             aria-label={`Log: ${action.label}`}

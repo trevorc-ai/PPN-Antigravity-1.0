@@ -46,6 +46,12 @@ interface SessionVitalsTrendChartProps {
     hideHeader?: boolean;
     /** When true, hides the static series legend at the bottom */
     hideLegend?: boolean;
+    /**
+     * WO-B0c: When true, suppresses the empty-state placeholder and shows a
+     * loading skeleton instead. Set to true while the parent is fetching
+     * historical vitals from the DB on mount.
+     */
+    isLoading?: boolean;
 }
 
 // ── Thresholds ────────────────────────────────────────────────────────────────
@@ -303,6 +309,7 @@ export const SessionVitalsTrendChart: FC<SessionVitalsTrendChartProps> = ({
     onVisibilityChange,
     hideHeader = false,
     hideLegend = false,
+    isLoading = false,
 }) => {
     const [visible, setVisible] = useState<Record<SeriesKey, boolean>>({
         hr: true, bp: true, temp: true, events: true,
@@ -397,7 +404,13 @@ export const SessionVitalsTrendChart: FC<SessionVitalsTrendChartProps> = ({
             {/* ── Chart ──────────────────────────────────────────────────── */}
             {/* position:relative anchors the absolute event tooltip overlay   */}
             <div className="h-full min-h-[220px] w-full relative">
-                {(hasData || events.length > 0) ? (
+                {/* WO-B0c: show loading skeleton while parent is fetching DB vitals on mount */}
+                {isLoading ? (
+                    <div className="flex flex-col items-center justify-center h-full min-h-[220px] gap-3">
+                        <div className="w-8 h-8 rounded-full border-2 border-indigo-500/40 border-t-indigo-400 animate-spin" aria-label="Loading vitals data" />
+                        <p className="text-xs font-bold uppercase tracking-widest text-slate-500">Loading vitals…</p>
+                    </div>
+                ) : (hasData || events.length > 0) ? (
                     <ResponsiveContainer width="100%" height="100%">
                         <ComposedChart margin={{ top: 10, right: 20, bottom: 24, left: -10 }}>
                             <CartesianGrid

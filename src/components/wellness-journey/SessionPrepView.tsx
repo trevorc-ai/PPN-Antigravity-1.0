@@ -520,6 +520,15 @@ export const SessionPrepView: React.FC<SessionPrepViewProps> = ({
                         type: 'rescue-protocol',
                         label: 'Rescue Protocol',
                     }]);
+                    // WO-B0: dispatch ppn:dose-registered so LiveSessionTimeline adds
+                    // an optimistic entry immediately (fixes FAIL 4 — rescue not in timeline).
+                    window.dispatchEvent(new CustomEvent('ppn:dose-registered', {
+                        detail: {
+                            type: 'rescue-protocol',
+                            label: 'Rescue Protocol initiated',
+                            elapsedSec: elapsedNow,
+                        },
+                    }));
                     onOpenForm('rescue-protocol');
                 } : undefined}
                 disabled={!isLive}

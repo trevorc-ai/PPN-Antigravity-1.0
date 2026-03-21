@@ -389,14 +389,17 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
                 if (data.resolved) aeParts.push('Resolved');
                 else if (data.follow_up_plan) aeParts.push(`Follow-up: ${data.follow_up_plan}`);
 
+                const aeTimestamp = data.occurred_at
+                    ? new Date(data.occurred_at).toISOString()
+                    : new Date().toISOString();
+                const aeDesc = aeParts.join(' · ');
+
                 createTimelineEvent({
                     session_id: sessionId,
-                    event_timestamp: data.occurred_at
-                        ? new Date(data.occurred_at).toISOString()
-                        : new Date().toISOString(),
-                    event_type_code: 'safety_event', // valid DB code; renders as [ADVERSE EVENT] via EVENT_CONFIG detection
+                    event_timestamp: aeTimestamp,
+                    event_type_code: 'safety_event',
                     metadata: {
-                        event_description: aeParts.join(' · '),
+                        event_description: aeDesc,
                         event_type: data.event_type,
                         severity_grade: data.severity_grade,
                         intervention_type: data.intervention_type,
@@ -404,6 +407,16 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
                         follow_up_plan: data.follow_up_plan,
                     },
                 }).catch(err => console.warn('[WO-597] AE Report timeline stamp failed (non-fatal):', err));
+
+                // WO-B2c: dispatch ppn:session-event so LiveSessionTimeline updates
+                // immediately without waiting for the 60-sec DB poll (FAIL 6 partial).
+                window.dispatchEvent(new CustomEvent('ppn:session-event', {
+                    detail: {
+                        type: 'safety-and-adverse-event',
+                        label: aeDesc,
+                        timestamp: aeTimestamp,
+                    },
+                }));
             }
         }
 
@@ -435,16 +448,31 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
                     const endFmt = new Date(data.end_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                     rescueParts.push(`Ended: ${endFmt}`);
                 }
+                const rescueTimestamp = data.start_time ?? new Date().toISOString();
+                const rescueDesc = rescueParts.join(' · ');
+
+                // WO-B2c: fixed event code — was 'session_completed' (wrong semantic: appeared
+                // as a session end marker in the ledger). 'safety_event' is the correct code.
                 createTimelineEvent({
                     session_id: sessionId,
-                    event_timestamp: data.start_time ?? new Date().toISOString(),
-                    event_type_code: 'session_completed', // closest valid DB code for rescue entries
+                    event_timestamp: rescueTimestamp,
+                    event_type_code: 'safety_event',
                     metadata: {
-                        event_description: rescueParts.join(' · '),
+                        event_description: rescueDesc,
                         intervention_type: data.intervention_type,
                         duration_minutes: data.duration_minutes,
                     },
                 }).catch(err => console.warn('[WellnessFormRouter] Rescue timeline stamp failed:', err));
+
+                // WO-B2c: dispatch ppn:session-event so LiveSessionTimeline updates
+                // immediately without waiting for the 60-sec DB poll (FAIL 4).
+                window.dispatchEvent(new CustomEvent('ppn:session-event', {
+                    detail: {
+                        type: 'rescue-protocol',
+                        label: rescueDesc,
+                        timestamp: rescueTimestamp,
+                    },
+                }));
             }
             onSaved('Rescue Protocol');
         } else {
