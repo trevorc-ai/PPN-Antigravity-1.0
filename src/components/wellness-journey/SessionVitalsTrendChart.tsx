@@ -1,4 +1,4 @@
-import React, { FC, useMemo, useState } from 'react';
+import React, { FC, useMemo, useState, useRef } from 'react';
 import {
     ComposedChart, Line, Scatter, ReferenceLine, ReferenceDot,
     XAxis, YAxis, CartesianGrid, Tooltip,
@@ -325,6 +325,10 @@ export const SessionVitalsTrendChart: FC<SessionVitalsTrendChartProps> = ({
         ev: SessionEventPin; cx: number; cy: number;
     } | null>(null);
 
+    // Ref on the chart inner wrapper — used to detect left/right edge proximity
+    // so the tooltip can lean away from the edge rather than clipping.
+    const containerRef = useRef<HTMLDivElement>(null);
+
     // X-axis domain always ends at current session time (minimum 10 min)
     const domainMaxSec = useMemo(() => {
         const allElapsed = [
@@ -403,7 +407,7 @@ export const SessionVitalsTrendChart: FC<SessionVitalsTrendChartProps> = ({
 
             {/* ── Chart ──────────────────────────────────────────────────── */}
             {/* position:relative anchors the absolute event tooltip overlay   */}
-            <div className="h-full min-h-[220px] w-full relative">
+            <div ref={containerRef} className="h-full min-h-[220px] w-full relative">
                 {/* WO-B0c: show loading skeleton while parent is fetching DB vitals on mount */}
                 {isLoading ? (
                     <div className="flex flex-col items-center justify-center h-full min-h-[220px] gap-3">
@@ -554,13 +558,28 @@ export const SessionVitalsTrendChart: FC<SessionVitalsTrendChartProps> = ({
                 {hoveredEvent && (() => {
                     const { ev, cx, cy } = hoveredEvent;
                     const p = getPinStyle(ev.type);
+                    // Edge-aware anchor: decide whether to left-, center-, or right-anchor
+                    // the tooltip based on where cx falls within the container width.
+                    const containerWidth = containerRef.current?.offsetWidth ?? 600;
+                    const zone =
+                        cx < containerWidth * 0.25 ? 'left'
+                        : cx > containerWidth * 0.75 ? 'right'
+                        : 'center';
+                    const tooltipTransform =
+                        zone === 'left'  ? 'translate(0%, -115%)'
+                        : zone === 'right' ? 'translate(-100%, -115%)'
+                        : 'translate(-50%, -115%)';
+                    const arrowClass =
+                        zone === 'left'  ? 'absolute left-4 -bottom-[6px] w-3 h-3 rotate-45 bg-slate-800/95 border-r border-b border-slate-600/80'
+                        : zone === 'right' ? 'absolute right-4 -bottom-[6px] w-3 h-3 rotate-45 bg-slate-800/95 border-r border-b border-slate-600/80'
+                        : 'absolute left-1/2 -translate-x-1/2 -bottom-[6px] w-3 h-3 rotate-45 bg-slate-800/95 border-r border-b border-slate-600/80';
                     return (
                         <div
                             className="absolute z-50 pointer-events-none"
                             style={{
                                 left: cx,
                                 top: cy,
-                                transform: 'translate(-50%, -115%)',
+                                transform: tooltipTransform,
                             }}
                         >
                             <div
@@ -581,10 +600,8 @@ export const SessionVitalsTrendChart: FC<SessionVitalsTrendChartProps> = ({
                                     </p>
                                 )}
                             </div>
-                            {/* Downward arrow */}
-                            <div
-                                className="absolute left-1/2 -translate-x-1/2 -bottom-[6px] w-3 h-3 rotate-45 bg-slate-800/95 border-r border-b border-slate-600/80"
-                            />
+                            {/* Downward arrow — repositions to match tooltip anchor */}
+                            <div className={arrowClass} />
                         </div>
                     );
                 })()}
