@@ -1,15 +1,15 @@
 ---
-id: WO-657
+id: WO-660
 title: "Homepage Enterprise Overhaul — Denver Launch Positioning (ppnportal.net)"
 owner: LEAD
-status: 00_INBOX
+status: 98_HOLD
 authored_by: PRODDY
 routed_by: ""
 priority: P1
 created: 2026-03-22
 depends_on: "WO-654 (Waitlist Overhaul — hero video and /partner-demo must exist before homepage links to them)"
 skip_approved_by: ""
-hold_reason: ""
+hold_reason: "public-facing WO missing growth_order_ref — Step 0.75 gate. This WO modifies ppnportal.net homepage (public route). A GO ticket must be created and reach 05_IMPLEMENTATION before BUILDER can proceed. Also blocked on depends_on: WO-654 P0 sub-tickets must ship first. USER decision required: create GO for homepage or waive the GO gate with stage_waived_by: USER."
 held_at: ""
 failure_count: 0
 completed_at: ""

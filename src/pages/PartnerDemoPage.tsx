@@ -73,7 +73,7 @@ const PartnerDemoPage: React.FC = () => {
             <ArrowRight className="w-4 h-4" aria-hidden="true" />
           </Link>
           <p className="ppn-meta text-slate-500">
-            Founding partner access — no commitment required
+            Founding partner access, no commitment required
           </p>
         </div>
 

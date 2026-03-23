@@ -263,11 +263,11 @@ const SignUp = () => {
                         We sent a confirmation link to:
                     </p>
                     <p className="text-sm font-black text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 rounded-lg px-4 py-2 mb-6 break-all">{confirmEmail}</p>
-                    <p className="text-xs text-slate-500 font-medium leading-relaxed">
+                    <p className="text-sm text-slate-500 font-medium leading-relaxed">
                         Click the link in that email to activate your secure workspace. Check your spam folder if you don't see it within a few minutes.
                     </p>
                     <div className="mt-8 pt-6 border-t border-slate-800">
-                        <Link to="/login" className="text-xs text-slate-500 hover:text-indigo-400 font-black uppercase tracking-widest transition-colors">
+                        <Link to="/login" className="text-sm text-slate-500 hover:text-indigo-400 font-black uppercase tracking-widest transition-colors">
                             Already confirmed? Sign In →
                         </Link>
                     </div>
@@ -284,7 +284,7 @@ const SignUp = () => {
             <div className="w-full max-w-2xl mb-8 flex items-center justify-center gap-4 relative z-10 px-4">
                 {[1, 2, 3].map((num) => (
                     <React.Fragment key={num}>
-                        <div className={`size-8 rounded-full flex items-center justify-center text-xs font-black shadow-lg transition-colors duration-500
+                        <div className={`size-8 rounded-full flex items-center justify-center text-sm font-black shadow-lg transition-colors duration-500
                             ${step >= num ? 'bg-indigo-600 border-indigo-400 text-white border' : 'bg-slate-900 border-slate-800 text-slate-500 border'}`}>
                             {num}
                         </div>
@@ -309,7 +309,7 @@ const SignUp = () => {
                     <h1 className="text-2xl font-black text-slate-300 tracking-tight mb-2">
                         {step === 1 ? "Identity & Privacy Boundaries" : step === 2 ? "Determine Network Affiliation" : "Establish New Clinical Hub"}
                     </h1>
-                    <p className="text-slate-400 text-xs font-black uppercase tracking-widest">
+                    <p className="text-slate-400 text-sm font-black uppercase tracking-widest">
                         {step === 1 ? "Step 1 of 3" : step === 2 ? "Step 2 of 3" : "Step 3 of 3"}
                     </p>
                 </div>
@@ -326,14 +326,14 @@ const SignUp = () => {
                     <div className={step === 1 ? 'block animate-in fade-in slide-in-from-right-4' : 'hidden'}>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
                             <div className="space-y-1">
-                                <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Legal First Name</label>
+                                <label className="text-sm font-bold text-slate-500 uppercase tracking-widest">Legal First Name</label>
                                 <div className="relative">
                                     <User className="absolute left-3 top-3 h-4 w-4 text-slate-600" />
                                     <input name="first_name" type="text" className="w-full bg-slate-900/50 border border-slate-700 text-slate-300 text-sm rounded-xl pl-10 p-3 placeholder-slate-600 transition-colors focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none" placeholder="Jane" value={formData.first_name} onChange={handleChange} />
                                 </div>
                             </div>
                             <div className="space-y-1">
-                                <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Legal Last Name</label>
+                                <label className="text-sm font-bold text-slate-500 uppercase tracking-widest">Legal Last Name</label>
                                 <div className="relative">
                                     <User className="absolute left-3 top-3 h-4 w-4 text-slate-600" />
                                     <input name="last_name" type="text" className="w-full bg-slate-900/50 border border-slate-700 text-slate-300 text-sm rounded-xl pl-10 p-3 placeholder-slate-600 transition-colors focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none" placeholder="Smith" value={formData.last_name} onChange={handleChange} />
@@ -343,26 +343,26 @@ const SignUp = () => {
 
                         <div className="space-y-1 mb-5">
                             <div className="flex justify-between items-center">
-                                <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Display Handle (Pseudonym)</label>
-                                <span className="text-[10px] uppercase font-black tracking-widest text-indigo-400 bg-indigo-500/10 px-2 rounded-full py-0.5 border border-indigo-500/20">Privacy Guard On</span>
+                                <label className="text-sm font-bold text-slate-500 uppercase tracking-widest">Display Handle (Pseudonym)</label>
+                                <span className="text-sm uppercase font-black tracking-widest text-indigo-400 bg-indigo-500/10 px-2 rounded-full py-0.5 border border-indigo-500/20">Privacy Guard On</span>
                             </div>
                             <div className="relative">
                                 <EyeOff className="absolute left-3 top-3 h-4 w-4 text-slate-600" />
                                 <input name="display_name" type="text" className="w-full bg-slate-900/50 border border-slate-700 text-slate-300 text-sm rounded-xl pl-10 p-3 placeholder-slate-600 transition-colors focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none" placeholder="How should we refer to you?" value={formData.display_name} onChange={handleChange} />
                             </div>
-                            <p className="text-xs text-slate-600 font-medium">Your real name is cryptographically sealed. This handle represents you until you formally verify your medical credentials.</p>
+                            <p className="text-sm text-slate-600 font-medium">Your real name is cryptographically sealed. This handle represents you until you formally verify your medical credentials.</p>
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6 pt-4 border-t border-slate-800/50">
                             <div className="space-y-1">
-                                <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Secure Email</label>
+                                <label className="text-sm font-bold text-slate-500 uppercase tracking-widest">Secure Email</label>
                                 <div className="relative">
                                     <Mail className="absolute left-3 top-3 h-4 w-4 text-slate-600" />
                                     <input name="email" type="email" className="w-full bg-slate-900/50 border border-slate-700 text-slate-300 text-sm rounded-xl pl-10 p-3 placeholder-slate-600 transition-colors focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none" placeholder="secure@email.com" value={formData.email} onChange={handleChange} />
                                 </div>
                             </div>
                             <div className="space-y-1">
-                                <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Master Password</label>
+                                <label className="text-sm font-bold text-slate-500 uppercase tracking-widest">Master Password</label>
                                 <div className="relative">
                                     <Lock className="absolute left-3 top-3 h-4 w-4 text-slate-600" />
                                     <input name="password" type="password" className="w-full bg-slate-900/50 border border-slate-700 text-slate-300 text-sm rounded-xl pl-10 p-3 placeholder-slate-600 transition-colors focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none" placeholder="••••••••" value={formData.password} onChange={handleChange} />
@@ -374,7 +374,7 @@ const SignUp = () => {
                             <input name="is_profile_public" type="checkbox" id="public_toggle" className="mt-1 size-5 rounded border-slate-700 bg-slate-800 text-indigo-500 focus:ring-indigo-500 focus:ring-offset-0 shrink-0" checked={formData.is_profile_public} onChange={handleChange} />
                             <div>
                                 <label htmlFor="public_toggle" className="text-sm font-bold text-slate-300 cursor-pointer mb-1 block">List me in the Global Practitioner Directory</label>
-                                <p className="text-xs text-slate-500">By checking this, verified network members can search for you to coordinate care and analyze blind protocols. Most solo practitioners leave this unchecked initially.</p>
+                                <p className="text-sm text-slate-500">By checking this, verified network members can search for you to coordinate care and analyze blind protocols. Most solo practitioners leave this unchecked initially.</p>
                             </div>
                         </div>
                     </div>
@@ -391,7 +391,7 @@ const SignUp = () => {
                                     <div className={`p-2 rounded-lg ${formData.affiliation_route === 'solo' ? 'bg-indigo-600 text-white' : 'bg-slate-800 text-slate-400'}`}><User className="w-5 h-5" /></div>
                                     <h3 className="text-sm font-bold text-slate-200">Independent Route</h3>
                                 </div>
-                                <p className="text-xs text-slate-500 font-medium">Create a private vault for my solo practice. Not discoverable by others.</p>
+                                <p className="text-sm text-slate-500 font-medium">Create a private vault for my solo practice. Not discoverable by others.</p>
                             </label>
 
                             {/* Option: Join Existing */}
@@ -401,7 +401,7 @@ const SignUp = () => {
                                     <div className={`p-2 rounded-lg ${formData.affiliation_route === 'existing' ? 'bg-indigo-600 text-white' : 'bg-slate-800 text-slate-400'}`}><Users className="w-5 h-5" /></div>
                                     <h3 className="text-sm font-bold text-slate-200">Join Established Clinic</h3>
                                 </div>
-                                <p className="text-xs text-slate-500 font-medium">Search the directory to link your profile to a registered clinical group.</p>
+                                <p className="text-sm text-slate-500 font-medium">Search the directory to link your profile to a registered clinical group.</p>
                             </label>
 
                             {/* Option: Invite Code */}
@@ -410,9 +410,9 @@ const SignUp = () => {
                                 <div className="flex items-center gap-3 mb-2">
                                     <div className={`p-2 rounded-lg ${formData.affiliation_route === 'invite' ? 'bg-indigo-600 text-white' : 'bg-slate-800 text-slate-400'}`}><Mail className="w-5 h-5" /></div>
                                     <h3 className="text-sm font-bold text-slate-200">I have an Invite</h3>
-                                    <span className="ml-auto text-[10px] font-black uppercase tracking-widest text-slate-500 bg-slate-800 px-2 py-0.5 rounded-full border border-slate-700">Soon</span>
+                                    <span className="ml-auto text-sm font-black uppercase tracking-widest text-slate-500 bg-slate-800 px-2 py-0.5 rounded-full border border-slate-700">Soon</span>
                                 </div>
-                                <p className="text-xs text-slate-500 font-medium">Use an encrypted token provided by your site administrator.</p>
+                                <p className="text-sm text-slate-500 font-medium">Use an encrypted token provided by your site administrator.</p>
                             </label>
 
                             {/* Option: Create New Structured Clinic */}
@@ -422,7 +422,7 @@ const SignUp = () => {
                                     <div className={`p-2 rounded-lg ${formData.affiliation_route === 'new' ? 'bg-indigo-600 text-white' : 'bg-slate-800 text-slate-400'}`}><Building2 className="w-5 h-5" /></div>
                                     <h3 className="text-sm font-bold text-slate-200">Establish Clinic HQ</h3>
                                 </div>
-                                <p className="text-xs text-slate-500 font-medium">Register a large institutional presence for multiple practitioners.</p>
+                                <p className="text-sm text-slate-500 font-medium">Register a large institutional presence for multiple practitioners.</p>
                             </label>
                         </div>
 
@@ -456,12 +456,12 @@ const SignUp = () => {
                     <div className={step === 3 ? 'block animate-in fade-in slide-in-from-right-4' : 'hidden'}>
                         <div className="p-4 bg-amber-500/10 border border-amber-500/20 rounded-xl flex items-start gap-3 mb-6">
                             <AlertCircle className="w-5 h-5 shrink-0 text-amber-500" />
-                            <p className="text-xs text-amber-500/80 font-bold leading-relaxed">Global Deduplication Active: To prevent fragmented networks and data silos, you must register a verifiable physical anchor point. We aggressively block duplicate clinics.</p>
+                            <p className="text-sm text-amber-500/80 font-bold leading-relaxed">Global Deduplication Active: To prevent fragmented networks and data silos, you must register a verifiable physical anchor point. We aggressively block duplicate clinics.</p>
                         </div>
 
                         <div className="space-y-4">
                             <div className="space-y-1">
-                                <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Formal Entity Name</label>
+                                <label className="text-sm font-bold text-slate-500 uppercase tracking-widest">Formal Entity Name</label>
                                 <div className="relative">
                                     <Building2 className="absolute left-3 top-3 h-4 w-4 text-slate-600" />
                                     <input name="new_site_name" type="text" required={step === 3} className="w-full bg-slate-900/50 border border-slate-700 text-slate-300 text-sm rounded-xl pl-10 p-3 placeholder-slate-600 transition-colors focus:border-indigo-500 outline-none" placeholder="e.g., Mount Sinai Center for Psychedelic Healing" value={formData.new_site_name} onChange={handleChange} />
@@ -469,7 +469,7 @@ const SignUp = () => {
                             </div>
 
                             <div className="space-y-1">
-                                <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Street Address</label>
+                                <label className="text-sm font-bold text-slate-500 uppercase tracking-widest">Street Address</label>
                                 <div className="relative">
                                     <MapPin className="absolute left-3 top-3 h-4 w-4 text-slate-600" />
                                     <input name="address_line1" type="text" required={step === 3} className="w-full bg-slate-900/50 border border-slate-700 text-slate-300 text-sm rounded-xl pl-10 p-3 placeholder-slate-600 transition-colors focus:border-indigo-500 outline-none" placeholder="123 Wellness Blvd, Ste 400" value={formData.address_line1} onChange={handleChange} />
@@ -478,15 +478,15 @@ const SignUp = () => {
 
                             <div className="grid grid-cols-6 gap-3">
                                 <div className="col-span-3 space-y-1">
-                                    <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">City</label>
+                                    <label className="text-sm font-bold text-slate-500 uppercase tracking-widest">City</label>
                                     <input name="city" type="text" required={step === 3} className="w-full bg-slate-900/50 border border-slate-700 text-slate-300 text-sm rounded-xl p-3 placeholder-slate-600 outline-none focus:border-indigo-500" placeholder="New York" value={formData.city} onChange={handleChange} />
                                 </div>
                                 <div className="col-span-1 space-y-1">
-                                    <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">State</label>
+                                    <label className="text-sm font-bold text-slate-500 uppercase tracking-widest">State</label>
                                     <input name="state_province" type="text" required={step === 3} maxLength={2} className="w-full bg-slate-900/50 border border-slate-700 text-slate-300 text-sm font-mono uppercase text-center rounded-xl p-3 placeholder-slate-600 outline-none focus:border-indigo-500" placeholder="NY" value={formData.state_province} onChange={handleChange} />
                                 </div>
                                 <div className="col-span-2 space-y-1">
-                                    <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Zip Code</label>
+                                    <label className="text-sm font-bold text-slate-500 uppercase tracking-widest">Zip Code</label>
                                     <input name="postal_code" type="text" required={step === 3} maxLength={10} className="w-full bg-slate-900/50 border border-slate-700 text-slate-300 text-sm font-mono text-center rounded-xl p-3 placeholder-slate-600 outline-none focus:border-indigo-500" placeholder="10001" value={formData.postal_code} onChange={handleChange} />
                                 </div>
                             </div>
@@ -522,7 +522,7 @@ const SignUp = () => {
                         </button>
 
                         <div className="text-center mt-6">
-                            <Link to="/login" className="text-xs text-slate-500 hover:text-indigo-400 font-black uppercase tracking-widest transition-colors flex items-center justify-center gap-1">
+                            <Link to="/login" className="text-sm text-slate-500 hover:text-indigo-400 font-black uppercase tracking-widest transition-colors flex items-center justify-center gap-1">
                                 Already inside the network?<ArrowRight className="w-3 h-3" /> Sign In
                             </Link>
                         </div>

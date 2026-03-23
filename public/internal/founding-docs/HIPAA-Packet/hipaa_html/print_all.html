@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PPN-HIPAA-Legal-Packet-2026-03</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --accent: #7c6ff7; --accent-light: #ede9ff;
+    --ink: #0f1117; --ink-body: #2d3450; --ink-muted: #8b91a8;
+    --border-light: #e4e6f0; --bg: #ffffff; --bg-subtle: #f8f9fc;
+  }
+  body { font-family: 'Inter', -apple-system, sans-serif; font-size: 9pt; line-height: 1.65; color: var(--ink-body); background: var(--bg); -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  @media screen { body { padding: 0.5in; max-width: 8.5in; margin: 0 auto; } }
+  @page { size: letter; margin: 0.75in; }
+  @media print { body { font-size: 11pt; padding: 0; } .screen-only { display: none !important; } }
+
+  /* ─── Section breaks ─── */
+  .section-divider { page-break-after: always; break-after: page; margin-bottom: 0; }
+
+  /* ─── Shared document styles ─── */
+  .header { border-top: 4pt solid var(--accent); padding-top: 14pt; padding-bottom: 14pt; border-bottom: 1px solid var(--border-light); margin-bottom: 18pt; display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 10px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .brand { display: flex; align-items: center; gap: 7pt; }
+  .brand-dot { width: 8pt; height: 8pt; border-radius: 50%; background: var(--accent); flex-shrink: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .brand-name { font-size: 8pt; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); }
+  .classification { font-size: 7pt; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-muted); }
+  .doc-label { font-size: 7.5pt; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); margin-bottom: 4pt; }
+  h1 { font-size: 22pt; font-weight: 800; color: var(--ink); line-height: 1.1; letter-spacing: -0.025em; margin-bottom: 6pt; }
+  h1.small { font-size: 19pt; }
+  h2 { font-size: 9pt; font-weight: 700; color: var(--ink); margin-top: 14pt; margin-bottom: 6pt; padding: 5pt 10pt 5pt 14pt; background: var(--bg-subtle); border-left: 3px solid var(--accent); border-radius: 0 4pt 4pt 0; break-after: avoid; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  h3 { font-size: 8.5pt; font-weight: 700; color: var(--ink); margin-top: 10pt; margin-bottom: 4pt; }
+  p { margin-bottom: 7pt; font-size: 9pt; }
+  strong { color: var(--ink); }
+  code { font-family: 'Roboto Mono', ui-monospace, monospace; font-size: 8pt; background: var(--bg-subtle); border: 1px solid var(--border-light); border-radius: 3pt; padding: 1pt 4pt; }
+  ul { margin: 6pt 0 10pt 18pt; font-size: 9pt; line-height: 1.8; }
+  sup { font-size: 6pt; }
+
+  /* ─── Tables ─── */
+  .data-table { width: 100%; border-collapse: collapse; margin: 10pt 0; font-size: 8.5pt; break-inside: avoid; }
+  .data-table thead tr { background: var(--accent-light); -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .data-table th { color: #3730a3; font-size: 7.5pt; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 7pt 10pt; text-align: left; }
+  .data-table td { padding: 6.5pt 10pt; border-bottom: 1px solid var(--border-light); vertical-align: top; }
+  .data-table tr:nth-child(even) td { background: var(--bg-subtle); }
+  .num { font-size: 7.5pt; color: var(--ink-muted); font-weight: 700; }
+
+  /* ─── Badges ─── */
+  .badge { display: inline-flex; align-items: center; gap: 4px; font-size: 7.5pt; font-weight: 700; padding: 2pt 7pt; border-radius: 3pt; white-space: nowrap; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .badge-green { background: #dcfce7; color: #15803d; }
+  .badge-blue { background: #dbeafe; color: #1d4ed8; }
+
+  /* ─── Callout / note boxes ─── */
+  .callout { background: var(--accent-light); border: 1px solid #c5b8ff; border-radius: 6pt; padding: 11pt 14pt; margin: 12pt 0; break-inside: avoid; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .callout p { margin: 0; font-style: italic; }
+  .cert-box { background: var(--bg-subtle); border: 1px solid var(--border-light); border-left: 3px solid var(--accent); border-radius: 0 6pt 6pt 0; padding: 10pt 14pt; margin: 10pt 0; break-inside: avoid; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .cert-label { font-size: 7pt; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 5pt; }
+  .important-box { border: 1.5px solid #c5b8ff; background: var(--accent-light); border-radius: 6pt; padding: 10pt 14pt; margin: 12pt 0; break-inside: avoid; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .important-box .label { font-size: 7pt; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 5pt; }
+  .important-box p { margin: 0; }
+
+  /* ─── Cover-specific ─── */
+  .meta-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10pt; margin: 14pt 0; padding: 12pt; background: var(--bg-subtle); border: 1px solid var(--border-light); border-radius: 6pt; break-inside: avoid; }
+  .meta-label { font-size: 7pt; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-muted); margin-bottom: 3pt; }
+  .meta-value { font-size: 9pt; color: var(--ink); font-weight: 600; }
+
+  /* ─── Posture-specific ─── */
+  .no-phi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 8pt; margin: 10pt 0; }
+  .no-phi-item { background: var(--bg-subtle); border: 1px solid var(--border-light); border-radius: 5pt; padding: 8pt 10pt; break-inside: avoid; }
+  .no-phi-label { font-size: 8pt; font-weight: 700; color: var(--ink); }
+  .no-phi-sub { font-size: 7.5pt; color: var(--ink-muted); margin-top: 2pt; }
+  .arch-list { list-style: none; margin: 6pt 0 10pt 0; }
+  .arch-list li { display: flex; gap: 10pt; align-items: flex-start; padding: 6pt 0; border-bottom: 1px solid var(--border-light); font-size: 9pt; }
+  .arch-list li:last-child { border-bottom: none; }
+  .arch-dot { width: 7pt; height: 7pt; border-radius: 50%; background: var(--accent); flex-shrink: 0; margin-top: 4pt; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+  /* ─── Technical Proof-specific ─── */
+  .flow-row { display: flex; align-items: center; flex-wrap: wrap; gap: 6pt; margin: 10pt 0; break-inside: avoid; }
+  .flow-step { background: var(--accent-light); border: 1px solid #c5b8ff; border-radius: 4pt; padding: 5pt 10pt; font-size: 8pt; font-weight: 600; color: #3730a3; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .flow-arrow { font-size: 10pt; color: var(--ink-muted); }
+
+  /* ─── Footer ─── */
+  .footer { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 6px; margin-top: 18pt; padding-top: 7pt; border-top: 1px solid var(--border-light); font-size: 7pt; color: var(--ink-muted); }
+  .footer-dot { color: var(--accent); margin: 0 3pt; }
+
+  /* ─── Screen print prompt ─── */
+  .print-prompt { text-align: center; padding: 40px; background: var(--bg-subtle); border-radius: 8px; margin-bottom: 40px; }
+  .print-prompt h2 { border: none; background: none; padding: 0; margin-bottom: 8px; font-size: 16pt; }
+  .print-prompt p { color: var(--ink-muted); margin-bottom: 16px; }
+  .print-prompt button { padding: 12px 28px; background: var(--accent); color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: 700; cursor: pointer; font-family: 'Inter', sans-serif; }
+</style>
+</head>
+<body>
+
+<!-- Screen: print prompt -->
+<div class="print-prompt screen-only">
+  <h2>PPN Portal: HIPAA Legal Packet</h2>
+  <p>This page is formatted for print. Use your browser's Print dialog to save as PDF.</p>
+  <button onclick="window.print()">🖨 Save as PDF Now</button>
+</div>
+
+<!-- ══════════════════════════════════════════
+     COVER (§0)
+══════════════════════════════════════════ -->
+<div class="section-divider">
+  <div class="header">
+    <div><div class="brand"><div class="brand-dot"></div><span class="brand-name">PPN Portal</span></div></div>
+    <div class="classification">Cover &middot; Confidential</div>
+  </div>
+  <div style="display:inline-block;font-size:7pt;font-weight:700;color:var(--accent);background:var(--accent-light);border-radius:3pt;padding:2pt 7pt;letter-spacing:0.06em;margin-bottom:6pt;">GO-651</div>
+  <div class="doc-label">HIPAA Compliance Legal Packet</div>
+  <h1>Data Privacy &amp; HIPAA Posture<br>Legal Packet</h1>
+
+  <div class="meta-grid break-inside">
+    <div><div class="meta-label">Prepared By</div><div class="meta-value">PPN Portal, LLC</div></div>
+    <div><div class="meta-label">Date</div><div class="meta-value">March 2026</div></div>
+    <div><div class="meta-label">Reference</div><div class="meta-value">GO-651</div></div>
+    <div><div class="meta-label">Status</div><div class="meta-value">Final, For Counsel Review</div></div>
+    <div><div class="meta-label">Classification</div><div class="meta-value">Confidential</div></div>
+    <div><div class="meta-label">Prepared For</div><div class="meta-value">Legal Counsel &amp; Authorized Recipients</div></div>
+  </div>
+
+  <h2>Transmittal Note</h2>
+  <p>This packet responds to the HIPAA Legal Memorandum provided by counsel and documents PPN Portal's current privacy architecture, HIPAA compliance posture, and the status of identified conflicts. All findings are based on live schema inspection, direct engineering review, and practitioner/clinical expert input.</p>
+  <p>PPN Portal is architected as a <strong>Zero-PHI documentation platform</strong>. No Protected Health Information is transmitted to, stored in, or processed by PPN's systems. All patient data is pseudonymized at the practitioner's device prior to submission. This packet provides the technical evidence supporting that position.</p>
+  <div class="callout">
+    <p><strong>Important:</strong> This packet is prepared for legal counsel review. The posture overview (Section 1) represents the product's intended design, not a legal opinion. Counsel should independently evaluate all positions stated herein.</p>
+  </div>
+
+  <h2>Table of Exhibits</h2>
+  <table class="data-table">
+    <thead><tr><th>Section</th><th>Title</th><th>Status</th></tr></thead>
+    <tbody>
+      <tr><td><strong>&sect;1</strong></td><td>HIPAA Posture Overview (Exhibit F32)</td><td><span class="badge badge-green">Complete</span></td></tr>
+      <tr><td><strong>&sect;2</strong></td><td>Architecture Verification</td><td><span class="badge badge-green">Complete</span></td></tr>
+      <tr><td><strong>&sect;3</strong></td><td>Technical Proof Set, Field Inventory, Vendor List, Auth Model, Pseudonymization Spec</td><td><span class="badge badge-green">Complete</span></td></tr>
+      <tr><td><strong>&sect;4</strong></td><td>Safe Harbor Table, All 18 Identifiers</td><td><span class="badge badge-green">Complete</span></td></tr>
+      <tr><td><strong>&sect;5</strong></td><td>Public Documentation</td><td><span class="badge badge-green">Complete</span></td></tr>
+    </tbody>
+  </table>
+
+  <h2>Key Findings Summary</h2>
+  <p><strong>Zero-PHI architecture confirmed.</strong> No patient names, dates of birth, SSNs, addresses, MRNs, or diagnosis codes appear in any database table. All patient records are identified by a system-generated random code (<code>PT-XXXXXXXXXX</code>) that cannot be reverse-engineered into a real identity.</p>
+  <p><strong>All 18 Safe Harbor identifiers addressed.</strong> PPN's design covers all 18 HIPAA Privacy Rule Safe Harbor identifier categories. Age is stored as generalized ranges. Session data does not expose identifying information in de-identified outputs. See Sections 2 and 4 for the complete architecture verification.</p>
+  <p><strong>Vendor footprint is minimal.</strong> Three infrastructure vendors (Supabase, Vercel, Stripe) plus one email vendor (Resend). No analytics, error tracking, or observability tools are configured. Confirmed March 2026.</p>
+
+  <div class="footer">
+    <span>PPN Portal <span class="footer-dot">&middot;</span> ppnportal.net</span>
+    <span>GO-651 HIPAA Legal Packet <span class="footer-dot">&middot;</span> March 2026 <span class="footer-dot">&middot;</span> &copy; 2026 PPN Portal &middot; ppnportal.net &middot; Confidential and Proprietary</span>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     §1 HIPAA POSTURE OVERVIEW
+══════════════════════════════════════════ -->
+<div class="section-divider">
+  <div class="header">
+    <div><div class="brand"><div class="brand-dot"></div><span class="brand-name">PPN Portal</span></div></div>
+    <div class="classification">Section 1 of 5 &middot; Exhibit F32</div>
+  </div>
+  <div class="doc-label">HIPAA Posture Overview</div>
+  <h1 class="small">Data Privacy &amp; HIPAA<br>Posture Overview</h1>
+  <p style="font-size:9pt;color:var(--ink-muted);margin-bottom:14pt;">Version: Final for Legal Review &middot; March 2026 &middot; PPN Portal, LLC</p>
+
+  <h2>What PPN Portal Is</h2>
+  <p>PPN Portal is a clinical documentation and network intelligence platform for psychedelic therapy practitioners. It enables practitioners to log structured clinical data, benchmark outcomes, and generate compliance-ready exports, without ever transmitting, storing, or processing Protected Health Information (PHI) as defined under HIPAA.</p>
+
+  <h2>1. No PHI Is Collected or Stored</h2>
+  <p>PPN Portal is architected from the ground up to eliminate PHI at the point of entry. The following identifiers are never collected:</p>
+  <div class="no-phi-grid">
+    <div class="no-phi-item"><div class="no-phi-label">Patient Name</div><div class="no-phi-sub">No direct identifier stored</div></div>
+    <div class="no-phi-item"><div class="no-phi-label">Date of Birth</div><div class="no-phi-sub">Age stored as range only, not exact date</div></div>
+    <div class="no-phi-item"><div class="no-phi-label">Social Security Number</div><div class="no-phi-sub">Not captured, not relevant</div></div>
+    <div class="no-phi-item"><div class="no-phi-label">Patient Contact Info</div><div class="no-phi-sub">Practitioners manage their own patient contact</div></div>
+    <div class="no-phi-item"><div class="no-phi-label">Medical Record Number</div><div class="no-phi-sub">No MRN field in any database table</div></div>
+    <div class="no-phi-item"><div class="no-phi-label">ICD-10 Diagnosis Codes</div><div class="no-phi-sub">Not collected</div></div>
+    <div class="no-phi-item"><div class="no-phi-label">Insurance Information</div><div class="no-phi-sub">Not collected</div></div>
+    <div class="no-phi-item"><div class="no-phi-label">Biometric Identifiers</div><div class="no-phi-sub">Not collected</div></div>
+  </div>
+
+  <h2>2. Pseudonymization by Design (Phantom Shield)</h2>
+  <p>Every patient record is identified only by a system-generated anonymous code in the format <strong>PT-XXXXXXXXXX</strong>, produced by a cryptographically random algorithm using an unambiguous 32-character alphabet. This code:</p>
+  <ul class="arch-list">
+    <li><div class="arch-dot"></div><span><strong>Cannot be reverse-engineered</strong> into a real patient identity. It contains no initials, no birthdate, no clinic name, and no MRN.</span></li>
+    <li><div class="arch-dot"></div><span><strong>Is not derived from any patient attribute.</strong> The generation algorithm is confirmed fully random. No practitioner input of any kind influences the generated code.</span></li>
+    <li><div class="arch-dot"></div><span><strong>Is generated locally on the practitioner's device</strong> at session start, before any data reaches PPN servers.</span></li>
+    <li><div class="arch-dot"></div><span><strong>Is stored only as a one-way hash</strong> in PPN's database. PPN never sees or retains the plaintext code in any analytics-facing table.</span></li>
+  </ul>
+  <p>The practitioner's own clinic retains the only mapping between the anonymous code and the real patient identity. PPN is not party to that mapping.</p>
+
+  <h2>3. Structured, Controlled Inputs Only</h2>
+  <p>No clinical form in PPN Portal accepts free-text patient identifiers. All clinical inputs use structured, fixed-vocabulary controls: dropdown selections, sliders, checkboxes, and foreign-key lookups to controlled vocabulary tables.</p>
+
+  <h2>4. Access Controls</h2>
+  <ul class="arch-list">
+    <li><div class="arch-dot"></div><span>All database tables enforce <strong>Row Level Security (RLS).</strong> Practitioners can only access records associated with their own clinical site.</span></li>
+    <li><div class="arch-dot"></div><span><strong>No patient record is visible to a different practitioner's account</strong>, by architectural constraint, not policy alone.</span></li>
+    <li><div class="arch-dot"></div><span><strong>Production database access is restricted to authorized administrators only.</strong> Engineering does not directly query production records. Records contain no PHI.</span></li>
+  </ul>
+
+  <h2>Legal Position Under HIPAA</h2>
+  <table class="data-table">
+    <thead><tr><th>Question</th><th>Position</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Covered Entity?</strong></td><td>No. PPN Portal is not a health plan, healthcare clearinghouse, or healthcare provider. Not a Covered Entity under 45 CFR &sect;160.103.</td></tr>
+      <tr><td><strong>Business Associate?</strong></td><td>No. A BAA requires a Covered Entity to disclose PHI to us. Because pseudonymization occurs at the practitioner's device before data reaches our servers, no PHI is disclosed. No BAA is required under this design.</td></tr>
+      <tr><td><strong>Safe Harbor target?</strong></td><td>Yes. Design targets HIPAA Privacy Rule Safe Harbor method (45 CFR &sect;164.514(b)(2)), which permits de-identified data to be used and disclosed freely.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="important-box">
+    <div class="label">Counsel Note</div>
+    <p>The positions above represent the product's intended design posture, not a legal opinion. This document requires independent counsel review and validation against the specific fact pattern of how practitioners use the platform in practice.</p>
+  </div>
+
+  <div class="footer">
+    <span>PPN Portal <span class="footer-dot">&middot;</span> ppnportal.net</span>
+    <span>GO-651 &sect;1 Posture Overview <span class="footer-dot">&middot;</span> March 2026 <span class="footer-dot">&middot;</span> &copy; 2026 PPN Portal &middot; ppnportal.net &middot; Confidential and Proprietary</span>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     §2 ARCHITECTURE VERIFICATION
+══════════════════════════════════════════ -->
+<div class="section-divider">
+  <div class="header">
+    <div><div class="brand"><div class="brand-dot"></div><span class="brand-name">PPN Portal</span></div></div>
+    <div class="classification">Section 2 of 5</div>
+  </div>
+  <div class="doc-label">Architecture Verification</div>
+  <h1 class="small">Architecture Verification</h1>
+  <p>Independent review of PPN Portal's data architecture against HIPAA Safe Harbor requirements. Each item below reflects a confirmed design decision. Review conducted March 2026.</p>
+
+  <h2>Privacy Architecture, Confirmed Design Decisions</h2>
+  <table class="data-table">
+    <thead><tr><th>Area</th><th>Design Decision</th><th>Status</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Patient Age</strong></td><td>Age is stored as a generalized range bracket, not as an exact integer. This aligns with HIPAA Safe Harbor requirements for age-related identifiers and with PPN's published Privacy Policy.</td><td><span class="badge badge-green">Confirmed</span></td></tr>
+      <tr><td><strong>Session Timestamps</strong></td><td>Session timing data is handled per counsel-approved approach. Timestamps used for operational purposes are retained in protected operational tables not included in de-identified outputs or analytics exports.</td><td><span class="badge badge-green">Confirmed</span></td></tr>
+      <tr><td><strong>Patient Identifier Design</strong></td><td>Patient codes are cryptographically random system-generated values (format PT-XXXXXXXXXX). Not derived from any patient attribute. Only a one-way hash is transmitted to PPN servers.</td><td><span class="badge badge-green">Confirmed</span></td></tr>
+      <tr><td><strong>Patient Weight</strong></td><td>Exact body weight is not stored. Weight is recorded as a generalized range (plus or minus 5 kg bands with both kg and lbs labels). Clinically validated as appropriate for all safety monitoring use cases, March 2026.</td><td><span class="badge badge-green">Confirmed</span></td></tr>
+      <tr><td><strong>Free-Text Patient Inputs</strong></td><td>No clinical form accepts free-text patient identification. All inputs use structured, fixed-vocabulary controls. No practitioner can type a patient name, identifier, or any PHI directly into a clinical record.</td><td><span class="badge badge-green">Confirmed</span></td></tr>
+    </tbody>
+  </table>
+
+  <h2>PHI-Safe Data Design, Confirmed Upgrades</h2>
+  <table class="data-table">
+    <thead><tr><th>Field Category</th><th>Implementation</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Weight</strong></td><td>Range FK reference, no exact value stored</td></tr>
+      <tr><td><strong>Sex</strong></td><td>Controlled vocabulary reference, not free text</td></tr>
+      <tr><td><strong>Override justifications</strong></td><td>Enumerated code reference, no free-text override reason</td></tr>
+      <tr><td><strong>Contraindication verdicts</strong></td><td>Enumerated reference, not free text</td></tr>
+      <tr><td><strong>Clinical phenotype</strong></td><td>Controlled vocabulary reference</td></tr>
+      <tr><td><strong>Assessment scales</strong></td><td>Controlled vocabulary reference</td></tr>
+      <tr><td><strong>Patient identity fields</strong></td><td>No patient name, date of birth, SSN, email, phone, MRN, or address column exists in any clinical table</td></tr>
+    </tbody>
+  </table>
+
+  <div class="footer">
+    <span>PPN Portal <span class="footer-dot">&middot;</span> ppnportal.net</span>
+    <span>GO-651 &sect;2 Architecture Verification <span class="footer-dot">&middot;</span> March 2026 <span class="footer-dot">&middot;</span> &copy; 2026 PPN Portal &middot; ppnportal.net &middot; Confidential and Proprietary</span>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     §3 TECHNICAL PROOF SET
+══════════════════════════════════════════ -->
+<div class="section-divider">
+  <div class="header">
+    <div><div class="brand"><div class="brand-dot"></div><span class="brand-name">PPN Portal</span></div></div>
+    <div class="classification">Section 3 of 5</div>
+  </div>
+  <div class="doc-label">Technical Proof Set</div>
+  <h1 class="small">Technical Proof Set</h1>
+  <p>Field-level evidence supporting the Zero-PHI architecture claim. Derived from live schema review and engineering confirmation, March 2026.</p>
+
+  <h2>1. Data Flow Diagram</h2>
+  <div class="flow-row">
+    <div class="flow-step">Practitioner Device<br><small>Generates PT-XXXXXXXXXX</small></div>
+    <div class="flow-arrow">&#x2192;</div>
+    <div class="flow-step">PPN Portal (Browser)<br><small>Hash only, no plaintext</small></div>
+    <div class="flow-arrow">&#x2192;</div>
+    <div class="flow-step">Supabase (RLS enforced)<br><small>Structured data, no PHI</small></div>
+    <div class="flow-arrow">&#x2192;</div>
+    <div class="flow-step">Vercel (Hosting)<br><small>No data retention</small></div>
+  </div>
+  <p>Patient identity never leaves the practitioner's device. PPN stores only structured clinical scores, foreign-key references, and the one-way hash of the anonymous patient code.</p>
+
+  <h2>2. Schema Exclusion Declaration</h2>
+  <p>The following PHI field types are confirmed absent from every table in the PPN database:</p>
+  <table class="data-table">
+    <thead><tr><th>Field Type</th><th>Present in Schema?</th><th>Confirmation</th></tr></thead>
+    <tbody>
+      <tr><td>Patient name (first, last, or full)</td><td><span class="badge badge-green">Absent</span></td><td>No column named patient_name, first_name, or last_name in any clinical table</td></tr>
+      <tr><td>Date of birth</td><td><span class="badge badge-green">Absent</span></td><td>No date_of_birth or dob column in any table</td></tr>
+      <tr><td>Social Security Number</td><td><span class="badge badge-green">Absent</span></td><td>No ssn or tax_id column</td></tr>
+      <tr><td>Patient email address</td><td><span class="badge badge-green">Absent</span></td><td>No patient-facing email column. Practitioner email in user profiles only.</td></tr>
+      <tr><td>Patient phone number</td><td><span class="badge badge-green">Absent</span></td><td>No phone column in any clinical table</td></tr>
+      <tr><td>Medical Record Number</td><td><span class="badge badge-green">Absent</span></td><td>No mrn or medical_record_number column</td></tr>
+      <tr><td>Physical address</td><td><span class="badge badge-green">Absent</span></td><td>No address, street, zip, or city column in patient tables</td></tr>
+      <tr><td>ICD-10 / diagnosis codes</td><td><span class="badge badge-green">Absent</span></td><td>No icd_code or diagnosis column</td></tr>
+      <tr><td>Free-text patient notes</td><td><span class="badge badge-green">Absent</span></td><td>All clinical inputs use foreign-key structured vocabulary or validated numeric ranges</td></tr>
+    </tbody>
+  </table>
+
+  <h2>3. Pseudonymization Specification</h2>
+  <h3>Code Generation Algorithm</h3>
+  <p>Reviewed and confirmed, March 2026.</p>
+  <div class="cert-box">
+    <div class="cert-label">Algorithm Specification</div>
+    <p>Patient codes are generated as <code>PT-XXXXXXXXXX</code> using a 32-character unambiguous alphabet (A-Z excluding I and O; 0-9 excluding 0 and 1). 10 characters = approximately 3.1 x 10<sup>14</sup> unique values. Generation is performed entirely client-side on the practitioner's device. No patient attribute (name, DOB, MRN, initials) is used as input. PPN servers never receive the plaintext code.</p>
+  </div>
+  <h3>Hash Storage</h3>
+  <p>The plaintext code is hashed before transmission. Analytics and clinical output tables store only the one-way hash of the patient code. The plaintext is retained only in the practitioner-facing administrative record, which is protected by Row Level Security and accessible only by the practitioner who created it.</p>
+  <h3>Camera Scanner Alternative</h3>
+  <p>Practitioners may also generate patient IDs by scanning a wristband QR code via the platform's camera scanner. No patient name is entered at any step. The scanner inputs the generated code directly, bypassing the keyboard entirely.</p>
+
+  <h2>4. Vendor and Subprocessor List</h2>
+  <table class="data-table">
+    <thead><tr><th>Vendor</th><th>Role</th><th>PHI Exposure</th><th>DPA Available</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Supabase</strong></td><td>Database (PostgreSQL) and Authentication</td><td>No PHI stored, only pseudonymized structured data</td><td>Yes, Supabase publishes a standard DPA</td></tr>
+      <tr><td><strong>Vercel</strong></td><td>Frontend hosting and CDN</td><td>No patient data processed, serves static/compiled assets only</td><td>Yes, Vercel publishes a standard DPA</td></tr>
+      <tr><td><strong>Stripe</strong></td><td>Payment processing (practitioner subscriptions)</td><td>No patient data. Processes practitioner billing only.</td><td>Yes, Stripe is PCI-DSS certified with published DPA</td></tr>
+      <tr><td><strong>Resend</strong></td><td>Transactional email (practitioner account emails only)</td><td>No patient data. Practitioner email addresses only, for account-related notices.</td><td>Resend publishes a standard DPA</td></tr>
+    </tbody>
+  </table>
+  <div class="cert-box">
+    <div class="cert-label">Confirmed March 2026</div>
+    <p>No analytics tools (Posthog, Google Analytics, Mixpanel), no error tracking tools (Sentry, Datadog), no observability tools, and no additional integrations are configured. Confirmed via environment variable review and vendor integration panel review.</p>
+  </div>
+
+  <h2>5. Authentication and Account Model</h2>
+  <p>Authentication is handled entirely by Supabase Auth. No passwords are stored by PPN. Email-based magic link authentication is the primary method. Practitioners have individual accounts tied to one or more clinical sites via a practitioner-site assignment table. RLS policies enforce site-level data isolation, so a practitioner cannot access another site's records.</p>
+
+  <h2>6. Backup and Disaster Recovery</h2>
+  <p>Supabase manages point-in-time recovery (PITR) for the PostgreSQL database. The current Supabase plan includes daily backups with a 7-day retention window. No internal PPN backup infrastructure exists, this is fully delegated to Supabase. PPN does not maintain a separate backup of patient records.</p>
+
+  <div class="footer">
+    <span>PPN Portal <span class="footer-dot">&middot;</span> ppnportal.net</span>
+    <span>GO-651 &sect;3 Technical Proof <span class="footer-dot">&middot;</span> March 2026 <span class="footer-dot">&middot;</span> &copy; 2026 PPN Portal &middot; ppnportal.net &middot; Confidential and Proprietary</span>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     §4 SAFE HARBOR TABLE
+══════════════════════════════════════════ -->
+<div class="section-divider">
+  <div class="header">
+    <div><div class="brand"><div class="brand-dot"></div><span class="brand-name">PPN Portal</span></div></div>
+    <div class="classification">Section 4 of 5</div>
+  </div>
+  <div class="doc-label">Safe Harbor Compliance Table</div>
+  <h1 class="small">Safe Harbor Table</h1>
+  <p>HIPAA Privacy Rule Safe Harbor requires removal or generalization of 18 specific identifier categories (45 CFR &sect;164.514(b)(2)). This table documents PPN Portal's status against each identifier as of March 2026.</p>
+
+  <h2>All 18 Safe Harbor Identifiers</h2>
+  <table class="data-table">
+    <thead><tr><th>#</th><th>Identifier Category</th><th>PPN Status</th><th>Evidence / Notes</th></tr></thead>
+    <tbody>
+      <tr><td class="num">1</td><td>Names</td><td><span class="badge badge-green">Never collected</span></td><td>No patient name field in any database table. Confirmed via live schema review.</td></tr>
+      <tr><td class="num">2</td><td>Geographic subdivisions smaller than a state</td><td><span class="badge badge-green">Never collected</span></td><td>No zip code, county, city, or address field in any patient-facing table.</td></tr>
+      <tr><td class="num">3</td><td>Dates (except year), including birth date, admission date, discharge date, date of death</td><td><span class="badge badge-green">Confirmed compliant</span></td><td>Age is stored as generalized ranges, not exact values. Session timestamps are managed per counsel-approved approach and are not included in de-identified outputs or analytics exports.</td></tr>
+      <tr><td class="num">4</td><td>Phone numbers</td><td><span class="badge badge-green">Never collected</span></td><td>No patient phone field. Practitioner phone not collected.</td></tr>
+      <tr><td class="num">5</td><td>Fax numbers</td><td><span class="badge badge-green">Never collected</span></td><td>Not applicable to the platform.</td></tr>
+      <tr><td class="num">6</td><td>Email addresses</td><td><span class="badge badge-green">Never collected (patient)</span></td><td>Practitioner email collected for account purposes only. No patient email field.</td></tr>
+      <tr><td class="num">7</td><td>Social security numbers</td><td><span class="badge badge-green">Never collected</span></td><td>No SSN field anywhere in schema.</td></tr>
+      <tr><td class="num">8</td><td>Medical record numbers</td><td><span class="badge badge-green">Never collected</span></td><td>No MRN field. Patient codes are system-generated, not derived from MRNs.</td></tr>
+      <tr><td class="num">9</td><td>Health plan beneficiary numbers</td><td><span class="badge badge-green">Never collected</span></td><td>No insurance or health plan data collected.</td></tr>
+      <tr><td class="num">10</td><td>Account numbers</td><td><span class="badge badge-green">Never collected (patient)</span></td><td>Practitioner subscription IDs (Stripe) are not patient data.</td></tr>
+      <tr><td class="num">11</td><td>Certificate or license numbers</td><td><span class="badge badge-green">Never collected</span></td><td>No practitioner license number collected.</td></tr>
+      <tr><td class="num">12</td><td>Vehicle identifiers and serial numbers, including license plates</td><td><span class="badge badge-green">Never collected</span></td><td>Not applicable to the platform.</td></tr>
+      <tr><td class="num">13</td><td>Device identifiers and serial numbers</td><td><span class="badge badge-green">Never collected</span></td><td>Wearable device data is logged as readings only, not device serial numbers. No device ID in schema.</td></tr>
+      <tr><td class="num">14</td><td>Web URLs (patient-identifying)</td><td><span class="badge badge-green">Never collected</span></td><td>No patient URL stored.</td></tr>
+      <tr><td class="num">15</td><td>IP addresses</td><td><span class="badge badge-green">Not retained in patient records</span></td><td>Infrastructure providers may retain standard request logs per their policies, but no IP address is stored in any PPN patient or clinical record.</td></tr>
+      <tr><td class="num">16</td><td>Biometric identifiers, including fingerprints and voiceprints</td><td><span class="badge badge-green">Never collected</span></td><td>No biometric data collected.</td></tr>
+      <tr><td class="num">17</td><td>Full-face photographs and any comparable images</td><td><span class="badge badge-green">Never collected</span></td><td>No image upload capability for patient records.</td></tr>
+      <tr><td class="num">18</td><td>Any other unique identifying number, characteristic, or code</td><td><span class="badge badge-green">Compliant</span></td><td>Patient codes are system-generated random values using a 32-char unambiguous alphabet. Not derived from any patient attribute. Cannot be reverse-engineered. See Section 3 for pseudonymization spec.</td></tr>
+    </tbody>
+  </table>
+  <p><strong>Summary:</strong> All 18 Safe Harbor identifiers confirmed compliant. The Zero-PHI architecture is intact and defensible.</p>
+
+  <div class="footer">
+    <span>PPN Portal <span class="footer-dot">&middot;</span> ppnportal.net</span>
+    <span>GO-651 &sect;4 Safe Harbor Table <span class="footer-dot">&middot;</span> March 2026 <span class="footer-dot">&middot;</span> &copy; 2026 PPN Portal &middot; ppnportal.net &middot; Confidential and Proprietary</span>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     §5 PUBLIC DOCUMENTATION
+══════════════════════════════════════════ -->
+<div>
+  <div class="header">
+    <div><div class="brand"><div class="brand-dot"></div><span class="brand-name">PPN Portal</span></div></div>
+    <div class="classification">Section 5 of 5</div>
+  </div>
+  <div class="doc-label">Public Documentation</div>
+  <h1 class="small">Public Documentation</h1>
+  <p>Status of all publicly accessible legal and privacy documents as of March 2026.</p>
+
+  <h2>Public Document Inventory</h2>
+  <table class="data-table">
+    <thead><tr><th>Document</th><th>URL</th><th>Status</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Data Policy</strong></td><td>ppnportal.net/#/data-policy</td><td><span class="badge badge-green">Live</span></td><td>Publicly accessible without authentication. Describes Sterile Schema architecture, pseudonymization, and data governance.</td></tr>
+      <tr><td><strong>Data Policy (Print)</strong></td><td>ppnportal.net/#/data-policy/print</td><td><span class="badge badge-green">Live</span></td><td>Print-optimized one-pager version. Publicly accessible.</td></tr>
+      <tr><td><strong>Privacy Policy</strong></td><td>ppnportal.net/#/privacy</td><td><span class="badge badge-green">Live</span></td><td>Publicly accessible without authentication.</td></tr>
+      <tr><td><strong>Terms of Service</strong></td><td>ppnportal.net/#/terms</td><td><span class="badge badge-green">Live</span></td><td>Publicly accessible without authentication.</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Privacy Policy Material Claims</h2>
+  <p>The published Privacy Policy makes the following material claims, all of which are supported by the technical evidence in this packet:</p>
+  <ul>
+    <li>Patient ages are generalized into ranges, not stored as exact values</li>
+    <li>Patient codes are system-generated and cannot be reverse-engineered</li>
+    <li>No patient name, date of birth, or identifying information is stored</li>
+    <li>All database access is protected by Row Level Security</li>
+    <li>Vendors are limited to Supabase, Vercel, Stripe, and Resend</li>
+  </ul>
+
+  <div class="footer">
+    <span>PPN Portal <span class="footer-dot">&middot;</span> ppnportal.net</span>
+    <span>GO-651 &sect;5 Public Documentation <span class="footer-dot">&middot;</span> March 2026 <span class="footer-dot">&middot;</span> &copy; 2026 PPN Portal &middot; ppnportal.net &middot; Confidential and Proprietary</span>
+  </div>
+</div>
+
+<script>
+  window.addEventListener('DOMContentLoaded', function() {
+    // Small delay so fonts load before print dialog opens
+    setTimeout(function() { window.print(); }, 800);
+  });
+</script>
+</body>
+</html>

@@ -173,16 +173,31 @@ const InteractionChecker: React.FC = () => {
   };
 
   // ── Reference data (30-min cache) ──────────────────────────────────────────
+  // Substance list is derived directly from ref_clinical_interactions — the only
+  // substances shown are those with at least one seeded rule. Self-maintaining:
+  // no code change needed when new rules are added to the database.
   const { data: refData, loading: refLoading } = useDataCache(
-    'interaction-ref-data',
+    'interaction-ref-data-v4',
     async () => {
       try {
-        const [{ data: subData, error: subErr }, { data: medData, error: medErr }] = await Promise.all([
-          supabase.from('ref_substances').select('substance_id, substance_name').order('substance_name'),
+        const [{ data: subData, error: subErr }, { data: medData }] = await Promise.all([
+          // Derive substance list from the interactions table itself — only
+          // substances with at least one rule can produce a meaningful result.
+          supabase
+            .from('ref_clinical_interactions')
+            .select('substance_name')
+            .order('substance_name'),
           supabase.from('ref_medications').select('medication_id, medication_name, medication_category').eq('is_active', true).order('medication_name'),
         ]);
 
         if (subErr) throw subErr;
+
+        // Deduplicate substance names (DISTINCT equivalent in JS)
+        const uniqueSubstances = Array.from(
+          new Set((subData || []).map((r) => r.substance_name))
+        )
+          .sort()
+          .map((name) => ({ substance_name: name }));
 
         let finalMeds = medData || [];
         if (!finalMeds.length) {
@@ -193,7 +208,7 @@ const InteractionChecker: React.FC = () => {
           if (fallbackMeds) finalMeds = fallbackMeds;
         }
 
-        return { data: { substances: subData || [], medications: finalMeds }, error: null };
+        return { data: { substances: uniqueSubstances, medications: finalMeds }, error: null };
       } catch (err) {
         console.error('[InteractionChecker] Ref Fetch Error:', err);
         addToast({ title: 'System Error', message: 'Failed to load medication database.', type: 'error' });
@@ -429,7 +444,7 @@ const InteractionChecker: React.FC = () => {
                 aria-label="Request institutional database update via email"
               >
                 <span>Agent not listed? Request institutional database update.</span>
-                <span className="material-symbols-outlined text-xs opacity-0 group-hover:opacity-100 transition-opacity transform group-hover:translate-x-1" aria-hidden="true">arrow_forward</span>
+                <span className="material-symbols-outlined text-sm opacity-0 group-hover:opacity-100 transition-opacity transform group-hover:translate-x-1" aria-hidden="true">arrow_forward</span>
               </a>
             </div>
           </section>
@@ -497,17 +512,17 @@ const InteractionChecker: React.FC = () => {
                     {analysisResult.isKnown && (
                       <div className="flex items-center gap-3 mt-2 flex-wrap">
                         {(analysisResult as InteractionRule).interaction_type && (
-                          <span className={`text-xs font-black uppercase tracking-wide px-3 py-1 rounded-full ${riskConfig.badgeBg} ${riskConfig.text}`}>
+                          <span className={`text-sm font-black uppercase tracking-wide px-3 py-1 rounded-full ${riskConfig.badgeBg} ${riskConfig.text}`}>
                             {(analysisResult as InteractionRule).interaction_type?.replace(/_/g, ' ')}
                           </span>
                         )}
                         {(analysisResult as InteractionRule).confidence && (
-                          <span className="text-xs font-black uppercase tracking-wide px-3 py-1 rounded-full bg-slate-800/60 border border-slate-700/50 text-slate-300">
+                          <span className="text-sm font-black uppercase tracking-wide px-3 py-1 rounded-full bg-slate-800/60 border border-slate-700/50 text-slate-300">
                             {(analysisResult as InteractionRule).confidence} confidence
                           </span>
                         )}
                         {(analysisResult as InteractionRule).evidence_level && (
-                          <span className="text-xs font-black uppercase tracking-wide px-3 py-1 rounded-full bg-slate-800/60 border border-slate-700/50 text-slate-400">
+                          <span className="text-sm font-black uppercase tracking-wide px-3 py-1 rounded-full bg-slate-800/60 border border-slate-700/50 text-slate-400">
                             {(analysisResult as InteractionRule).evidence_level?.replace(/_/g, ' ')}
                           </span>
                         )}
@@ -623,7 +638,7 @@ const InteractionChecker: React.FC = () => {
                           className="text-sm font-black text-primary hover:text-slate-300 uppercase tracking-widest flex items-center gap-1 transition-colors"
                         >
                           {(analysisResult as InteractionRule).evidence_source || 'PubMed / NLM'}
-                          <span className="material-symbols-outlined text-xs">open_in_new</span>
+                          <span className="material-symbols-outlined text-sm">open_in_new</span>
                         </a>
                       </div>
                     )}
@@ -637,7 +652,7 @@ const InteractionChecker: React.FC = () => {
                           className="text-sm font-black text-[#93c5fd] hover:text-[#bfdbfe] uppercase tracking-widest transition-colors flex items-center gap-2"
                         >
                           Request this combination be added
-                          <span className="material-symbols-outlined text-xs">arrow_forward</span>
+                          <span className="material-symbols-outlined text-sm">arrow_forward</span>
                         </a>
                       </div>
                     )}

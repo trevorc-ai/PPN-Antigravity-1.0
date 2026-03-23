@@ -24,14 +24,14 @@ const VALUE_PROPS = [
         color: 'text-indigo-400',
         bg: 'bg-indigo-500/10',
         title: 'Priority Access',
-        body: 'First in line when the pilot opens — targeted early spring 2026.',
+        body: 'First in line when the pilot opens, targeting early spring 2026.',
     },
     {
         icon: Diamond,
-        color: 'text-purple-400',
-        bg: 'bg-purple-500/10',
+        color: 'text-indigo-400',
+        bg: 'bg-indigo-500/10',
         title: 'Founding Pricing',
-        body: 'Locked rate for founding practitioners — communicated at pilot launch.',
+        body: 'Locked rate for founding practitioners, communicated at pilot launch.',
     },
     {
         icon: LineChart,
@@ -45,7 +45,7 @@ const VALUE_PROPS = [
         color: 'text-sky-400',
         bg: 'bg-sky-500/10',
         title: 'Clinical-Grade Infrastructure',
-        body: 'Built for psychedelic-assisted therapy — documentation, analytics, safety.',
+        body: 'Built for psychedelic-assisted therapy, covering documentation, analytics, and safety.',
     },
 ];
 
@@ -146,7 +146,7 @@ export const Waitlist: FC = () => {
                     </h1>
 
                     <p className="text-lg xl:text-xl text-slate-400 font-medium leading-relaxed mb-14 max-w-lg">
-                        Join the founding cohort of practitioners helping shape the platform — documentation, analytics, drug safety, and more.
+                        Join the founding cohort of practitioners helping shape the platform, covering documentation, analytics, drug safety, and more.
                     </p>
 
                     {/* Value props grid */}

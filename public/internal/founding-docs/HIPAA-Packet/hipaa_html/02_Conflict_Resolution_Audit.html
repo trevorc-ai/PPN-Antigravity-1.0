@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PPN Portal — Architecture Verification</title>
+<title>PPN-HIPAA-02-Architecture-Verification</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -51,7 +51,7 @@
 <h1>Architecture Verification</h1>
 <p>Independent review of PPN Portal's data architecture against HIPAA Safe Harbor requirements. Each item below reflects a confirmed design decision, not an aspirational claim. Review conducted March 2026.</p>
 
-<h2>Privacy Architecture — Confirmed Design Decisions</h2>
+<h2>Privacy Architecture, Confirmed Design Decisions</h2>
 <table class="verify-table">
   <thead><tr><th>Area</th><th>Design Decision</th><th>Status</th></tr></thead>
   <tbody>
@@ -67,7 +67,7 @@
     </tr>
     <tr>
       <td><strong>Patient Identifier Design</strong></td>
-      <td>Patient codes are cryptographically random system-generated values (format PT-XXXXXXXXXX). They are not derived from any patient attribute. The plaintext code never leaves the practitioner's device — only a one-way hash is transmitted to PPN servers. Analytics and export tables store only the hash.</td>
+      <td>Patient codes are cryptographically random system-generated values (format PT-XXXXXXXXXX). Not derived from any patient attribute. The plaintext code never leaves the practitioner's device, only a one-way hash is transmitted to PPN servers. Analytics and export tables store only the hash.</td>
       <td><span class="badge badge-green">✓ Confirmed</span></td>
     </tr>
     <tr>
@@ -83,14 +83,14 @@
   </tbody>
 </table>
 
-<h2>PHI-Safe Data Design — Confirmed Upgrades</h2>
+<h2>PHI-Safe Data Design, Confirmed Upgrades</h2>
 <table class="verify-table">
   <thead><tr><th>Field Category</th><th>Implementation</th></tr></thead>
   <tbody>
-    <tr><td><strong>Weight</strong></td><td>Range FK reference — no exact value stored</td></tr>
-    <tr><td><strong>Sex</strong></td><td>Controlled vocabulary reference — not free text</td></tr>
-    <tr><td><strong>Override justifications</strong></td><td>Enumerated code reference — no free-text override reason</td></tr>
-    <tr><td><strong>Contraindication verdicts</strong></td><td>Enumerated reference — not free text</td></tr>
+    <tr><td><strong>Weight</strong></td><td>Range FK reference, no exact value stored</td></tr>
+    <tr><td><strong>Sex</strong></td><td>Controlled vocabulary reference, not free text</td></tr>
+    <tr><td><strong>Override justifications</strong></td><td>Enumerated code reference, no free-text override reason</td></tr>
+    <tr><td><strong>Contraindication verdicts</strong></td><td>Enumerated reference, not free text</td></tr>
     <tr><td><strong>Clinical phenotype</strong></td><td>Controlled vocabulary reference</td></tr>
     <tr><td><strong>Assessment scales</strong></td><td>Controlled vocabulary reference</td></tr>
     <tr><td><strong>Patient identity fields</strong></td><td>No patient name, date of birth, SSN, email, phone, MRN, or address column exists in any clinical table</td></tr>
@@ -99,7 +99,9 @@
 
 <div class="footer">
   <span>PPN Portal <span class="footer-dot">&middot;</span> ppnportal.net</span>
-  <span>GO-651 §2 Architecture Verification <span class="footer-dot">&middot;</span> March 2026 <span class="footer-dot">&middot;</span> Confidential</span>
+  <span>GO-651 &sect;2 Architecture Verification <span class="footer-dot">&middot;</span> March 2026 <span class="footer-dot">&middot;</span> &copy; 2026 PPN Portal &middot; ppnportal.net &middot; Confidential and Proprietary</span>
 </div>
+
+<script>if(window.self!==window.top){var ab=document.querySelector('.action-bar');if(ab)ab.style.display='none';}</script>
 </body>
 </html>

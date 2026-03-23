@@ -14,6 +14,7 @@ const SignUp = lazy(() => import('./pages/SignUp'));
 const ForgotPassword = lazy(() => import('./pages/ForgotPassword'));
 const ResetPassword = lazy(() => import('./pages/ResetPassword'));
 const Waitlist = lazy(() => import('./pages/Waitlist'));
+const WaitlistPage = lazy(() => import('./pages/WaitlistPage')); // WO-642: /join — Denver conference QR target
 const About = lazy(() => import('./pages/About'));
 const Pricing = lazy(() => import('./pages/Pricing'));
 const ContributionModel = lazy(() => import('./pages/ContributionModel'));
@@ -399,6 +400,7 @@ const AppContent: React.FC = () => {
               <Route path="/landing" element={<Landing />} />
               <Route path="/about" element={<About />} />
               <Route path="/waitlist" element={<Waitlist />} />
+              <Route path="/join" element={<WaitlistPage />} /> {/* WO-642: Denver QR — public, no auth */}
               <Route path="/secure-gate" element={<SecureGate />} />
               <Route path="/privacy" element={<PrivacyPolicy />} />
               <Route path="/terms" element={<TermsOfService />} />

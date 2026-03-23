@@ -2,7 +2,7 @@
 id: WO-B6
 title: "Select Patient modal needs a ppn-ui-standards audit"
 owner: LEAD
-status: 00_INBOX
+status: 04_BUILD
 authored_by: LEAD (fast-track)
 priority: P1
 created: 2026-03-22

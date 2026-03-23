@@ -300,7 +300,7 @@ const PartnerDemoHub: React.FC = () => {
             case 'Core':
                 return 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20';
             case 'Premium':
-                return 'bg-purple-500/10 text-purple-400 border-purple-500/20';
+                return 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20';
             case 'Enterprise':
                 return 'bg-amber-500/10 text-amber-400 border-amber-500/20';
             case 'Demo':
@@ -369,14 +369,14 @@ const PartnerDemoHub: React.FC = () => {
                                 >
                                     {/* New Badge */}
                                     {feature.isNew && (
-                                        <div className="absolute -top-3 -right-3 px-3 py-1 bg-clinical-green text-slate-900 text-xs font-black rounded-full uppercase tracking-widest shadow-lg">
+                                        <div className="absolute -top-3 -right-3 px-3 py-1 bg-clinical-green text-slate-900 text-sm font-black rounded-full uppercase tracking-widest shadow-lg">
                                             New!
                                         </div>
                                     )}
 
                                     {/* Tier Badge */}
                                     {feature.badge && (
-                                        <div className={`inline-block px-3 py-1 border rounded-lg text-xs font-black uppercase tracking-widest mb-4 ${getBadgeColor(feature.badge)}`}>
+                                        <div className={`inline-block px-3 py-1 border rounded-lg text-sm font-black uppercase tracking-widest mb-4 ${getBadgeColor(feature.badge)}`}>
                                             {feature.badge}
                                         </div>
                                     )}

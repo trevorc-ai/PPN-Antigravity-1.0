@@ -57,6 +57,8 @@ For ANY file in `public/outreach/`, ANY HTML leave-behind, ANY PDF, or ANY clien
 - Complete the **Print Pre-flight Checklist** in Rule 5 before committing
 - Run the **Rule 6d accessibility check** grep before committing
 
+> **Note:** ppn-ui-standards compliance was already gate-checked by INSPECTOR in Phase 0 before this ticket reached `04_BUILD`. BUILDER's reads above are implementation-time references, not the enforcement gate.
+
 ## Step 3: Check WO Constraints section
 
 Before every edit, quote the WO's `Constraints` block verbatim. If an edit would violate a constraint, STOP and flag to LEAD.
@@ -134,3 +136,4 @@ Do NOT run `/finalize_feature`. Do NOT `git commit`. INSPECTOR owns the commit g
 | 1.1 | 2026-03-21 | LEAD + INSPECTOR | Added Asset Source Rule, ppn-ui-standards read, INSPECTOR-only turbo-all note, GO handoff callout |
 | 1.2 | 2026-03-22 | LEAD | Added Hard Rule 6: BUILDER forbidden from `02.5_PRE-BUILD_REVIEW` |
 | 2.0 | 2026-03-23 | LEAD | **Pipeline Architecture Redesign.** Renamed all stage folders. Added USER-only gate law. Added parallel build rule in Step 1. Added WIP limit check. Auto-handoff to INSPECTOR in same response after build. |
+| 2.1 | 2026-03-23 | LEAD | Clarified Step 2 ppn-ui-standards read: BUILDER's read is implementation-time reference only. Enforcement gate is INSPECTOR Phase 0 (02.5_PRE-BUILD_REVIEW). |

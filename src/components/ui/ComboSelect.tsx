@@ -63,7 +63,7 @@ export const ComboSelect: React.FC<ComboSelectProps> = ({
 
     // The label shown for the currently selected value
     const selectedOption = options.find((o) => o.value === value);
-    const displayLabel = selectedOption ? toTitleCase(selectedOption.label) : '';
+    const displayLabel = selectedOption ? selectedOption.label : '';
 
     // Filtered options based on query (contains match, case-insensitive)
     const filtered = query
@@ -238,7 +238,7 @@ export const ComboSelect: React.FC<ComboSelectProps> = ({
 
             {/* ── Dropdown listbox ─────────────────────────────────────── */}
             {open && (
-                <div className="absolute z-50 left-0 right-0 mt-2 bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl overflow-hidden">
+                <div className="absolute z-50 left-0 right-0 mt-2 bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl">
                     {filtered.length === 0 ? (
                         <div className="px-5 py-4 text-sm text-slate-500 font-medium">
                             No matches for &quot;{query}&quot;
@@ -273,7 +273,7 @@ export const ComboSelect: React.FC<ComboSelectProps> = ({
                                                     : 'text-slate-300 hover:bg-slate-800'
                                             }`}
                                     >
-                                        {toTitleCase(opt.label)}
+                                        {opt.label}
                                     </li>
                                 );
                             })}

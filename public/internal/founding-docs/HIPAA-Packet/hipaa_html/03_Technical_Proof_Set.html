@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PPN Portal — Technical Proof Set</title>
+<title>PPN-HIPAA-03-Technical-Proof</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -60,7 +60,7 @@
 
 <div class="header">
   <div><div class="brand"><div class="brand-dot"></div><span class="brand-name">PPN Portal</span></div></div>
-  <div class="classification">Section 3 of 6</div>
+  <div class="classification">Section 3 of 5</div>
 </div>
 
 <div class="doc-label">Technical Proof Set</div>
@@ -71,7 +71,7 @@
 <div class="flow-row">
   <div class="flow-step">Practitioner Device<br><small>Generates PT-XXXXXXXXXX</small></div>
   <div class="flow-arrow">→</div>
-  <div class="flow-step">PPN Portal (Browser)<br><small>Hash only — no plaintext</small></div>
+  <div class="flow-step">PPN Portal (Browser)<br><small>Hash only, no plaintext</small></div>
   <div class="flow-arrow">→</div>
   <div class="flow-step">Supabase (RLS enforced)<br><small>Structured data, no PHI</small></div>
   <div class="flow-arrow">→</div>
@@ -112,9 +112,9 @@
 <table class="proof-table">
   <thead><tr><th>Vendor</th><th>Role</th><th>PHI Exposure</th><th>DPA Available</th></tr></thead>
   <tbody>
-    <tr><td><strong>Supabase</strong></td><td>Database (PostgreSQL) and Authentication</td><td>No PHI stored — only pseudonymized structured data</td><td>Yes — Supabase publishes a standard DPA</td></tr>
-    <tr><td><strong>Vercel</strong></td><td>Frontend hosting and CDN</td><td>No patient data processed — serves static/compiled assets only</td><td>Yes — Vercel publishes a standard DPA</td></tr>
-    <tr><td><strong>Stripe</strong></td><td>Payment processing (practitioner subscriptions)</td><td>No patient data. Processes practitioner billing only.</td><td>Yes — Stripe is PCI-DSS certified with published DPA</td></tr>
+    <tr><td><strong>Supabase</strong></td><td>Database (PostgreSQL) and Authentication</td><td>No PHI stored, only pseudonymized structured data</td><td>Yes, Supabase publishes a standard DPA</td></tr>
+    <tr><td><strong>Vercel</strong></td><td>Frontend hosting and CDN</td><td>No patient data processed, serves static/compiled assets only</td><td>Yes, Vercel publishes a standard DPA</td></tr>
+    <tr><td><strong>Stripe</strong></td><td>Payment processing (practitioner subscriptions)</td><td>No patient data. Processes practitioner billing only.</td><td>Yes, Stripe is PCI-DSS certified with published DPA</td></tr>
     <tr><td><strong>Resend</strong></td><td>Transactional email (practitioner account emails only)</td><td>No patient data. Practitioner email addresses only, for account-related notices.</td><td>Resend publishes a standard DPA</td></tr>
   </tbody>
 </table>
@@ -124,14 +124,16 @@
 </div>
 
 <h2>5. Authentication and Account Model</h2>
-<p>Authentication is handled entirely by Supabase Auth. No passwords are stored by PPN. Email-based magic link authentication is the primary method. Practitioners have individual accounts tied to one or more clinical sites via <code>log_user_sites</code>. RLS policies enforce site-level data isolation — a practitioner cannot access another site's records.</p>
+<p>Authentication is handled entirely by Supabase Auth. No passwords are stored by PPN. Email-based magic link authentication is the primary method. Practitioners have individual accounts tied to one or more clinical sites via a practitioner-site assignment table. RLS policies enforce site-level data isolation, so a practitioner cannot access another site's records.</p>
 
 <h2>6. Backup and Disaster Recovery</h2>
-<p>Supabase manages point-in-time recovery (PITR) for the PostgreSQL database. The current Supabase plan includes daily backups with a 7-day retention window. No internal PPN backup infrastructure exists — this is fully delegated to Supabase. PPN does not maintain a separate backup of patient records.</p>
+<p>Supabase manages point-in-time recovery (PITR) for the PostgreSQL database. The current Supabase plan includes daily backups with a 7-day retention window. No internal PPN backup infrastructure exists, this is fully delegated to Supabase. PPN does not maintain a separate backup of patient records.</p>
 
 <div class="footer">
   <span>PPN Portal <span class="footer-dot">&middot;</span> ppnportal.net</span>
-  <span>GO-651 §3 Technical Proof <span class="footer-dot">&middot;</span> March 2026 <span class="footer-dot">&middot;</span> Confidential</span>
+  <span>GO-651 &sect;3 Technical Proof <span class="footer-dot">&middot;</span> March 2026 <span class="footer-dot">&middot;</span> &copy; 2026 PPN Portal &middot; ppnportal.net &middot; Confidential and Proprietary</span>
 </div>
+
+<script>if(window.self!==window.top){var ab=document.querySelector('.action-bar');if(ab)ab.style.display='none';}</script>
 </body>
 </html>

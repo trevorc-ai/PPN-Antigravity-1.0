@@ -1,5 +1,5 @@
 # SESSION_HANDOFF.md
-**Last updated:** 2026-03-23 | **Session focus:** PRODDY strategy + pipeline remediation
+**Last updated:** 2026-03-23 | **Session focus:** Select Patient modal ppn-ui-standards audit + remediation (WO-B6)
 
 ---
 
@@ -7,38 +7,34 @@
 
 | Ticket | Stage | Notes |
 |---|---|---|
-| WO-654-A | `03_BUILD` | `/partner-demo` video route — BUILDER has it. Fixes broken link in all live confirmation emails. P0. |
-| WO-654-B | `03_BUILD` | Operator notification edge function — BUILDER has it. |
-| WO-657 | `00_INBOX` | Homepage enterprise overhaul (formerly filed as WO-655 — renumbered to avoid collision) |
-| GO-658 | `00_BACKLOG` | Denver Leave-Behind — retroactive GO filing. MARKETER must start `01_DRAFTING` ASAP. Print deadline April 5. |
-| 16 tickets | `02.5_PRE-BUILD_REVIEW` | Awaiting INSPECTOR Phase 0 clearance from prior session |
-| WO-640 | `03_BUILD` | Denver Stability Audit |
+| WO-654-A | `04_BUILD` | `/partner-demo` video route — BUILDER has it. Fixes broken link in all live confirmation emails. P0. |
+| WO-654-B | `04_BUILD` | Operator notification edge function — BUILDER has it. |
+| WO-657 | `00_INBOX` | Homepage enterprise overhaul — needs LEAD routing. |
+| GO-658 | `00_BACKLOG` | Denver Leave-Behind — MARKETER must start `01_DRAFTING` ASAP. Print deadline April 5. |
+| 16 tickets | `02.5_PRE-BUILD_REVIEW` | Awaiting INSPECTOR Phase 0 clearance from prior session. |
+| WO-640 | `04_BUILD` | Denver Stability Audit. |
+| WO-B6 | `05_QA` | Select Patient modal UI standards fix — awaiting INSPECTOR close-out + W1 check. |
 
 ---
 
-## ✅ Completed This Session (PRODDY session, 2026-03-22)
+## ✅ Completed This Session (2026-03-23)
 
-- **Pipeline audit** — All `_WORK_ORDERS` and `_GROWTH_ORDERS` cross-referenced against Denver strategy doc
-- **5 tickets archived** — WO-559 V2, V3, V4, V5, GO-589 moved to `_GROWTH_ORDERS/99_ARCHIVED/`
-- **GO-591 updated** — Variations 2–5 cancelled; Variation 1 (Clinical) survives as sole enterprise ICP
-- **WO-654** filed and picked up by LEAD; sub-tickets A and B in `03_BUILD`
-- **WO-657** (Homepage Overhaul) filed in `00_INBOX`
-- **WO-643 demo script** produced; saved to `public/internal/admin_uploads/denver-2026/PsyCon_Demo_Script_April9.md`
-- **WO-644 leave-behind HTML** produced with embedded QR codes; saved to `public/internal/admin_uploads/denver-2026/PPN_Leave_Behind_Print.html`
-- **GO-658** filed — retroactive GO ticket for leave-behind, per Rule Zero-B remediation
-- **WO numbering collision fixed** — WO-655 (homepage) renumbered to WO-657
-- **`ppn-ui-standards` v1.2** — Quick Reference explicitly bans JetBrains Mono
-- **`proddy-protocol` v2.0** — Major redesign (see Protocol Changes below)
+- **WO-B6 filed, built, and moved to `05_QA`** — Select Patient modal fully remediated:
+  - `PHASE_COLORS` fixed: Preparation→indigo, Integration→teal (was blue/purple)
+  - `PHASE_ICONS` map added: Clock/FlaskConical/Activity/CheckCircle — colorblind-safe Rule 1 + 6 compliance
+  - All `text-xs`, `text-[10px]`, `text-[11px]` upgraded to `text-sm` across the modal
+  - TypeScript zero errors; browser verified live
 
 ---
 
 ## 🟡 Needs User Decision
 
-1. **WO-643 and WO-657 (demo script and homepage)** — LEAD must route both
-2. **GO-658** — MARKETER must begin `01_DRAFTING` immediately; USER approves copy at `02_USER_REVIEW`
-3. **Dedicated operator email alias** — `signups@ppnportal.net` recommended. Confirm before WO-654-B ships
-4. **GO-649, GO-650** — in `_GROWTH_ORDERS/06_QA`, awaiting USER final visual approval before `99_PUBLISHED`
-5. **`_GROWTH_ORDERS/07_ARCHIVED/`** — non-standard folder name; LEAD should consolidate into `99_ARCHIVED/`
+1. **WO-B6 W1 (Advisory)** — Confirm `tailwind.config.ts` maps `font-mono` → Roboto Mono (not JetBrains Mono or Courier New). INSPECTOR to verify before archiving.
+2. **WO-643 and WO-657** — Demo script and homepage overhaul need LEAD routing.
+3. **GO-658** — MARKETER must begin `01_DRAFTING` immediately; USER approves copy at `02_USER_REVIEW`.
+4. **Dedicated operator email alias** — `signups@ppnportal.net` recommended. Confirm before WO-654-B ships.
+5. **GO-649, GO-650** — in `_GROWTH_ORDERS/06_QA`, awaiting USER final visual approval before `99_PUBLISHED`.
+6. **WO-655 double-filing** — Two different tickets both numbered WO-655 exist. LEAD must resolve.
 
 ---
 
@@ -49,17 +45,17 @@
 | `_GROWTH_ORDERS/00_BACKLOG` | 1 | GO-658 (leave-behind, needs MARKETER NOW) |
 | `_WORK_ORDERS/00_INBOX` | 1 | WO-657 (homepage overhaul, needs LEAD routing) |
 | `02.5_PRE-BUILD_REVIEW` | 16 | All need INSPECTOR clearance |
-| `03_BUILD` | 3+ | WO-654-A, WO-654-B, WO-640 |
-| `05_USER_REVIEW` | 2 | WO-643 (demo script), WO-644 ticket |
+| `04_BUILD` | 3+ | WO-654-A (P0), WO-654-B, WO-640 |
+| `05_QA` | 1 | WO-B6 (Select Patient modal — needs INSPECTOR close-out) |
 | `_GROWTH_ORDERS/06_QA` | 2 | GO-649, GO-650 (user approval pending) |
 
 ---
 
 ## ⚪ Next Recommended Actions
 
-1. **MARKETER** — Begin GO-658 `01_DRAFTING` (CONTENT_MATRIX for leave-behind copy). Print deadline April 5; no time to waste.
+1. **INSPECTOR** — Close out WO-B6 in `05_QA`: verify `tailwind.config.ts` font-mono mapping (W1), then move to `99_COMPLETED`.
 2. **BUILDER** — Ship WO-654-A (`/partner-demo` route). Fixes live broken link in every confirmation email. P0.
-3. **LEAD** — Route WO-657 (Homepage Overhaul). Identify homepage component file before assigning to BUILDER.
+3. **MARKETER** — Begin GO-658 `01_DRAFTING`. Print deadline April 5; no time to waste.
 
 ---
 
@@ -67,15 +63,14 @@
 
 | File | Version | Change |
 |---|---|---|
-| `ppn-ui-standards/SKILL.md` | v1.2 | JetBrains Mono explicitly banned in Quick Reference row |
-| `proddy-protocol/SKILL.md` | v2.0 | **Major redesign:** Rule Zero-B (full pipeline compliance, zero exceptions), USER-Only Gate Law, Mandatory Full Agent Chain, stage name updates (`03_REVIEW`, `04_BUILD`, `05_QA`, `06_USER_REVIEW`), AUTO-HANDOFF mandate, `active_sprint` + `files:` added to WO frontmatter |
+| `PatientSelectModal.tsx` | WO-B6 | Phase colors corrected, PHASE_ICONS map added, sub-pixel fonts removed |
 
 ---
 
 ## Key Context for Next Agent
 
 - **Denver is April 9, 2026.** Print deadline April 5.
-- **Broken link is live NOW:** `/#/partner-demo` in every confirmation email returns 404. WO-654-A fixes it. P0.
-- **ICP locked:** Multi-site premium clinic networks. No grey-market, no patients, no insurance, no academic researchers (all Wave 2).
-- **`proddy-protocol` v2.0 is now in effect** — agents do NOT stop after filing a ticket. AUTO-HANDOFF is mandatory. Filing and stopping = Rule Zero-B violation.
-- **WO numbering note:** WO-655 exists twice (weight range fix in `03_BUILD` + hook extraction in `02_TRIAGE`). Homepage overhaul was correctly renumbered to WO-657. LEAD must resolve the WO-655 double.
+- **Broken link is live NOW:** `/#/partner-demo` 404. WO-654-A is P0.
+- **ICP locked:** Multi-site premium clinic networks only.
+- **`proddy-protocol` v2.0 in effect** — AUTO-HANDOFF mandatory. Filing + stopping = Rule Zero-B violation.
+- **WO-655 double-filing** needs resolution before any new WOs are created.

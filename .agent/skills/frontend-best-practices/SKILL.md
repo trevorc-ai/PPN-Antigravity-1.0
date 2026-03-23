@@ -22,6 +22,7 @@ Before writing a single JSX element, answer YES to all of the below:
 - [ ] I have NOT used `text-[8px]`, `text-[9px]`, `text-[10px]`, or `text-[11px]` anywhere
 - [ ] I have NOT used red for anything other than a warning/adverse event
 - [ ] I have NOT used `bg-emerald-500` or `bg-emerald-600` as a solid button background
+- [ ] **Every dropdown, select, or option list that mirrors a `ref_*` table is fetched from the database — NOT hardcoded in the component.** If the data lives in a DB table, the UI reads from it. No exceptions.
 
 If any answer is NO — fix it before handing off.
 
@@ -191,6 +192,50 @@ SLATE   → Neutral text, borders, backgrounds
 - [ ] Form footer uses Back | Save & Exit | Save & Continue pattern
 - [ ] All icon-only buttons have `aria-label`
 - [ ] TypeScript: no `any` types
+- [ ] **No hardcoded option arrays that duplicate a `ref_*` table.** Any data that exists in the DB must be fetched from the DB. Hardcoding creates silent drift bugs when the DB grows.
+
+---
+
+## 6. DATABASE-DRIVEN DATA — THE LAW
+
+The database is the **single source of truth** for all reference data. The frontend is a consumer — never a second copy.
+
+### The Rule
+
+| Data type | Source | NEVER |
+|---|---|---|
+| Substance list | `ref_substances` or derived from `ref_clinical_interactions` | Hardcoded array in component |
+| Medication list | `ref_medications` | Hardcoded array |
+| Safety concerns / actions | `ref_clinical_observations` | Hardcoded array with integer IDs |
+| Session types | `ref_session_types` | Hardcoded string literals |
+| Weight ranges | `ref_weight_ranges` | Hardcoded number ranges |
+| Any other `ref_*` table | The `ref_*` table | A `const` array in the component |
+
+### How to spot the violation
+
+If you are writing any of the following in a component, STOP and confirm it should not come from the DB:
+
+```tsx
+// 🚨 RED FLAGS — likely violations:
+const OPTIONS = [ { id: 1, name: 'Foo' }, { id: 2, name: 'Bar' } ];
+const SUBSTANCES = ['Psilocybin', 'MDMA', 'Ketamine'];
+const TYPES = ['preparation', 'dosing', 'integration'];
+```
+
+### The correct pattern
+
+```tsx
+// ✅ CORRECT — fetch from DB, let the DB own the list
+const { data } = await supabase.from('ref_substances').select('*').order('substance_name');
+// If you only want substances with seeded rules:
+const { data } = await supabase.from('ref_clinical_interactions').select('substance_name');
+const unique = [...new Set(data.map(r => r.substance_name))].sort();
+```
+
+### Exception (the ONLY acceptable hardcoding)
+
+Mock/demo data in `src/constants/analyticsData.ts` is intentionally synthetic and does not shadow any DB table.
+It is placeholder for the future analytics-from-live-data build and is clearly marked as `MOCK_*`.
 
 ---
 

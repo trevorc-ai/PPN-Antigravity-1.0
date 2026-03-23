@@ -46,6 +46,26 @@ INSPECTOR MUST note the chosen index type for each new index in the `## INSPECTO
 - [ ] New queries use indexed columns in WHERE/JOIN clauses
 - [ ] No unbounded queries (confirm LIMIT or pagination where result set could be large)
 
+### UI Standards Pre-Build Gate
+
+**Trigger:** Run this check if the WO's `files:` list contains any `.tsx`, `.css`, `.html`, or any path inside `public/outreach/`. Skip for pure DB-only or migration-only tickets.
+
+Read `/ppn-ui-standards` Quick Reference table, then verify the WO spec, design notes, and any copy blocks against:
+
+- [ ] **Font floor:** No `text-xs`, `JetBrains Mono`, or `Courier New` specified in design notes or code snippets
+- [ ] **Em dash:** No em dash (—) or hyphen-as-em-dash (` - `) in any body text within the WO spec or copy blocks
+- [ ] **Color alone:** Every color-coded state in the spec includes a paired icon or text label, not color alone
+- [ ] **Phase palette:** Only indigo (Phase 1), amber (Phase 2), teal (Phase 3) used for phase indicators — no ad hoc colors
+- [ ] **Background (screen):** Deep Slate `#020408` / `bg-slate-950` specified — no flat black
+- [ ] **Background (print/PDF):** White `#ffffff` or near-white `#f8f9fc` — no dark fills _(skip if no print/PDF in scope)_
+- [ ] **Branding:** PPN Portal wordmark required in header for any outreach or PDF file _(skip if platform-only React)_
+
+If ANY check fails → **return ticket to `02_TRIAGE`** with `hold_reason: ppn-ui-standards violation — [specific failing check]`. Do NOT sign the clearance block.
+
+If ALL checks pass → add `- [ ] UI Standards Pre-Build Gate: PASS` to the clearance block below.
+
+---
+
 ### INSPECTOR 02.5 CLEARANCE Block (paste into ticket)
 ```
 ## INSPECTOR 02.5 CLEARANCE
@@ -54,6 +74,7 @@ INSPECTOR MUST note the chosen index type for each new index in the `## INSPECTO
 - [ ] Index types reviewed: [list each index + type chosen]
 - [ ] RLS completeness: PASS
 - [ ] Backend efficiency: PASS
+- [ ] UI Standards Pre-Build Gate: PASS (or N/A — no visible files)
 Signed: INSPECTOR | Date: YYYY-MM-DD
 ```
 
@@ -184,23 +205,43 @@ Reply with `STATUS: APPROVED`. Update GO frontmatter `status: 99_PUBLISHED`. Mov
 
 ---
 
-## PHASE 5.5: JOINT USER VISUAL CONFIRMATION (`05_USER_REVIEW`)
+## PHASE 5.5: JOINT USER VISUAL CONFIRMATION (`06_USER_REVIEW`)
 
-**Run this phase after `04_QA` APPROVED. INSPECTOR and User jointly confirm before any push.**
+**Run this phase after QA APPROVED. Screenshots are mandatory — user reviews in Agent Manager without opening a browser.**
 
 When INSPECTOR issues final QA APPROVED:
-1. Move WO to `05_USER_REVIEW/`
+
+### Step A: Capture Screenshots (mandatory)
+
+Use the browser subagent to navigate to every affected route and capture a screenshot. Minimum 1 screenshot per ticket. Multi-route tickets require one per affected view.
+
+Append the following block directly to the WO ticket file **before** moving it:
+
+```markdown
+## INSPECTOR QA — Visual Evidence
+![WO-XXX: [Feature Name] at [route]](absolute/path/to/screenshot.webp)
+<!-- Add additional screenshots for each affected route -->
+INSPECTOR VERDICT: APPROVED | Date: YYYY-MM-DD
+```
+
+- Use the absolute path to the screenshot file (stored in the artifacts dir or `.gemini/` cache)
+- Caption format: `WO-XXX: [what the screenshot shows] at [URL or route]`
+- If the browser subagent cannot reach the route (e.g. auth required), note `CANNOT_SCREENSHOT — [reason]` instead
+
+### Step B: Move and Notify
+
+1. Move WO to `06_USER_REVIEW/`
 2. Post to user:
 
-> 🔔 **@USER — `WO-XXX` has passed QA.** Please confirm the following before I push:
-
-**User visual confirmation checklist (3 items):**
-- [ ] **Visual render:** Open the affected page/feature in the browser. Does it look correct at both desktop and mobile widths?
-- [ ] **Data accuracy:** If this ticket writes to or reads from the database, is the data displaying correctly? (No placeholders, no stale data, no blank fields)
-- [ ] **No regressions visible:** Does any adjacent page or feature appear broken that wasn’t broken before this change?
+> 🔔 **@USER — `WO-XXX` has passed QA.** Screenshots embedded above. Please confirm before I push:
+> - [ ] **Visual render:** Does it look correct? (Check the screenshots above — open browser only if needed)
+> - [ ] **Data accuracy:** If this touches the DB, is data displaying correctly?
+> - [ ] **No regressions:** Does anything adjacent look broken?
+>
+> Reply **`push`** to deploy · **`hold [reason]`** to send back
 
 User replies `push` → INSPECTOR runs `/finalize_feature`.
-User replies `hold [reason]` → INSPECTOR logs the issue, moves WO back to `03_BUILD`, creates follow-up note.
+User replies `hold [reason]` → INSPECTOR logs the issue, moves WO back to `04_BUILD`, creates follow-up note.
 
 > ⛔ **No push until User replies `push`.** This is the final human gate before production.
 
@@ -214,3 +255,5 @@ User replies `hold [reason]` → INSPECTOR logs the issue, moves WO back to `03_
 | 1.1 | 2026-03-21 | LEAD + INSPECTOR | Added Phase 4 (Outreach/HTML audit), Phase 5 (Color Blindness / WCAG AA), Phase 6 (Print/PDF readiness), GO pipeline invocation note, Phase 3 renamed to clarify scope |
 | 1.2 | 2026-03-21 | INSPECTOR | Added Phase 3.5 — Mandatory Regression Testing Gate. Trigger table maps affected files to required browser workflows (/phase2-session-regression, /phase3-integration-regression, PDF audit). Fixes protocol gap that allowed Track B WOs to commit without browser regression testing. |
 | 1.3 | 2026-03-22 | LEAD | Added Phase 0 (02.5_PRE-BUILD_REVIEW pre-build checklist: fast-pass rule, DB schema compatibility, index type recommendations, backend efficiency). Added Phase 5.5 (joint User visual confirmation at 05_USER_REVIEW before push). Fixed frontmatter. |
+| 1.4 | 2026-03-23 | LEAD | Phase 5.5 rewritten — mandatory browser screenshot block required before any ticket moves to 06_USER_REVIEW. Screenshots embedded directly in WO ticket file. Updated stage name to 06_USER_REVIEW. INSPECTOR must use browser subagent to capture and append evidence before posting @USER notification. |
+| 1.5 | 2026-03-23 | LEAD | Added UI Standards Pre-Build Gate to Phase 0. Any WO with visible files (.tsx, .css, .html, public/outreach) must pass 7 ppn-ui-standards checks before INSPECTOR signs the 02.5 CLEARANCE block. Failure returns ticket to 02_TRIAGE. Updated clearance block template to include gate line. |

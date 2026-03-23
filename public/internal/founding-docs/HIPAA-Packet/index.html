@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PPN Portal — HIPAA Legal Packet</title>
+<title>PPN Portal: HIPAA Legal Packet</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -13,7 +13,7 @@
     --border: #c8cdd8; --border-light: #e4e8f0;
     --bg: #ffffff; --bg-subtle: #f8f9fc;
     --sidebar-w: 240px;
-    --green: #16a34a; --amber: #d97706; --red: #dc2626;
+    --green: #16a34a;
     --topbar-h: 52px; --bottom-nav-h: 60px;
   }
   html, body { height: 100%; margin: 0; }
@@ -30,7 +30,7 @@
   .topbar {
     height: var(--topbar-h); background: var(--accent); flex-shrink: 0;
     display: flex; align-items: center; justify-content: space-between;
-    padding: 0 20px; z-index: 200;
+    padding: 0 16px; z-index: 200;
     -webkit-print-color-adjust: exact; print-color-adjust: exact;
   }
   .topbar-left { display: flex; align-items: center; gap: 10px; }
@@ -38,9 +38,21 @@
   .topbar-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.5); flex-shrink: 0; }
   .topbar-name { font-size: 13px; font-weight: 700; color: #fff; letter-spacing: 0.04em; text-transform: uppercase; }
   .topbar-sub { font-size: 11px; color: rgba(255,255,255,0.55); }
-  .topbar-meta { font-size: 10px; color: rgba(255,255,255,0.4); letter-spacing: 0.04em; text-align: right; }
 
-  /* Hamburger — mobile only */
+  .topbar-actions { display: flex; align-items: center; gap: 6px; }
+  .topbar-btn {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 6px 12px; border-radius: 6px;
+    border: 1.5px solid rgba(255,255,255,0.3);
+    background: rgba(255,255,255,0.12);
+    font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.9);
+    cursor: pointer; transition: background 0.15s, border-color 0.15s;
+    font-family: 'Inter', sans-serif; min-height: 34px;
+  }
+  .topbar-btn:hover { background: rgba(255,255,255,0.22); border-color: rgba(255,255,255,0.6); }
+  .topbar-btn.primary { background: rgba(255,255,255,0.25); border-color: rgba(255,255,255,0.5); }
+
+  /* ─── Hamburger, mobile only ─── */
   .hamburger {
     display: none; background: transparent; border: none; cursor: pointer;
     padding: 8px; border-radius: 6px;
@@ -72,8 +84,7 @@
     font-size: 12px; font-weight: 500; color: var(--ink-body);
     border: none; background: transparent; width: 100%; text-align: left;
     transition: background 0.12s, color 0.12s;
-    border-left: 3px solid transparent;
-    min-height: 44px;
+    border-left: 3px solid transparent; min-height: 44px;
   }
   .nav-item:hover { background: var(--accent-light); color: var(--accent); }
   .nav-item.active {
@@ -82,32 +93,31 @@
     -webkit-print-color-adjust: exact; print-color-adjust: exact;
   }
   .nav-item-icon { font-size: 14px; flex-shrink: 0; }
-  .nav-item-label { flex: 1; text-align: left; }
+  .nav-item-label { flex: 1; text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .nav-item-num {
     flex-shrink: 0; font-size: 9px; font-weight: 600;
     color: var(--ink-muted); letter-spacing: 0.06em;
   }
   .nav-item.active .nav-item-num { color: var(--accent); }
-
   .sidebar-divider { height: 1px; background: var(--border-light); margin: 8px 16px; }
 
-  .print-btn {
-    margin: 12px 16px; padding: 9px 16px; border-radius: 8px;
+  .action-group { padding: 0 12px 12px; display: flex; flex-direction: column; gap: 6px; }
+  .sidebar-btn {
+    padding: 9px 14px; border-radius: 8px;
     border: 1.5px solid var(--border); background: var(--bg-subtle);
     font-size: 11px; font-weight: 600; color: var(--ink-muted);
     cursor: pointer; display: flex; align-items: center; gap: 6px;
     transition: border-color 0.15s, color 0.15s; font-family: 'Inter', sans-serif;
-    min-height: 44px;
+    min-height: 44px; width: 100%;
   }
-  .print-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .sidebar-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-text { white-space: nowrap; }
 
   .status-legend { padding: 12px 16px 20px; }
   .legend-label { font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-muted); margin-bottom: 8px; }
   .legend-row { display: flex; align-items: center; gap: 6px; font-size: 10px; margin-bottom: 5px; color: var(--ink-muted); }
   .dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   .dot-green { background: var(--green); }
-  .dot-amber { background: var(--amber); }
-  .dot-red { background: var(--red); }
 
   /* Overlay for mobile sidebar */
   .sidebar-overlay {
@@ -135,27 +145,37 @@
   .bottom-nav-inner { display: flex; height: 100%; }
   .bottom-nav-item {
     display: flex; flex-direction: column; align-items: center; justify-content: center;
-    gap: 3px; flex: 1; min-width: 52px; padding: 0 4px;
+    gap: 2px; flex: 1; min-width: 52px; padding: 0 4px;
     border: none; background: transparent; cursor: pointer;
     font-size: 8.5px; font-weight: 600; color: var(--ink-muted);
     text-transform: uppercase; letter-spacing: 0.04em; min-height: 44px;
-    transition: color 0.12s;
-    border-top: 2.5px solid transparent;
+    transition: color 0.12s; border-top: 2.5px solid transparent;
   }
   .bottom-nav-item.active { color: var(--accent); border-top-color: var(--accent); -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   .bottom-nav-item:hover { color: var(--accent); }
   .bottom-nav-icon { font-size: 16px; }
 
+  /* ─── TABLET BREAKPOINT (768px - 1024px) ─── */
+  @media (min-width: 768px) and (max-width: 1024px) {
+    :root { --sidebar-w: 56px; }
+    .nav-item-label, .sidebar-section-label, .status-legend, .btn-text { display: none; }
+    .nav-item { padding: 10px 0; justify-content: center; flex-direction: column; gap: 2px; border-left: 3px solid transparent; }
+    .nav-item-icon { font-size: 18px; }
+    .nav-item-num { font-size: 8px; font-weight: 700; }
+    .sidebar-divider { margin: 6px 8px; }
+    .action-group { padding: 0 6px 12px; }
+    .sidebar-btn { padding: 10px 0; justify-content: center; min-height: 44px; }
+    .hamburger { display: none !important; }
+    .bottom-nav { display: none !important; }
+    .topbar-sub { display: none; }
+  }
+
   /* ─── MOBILE BREAKPOINT ─── */
   @media (max-width: 767px) {
     body { overflow: hidden; }
-
-    /* Show hamburger */
     .hamburger { display: flex; align-items: center; justify-content: center; }
-    .topbar-meta { display: none; }
     .topbar-sub { display: none; }
-
-    /* Sidebar becomes a slide-in overlay drawer */
+    .topbar-btn .btn-text-sm { display: none; }
     .sidebar {
       position: fixed; top: var(--topbar-h); left: 0; bottom: var(--bottom-nav-h);
       transform: translateX(-100%);
@@ -163,11 +183,7 @@
     }
     .sidebar.open { transform: translateX(0); }
     .sidebar-overlay.visible { display: block; }
-
-    /* Bottom nav visible */
     .bottom-nav { display: flex; }
-
-    /* Main area shrinks for bottom nav */
     .main { margin-bottom: var(--bottom-nav-h); }
     .doc-frame { bottom: 0; }
   }
@@ -197,7 +213,14 @@
       <span class="topbar-sub">&nbsp;&middot;&nbsp;HIPAA Legal Packet &middot; GO-651</span>
     </div>
   </div>
-  <span class="topbar-meta">Confidential &mdash; For Legal Counsel Only</span>
+  <div class="topbar-actions">
+    <button class="topbar-btn" id="copy-link-btn" onclick="copyPacketLink()" aria-label="Copy shareable link">
+      🔗 <span class="btn-text-sm">Copy Link</span>
+    </button>
+    <button class="topbar-btn primary" onclick="printAll()" aria-label="Save complete packet as PDF">
+      📥 <span class="btn-text-sm">Save All as PDF</span>
+    </button>
+  </div>
 </div>
 
 <div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
@@ -207,52 +230,54 @@
   <nav class="sidebar" id="sidebar" aria-label="Packet sections">
     <div class="sidebar-section-label">Documents</div>
 
-    <button class="nav-item active" data-frame="frame-0" data-bn="bn-0" onclick="switchSection(this)">
+    <button class="nav-item active" data-frame="frame-0" data-bn="bn-0" onclick="switchSection(this)" title="Cover and Index">
       <span class="nav-item-icon">📋</span>
       <span class="nav-item-label">Cover &amp; Index</span>
       <span class="nav-item-num">CV</span>
     </button>
-    <button class="nav-item" data-frame="frame-1" data-bn="bn-1" onclick="switchSection(this)">
+    <button class="nav-item" data-frame="frame-1" data-bn="bn-1" onclick="switchSection(this)" title="§1 HIPAA Posture Overview">
       <span class="nav-item-icon">🛡️</span>
       <span class="nav-item-label">Posture Overview</span>
       <span class="nav-item-num">§1</span>
     </button>
-    <button class="nav-item" data-frame="frame-2" data-bn="bn-2" onclick="switchSection(this)">
+    <button class="nav-item" data-frame="frame-2" data-bn="bn-2" onclick="switchSection(this)" title="§2 Architecture Verification">
       <span class="nav-item-icon">✅</span>
       <span class="nav-item-label">Architecture</span>
       <span class="nav-item-num">§2</span>
     </button>
-    <button class="nav-item" data-frame="frame-3" data-bn="bn-3" onclick="switchSection(this)">
+    <button class="nav-item" data-frame="frame-3" data-bn="bn-3" onclick="switchSection(this)" title="§3 Technical Proof Set">
       <span class="nav-item-icon">🔬</span>
       <span class="nav-item-label">Technical Proof</span>
       <span class="nav-item-num">§3</span>
     </button>
-    <button class="nav-item" data-frame="frame-4" data-bn="bn-4" onclick="switchSection(this)">
+    <button class="nav-item" data-frame="frame-4" data-bn="bn-4" onclick="switchSection(this)" title="§4 Safe Harbor Table">
       <span class="nav-item-icon">📊</span>
       <span class="nav-item-label">Safe Harbor</span>
       <span class="nav-item-num">§4</span>
     </button>
-    <button class="nav-item" data-frame="frame-5" data-bn="bn-5" onclick="switchSection(this)">
+    <button class="nav-item" data-frame="frame-5" data-bn="bn-5" onclick="switchSection(this)" title="§5 Public Documentation">
       <span class="nav-item-icon">🌐</span>
       <span class="nav-item-label">Public Docs</span>
       <span class="nav-item-num">§5</span>
     </button>
 
     <div class="sidebar-divider"></div>
-    <button class="print-btn" onclick="printCurrent()">🖨 Print This Section</button>
+    <div class="action-group">
+      <button class="sidebar-btn" onclick="printCurrent()" title="Print this section">
+        🖨 <span class="btn-text">Print This Section</span>
+      </button>
+    </div>
 
     <div class="status-legend">
       <div class="legend-label">Status Key</div>
-      <div class="legend-row"><div class="dot dot-green"></div> Resolved / Compliant</div>
-      <div class="legend-row"><div class="dot dot-amber"></div> Under Remediation</div>
-      <div class="legend-row"><div class="dot dot-red"></div> Open / Requires Action</div>
+      <div class="legend-row"><div class="dot dot-green"></div> Confirmed Compliant</div>
     </div>
   </nav>
 
   <main class="main">
     <iframe class="doc-frame active" id="frame-0" src="hipaa_html/00_Cover.html" title="Cover and Index"></iframe>
     <iframe class="doc-frame"        id="frame-1" src="hipaa_html/01_HIPAA_Posture_Overview.html" title="HIPAA Posture Overview"></iframe>
-    <iframe class="doc-frame"        id="frame-2" src="hipaa_html/02_Conflict_Resolution_Audit.html" title="Conflict Resolution Audit"></iframe>
+    <iframe class="doc-frame"        id="frame-2" src="hipaa_html/02_Conflict_Resolution_Audit.html" title="Architecture Verification"></iframe>
     <iframe class="doc-frame"        id="frame-3" src="hipaa_html/03_Technical_Proof_Set.html" title="Technical Proof Set"></iframe>
     <iframe class="doc-frame"        id="frame-4" src="hipaa_html/04_Safe_Harbor_Table.html" title="Safe Harbor Table"></iframe>
     <iframe class="doc-frame"        id="frame-5" src="hipaa_html/06_Public_Documentation.html" title="Public Documentation"></iframe>
@@ -270,7 +295,7 @@
       <span class="bottom-nav-icon">🛡️</span>§1
     </button>
     <button class="bottom-nav-item" id="bn-2" data-frame="frame-2" onclick="switchSection(this)">
-      <span class="bottom-nav-icon">⚖️</span>§2
+      <span class="bottom-nav-icon">✅</span>§2
     </button>
     <button class="bottom-nav-item" id="bn-3" data-frame="frame-3" onclick="switchSection(this)">
       <span class="bottom-nav-icon">🔬</span>§3
@@ -285,6 +310,7 @@
 </nav>
 
 <script>
+  const PRODUCTION_URL = 'https://ppnportal.net/internal/founding-docs/HIPAA-Packet/index.html';
   const NAV_ITEMS = document.querySelectorAll('.nav-item');
   const BN_ITEMS  = document.querySelectorAll('.bottom-nav-item');
   const FRAMES    = document.querySelectorAll('.doc-frame');
@@ -292,17 +318,12 @@
   function switchSection(el) {
     const frameId = el.getAttribute('data-frame');
     const bnId    = el.getAttribute('data-bn');
-
-    // Deactivate all
     NAV_ITEMS.forEach(b => b.classList.remove('active'));
     BN_ITEMS.forEach(b => b.classList.remove('active'));
     FRAMES.forEach(f => f.classList.remove('active'));
-
-    // Activate target
     document.querySelectorAll(`[data-frame="${frameId}"]`).forEach(b => b.classList.add('active'));
     if (bnId) document.getElementById(bnId)?.classList.add('active');
     document.getElementById(frameId).classList.add('active');
-
     closeSidebar();
   }
 
@@ -313,10 +334,22 @@
     if (win) win.onload = function() { win.focus(); win.print(); };
   }
 
+  function printAll() {
+    window.open('hipaa_html/print_all.html', '_blank');
+  }
+
+  function copyPacketLink() {
+    const btn = document.getElementById('copy-link-btn');
+    navigator.clipboard.writeText(PRODUCTION_URL).then(() => {
+      btn.textContent = '✓ Copied!';
+      setTimeout(() => { btn.innerHTML = '🔗 <span class="btn-text-sm">Copy Link</span>'; }, 2000);
+    });
+  }
+
   function toggleSidebar() {
-    const sidebar  = document.getElementById('sidebar');
-    const overlay  = document.getElementById('sidebar-overlay');
-    const isOpen   = sidebar.classList.contains('open');
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebar-overlay');
+    const isOpen  = sidebar.classList.contains('open');
     sidebar.classList.toggle('open', !isOpen);
     overlay.classList.toggle('visible', !isOpen);
   }

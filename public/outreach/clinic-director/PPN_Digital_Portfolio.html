@@ -370,6 +370,18 @@
     .module-section:first-of-type { page-break-before: auto; }
     h1, h2, h3 { break-after: avoid; }
     .exhibit-grid { page-break-inside: avoid; }
+    /* Phase 6 print compliance — force white backgrounds */
+    body, html { background: #ffffff !important; color: #1a1a2e !important; }
+    .hero, .module-section, .site-footer, .accent-bar,
+    .exhibit-card, .exhibit-grid > *, .hero-inner {
+      background: #ffffff !important;
+      background-color: #ffffff !important;
+      color: #1a1a2e !important;
+      border-color: #d1d5db !important;
+      box-shadow: none !important;
+    }
+    .hero-eyebrow, .hero-sub, .section-eyebrow { color: #4f46e5 !important; }
+    a { color: #4f46e5 !important; }
   }
 
   /* ── Responsive ── */

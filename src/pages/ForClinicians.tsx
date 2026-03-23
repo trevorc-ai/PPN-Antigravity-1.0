@@ -121,7 +121,7 @@ const ForClinicians: React.FC = () => {
           <div className="absolute inset-0 bg-gradient-to-br from-indigo-950/40 via-slate-900/20 to-indigo-950/60" aria-hidden="true" />
           <div className="relative flex flex-col items-center gap-3 opacity-30">
             <Network className="w-16 h-16 text-indigo-400" aria-hidden="true" />
-            <p className="text-xs text-indigo-400 font-mono tracking-widest uppercase">Zero-Knowledge Clinical Network</p>
+            <p className="text-sm text-indigo-400 font-mono tracking-widest uppercase">Zero-Knowledge Clinical Network</p>
           </div>
         </div>
       </section>
@@ -133,7 +133,7 @@ const ForClinicians: React.FC = () => {
             {
               icon: <FileText className="w-6 h-6 text-indigo-400" aria-hidden="true" />,
               heading: 'Documenting a treatment should be as natural as conducting one.',
-              body: 'We provide every practitioner — regardless of technical ability — a fast, schema-stable way to document every treatment protocol. Every entry is a permanent, immutable clinical record.',
+              body: 'We provide every practitioner, regardless of technical ability, a fast, schema-stable way to document every treatment protocol. Every entry is a permanent, immutable clinical record.',
             },
             {
               icon: <Lock className="w-6 h-6 text-indigo-400" aria-hidden="true" />,
@@ -143,7 +143,7 @@ const ForClinicians: React.FC = () => {
             {
               icon: <TrendingUp className="w-6 h-6 text-indigo-400" aria-hidden="true" />,
               heading: 'Smarter decisions with every session logged.',
-              body: 'Because our database structure never changes, PPN generates beautiful, real-time visual analytics — so you can benchmark your outcomes against the global peer network.',
+              body: 'Because our database structure never changes, PPN generates beautiful, real-time visual analytics, so you can benchmark your outcomes against the global peer network.',
             },
           ].map(({ icon, heading, body }) => (
             <div key={heading} className="bg-slate-900/60 backdrop-blur-md border border-white/10 rounded-[2rem] p-8 shadow-xl shadow-black/40 hover:border-white/[0.14] transition-colors">
@@ -164,7 +164,7 @@ const ForClinicians: React.FC = () => {
             Ready to join the vanguard of psychedelic medicine?
           </h2>
           <p className="ppn-body text-slate-400 max-w-lg mx-auto mb-10">
-            Get instant access to the clinical tools, outcome tracking, and global benchmark intelligence — built for practitioners ready to lead.
+            Get instant access to the clinical tools, outcome tracking, and global benchmark intelligence, built for practitioners ready to lead.
           </p>
           <button
             onClick={() => navigate('/waitlist')}

@@ -126,3 +126,19 @@ A Principal Investigator or research director needs to navigate an interactive, 
 - Adverse Event Report → `public/screenshots/Phase2.3.3-Form-Adverse-Events.webp`
 
 **LEAD routing:** → `03_BUILD`. No blockers.
+
+---
+
+## INSPECTOR QA — Visual Evidence
+![WO-648: Researcher Portfolio — white background print fix verified](/Users/trevorcalton/.gemini/antigravity/brain/25ca7091-11e2-4317-8401-548d548bb8ff/researcher_portfolio_screen_1774270594309.png)
+
+**INSPECTOR VERDICT: APPROVED | Date: 2026-03-23**
+
+Phase 6 print fix applied — `@media print` block now forces `background: #ffffff` on all dark sections (including `.arch-strip`). Browser-verified: white background confirms, zero console errors, all images load.
+
+> 🔔 **@USER — WO-648 has passed QA.** Screenshot above shows current render. Please confirm before I push:
+> - [ ] **Visual render:** Does the Researcher portfolio look correct? (See screenshot above)
+> - [ ] **Print output:** Open the file → Cmd+P — does the print preview show a white background?
+> - [ ] **No regressions:** Footer, CTAs, and module tabs all functional?
+>
+> Reply **`push WO-648`** to deploy · **`hold [reason]`** to send back

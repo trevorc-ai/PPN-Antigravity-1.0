@@ -220,7 +220,7 @@ const Login: React.FC = () => {
 
               {/* Email Field */}
               <div>
-                <label htmlFor="login-email" className="block text-xs font-black text-slate-300 uppercase tracking-[0.2em] mb-2">
+                <label htmlFor="login-email" className="block text-sm font-black text-slate-300 uppercase tracking-[0.2em] mb-2">
                   Email
                 </label>
                 <input
@@ -237,7 +237,7 @@ const Login: React.FC = () => {
 
               {/* Password Field */}
               <div>
-                <label htmlFor="login-password" className="block text-xs font-black text-slate-300 uppercase tracking-[0.2em] mb-2">
+                <label htmlFor="login-password" className="block text-sm font-black text-slate-300 uppercase tracking-[0.2em] mb-2">
                   Password
                 </label>
                 <div className="relative">
@@ -286,7 +286,7 @@ const Login: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => { setShowResetModal(true); setError(null); }}
-                  className="text-xs text-indigo-400 hover:text-indigo-300 font-bold transition-colors"
+                  className="text-sm text-indigo-400 hover:text-indigo-300 font-bold transition-colors"
                 >
                   Forgot Password?
                 </button>
@@ -299,7 +299,7 @@ const Login: React.FC = () => {
                   PPN Portal is{' '}
                   <span className="text-slate-300 font-bold">invitation-only.</span>
                 </p>
-                <p className="text-xs text-slate-500 font-medium mt-1">
+                <p className="text-sm text-slate-500 font-medium mt-1">
                   Access is granted by your PPN administrator via email invitation.
                 </p>
               </div>
@@ -308,7 +308,7 @@ const Login: React.FC = () => {
         </div>
 
         {/* Security Badge */}
-        <div className="mt-6 flex items-center justify-center gap-2 text-slate-500 text-xs">
+        <div className="mt-6 flex items-center justify-center gap-2 text-slate-500 text-sm">
           <ShieldCheck className="w-4 h-4" />
           <span className="font-black uppercase tracking-widest">HIPAA Compliant • End-to-End Encrypted</span>
         </div>
@@ -358,7 +358,7 @@ const Login: React.FC = () => {
                     )}
 
                     <div>
-                      <label htmlFor="reset-email" className="block text-xs font-black text-slate-300 uppercase tracking-[0.2em] mb-2">
+                      <label htmlFor="reset-email" className="block text-sm font-black text-slate-300 uppercase tracking-[0.2em] mb-2">
                         Email Address
                       </label>
                       <input
