@@ -59,6 +59,7 @@ Read `/ppn-ui-standards` Quick Reference table, then verify the WO spec, design 
 - [ ] **Background (screen):** Deep Slate `#020408` / `bg-slate-950` specified — no flat black
 - [ ] **Background (print/PDF):** White `#ffffff` or near-white `#f8f9fc` — no dark fills _(skip if no print/PDF in scope)_
 - [ ] **Branding:** PPN Portal wordmark required in header for any outreach or PDF file _(skip if platform-only React)_
+- [ ] **Mobile-first layout:** Grid, flex, and container classes in the spec use mobile-first patterns (`grid-cols-1 md:grid-cols-N`, `flex-col md:flex-row`). No bare `grid-cols-2+` or `w-1/2` on flex children without responsive prefix. Any interactive element (button, input, card tap) has a minimum touch target of `h-12` (48px).
 
 If ANY check fails → **return ticket to `02_TRIAGE`** with `hold_reason: ppn-ui-standards violation — [specific failing check]`. Do NOT sign the clearance block.
 
@@ -94,6 +95,7 @@ You must evaluate BUILDER's output against this exact checklist. Paste this chec
 - [ ] **Typography Check:** Are there any font sizes implemented that are smaller than 9pt / 12px? (If YES -> FAIL)
 - [ ] **Character Check:** Does the new code or UI text contain an em dash character? (If YES -> FAIL)
 - [ ] **Input Check:** Were any uncontrolled free-text `textarea` inputs added for clinical data? (If YES -> FAIL)
+- [ ] **Mobile-First Check:** Run `grep -n 'grid-cols-[2-9]\b' <file> | grep -v 'md:\|lg:\|sm:'` — any match that cannot be manually justified as intentionally mobile-only = FAIL. Run `grep -n 'w-\[.*px\]\|min-w-\[.*px\]' <file> | grep -v 'max-w-'` — any match = FAIL. All tappable elements must be `h-12` or larger.
 
 ## PHASE 3: VERDICT (for React / TSX / platform code only)
 
@@ -168,6 +170,7 @@ Overall: ✅ REGRESSION CLEAR — proceeding to /finalize_feature
 - [ ] **Background Check:** Hero section and page background is white or near-white. No dark navy or dark-fill hero sections
 - [ ] **CONTENT_MATRIX Traceability:** A corresponding `GO-XXX_CONTENT_MATRIX.md` exists in `_GROWTH_ORDERS/06_QA/` or `99_PUBLISHED/`
 - [ ] **MARKETER Self-Certification:** The CONTENT_MATRIX.md contains the accessibility pre-check certification block at the end
+- [ ] **Mobile-Viewport Screenshot:** INSPECTOR must capture a screenshot at 375px viewport width using the browser subagent (iPhone SE equivalent). Layout must stack correctly — no horizontal overflow, no truncated CTAs, no unusable touch targets. Any overflow or broken layout = FAIL.
 
 ## PHASE 5: COLOR BLINDNESS AND WCAG AA ACCESSIBILITY AUDIT
 
@@ -257,3 +260,4 @@ User replies `hold [reason]` → INSPECTOR logs the issue, moves WO back to `04_
 | 1.3 | 2026-03-22 | LEAD | Added Phase 0 (02.5_PRE-BUILD_REVIEW pre-build checklist: fast-pass rule, DB schema compatibility, index type recommendations, backend efficiency). Added Phase 5.5 (joint User visual confirmation at 05_USER_REVIEW before push). Fixed frontmatter. |
 | 1.4 | 2026-03-23 | LEAD | Phase 5.5 rewritten — mandatory browser screenshot block required before any ticket moves to 06_USER_REVIEW. Screenshots embedded directly in WO ticket file. Updated stage name to 06_USER_REVIEW. INSPECTOR must use browser subagent to capture and append evidence before posting @USER notification. |
 | 1.5 | 2026-03-23 | LEAD | Added UI Standards Pre-Build Gate to Phase 0. Any WO with visible files (.tsx, .css, .html, public/outreach) must pass 7 ppn-ui-standards checks before INSPECTOR signs the 02.5 CLEARANCE block. Failure returns ticket to 02_TRIAGE. Updated clearance block template to include gate line. |
+| 1.6 | 2026-03-23 | LEAD | **Added mobile-first enforcement gates.** Phase 0 pre-build checklist: added mobile-first layout check (8th item). Phase 2 UI audit: added Mobile-First Check with grep commands for bare grid-cols and hardcoded px widths. Phase 4 outreach audit: added mandatory 375px mobile-viewport screenshot requirement. Root cause fix for recurring desktop-first rework. |

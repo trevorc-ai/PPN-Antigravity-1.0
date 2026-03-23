@@ -15,6 +15,7 @@ For fast builds, this 10-line summary covers the most common violations. Use the
 
 | Rule | Requirement |
 |---|---|
+| **Mobile-first** | **MANDATORY. Write mobile layout first. Desktop is an enhancement via `md:` / `lg:` prefixes. No hardcoded px widths on layout containers.** |
 | Em dash | BANNED everywhere. Replace with colon or comma. |
 | Font | `Inter` only. `Roboto Mono` for code/labels. `JetBrains Mono` and `Courier New` are banned. |
 | Font floor | 12px screen minimum. 9pt (12px) print minimum. |
@@ -208,6 +209,50 @@ If any element relies on color alone to communicate state (error, warning, succe
 
 ---
 
+## Rule 8: Mobile-First Mandate
+
+> **This rule exists because practitioners will QR-scan ppnportal.net from a phone at trade shows, and because clinical staff use tablets at point-of-care. Desktop-first layouts that are "made responsive later" always produce rework. Mobile is the primary canvas.**
+
+### 8a: Layout Construction Order (Mandatory)
+
+| Step | Rule |
+|---|---|
+| **1. Write mobile first** | All layout, spacing, and typography classes must be written for the smallest screen first (no prefix = mobile). |
+| **2. Add desktop enhancement** | Use `md:` and `lg:` responsive prefixes to upgrade the layout for wider viewports. |
+| **3. No hardcoded widths on containers** | Never use `w-[640px]`, `min-w-[500px]`, or any fixed-px width on layout containers. Use `max-w-*` with `mx-auto` for centering. |
+| **4. No `hover:`-only interactions** | Any interaction designed as `hover:` must also work on `tap`. Use `active:` and `focus:` states as the fallback. |
+
+### 8b: Mandatory Responsive Patterns
+
+| Pattern | Wrong | Correct |
+|---|---|---|
+| Grid layout | `grid-cols-3` (breaks on mobile) | `grid-cols-1 md:grid-cols-3` |
+| Two-column split | `flex` with `w-1/2` children | `flex flex-col md:flex-row` with `w-full md:w-1/2` |
+| Chart/data containers | `<div style="width: 700px">` | `<ResponsiveContainer width="100%">` or `w-full` |
+| Pricing / comparison table | Side-by-side columns | Stacked cards on mobile, table on `md:` |
+| Nav / header items | Always visible inline | `hidden md:flex` with a mobile hamburger or collapsed menu |
+| Button width | `px-8` inline button | `w-full sm:w-auto` |
+| Touch targets | `h-8` (32px) | `h-12` (48px minimum) for any tappable element |
+
+### 8c: Pre-Commit Mobile Check (BUILDER must run before every handoff)
+
+```bash
+# Check for hardcoded pixel widths on layout containers
+grep -n 'w-\[.*px\]\|min-w-\[.*px\]\|style.*width.*px' <file> | grep -v 'max-w-'
+# Must return empty or be justified with a comment
+
+# Check for grid-cols without mobile-first pattern
+grep -n 'grid-cols-[2-9]\b' <file> | grep -v 'md:\|lg:\|sm:'
+# Any match = likely missing mobile breakpoint — verify manually
+```
+
+### 8d: INSPECTOR Mobile Gate (Phase 2 addition — see inspector-qa-script)
+
+- Every `.tsx`, `.html`, or `.css` file with visible layout must pass the mobile-first check before INSPECTOR approves.
+- INSPECTOR must take a mobile-viewport screenshot (375px wide) for every Growth Order and public-facing screen before issuing Phase 4/5 approval.
+
+---
+
 ## Changelog
 
 | Version | Date | Author | Change |
@@ -215,3 +260,4 @@ If any element relies on color alone to communicate state (error, warning, succe
 | 1.0 | 2026-02-23 | INSPECTOR | Initial standards established |
 | 1.1 | 2026-03-21 | LEAD | Added Rule 6 (color blindness explicit: WCAG AA, banned pairs, phase palette verification), expanded Rule 5 (print pre-flight checklist, header/footer requirements), added Rule 7 (public-facing polish: branding, typography, layout, legal footer), updated description |
 | 1.2 | 2026-03-22 | PRODDY | Confirmed `JetBrains Mono` banned (already in Rule 2b table). Updated Quick Reference row to explicitly surface the ban. |
+| 1.3 | 2026-03-23 | LEAD | **Added Rule 8: Mobile-First Mandate.** Root cause fix for recurring rework. Establishes mobile as the primary layout canvas. Adds 8a (construction order), 8b (responsive patterns), 8c (BUILDER pre-commit grep checks), 8d (INSPECTOR mobile gate). Added Mobile-First row to Quick Reference table. |
