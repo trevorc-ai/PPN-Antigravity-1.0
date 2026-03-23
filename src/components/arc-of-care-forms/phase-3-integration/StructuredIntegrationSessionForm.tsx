@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Brain, Save, CheckCircle, Star } from 'lucide-react';
+import { Brain, Save, CheckCircle, Star, Clock, XCircle } from 'lucide-react';
 import { FormField } from '../shared/FormField';
 import { FormFooter } from '../shared/FormFooter';
 
@@ -168,15 +168,15 @@ const StructuredIntegrationSessionForm: React.FC<StructuredIntegrationSessionFor
                 <div className="flex items-start justify-between">
                     <div>
                         <h2 className="text-2xl font-black text-slate-300 flex items-center gap-3">
-                            <Brain className="w-7 h-7 text-purple-400" />
+                            <Brain className="w-7 h-7 text-teal-400" />
                             Structured Integration Session
                         </h2>
                         <p className="text-slate-300 text-sm mt-2">
                             PHI-safe structured session documentation with zero free-text inputs
                         </p>
                     </div>
-                    <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-lg px-3 py-1">
-                        <span className="text-xs font-bold text-emerald-400">✓ 100% COMPLIANT</span>
+                    <div className="bg-teal-500/10 border border-teal-500/30 rounded-lg px-3 py-1">
+                        <span className="text-sm font-bold text-teal-400">✓ PHI-SAFE</span>
                     </div>
                 </div>
             </div>
@@ -234,19 +234,20 @@ const StructuredIntegrationSessionForm: React.FC<StructuredIntegrationSessionFor
                 <FormField label="Attendance">
                     <div className="flex gap-2">
                         {[
-                            { value: 'attended', label: 'Attended', color: 'emerald' },
-                            { value: 'cancelled', label: 'Cancelled', color: 'yellow' },
-                            { value: 'no_show', label: 'No-Show', color: 'red' }
-                        ].map(({ value, label, color }) => (
+                            { value: 'attended', label: 'Attended', Icon: CheckCircle, activeClass: 'bg-teal-600 text-white' },
+                            { value: 'cancelled', label: 'Cancelled', Icon: Clock, activeClass: 'bg-amber-600 text-white' },
+                            { value: 'no_show', label: 'No-Show', Icon: XCircle, activeClass: 'bg-slate-600 text-white' }
+                        ].map(({ value, label, Icon, activeClass }) => (
                             <button
                                 key={value}
                                 type="button"
                                 onClick={() => updateField('attendance_status', value as 'attended' | 'cancelled' | 'no_show')}
-                                className={`flex-1 px-4 py-3 rounded-lg font-medium transition-all ${data.attendance_status === value
-                                    ? `bg-${color}-500 text-slate-300`
+                                className={`flex-1 px-4 py-3 rounded-lg font-medium transition-all flex items-center justify-center gap-2 ${data.attendance_status === value
+                                    ? activeClass
                                     : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700/50'
                                     }`}
                             >
+                                <Icon className="w-4 h-4" />
                                 {label}
                             </button>
                         ))}
@@ -315,7 +316,7 @@ const StructuredIntegrationSessionForm: React.FC<StructuredIntegrationSessionFor
                                 type="button"
                                 onClick={() => toggleArrayItem('homework_assigned_ids', homework.id)}
                                 className={`px-4 py-3 rounded-lg text-left font-medium transition-all ${data.homework_assigned_ids.includes(homework.id)
-                                    ? 'bg-cyan-500 text-slate-300'
+                                    ? 'bg-teal-600 text-white'
                                     : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700/50'
                                     }`}
                             >
@@ -324,7 +325,7 @@ const StructuredIntegrationSessionForm: React.FC<StructuredIntegrationSessionFor
                                         <CheckCircle className={`w-4 h-4 ${data.homework_assigned_ids.includes(homework.id) ? 'opacity-100' : 'opacity-0'}`} />
                                         {homework.name}
                                     </div>
-                                    <span className="text-xs opacity-75">({homework.frequency})</span>
+                                    <span className="text-sm opacity-75">({homework.frequency})</span>
                                 </div>
                             </button>
                         ))}

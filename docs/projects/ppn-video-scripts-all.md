@@ -12,22 +12,22 @@
 
 # SCRIPT 0 -- Platform Overview: The 5-Minute Arc
 **Type:** Sales + Onboarding | **Runtime target:** 240-300 seconds
-**Denver Priority:** P0 -- Must ship by April 4
+**Priority:** P0 -- Flagship overview
 
 ---
 
 ### HOOK (0:00-0:12)
-> "This is what your practice looks like now."
+> "How many sessions have you run this year where you could not produce a structured clinical record within 24 hours?"
 > *(pause 1.5 seconds)*
-> "And this is what PPN helps you see instead."
+> "PPN Portal was built so that question never applies to you again."
 
 ---
 
 ### NARRATION
 
-Psychedelic therapy is one of the most promising -- and most complex -- areas of modern clinical care. You are managing protocols that are highly individualized, sessions that are intensely physiological, and regulatory environments that are still evolving. Documentation is not optional. It is the difference between evidenced practice and guesswork.
+Psychedelic therapy is one of the most promising, and most complex, areas of modern clinical care. You are managing protocols that are highly individualized, sessions that are intensely physiological, and regulatory environments that are still evolving. Documentation is not optional. It is the difference between evidenced practice and guesswork.
 
-PPN -- the Psychedelic Practitioner Network -- is the first structured clinical platform built specifically for the work you do. Every session you log, every vital you record, every report you generate becomes part of a permanent, structured record that does not just store your data -- it understands it.
+PPN Portal, the Psychedelic Practitioner Network, is the first structured clinical platform built specifically for the work you do. Every session you log, every vital you record, every report you generate becomes part of a permanent, structured record that does not just store your data, it understands it.
 
 When you open PPN for the first time, you are greeted with your clinical workspace. From here, you can add and manage your patient list, view their treatment arcs across multiple phases, check drug interactions before you ever begin, and launch a live session cockpit the moment your patient arrives.
 
@@ -64,11 +64,16 @@ This is not software. This is the clinical infrastructure that your work deserve
 1. **Opening (pairs with hook):** "Overhead time-lapse of a medical clinic hallway, soft clinical lighting, slow motion, dark cinematic tones, documentary style"
 2. **Closing (pairs with 'clinical infrastructure'):** "Macro close-up of a glowing green data node on a dark circuit-board texture, smooth rack focus, clinical precision aesthetic"
 
+### CLOSING CARD
+> "PPN Portal -- ppnportal.net"
+> *(hold 2.5 seconds on deep black background, Clinical Green wordmark)*
+> "The clinical infrastructure your practice deserves."
+
 ---
 
 # SCRIPT 1 -- The Dosing Cockpit: Real-Time Clinical Intelligence
 **Type:** HERO Sales Demo | **Runtime target:** 90-150 seconds
-**Denver Priority:** P0 -- Must ship by April 4
+**Priority:** P0 -- HERO video
 
 ---
 
@@ -85,7 +90,7 @@ The Dosing Cockpit changed that.
 
 The moment a session begins, a live physiological record starts building. Heart rate plotted in real time. Systolic blood pressure tracked across every check. Temperature logged alongside the session timeline, with every clinical event pinned directly onto the chart at the moment it happened.
 
-You can see when the dose was administered. You can see when the patient reached peak experience. You can see exactly where a safety event occurred relative to the vitals trending at that moment -- not as a note in a file, but as a data point on a clinical record.
+You can see when the dose was administered. You can see when the patient reached peak experience. You can see exactly where a safety event occurred relative to the vitals trending at that moment, not as a note in a file, but as a data point on a clinical record.
 
 If heart rate exceeds 130 beats per minute, or systolic pressure climbs above 140 millimeters of mercury, the chart flags it. Not after the session. Right now.
 
@@ -122,11 +127,16 @@ This is what real-time clinical intelligence looks like.
 1. **Hook pairing:** "Cinematic macro of a glowing rose-red cardiac waveform on a deep black background, soft pulse animation, medical precision, smooth camera drift"
 2. **Threshold alert moment:** "Macro close-up of a glowing amber threshold indicator light, soft bokeh background, medical device aesthetic, 4 seconds"
 
+### CLOSING CARD
+> "PPN Portal -- ppnportal.net"
+> *(hold 2.5 seconds)*
+> "Start your first session today."
+
 ---
 
 # SCRIPT 2 -- The Global Benchmark: You Are Not Practicing Alone
 **Type:** HERO Sales Demo | **Runtime target:** 90-120 seconds
-**Denver Priority:** Post-Denver -- wait for real network data before filming
+**Priority:** Film after real network data is available
 
 ---
 
@@ -180,32 +190,41 @@ This is what a networked practice looks like.
 1. **Hook pairing:** "Aerial drone view of glowing network nodes connecting across a dark globe, Clinical Green #53d22d light trails, smooth pullback camera, cinematic, 4 seconds"
 2. **Benchmark reveal:** "Abstract data visualization: glowing bar chart rising from black, clean white grid lines, medical precision aesthetic, slow zoom in"
 
+### CLOSING CARD
+> "PPN Portal -- ppnportal.net"
+> *(hold 2.5 seconds)*
+> "You are not practicing alone."
+
 ---
 
 # SCRIPT 3 -- The Report Suite: Your Compliance Stack
 **Type:** HERO Sales Demo | **Runtime target:** 120-150 seconds
-**Denver Priority:** P0 -- Must ship by April 4
+**Priority:** P0 -- HERO video
 
 ---
 
-### HOOK (0:00-0:12)
-> "When a payer asks for documentation of a psilocybin session, what do you hand them?"
+### HOOK (0:00-0:15)
+> "A practitioner we spoke with spent six hours assembling documentation for a single insurance audit."
+> *(pause 1 second)*
+> "Six hours. For one session."
+> *(pause 1 second)*
+> "PPN Portal generates that same package in one click."
 
 ---
 
 ### NARRATION
 
-Before PPN, practitioners answered that question with PDFs cobbled from notes, spreadsheets, and memory. After PPN, you hand them a suite of clinical reports -- structured, timestamped, and built from the exact data logged during the session.
+Before PPN Portal, practitioners answered that question with PDFs cobbled from notes, spreadsheets, and memory. After PPN Portal, you hand them a suite of clinical reports: structured, timestamped, and built from the exact data logged during the session.
 
-The Clinical Outcomes Report is your primary record. It begins with the patient's baseline: PHQ-9 and GAD-7 scores, diagnoses, physical status, and the complete protocol specification. It continues into the session itself: every vital check recorded in the cockpit, plotted across elapsed time. The Pharmacokinetic Flight Plan maps your protocol decision -- dose, weight, timing -- to expected concentration curves for your specific molecule.
+The Clinical Outcomes Report is your primary record. It begins with the patient's baseline: PHQ-9 and GAD-7 scores, diagnoses, physical status, and the complete protocol specification. It continues into the session itself: every vital check recorded in the cockpit, plotted across elapsed time. The Pharmacokinetic Flight Plan maps your protocol decision (dose, weight, timing) to expected concentration curves for your specific molecule.
 
 For cardiac safety, the QT Interval table sits prominently in the report, pre-calculated from your protocol and the patient's baseline data, formatted for review by any cardiologist or institutional committee.
 
-The MEQ-30 -- the gold standard mystical experience scale -- is embedded after session completion. And the Integration Compass summarizes the patient's post-session psychological trajectory: where they started, where they are now, and what integration work remains.
+The MEQ-30, the gold standard mystical experience scale, is embedded after session completion. And the Integration Compass summarizes the patient's post-session psychological trajectory: where they started, where they are now, and what integration work remains.
 
 Every report exports as a PDF with one click. Every report is formatted for US Letter or A4 printing, using a clean white layout designed for institutional review.
 
-There is also a Session Export -- a complete, timestamped record of every clinical event logged during the session. And the Patient Report, accessible from the patient-facing portal, summarizes the Wellness Journey in plain language they can share with their own physician.
+There is also a Session Export, a complete and timestamped record of every clinical event logged during the session. And the Patient Report, accessible from the patient-facing portal, summarizes the Wellness Journey in plain language they can share with their own physician.
 
 Your practice is now documented. And your documentation is now a clinical asset.
 
@@ -240,11 +259,16 @@ Your practice is now documented. And your documentation is now a clinical asset.
 1. **Hook pairing:** "Overhead macro shot of a sealed clinical document folder, dramatic directional lighting, deep black background, glowing green embossed checkmark, 4 seconds"
 2. **Closing ('documentation as an asset'):** "Slow push-in on a printed clinical report sitting on a clean white desk under focused clinical lighting, precise and professional"
 
+### CLOSING CARD
+> "PPN Portal -- ppnportal.net"
+> *(hold 2.5 seconds)*
+> "Your documentation is your asset. One click."
+
 ---
 
 # SCRIPT 4 -- The Wellness Journey: A Patient's Full Arc
 **Type:** Onboarding | **Runtime target:** 150-180 seconds
-**Denver Priority:** Post-Denver
+**Priority:** Film after Scripts 0, 1, 3
 
 ---
 
@@ -255,11 +279,11 @@ Your practice is now documented. And your documentation is now a clinical asset.
 
 ### NARRATION
 
-Psychedelic therapy is not a single session. It is a structured arc -- Preparation, Dosing, and Integration -- each phase building on the last. PPN's Wellness Journey mirrors that arc exactly.
+Psychedelic therapy is not a single session. It is a structured arc of Preparation, Dosing, and Integration, each phase building on the last. PPN Portal's Wellness Journey mirrors that arc exactly.
 
-In Phase 1, Preparation, you document everything that matters before the session begins. The patient's baseline mental health scores: PHQ-9, GAD-7, and MEQ-30. Their physical status: age range, weight, medications, cardiac history. Their protocol: which molecule, which dose, which administration schedule. This is not a form -- it is the clinical foundation that every downstream record depends on.
+In Phase 1, Preparation, you document everything that matters before the session begins. The patient's baseline mental health scores: PHQ-9, GAD-7, and MEQ-30. Their physical status: age range, weight, medications, cardiac history. Their protocol: which molecule, which dose, which administration schedule. This is not a form, it is the clinical foundation that every downstream record depends on.
 
-Before you proceed, PPN runs a drug interaction screen. If there is a contraindication between the selected substance and any medication your patient is taking, you will see it -- with its risk level, its mechanism, and a citation from the peer-reviewed literature. You log your clinical decision. The record is permanent.
+Before you proceed, PPN Portal runs a drug interaction screen. If there is a contraindication between the selected substance and any medication your patient is taking, you will see it, with its risk level, its mechanism, and a citation from the peer-reviewed literature. You log your clinical decision. The record is permanent.
 
 In Phase 2, Dosing, you enter the Cockpit. From this point, every vital check, every event, every clinical note is timestamped from T-plus-zero. You are building a physiological record in real time.
 
@@ -296,11 +320,16 @@ Three phases. One record. One platform.
 1. **Opening:** "Gentle time-lapse of sunrise through a frosted clinical window, soft diffused light, warm and calm, slow motion, 4 seconds"
 2. **Phase 2 transition:** "Macro close-up of a glowing green pulse waveform on black, slow fade-in from darkness, steady beat, clinical aesthetic"
 
+### CLOSING CARD
+> "PPN Portal -- ppnportal.net"
+> *(hold 2.5 seconds)*
+> "Three phases. One record. One platform."
+
 ---
 
 # SCRIPT 5 -- The Interaction Checker: Safety Before You Begin
 **Type:** Onboarding + Safety Feature | **Runtime target:** 90-120 seconds
-**Denver Priority:** Post-Denver
+**Priority:** Film after Scripts 0, 1, 3
 
 ---
 
@@ -311,11 +340,11 @@ Three phases. One record. One platform.
 
 ### NARRATION
 
-Contraindication screening is one of the most critical -- and most frequently skipped -- steps in psychedelic practice. Not because practitioners do not care. Because there was not a tool purpose-built for this work.
+Contraindication screening is one of the most critical, and most frequently skipped, steps in psychedelic practice. Not because practitioners do not care. Because there was not a tool purpose-built for this work.
 
 PPN's Interaction Checker is that tool.
 
-Select the psychedelic compound in use -- psilocybin, MDMA, ketamine, ibogaine, and others, drawn from a validated reference list. Then select the patient's concurrent medication. In under a second, PPN queries a clinical knowledge graph built from peer-reviewed literature and cross-references the National Library of Medicine.
+Select the psychedelic compound in use: psilocybin, MDMA, ketamine, ibogaine, and others, drawn from a validated reference list. Then select the patient's concurrent medication. In under a second, PPN Portal queries a clinical knowledge graph built from peer-reviewed literature and cross-references the National Library of Medicine.
 
 The result appears immediately: a risk score from 1 to 10, a severity grade of No Known Interaction, Clinical Caution, or Contraindicated, along with the clinical description and the exact mechanism of the interaction.
 
@@ -352,7 +381,12 @@ Safety is not a checkbox. It is a posture. And this is how PPN helps you hold it
 
 ### VEO B-ROLL PROMPTS
 1. **Hook pairing:** "Cinematic macro of a glowing amber warning indicator on a black surface, soft depth-of-field blur in background, medical safety aesthetic, 4 seconds"
-2. **Close -- 'safety as a posture':** "Wide shot of a practitioner at a clean desk with a single glowing monitor, calm clinical lighting, thoughtful and precise, documentary style"
+2. **Close - 'safety as a posture':** "Wide shot of a practitioner at a clean desk with a single glowing monitor, calm clinical lighting, thoughtful and precise, documentary style"
+
+### CLOSING CARD
+> "PPN Portal -- ppnportal.net"
+> *(hold 2.5 seconds)*
+> "Safety is not a checkbox. It is a posture."
 
 ---
 
@@ -370,6 +404,16 @@ Safety is not a checkbox. It is a posture. And this is how PPN helps you hold it
 - **Pace:** Unhurried. Clinical without being cold.
 - **Emphasis words:** "right now," "permanent," "exactly," "immediately" -- these carry the weight. Let the voice land on them.
 - **Pauses:** 0.5 seconds after rhetorical questions in hooks and after the final line of each script.
+- **Silence:** After the single most important line in each script (the line that names the core output), the Descript timeline should hold for 1 full second before continuing. Silence is not dead air for a clinical audience.
+
+### Demo Data Seeding (Required Before Screenshot Capture)
+The vitals chart in Script 1 and the report suite in Script 3 are only compelling if the demo patient has rich, complete data. Before any production screenshot is taken, seed the DEMO-2026-001 synthetic patient with:
+- A full 4-hour session with vitals logged every 15 minutes
+- A complete event pin set: dose_admin at T+00:00, vital_check at T+00:15, PEAK at T+02:00, patient_observation at T+02:30, CLOSE at T+04:00
+- PHQ-9 and GAD-7 baseline scores (recommend PHQ-9: 14, GAD-7: 11 -- moderate severity, shows meaningful delta at integration)
+- Post-session longitudinal assessment scores showing measurable improvement
+- A completed MEQ-30 and Integration Compass entry
+Do not film a sparse or empty-state session. The data behind the screenshot IS the argument.
 
 ### Glow Effect Spec
 - **Type:** Drop shadow + outer glow, 2-4px radius
@@ -378,7 +422,7 @@ Safety is not a checkbox. It is a posture. And this is how PPN helps you hold it
 - **Safety-critical element:** Rose #f43f5e
 
 ### Screenshot Capture Spec
-- Source: ppnportal.net production (not localhost -- Cockpit Mode only available in production)
+- Source: ppnportal.net production (not localhost; Cockpit Mode only available in production)
 - Format: .webp preferred
-- Resolution: Maximum -- browser zoom 100%, full window
+- Resolution: Maximum, browser zoom 100%, full window
 - Overlay state: Tooltips closed, no loading states

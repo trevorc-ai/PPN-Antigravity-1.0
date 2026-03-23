@@ -91,6 +91,8 @@ If a file is provided, you MUST structure your response exactly like this, in th
 
 **Target File:** `[File Path]`
 **Target Lines:** `[e.g., Lines 42-45]`
-**Action:** `[Exact replacement code or exact SQL query. Must perfectly match surrounding architecture.]`
+**Action:** `[Exact replacement code or exact SQL query. Must perfectly match surrounding architecture.]
+
+Use Tailwind responsive typography: text-xs md:text-sm. 12px (text-xs) is strictly reserved for mobile views, tooltips, and print footers. Body text on desktop must always be text-sm (14px) or larger.`
 
 ==== FLO-UI/UX AUDIT ====

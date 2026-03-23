@@ -945,7 +945,7 @@ const ClinicalReportPDF: React.FC = () => {
                         Dashed polygon = population average for {data.substanceName ?? 'this substance'}.
                         Solid polygon = this patient's session profile derived from timeline event types and intensities.
                     </p>
-                    <div style={{ backgroundColor: '#0a1628', borderRadius: '8px', padding: '12px', border: '1px solid #1e3a5f', marginBottom: '16px' }}>
+                    <div style={{ backgroundColor: '#0a1628', borderRadius: '8px', padding: '12px 12px 4px', border: '1px solid #1e3a5f', marginBottom: '16px' }}>
                         <CompassSpiderGraph
                             substanceCategory={data.substanceCategory ?? 'psilocybin'}
                             accentColor={data.accentColor ?? '#2dd4bf'}

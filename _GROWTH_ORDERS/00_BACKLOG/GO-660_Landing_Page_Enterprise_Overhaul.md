@@ -8,11 +8,27 @@ created_at: 2026-03-23
 created_by: LEAD
 source_brief: "Downloads/PPN Landing Page and Launch 03-22-26.md"
 type: public_facing
-route: ppnportal.net (Landing.tsx)
+route: ppnportal.net (Landing.tsx and all front-door pages — see scope below)
 pipeline: _GROWTH_ORDERS (mandatory — public-facing deliverable)
 ---
 
 # GO-660: Landing Page Enterprise Overhaul — PsyCon Denver Launch
+
+> ⛔ **FRONT DOOR COORDINATION LOCK — READ BEFORE ANY IMPLEMENTATION**
+>
+> The homepage (`Landing.tsx`) is architecturally and visually interrelated with all other front-door pages. **No individual front-door page may go live until the entire front-door set has been fully designed, reviewed, and approved as a cohesive group.**
+>
+> **Front-door page set (all must be approved together):**
+> - `Landing.tsx` — Homepage
+> - `ForClinicians.tsx` — Clinical audience entry
+> - `ForPayers.tsx` — Payer/institutional entry
+> - `Waitlist.tsx` + `WaitlistPage.tsx` (`/join`) — Lead capture
+> - `Pricing.tsx` — Commercial model
+> - `Login.tsx` — Authentication entry
+> - `StructuralPrivacy.tsx` — Privacy policy entry
+> - `PartnerDemoPage.tsx` + `PartnerDemoHub.tsx` — Partner sales flow
+>
+> BUILDER must NOT push any page from this set to production independently. The deploy is a coordinated all-or-nothing release.
 
 ## Strategic Context
 

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { TrendingUp, Save, CheckCircle, Star } from 'lucide-react';
+import { TrendingUp, Save, CheckCircle, Star, ArrowUp, ArrowDown, Minus, AlertTriangle } from 'lucide-react';
 import { FormField } from '../shared/FormField';
 import { FormFooter } from '../shared/FormFooter';
 
@@ -142,8 +142,8 @@ const BehavioralChangeTrackerForm: React.FC<BehavioralChangeTrackerFormProps> = 
                             Track meaningful behavioral changes with structured, PHI-safe inputs
                         </p>
                     </div>
-                    <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-lg px-3 py-1">
-                        <span className="text-xs font-bold text-emerald-400">✓ 100% COMPLIANT</span>
+                    <div className="bg-teal-500/10 border border-teal-500/30 rounded-lg px-3 py-1">
+                        <span className="text-sm font-bold text-teal-400">✓ PHI-SAFE</span>
                     </div>
                 </div>
             </div>
@@ -229,22 +229,24 @@ const BehavioralChangeTrackerForm: React.FC<BehavioralChangeTrackerFormProps> = 
                 <FormField label="Impact on Well-Being">
                     <div className="grid grid-cols-1 gap-2">
                         {[
-                            { value: 'highly_positive', label: '😊 Highly Positive', color: 'emerald' },
-                            { value: 'moderately_positive', label: '🙂 Moderately Positive', color: 'green' },
-                            { value: 'neutral', label: '😐 Neutral', color: 'slate' },
-                            { value: 'moderately_negative', label: '😕 Moderately Negative', color: 'yellow' },
-                            { value: 'highly_negative', label: '😞 Highly Negative', color: 'red' }
-                        ].map(({ value, label, color }) => (
+                            { value: 'highly_positive',    label: 'Highly Positive',    emoji: '😊', Icon: TrendingUp,    activeClass: 'bg-teal-600 text-white' },
+                            { value: 'moderately_positive', label: 'Moderately Positive', emoji: '🙂', Icon: ArrowUp,       activeClass: 'bg-teal-800 text-white' },
+                            { value: 'neutral',            label: 'Neutral',            emoji: '😐', Icon: Minus,         activeClass: 'bg-slate-600 text-white' },
+                            { value: 'moderately_negative', label: 'Moderately Negative', emoji: '😕', Icon: ArrowDown,     activeClass: 'bg-amber-700 text-white' },
+                            { value: 'highly_negative',    label: 'Highly Negative',    emoji: '😞', Icon: AlertTriangle, activeClass: 'bg-red-800 text-white' }
+                        ].map(({ value, label, emoji, Icon, activeClass }) => (
                             <button
                                 key={value}
                                 type="button"
                                 onClick={() => updateField('impact_on_wellbeing', value as any)}
-                                className={`px-4 py-3 rounded-lg font-medium transition-all ${data.impact_on_wellbeing === value
-                                    ? `bg-${color}-500 text-slate-300`
+                                className={`px-4 py-3 rounded-lg font-medium transition-all flex items-center gap-3 ${data.impact_on_wellbeing === value
+                                    ? activeClass
                                     : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700/50'
                                     }`}
                             >
-                                {label}
+                                <span aria-hidden="true">{emoji}</span>
+                                <Icon className="w-4 h-4 shrink-0" />
+                                <span>{label}</span>
                             </button>
                         ))}
                     </div>

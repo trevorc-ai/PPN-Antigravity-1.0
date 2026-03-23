@@ -114,7 +114,7 @@ export const CompassSpiderGraph: React.FC<CompassSpiderGraphProps> = ({
     const lived: (number | null)[] = livedRaw.map(v => (v === null || v === (null as any) ? null : v));
     const hasLivedData = timelineEvents.length > 0;
 
-    const cx = 160; const cy = 155; const maxR = 110;
+    const cx = 160; const cy = 160; const maxR = 100;
     const n = AXES.length;
 
     const labels = mode === 'science' ? SCIENCE_LABELS : EXPERIENCE_LABELS;
@@ -130,8 +130,26 @@ export const CompassSpiderGraph: React.FC<CompassSpiderGraphProps> = ({
 
     return (
         <div>
-            {/* Toggle */}
-            <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 12 }}>
+            {/* Top bar: legend (left) + toggle (right) */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
+                {/* Legend — moved above SVG to avoid collision with Sensory Alteration axis label */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                        <svg width={20} height={6} aria-hidden="true">
+                            <line x1={0} y1={3} x2={20} y2={3} stroke="rgba(100,116,139,0.7)" strokeWidth={1.5} strokeDasharray="4 3" />
+                        </svg>
+                        <span style={{ fontSize: 12, fontWeight: 600, color: 'rgba(100,116,139,0.85)' }}>Predicted</span>
+                    </div>
+                    {hasLivedData && (
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                            <svg width={20} height={6} aria-hidden="true">
+                                <line x1={0} y1={3} x2={20} y2={3} stroke={accentColor} strokeWidth={2} />
+                            </svg>
+                            <span style={{ fontSize: 12, fontWeight: 600, color: accentColor }}>Your Experience</span>
+                        </div>
+                    )}
+                </div>
+                {/* Toggle */}
                 <button
                     onClick={toggleMode}
                     aria-label={`Switch to ${mode === 'experience' ? 'science' : 'experience'} mode`}
@@ -149,9 +167,9 @@ export const CompassSpiderGraph: React.FC<CompassSpiderGraphProps> = ({
             </div>
 
             <svg
-                viewBox={`0 0 320 310`}
+                viewBox={`0 0 320 330`}
                 width="100%"
-                style={{ overflow: 'visible' }}
+                style={{ overflow: 'visible', maxHeight: 380 }}
                 aria-label="Predicted vs. lived experience radar chart"
                 role="img"
             >
@@ -229,13 +247,13 @@ export const CompassSpiderGraph: React.FC<CompassSpiderGraphProps> = ({
                     />
                 )}
 
-                {/* Gap label */}
+                {/* Gap label — positioned well below the Physical Sensation axis label */}
                 {hasLivedData && (
                     <text
-                        x={cx} y={cy + maxR + 28}
+                        x={cx} y={cy + maxR + 46}
                         textAnchor="middle"
                         fill="rgba(245,158,11,0.75)"
-                        fontSize={14}
+                        fontSize={13}
                         fontWeight={700}
                         letterSpacing="0.08em"
                     >
@@ -246,7 +264,7 @@ export const CompassSpiderGraph: React.FC<CompassSpiderGraphProps> = ({
                 {/* Axis labels */}
                 {Array.from({ length: n }).map((_, i) => {
                     const angle = (2 * Math.PI * i) / n;
-                    const labelR = maxR + 22;
+                    const labelR = maxR + 24;
                     const p = polarPoint(cx, cy, labelR, angle);
                     return (
                         <text
@@ -263,17 +281,7 @@ export const CompassSpiderGraph: React.FC<CompassSpiderGraphProps> = ({
                     );
                 })}
 
-                {/* Legend */}
-                <g transform={`translate(12, 6)`}>
-                    <line x1={0} y1={6} x2={18} y2={6} stroke="rgba(100,116,139,0.6)" strokeWidth={1.5} strokeDasharray="4 3" />
-                    <text x={22} y={10} fill="rgba(100,116,139,0.8)" fontSize={14} fontWeight={600}>Predicted</text>
-                    {hasLivedData && (
-                        <>
-                            <line x1={0} y1={20} x2={18} y2={20} stroke={accentColor} strokeWidth={2} />
-                            <text x={22} y={24} fill={accentColor} fontSize={14} fontWeight={600}>Your Experience</text>
-                        </>
-                    )}
-                </g>
+                {/* Legend removed from SVG — now rendered above the chart as a flex row */}
             </svg>
 
             {/* Empty state copy */}

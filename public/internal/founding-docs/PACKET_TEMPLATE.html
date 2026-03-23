@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PPN Portal: HIPAA Legal Packet</title>
+<title>PPN Portal Document Packet</title><!-- Overwritten by buildShell() -->
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -111,6 +111,7 @@
   .bottom-nav-item.active { color: var(--accent); border-top-color: var(--accent); }
   .bottom-nav-item:hover { color: var(--accent); }
   .bottom-nav-icon { font-size: 16px; }
+  /* ─── Tablet (768-1024px) ─── */
   @media (min-width: 768px) and (max-width: 1024px) {
     :root { --sidebar-w: 56px; }
     .nav-item-label, .sidebar-section-label, .status-legend, .btn-text { display: none; }
@@ -124,6 +125,7 @@
     .bottom-nav { display: none !important; }
     .topbar-sub { display: none; }
   }
+  /* ─── Mobile (<768px) ─── */
   @media (max-width: 767px) {
     body { overflow: hidden; }
     .hamburger { display: flex; align-items: center; justify-content: center; }
@@ -156,76 +158,164 @@
 </nav>
 
 <script>
+// ═══════════════════════════════════════════════════════════
+// HOW TO USE THIS TEMPLATE
+// ─────────────────────────────────────────────────────────
+// 1. Copy this file into your packet folder (e.g. My-Packet/)
+// 2. Edit ONLY the PACKET_CONFIG block below
+// 3. Make sure each section `src` path is correct relative
+//    to this file (e.g. "my_html/00_Cover.html")
+// 4. Create a print_all.html in your section folder for
+//    the "Save All as PDF" button to work
+// 5. Do NOT touch anything outside the config block
+// ═══════════════════════════════════════════════════════════
+
 const PACKET_CONFIG = {
-  title:         'HIPAA Legal Packet',
-  reference:     'GO-651',
-  productionUrl: 'https://ppnportal.net/internal/founding-docs/HIPAA-Packet/index.html',
-  printAllUrl:   'hipaa_html/print_all.html',
-  legend:        [{ dot: 'dot-green', label: 'Confirmed Compliant' }],
+  // Shown in the topbar subtitle and browser tab
+  title: 'My Document Packet',
+
+  // Reference number shown in topbar
+  reference: 'REF-000',
+
+  // Full production URL — copied when user clicks "Copy Link"
+  productionUrl: 'https://ppnportal.net/internal/founding-docs/PACKET-NAME/index.html',
+
+  // Path to print_all.html relative to this file
+  printAllUrl: 'section_html/print_all.html',
+
+  // Optional: status legend shown at bottom of sidebar
+  // Set to null to hide, or provide an array of { dot, label } entries
+  // Available dot classes: dot-green
+  legend: null,
+  // legend: [{ dot: 'dot-green', label: 'Confirmed Compliant' }],
+
+  // Sections: each becomes one sidebar item + one iframe + one bottom nav item
   sections: [
-    { icon: '📋', label: 'Cover & Index',     num: 'CV', title: 'Cover and Index',         src: 'hipaa_html/00_Cover.html' },
-    { icon: '🛡️', label: 'Posture Overview', num: '§1', title: '§1 HIPAA Posture Overview', src: 'hipaa_html/01_HIPAA_Posture_Overview.html' },
-    { icon: '✅', label: 'Architecture',       num: '§2', title: '§2 Architecture Verification', src: 'hipaa_html/02_Conflict_Resolution_Audit.html' },
-    { icon: '🔬', label: 'Technical Proof',   num: '§3', title: '§3 Technical Proof Set',  src: 'hipaa_html/03_Technical_Proof_Set.html' },
-    { icon: '📊', label: 'Safe Harbor',        num: '§4', title: '§4 Safe Harbor Table',   src: 'hipaa_html/04_Safe_Harbor_Table.html' },
-    { icon: '🌐', label: 'Public Docs',        num: '§5', title: '§5 Public Documentation', src: 'hipaa_html/06_Public_Documentation.html' }
+    { icon: '📋', label: 'Cover',     num: 'CV', title: 'Cover Document',   src: 'section_html/00_Cover.html' },
+    { icon: '🛡️', label: 'Section 1', num: '§1', title: 'Section 1 Title', src: 'section_html/01_Section.html' },
+    // Add more sections here...
   ]
 };
 
+// ═══════════════════════════════════════════════════════════
+// SHELL ENGINE — do not modify below this line
+// ═══════════════════════════════════════════════════════════
+
 function buildShell() {
-  var cfg = PACKET_CONFIG;
+  const cfg = PACKET_CONFIG;
   document.title = 'PPN Portal: ' + cfg.title;
+
+  // Topbar
   document.getElementById('topbar').innerHTML =
     '<div class="topbar-left">' +
       '<button class="hamburger" id="hamburger-btn" aria-label="Open navigation" onclick="toggleSidebar()">' +
-        '<svg width="20" height="20" viewBox="0 0 20 20" fill="rgba(255,255,255,0.85)"><rect x="2" y="4" width="16" height="2" rx="1"/><rect x="2" y="9" width="16" height="2" rx="1"/><rect x="2" y="14" width="16" height="2" rx="1"/></svg>' +
+        '<svg width="20" height="20" viewBox="0 0 20 20" fill="rgba(255,255,255,0.85)">' +
+          '<rect x="2" y="4" width="16" height="2" rx="1"/>' +
+          '<rect x="2" y="9" width="16" height="2" rx="1"/>' +
+          '<rect x="2" y="14" width="16" height="2" rx="1"/>' +
+        '</svg>' +
       '</button>' +
-      '<div class="topbar-brand"><div class="topbar-dot"></div><span class="topbar-name">PPN Portal</span>' +
+      '<div class="topbar-brand">' +
+        '<div class="topbar-dot"></div>' +
+        '<span class="topbar-name">PPN Portal</span>' +
         '<span class="topbar-sub">\u00a0\u00b7\u00a0' + cfg.title + ' \u00b7 ' + cfg.reference + '</span>' +
-      '</div></div>' +
+      '</div>' +
+    '</div>' +
     '<div class="topbar-actions">' +
-      '<button class="topbar-btn" id="copy-link-btn" onclick="copyPacketLink()" aria-label="Copy shareable link">&#x1f517; <span class="btn-text-sm">Copy Link</span></button>' +
-      '<button class="topbar-btn primary" onclick="printAll()" aria-label="Save complete packet as PDF">&#x1f4e5; <span class="btn-text-sm">Save All as PDF</span></button>' +
+      '<button class="topbar-btn" id="copy-link-btn" onclick="copyPacketLink()" aria-label="Copy shareable link">' +
+        '&#x1f517; <span class="btn-text-sm">Copy Link</span>' +
+      '</button>' +
+      '<button class="topbar-btn primary" onclick="printAll()" aria-label="Save complete packet as PDF">' +
+        '&#x1f4e5; <span class="btn-text-sm">Save All as PDF</span>' +
+      '</button>' +
     '</div>';
+
+  // Sidebar nav
+  const navItems = cfg.sections.map((s, i) =>
+    '<button class="nav-item' + (i === 0 ? ' active' : '') + '" data-frame="frame-' + i + '" data-bn="bn-' + i + '" onclick="switchSection(this)" title="' + s.title + '">' +
+      '<span class="nav-item-icon">' + s.icon + '</span>' +
+      '<span class="nav-item-label">' + s.label + '</span>' +
+      '<span class="nav-item-num">' + s.num + '</span>' +
+    '</button>'
+  ).join('');
+
+  const legendHtml = cfg.legend
+    ? '<div class="status-legend"><div class="legend-label">Status Key</div>' +
+        cfg.legend.map(function(l) { return '<div class="legend-row"><div class="dot ' + l.dot + '"></div> ' + l.label + '</div>'; }).join('') +
+      '</div>'
+    : '';
+
   document.getElementById('sidebar').innerHTML =
     '<div class="sidebar-section-label">Documents</div>' +
-    cfg.sections.map(function(s, i) {
-      return '<button class="nav-item' + (i===0?' active':'') + '" data-frame="frame-' + i + '" data-bn="bn-' + i + '" onclick="switchSection(this)" title="' + s.title + '">' +
-        '<span class="nav-item-icon">' + s.icon + '</span><span class="nav-item-label">' + s.label + '</span><span class="nav-item-num">' + s.num + '</span></button>';
-    }).join('') +
+    navItems +
     '<div class="sidebar-divider"></div>' +
-    '<div class="action-group"><button class="sidebar-btn" onclick="printCurrent()" title="Print this section">&#x1f5a8; <span class="btn-text">Print This Section</span></button></div>' +
-    (cfg.legend ? '<div class="status-legend"><div class="legend-label">Status Key</div>' + cfg.legend.map(function(l){return '<div class="legend-row"><div class="dot '+l.dot+'"></div> '+l.label+'</div>';}).join('') + '</div>' : '');
-  document.getElementById('main').innerHTML = cfg.sections.map(function(s,i){
-    return '<iframe class="doc-frame' + (i===0?' active':'') + '" id="frame-'+i+'" src="'+s.src+'" title="'+s.title+'"></iframe>';
-  }).join('');
-  document.getElementById('bottom-nav-inner').innerHTML = cfg.sections.map(function(s,i){
-    return '<button class="bottom-nav-item' + (i===0?' active':'') + '" id="bn-'+i+'" data-frame="frame-'+i+'" onclick="switchSection(this)"><span class="bottom-nav-icon">'+s.icon+'</span>'+s.num+'</button>';
-  }).join('');
+    '<div class="action-group">' +
+      '<button class="sidebar-btn" onclick="printCurrent()" title="Print this section">' +
+        '&#x1f5a8; <span class="btn-text">Print This Section</span>' +
+      '</button>' +
+    '</div>' +
+    legendHtml;
+
+  // Iframes
+  document.getElementById('main').innerHTML = cfg.sections.map((s, i) =>
+    '<iframe class="doc-frame' + (i === 0 ? ' active' : '') + '" id="frame-' + i + '" src="' + s.src + '" title="' + s.title + '"></iframe>'
+  ).join('');
+
+  // Bottom nav
+  document.getElementById('bottom-nav-inner').innerHTML = cfg.sections.map((s, i) =>
+    '<button class="bottom-nav-item' + (i === 0 ? ' active' : '') + '" id="bn-' + i + '" data-frame="frame-' + i + '" onclick="switchSection(this)">' +
+      '<span class="bottom-nav-icon">' + s.icon + '</span>' + s.num +
+    '</button>'
+  ).join('');
 }
 
 function switchSection(el) {
-  var frameId = el.getAttribute('data-frame'), bnId = el.getAttribute('data-bn');
-  document.querySelectorAll('.nav-item').forEach(function(b){b.classList.remove('active');});
-  document.querySelectorAll('.bottom-nav-item').forEach(function(b){b.classList.remove('active');});
-  document.querySelectorAll('.doc-frame').forEach(function(f){f.classList.remove('active');});
-  document.querySelectorAll('[data-frame="'+frameId+'"]').forEach(function(b){b.classList.add('active');});
-  var bn = document.getElementById(bnId); if (bn) bn.classList.add('active');
+  const frameId = el.getAttribute('data-frame');
+  const bnId    = el.getAttribute('data-bn');
+  document.querySelectorAll('.nav-item').forEach(function(b) { b.classList.remove('active'); });
+  document.querySelectorAll('.bottom-nav-item').forEach(function(b) { b.classList.remove('active'); });
+  document.querySelectorAll('.doc-frame').forEach(function(f) { f.classList.remove('active'); });
+  document.querySelectorAll('[data-frame="' + frameId + '"]').forEach(function(b) { b.classList.add('active'); });
+  if (bnId) { var bn = document.getElementById(bnId); if (bn) bn.classList.add('active'); }
   document.getElementById(frameId).classList.add('active');
   closeSidebar();
 }
-function printCurrent() { var f=document.querySelector('.doc-frame.active'); if(!f)return; var w=window.open(f.src,'_blank'); if(w)w.onload=function(){w.focus();w.print();}; }
-function printAll() { window.open(PACKET_CONFIG.printAllUrl,'_blank'); }
+
+function printCurrent() {
+  var f = document.querySelector('.doc-frame.active');
+  if (!f) return;
+  var win = window.open(f.src, '_blank');
+  if (win) win.onload = function() { win.focus(); win.print(); };
+}
+
+function printAll() {
+  window.open(PACKET_CONFIG.printAllUrl, '_blank');
+}
+
 function copyPacketLink() {
-  var btn=document.getElementById('copy-link-btn');
-  navigator.clipboard.writeText(PACKET_CONFIG.productionUrl).then(function(){
-    btn.innerHTML='&#x2713; Copied!';
-    setTimeout(function(){btn.innerHTML='&#x1f517; <span class="btn-text-sm">Copy Link</span>';},2000);
+  var btn = document.getElementById('copy-link-btn');
+  navigator.clipboard.writeText(PACKET_CONFIG.productionUrl).then(function() {
+    btn.innerHTML = '&#x2713; Copied!';
+    setTimeout(function() {
+      btn.innerHTML = '&#x1f517; <span class="btn-text-sm">Copy Link</span>';
+    }, 2000);
   });
 }
-function toggleSidebar() { var s=document.getElementById('sidebar'),o=document.getElementById('sidebar-overlay'),open=s.classList.contains('open'); s.classList.toggle('open',!open); o.classList.toggle('visible',!open); }
-function closeSidebar() { document.getElementById('sidebar').classList.remove('open'); document.getElementById('sidebar-overlay').classList.remove('visible'); }
 
+function toggleSidebar() {
+  var s = document.getElementById('sidebar');
+  var o = document.getElementById('sidebar-overlay');
+  var open = s.classList.contains('open');
+  s.classList.toggle('open', !open);
+  o.classList.toggle('visible', !open);
+}
+
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebar-overlay').classList.remove('visible');
+}
+
+// Boot
 buildShell();
 </script>
 

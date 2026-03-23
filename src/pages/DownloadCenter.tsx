@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
     Download, FileText, Database, Shield, FileOutput,
-    ClipboardList, FlaskConical, FileBadge, CodeSquare, Loader2, CheckCircle
+    ClipboardList, FileBadge, CodeSquare, Loader2, CheckCircle
 } from 'lucide-react';
 import { PageContainer } from '../components/layouts/PageContainer';
 import { Section } from '../components/layouts/Section';
@@ -145,38 +145,6 @@ const DOWNLOAD_CATEGORIES: DownloadCategory[] = [
             }
         ]
     },
-    {
-        title: 'Forms & Templates',
-        description: 'Blank, printable clinical documents for offline use.',
-        items: [
-            {
-                id: 'blank-informed-consent',
-                title: 'Informed Consent Template',
-                description: 'Standardized informed consent outlining protocols, risks, and clinical setting boundaries.',
-                icon: FileText,
-                format: 'pdf',
-                actionType: 'simulated',
-                actionTarget: 'informed-consent.pdf',
-                accentColor: 'text-slate-400',
-                bgColor: 'bg-slate-800',
-                borderColor: 'border-slate-700',
-                textColor: 'text-slate-400',
-            },
-            {
-                id: 'blank-meq',
-                title: 'Blank MEQ-30 Assessment',
-                description: 'Printable version of the Mystical Experience Questionnaire (30-item) for offline patient administration.',
-                icon: FlaskConical,
-                format: 'pdf',
-                actionType: 'simulated',
-                actionTarget: 'meq-30-blank.pdf',
-                accentColor: 'text-slate-400',
-                bgColor: 'bg-slate-800',
-                borderColor: 'border-slate-700',
-                textColor: 'text-slate-400',
-            }
-        ]
-    }
 ];
 
 const DownloadCenter: React.FC = () => {

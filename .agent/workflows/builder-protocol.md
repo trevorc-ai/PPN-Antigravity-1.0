@@ -44,20 +44,46 @@ Read every `.md` file in `04_BUILD` and extract the `files:` frontmatter list fr
 
 ## Step 2: Read mandatory skills BEFORE writing any code
 
-For ANY React/TSX/CSS change, MUST read:
+### 🚨 FOR ANY React/TSX/CSS change — ALL of these are MANDATORY, no exceptions:
+
 - `.agent/skills/frontend-surgical-standards/SKILL.md`
 - `.agent/skills/frontend-best-practices/SKILL.md`
+- `.agent/skills/ppn-ui-standards/SKILL.md` — **Quick Reference table first, then full rules**
 
-For ANY database/migration change, MUST read:
+**This means every single `.tsx`, `.ts`, `.css` file with visible UI must comply with ppn-ui-standards.**
+This is not a print-only or outreach-only rule. It is universal and non-negotiable.
+
+### 🚨 Mobile-First Pre-Commit Grep (Rule 8c) — run before EVERY TSX handoff:
+
+```bash
+# Must return empty or be justified with a comment
+grep -n 'w-\[.*px\]\|min-w-\[.*px\]\|style.*width.*px' <file> | grep -v 'max-w-'
+
+# Flag any bare grid-cols without a mobile breakpoint
+grep -n 'grid-cols-[2-9]\b' <file> | grep -v 'md:\|lg:\|sm:'
+
+# Flag text-xs in rendered JSX (only comments are acceptable)
+grep -n 'text-xs\b' <file>
+
+# Flag sub-pixel font sizes
+grep -n 'text-\[8px\]\|text-\[9px\]\|text-\[10px\]\|text-\[11px\]' <file>
+
+# Flag em dashes in rendered strings
+grep -n '\—\|" - "' <file>
+```
+
+All five greps must return empty (or matches only inside block comments) before handoff. If any match hits rendered JSX, fix it before moving to 05_QA.
+
+### For ANY database/migration change, MUST additionally read:
+
 - `.agent/skills/migration-manager/SKILL.md`
 - `.agent/skills/database-schema-validator/SKILL.md`
 
-For ANY file in `public/outreach/`, ANY HTML leave-behind, ANY PDF, or ANY client-facing asset, MUST additionally read:
-- `.agent/skills/ppn-ui-standards/SKILL.md` — read Quick Reference table first
-- Complete the **Print Pre-flight Checklist** in Rule 5 before committing
+### For ANY file in `public/outreach/`, ANY HTML leave-behind, ANY PDF, or ANY client-facing asset, MUST additionally:
+
+- Complete the **Print Pre-flight Checklist** in ppn-ui-standards Rule 5 before committing
 - Run the **Rule 6d accessibility check** grep before committing
 
-> **Note:** ppn-ui-standards compliance was already gate-checked by INSPECTOR in Phase 0 before this ticket reached `04_BUILD`. BUILDER's reads above are implementation-time references, not the enforcement gate.
 
 ## Step 3: Check WO Constraints section
 
@@ -136,4 +162,4 @@ Do NOT run `/finalize_feature`. Do NOT `git commit`. INSPECTOR owns the commit g
 | 1.1 | 2026-03-21 | LEAD + INSPECTOR | Added Asset Source Rule, ppn-ui-standards read, INSPECTOR-only turbo-all note, GO handoff callout |
 | 1.2 | 2026-03-22 | LEAD | Added Hard Rule 6: BUILDER forbidden from `02.5_PRE-BUILD_REVIEW` |
 | 2.0 | 2026-03-23 | LEAD | **Pipeline Architecture Redesign.** Renamed all stage folders. Added USER-only gate law. Added parallel build rule in Step 1. Added WIP limit check. Auto-handoff to INSPECTOR in same response after build. |
-| 2.1 | 2026-03-23 | LEAD | Clarified Step 2 ppn-ui-standards read: BUILDER's read is implementation-time reference only. Enforcement gate is INSPECTOR Phase 0 (02.5_PRE-BUILD_REVIEW). |
+| 2.2 | 2026-03-23 | LEAD | **SYSTEMIC FIX: ppn-ui-standards is now MANDATORY for ALL React/TSX components**, not just outreach files. Added Rule 8c mobile-first pre-commit grep block (5 checks) as a required gate before every handoff to 05_QA. Root cause of recurring standards violations after WO-658. |

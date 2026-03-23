@@ -1,3 +1,7 @@
+---
+description: 
+---
+
 # WORKFLOW: Design System Architect
 **Description:** Generates premium, modern SaaS design tokens (colors, typography, spacing, interactions) before code is written.
 **Trigger:** `/design-architect`
@@ -66,4 +70,6 @@ You are the Lead Design Systems Architect. Your job is to translate a marketing 
 ## 4. IMAGE ASSETS REQUIRED
 *(Use Nano Banana 2 to generate these before placing them in the UI)*
 * **Asset 1 Prompt:** "[Write the highly specific image generation prompt here]"
+
+## 5. Use Tailwind responsive typography: text-xs md:text-sm. 12px (text-xs) is strictly reserved for mobile views, tooltips, and print footers. Body text on desktop must always be text-sm (14px) or larger.
 ```
