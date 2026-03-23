@@ -1,6 +1,6 @@
 # PPN Schema Snapshot
 **Source:** Production Database (Supabase)
-**Captured:** 2026-03-03
+**Captured:** 2026-03-23
 **Purpose:** Pre-SQL verification reference. Agents MUST check this file before producing any SQL that touches existing tables. If in doubt, query the live DB to confirm — this file is a snapshot, not a live view.
 
 > **Maintenance:** Update this file whenever a migration adds or alters columns/tables/constraints. Run the snapshot query in Supabase SQL Editor and replace the relevant section.
@@ -16,6 +16,10 @@
 | 🔴 WO-530B | `ref_clinical_observations` | `created_at` | `timestamp without time zone` — missed in WO-530 |
 | 🔴 WO-530B | `ref_intervention_types` | `created_at` | `timestamp without time zone` — missed in WO-530 |
 | 🔴 WO-530B | `ref_meddra_codes` | `created_at` | `timestamp without time zone` — missed in WO-530 |
+| 🟠 DEPRECATED | `log_clinical_records` | `patient_age_years` | Integer age — **deprecated 2026-03-23**. Use `age_range_id → ref_age_ranges`. BUILDER must stop writing. 0 non-null rows. Do NOT DROP yet. |
+| 🟠 DEPRECATED | `log_patient_profiles` | `age_at_intake` | Integer age — **deprecated 2026-03-23**. Use `age_range_id → ref_age_ranges`. BUILDER must stop writing. 19 rows backfilled to `age_range_id`. Do NOT DROP yet. |
+| 🟠 DEPRECATED | `log_clinical_records` | `dose_administered_at`, `onset_reported_at`, `peak_intensity_at`, `session_started_at`, `session_ended_at`, `meq30_completed_at`, `edi_completed_at`, `ceq_completed_at`, `contraindication_assessed_at`, `submitted_at` | Minute-level timestamps — **deprecated 2026-03-23** per HIPAA posture review. BUILDER must stop writing. Columns retained (additive-only). |
+| 🟠 DEPRECATED | `log_clinical_records` | `session_date` | Exact DATE — **deprecated 2026-03-23**. Use `session_number` (integer) for ordering. BUILDER must stop writing. 29 rows retain historical dates. |
 | 🟡 PHI-WATCH | `log_user_profiles` | `user_first_name`, `user_last_name` | Free TEXT on practitioner identity — not patient PHI but monitor |
 | 🟡 NOTE | `log_corrections` | `source_table`, `field_name`, `correction_reason` | TEXT columns — acceptable (audit trail, not clinical narrative) |
 | 🟡 NOTE | `log_clinical_records` | `patient_link_code_hash` | TEXT — cryptographic hash only, approved exception |
@@ -117,20 +121,20 @@
 | severity_grade_id | bigint | YES | null |
 | resolution_status_id | bigint | YES | null |
 | is_submitted | boolean | YES | false |
-| submitted_at | timestamptz | YES | null |
+| submitted_at | timestamptz | YES | null | 🟠 DEPRECATED |
 | dosage_mg | numeric | YES | null |
-| dose_administered_at | timestamptz | YES | null |
-| onset_reported_at | timestamptz | YES | null |
-| peak_intensity_at | timestamptz | YES | null |
-| session_ended_at | timestamptz | YES | null |
+| dose_administered_at | timestamptz | YES | null | 🟠 DEPRECATED |
+| onset_reported_at | timestamptz | YES | null | 🟠 DEPRECATED |
+| peak_intensity_at | timestamptz | YES | null | 🟠 DEPRECATED |
+| session_ended_at | timestamptz | YES | null | 🟠 DEPRECATED |
 | meq30_score | integer | YES | null |
-| meq30_completed_at | timestamptz | YES | null |
+| meq30_completed_at | timestamptz | YES | null | 🟠 DEPRECATED |
 | edi_score | integer | YES | null |
-| edi_completed_at | timestamptz | YES | null |
+| edi_completed_at | timestamptz | YES | null | 🟠 DEPRECATED |
 | ceq_score | integer | YES | null |
-| ceq_completed_at | timestamptz | YES | null |
+| ceq_completed_at | timestamptz | YES | null | 🟠 DEPRECATED |
 | guide_user_id | uuid | YES | null |
-| contraindication_assessed_at | timestamptz | YES | null |
+| contraindication_assessed_at | timestamptz | YES | null | 🟠 DEPRECATED |
 | session_type_id | integer | YES | null |
 | justification_code_id | bigint | YES | null |
 | assessment_scale_id | integer | YES | null |
@@ -139,10 +143,12 @@
 | patient_sex_id | bigint | YES | null |
 | weight_range_id | bigint | YES | null |
 | concomitant_med_ids | ARRAY | YES | null |
-| patient_age_years | integer | YES | null |
+| patient_age_years | integer | YES | null | 🟠 **DEPRECATED** — use age_range_id |
 | created_by | uuid | YES | null |
 | patient_link_code_hash | text | YES | null |
 | session_status | text | NO | 'draft' | ✅ WO-592 — valid: 'draft', 'active', 'completed'. Analytics queries must filter `!= 'draft'`. |
+| age_range_id | bigint | YES | null | ✅ Added 2026-03-23. FK → `ref_age_ranges(id)`. Replaces `patient_age_years`. |
+| session_started_at | timestamptz | YES | null | 🟠 **DEPRECATED** — discovered 2026-03-23 (was missing from prior snapshot). Stop writing. |
 
 ### `log_consent`
 | column | type | nullable | default |
@@ -928,6 +934,22 @@
 | 10 | user_premium |
 | 11 | user_enterprise |
 
+### `ref_age_ranges`
+> ✅ **Added 2026-03-23 (WO: age_range migration).** HIPAA Safe Harbor-compliant age brackets. Ages ≥ 90 grouped per HHS requirement.
+
+| column | type |
+|---|---|
+| id | bigserial PK |
+| range_code | varchar UNIQUE |
+| range_label | text |
+| age_low | integer |
+| age_high | integer |
+| sort_order | integer |
+| is_active | boolean |
+| created_at | timestamptz |
+
+Seeded with 10 ranges: `UNDER_18`, `AGE_18_24`, `AGE_25_34`, `AGE_35_44`, `AGE_45_54`, `AGE_55_64`, `AGE_65_74`, `AGE_75_84`, `AGE_85_89`, `AGE_90_PLUS`.
+
 ### `ref_weight_ranges`
 | column | type |
 |---|---|
@@ -939,6 +961,25 @@
 | is_active | boolean |
 | created_at | timestamptz |
 | updated_at | timestamptz |
+
+---
+
+## NOTE: log_patient_profiles (not in original snapshot)
+> Table discovered via live query 2026-03-23. Full column list confirmed via Block 11 pre-flight.
+
+| column | type | nullable | default |
+|---|---|---|---|
+| id | bigint | NO | null |
+| patient_uuid | uuid | NO | null |
+| site_id | uuid | NO | null |
+| sex_id | bigint | YES | null |
+| age_at_intake | integer | YES | null | 🟠 **DEPRECATED** — use age_range_id |
+| weight_range_id | bigint | YES | null |
+| smoking_status_id | bigint | YES | null |
+| protocol_archetype_id | integer | YES | null |
+| created_at | timestamptz | NO | now() |
+| created_by | uuid | YES | null |
+| age_range_id | bigint | YES | null | ✅ Added 2026-03-23. FK → `ref_age_ranges(id)`. Replaces `age_at_intake`. |
 
 ---
 

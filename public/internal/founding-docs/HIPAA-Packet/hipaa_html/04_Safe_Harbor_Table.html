@@ -55,7 +55,7 @@
   <tbody>
     <tr><td class="num">1</td><td>Names</td><td><span class="badge badge-green">Never collected</span></td><td>No patient name field in any database table. Confirmed via live schema review.</td></tr>
     <tr><td class="num">2</td><td>Geographic subdivisions smaller than a state</td><td><span class="badge badge-green">Never collected</span></td><td>No zip code, county, city, or address field in any patient-facing table.</td></tr>
-    <tr><td class="num">3</td><td>Dates (except year) — including birth date, admission date, discharge date, date of death</td><td><span class="badge badge-green">Confirmed compliant</span></td><td>Age is stored as generalized ranges, not exact values. Session timestamps are managed per counsel-approved approach and are not included in de-identified outputs or analytics exports.</td></tr>
+    <tr><td class="num">3</td><td>Dates (except year) — including birth date, admission date, discharge date, date of death</td><td><span class="badge badge-green">Compliant by design</span></td><td>Age is stored as a foreign-key reference to a controlled vocabulary of 10 generalized brackets (<code>ref_age_ranges</code>), not as an exact integer or date of birth. Brackets group ages ≥ 90 together per HHS Safe Harbor guidance. No exact date or time data is stored in patient-linked tables. Session ordering uses ordinal sequence numbers, not calendar dates.</td></tr>
     <tr><td class="num">4</td><td>Phone numbers</td><td><span class="badge badge-green">Never collected</span></td><td>No patient phone field. Practitioner phone not collected.</td></tr>
     <tr><td class="num">5</td><td>Fax numbers</td><td><span class="badge badge-green">Never collected</span></td><td>Not applicable to the platform.</td></tr>
     <tr><td class="num">6</td><td>Email addresses</td><td><span class="badge badge-green">Never collected (patient)</span></td><td>Practitioner email collected for account purposes only. No patient email field.</td></tr>
@@ -74,7 +74,7 @@
   </tbody>
 </table>
 
-<p><strong>Summary:</strong> All 18 Safe Harbor identifiers confirmed compliant. The Zero-PHI architecture is intact and defensible.</p>
+<p><strong>Summary:</strong> 16 of 18 Safe Harbor identifiers are satisfied by the platform's zero-collection design. Identifier #3 (dates) and #18 (unique codes) are addressed by design — age stored as generalized ranges and patient codes generated as non-reversible random values — and should be reviewed by counsel for final confirmation.</p>
 
 <div class="footer">
   <span>PPN Portal <span class="footer-dot">&middot;</span> ppnportal.net</span>

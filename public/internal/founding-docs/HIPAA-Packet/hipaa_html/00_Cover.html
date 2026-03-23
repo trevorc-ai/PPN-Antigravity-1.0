@@ -109,7 +109,7 @@
 
 <h2>Key Findings Summary</h2>
 <p><strong>Zero-PHI architecture confirmed.</strong> No patient names, dates of birth, SSNs, addresses, MRNs, or diagnosis codes appear in any database table. All patient records are identified by a system-generated random code (<code>PT-XXXXXXXXXX</code>) that cannot be reverse-engineered into a real identity.</p>
-<p><strong>All 18 Safe Harbor identifiers addressed.</strong> PPN's design covers all 18 HIPAA Privacy Rule Safe Harbor identifier categories. Age is stored as generalized ranges. Session data does not expose identifying information in de-identified outputs. See Sections 2 and 4 for the complete architecture verification.</p>
+<p><strong>16 of 18 Safe Harbor identifiers addressed by zero-collection design; 2 addressed by design for counsel confirmation.</strong> PPN's design covers 16 HIPAA Privacy Rule Safe Harbor identifier categories by never collecting the data at all. Identifier #3 (dates beyond year) is addressed by storing age as generalized ranges (<code>ref_age_ranges</code>) and using ordinal sequence numbers instead of calendar dates. Identifier #18 (unique codes) is addressed by generating patient codes as cryptographically random values not derived from any patient attribute. Both require final counsel confirmation. See Sections 2 and 4 for the complete architecture verification.</p>
 <p><strong>Vendor footprint is minimal.</strong> Three infrastructure vendors (Supabase, Vercel, Stripe) plus one email vendor (Resend). No analytics, error tracking, or observability tools are configured. Confirmed March 2026.</p>
 
 <div class="footer">
