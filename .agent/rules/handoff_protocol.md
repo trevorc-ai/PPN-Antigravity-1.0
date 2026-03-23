@@ -3,8 +3,8 @@
 ## 1. Handoff Protocol (Chain of Custody)
 - **Artifact-First:** Never pass a task via chat. Create a file first.
   - **DESIGNER:** Save specs to `docs/design/[feature_name].md`.
-  - **SOOP:** Save schemas to `docs/schema/[feature_name].sql`.
-  - **BUILDER:** You may begin work immediately on any ticket in `_WORK_ORDERS/03_BUILD/` where `owner: BUILDER`. No additional approval needed — the routing IS the approval.
+  - **INSPECTOR (DB work):** Save migration SQL to `migrations/NNN_description.sql`. Hand to User for execution.
+  - **BUILDER:** You may begin work immediately on any ticket in `_WORK_ORDERS/03_BUILD/` where `owner: BUILDER`. No additional approval needed — the INSPECTOR `02.5_PRE-BUILD_REVIEW` clearance + routing IS the approval.
 - **Handoff Syntax:** When finishing a task, state: *"I have completed [Task]. Review artifact at [File_Path]."*
 - **Batch Processing:** BUILDER should process ALL tickets in `03_BUILD/` with `owner: BUILDER` sequentially without stopping to ask permission between tickets. Move each to `04_QA/` when done, then pick up the next one.
 
@@ -28,7 +28,7 @@ The `## NEXT ACTIONS` section must answer:
 - **Constraint:** React apps must wrap major features in an `<ErrorBoundary>`. The app should never crash to a white screen.
 
 **B. The "Transaction Safety" Rule (Backend/Data)**
-- **SOOP/BUILDER:** All database write operations must use Transactions.
+- **INSPECTOR/BUILDER:** All database write operations must use Transactions.
 - **Constraint:** If an error occurs during a multi-step write, the system must `ROLLBACK` to the previous state. Never leave partial data ("orphaned rows") in the database.
 
 **C. The "Two-Strike" Debugging Rule**

@@ -1,0 +1,52 @@
+══════════════════════════════════════════════════════════
+SESSION TIMELINE LOG
+PPN Research Portal — Confidential Clinical Document
+══════════════════════════════════════════════════════════
+Session ID:  270243b9-fd85-41f2-a6eb-415e7ed99aba
+Export Date: March 21, 2026
+Events:      20
+──────────────────────────────────────────────────────────
+
+08:43 AM  -  [NOTE]  Phase 1 Preparation completed. Baseline assessment recorded.
+
+08:43 AM  -  [NOTE]  Phase 1 Structured Safety Check completed by practitioner.
+
+08:43 AM  -  [NOTE]  Informed consent verified.
+
+08:43 AM  -  [NOTE]  Informed consent verified.
+
+08:27 AM  *  [RESCUE PROTOCOL]  Session submitted and closed. Post-session assessment scores — MEQ: 0, EDI: 0, CEQ: 0.
+
+08:27 AM  ✎  [SESSION UPDATE]  Session update logged
+
+08:17 AM  ✎  [SESSION UPDATE]  Affect: Calm · Responsiveness: Fully responsive · Comfort: Normal, no complaints · Patient appears calm and stable
+
+08:16 AM  ✎  [SESSION UPDATE]  Session update logged
+
+08:15 AM  ●  [DOSE]  Initial Dose · 100 · MDMA · Oral · T+00:00:00
+
+10:22 AM  ✎  [SESSION UPDATE]  Session update logged
+
+10:13 AM  ✎  [SESSION UPDATE]  Affect: Euphoric · Responsiveness: Partially responsive · Comfort: Restless · Patient appears calm and stable
+
+09:59 AM  ✎  [SESSION UPDATE]  Affect: Anxious · Responsiveness: Fully responsive · Comfort: Normal, no complaints
+
+09:55 AM  ➕  [ADD DOSE]  Additional Dose · 10 · LSD-25 · Intravenous (IV) · T+01:33:43
+
+09:54 AM  ✎  [SESSION UPDATE]  Session update logged
+
+09:54 AM  ✎  [SESSION UPDATE]  Session update logged
+
+09:54 AM  ✎  [SESSION UPDATE]  Session update logged
+
+09:52 AM  ✎  [SESSION UPDATE]  Session update logged
+
+09:52 AM  ✎  [SESSION UPDATE]  Session update logged
+
+08:40 AM  ✎  [SESSION UPDATE]  Session update logged
+
+08:35 AM  ✎  [SESSION UPDATE]  Affect: Calm · Responsiveness: Fully responsive · Comfort: Normal, no complaints · Patient appears calm and stable
+
+──────────────────────────────────────────────────────────
+Provider Signature: ______________________________   Date: _______________
+══════════════════════════════════════════════════════════

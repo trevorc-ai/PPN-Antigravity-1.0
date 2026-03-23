@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PPN Portal — Denver Leave-Behind 2026</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: #ffffff;
+      color: #0a1628;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    /* ── Page sizing: US Letter 8.5" x 11" ── */
+    .page {
+      width: 8.5in;
+      height: 11in;
+      padding: 0.55in 0.65in 0.5in;
+      position: relative;
+      page-break-after: always;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Shared ── */
+    .wordmark {
+      font-family: 'Roboto Mono', ui-monospace, monospace;
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: #4a6fa5;
+    }
+    .rule {
+      height: 1px;
+      background: #d0d9e8;
+      margin: 14px 0;
+    }
+    .rule-heavy {
+      height: 2px;
+      background: #0a1628;
+      margin: 14px 0;
+    }
+
+    /* ════════════════════════════
+       SIDE A
+    ════════════════════════════ */
+    .side-a { background: #ffffff; }
+
+    .side-a .header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 18px;
+    }
+
+    .side-a .brand-block .ppn {
+      font-size: 28px;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      color: #0a1628;
+      line-height: 1;
+    }
+    .side-a .brand-block .full-name {
+      font-size: 11px;
+      font-weight: 500;
+      color: #6b7fa5;
+      letter-spacing: 0.04em;
+      margin-top: 4px;
+    }
+    .side-a .brand-block .url {
+      font-family: 'Roboto Mono', ui-monospace, monospace;
+      font-size: 10px;
+      color: #4a6fa5;
+      margin-top: 6px;
+    }
+
+    .side-a .headline-block {
+      text-align: right;
+      max-width: 3.8in;
+    }
+    .side-a .headline-block .headline {
+      font-size: 13px;
+      font-weight: 700;
+      color: #0a1628;
+      line-height: 1.35;
+    }
+    .side-a .headline-block .sub {
+      font-size: 10.5px;
+      color: #6b7fa5;
+      margin-top: 4px;
+      line-height: 1.5;
+    }
+
+    /* Zero-PHI badge */
+    .phi-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #f0f4ff;
+      border: 1px solid #c5d0e8;
+      border-radius: 4px;
+      padding: 7px 14px;
+      margin-bottom: 18px;
+    }
+    .phi-badge .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #3b6be0;
+      flex-shrink: 0;
+    }
+    .phi-badge .phi-text {
+      font-family: 'Roboto Mono', ui-monospace, monospace;
+      font-size: 9.5px;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      color: #2a4fa0;
+    }
+
+    /* Three phase columns */
+    .phases {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+    .phase-card {
+      border: 1px solid #d0d9e8;
+      border-top: 3px solid #0a1628;
+      border-radius: 4px;
+      padding: 14px;
+    }
+    .phase-label {
+      font-family: 'Roboto Mono', ui-monospace, monospace;
+      font-size: 8.5px;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #6b7fa5;
+      margin-bottom: 5px;
+    }
+    .phase-title {
+      font-size: 14px;
+      font-weight: 900;
+      color: #0a1628;
+      margin-bottom: 10px;
+    }
+    .phase-feature {
+      font-size: 9.5px;
+      color: #3a4f6a;
+      line-height: 1.6;
+      padding-left: 10px;
+      border-left: 2px solid #d0d9e8;
+      margin-bottom: 5px;
+    }
+
+    /* Bottom guarantee bar */
+    .guarantee {
+      background: #0a1628;
+      color: #ffffff;
+      border-radius: 4px;
+      padding: 14px 18px;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .guarantee-item {
+      text-align: center;
+    }
+    .guarantee-item .g-label {
+      font-family: 'Roboto Mono', ui-monospace, monospace;
+      font-size: 7.5px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #8b9dc3;
+      margin-bottom: 4px;
+    }
+    .guarantee-item .g-value {
+      font-size: 11px;
+      font-weight: 700;
+      color: #ffffff;
+      line-height: 1.3;
+    }
+
+    .side-a .footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .side-a .footer .tagline {
+      font-size: 9px;
+      color: #9aaac0;
+      font-style: italic;
+    }
+    .side-a .footer .founding-badge {
+      font-size: 9px;
+      font-weight: 700;
+      color: #3b6be0;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    /* ════════════════════════════
+       SIDE B
+    ════════════════════════════ */
+    .side-b { background: #0a1628; color: #c8d8e8; }
+
+    .side-b .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .side-b .header .ppn-light {
+      font-size: 20px;
+      font-weight: 900;
+      color: #ffffff;
+      letter-spacing: -0.01em;
+    }
+    .side-b .header .header-tag {
+      font-family: 'Roboto Mono', ui-monospace, monospace;
+      font-size: 9px;
+      color: #4a6fa5;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    .side-b .rule { background: rgba(255,255,255,0.1); }
+    .side-b .rule-heavy { background: rgba(255,255,255,0.25); }
+
+    .network-intro {
+      margin-bottom: 22px;
+    }
+    .network-intro .section-label {
+      font-family: 'Roboto Mono', ui-monospace, monospace;
+      font-size: 8.5px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #4a6fa5;
+      margin-bottom: 8px;
+    }
+    .network-intro h2 {
+      font-size: 22px;
+      font-weight: 900;
+      color: #ffffff;
+      line-height: 1.2;
+      margin-bottom: 10px;
+    }
+    .network-intro .body {
+      font-size: 10.5px;
+      color: #8b9dc3;
+      line-height: 1.7;
+    }
+
+    /* Network callout cards */
+    .network-cards {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 22px;
+    }
+    .network-card {
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 4px;
+      padding: 12px;
+      background: rgba(255,255,255,0.03);
+    }
+    .nc-title {
+      font-size: 10.5px;
+      font-weight: 700;
+      color: #c8d8e8;
+      margin-bottom: 5px;
+    }
+    .nc-body {
+      font-size: 9.5px;
+      color: #6b7fa5;
+      line-height: 1.6;
+    }
+
+    /* Standards grid */
+    .standards-section .section-label {
+      font-family: 'Roboto Mono', ui-monospace, monospace;
+      font-size: 8.5px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #4a6fa5;
+      margin-bottom: 10px;
+    }
+    .standards-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-bottom: 22px;
+    }
+    .standard-item {
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 3px;
+      padding: 8px;
+      background: rgba(255,255,255,0.02);
+    }
+    .std-code {
+      font-family: 'Roboto Mono', ui-monospace, monospace;
+      font-size: 9px;
+      font-weight: 500;
+      color: #5d8cde;
+      margin-bottom: 3px;
+    }
+    .std-label {
+      font-size: 8.5px;
+      color: #6b7fa5;
+      line-height: 1.4;
+    }
+
+    /* QR section */
+    .qr-section {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-top: auto;
+      padding-top: 14px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+    .qr-block {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .qr-box {
+      width: 64px;
+      height: 64px;
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 4px;
+      background: #ffffff;
+      padding: 3px;
+      flex-shrink: 0;
+    }
+    .qr-box img {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+    .qr-info .qr-cta {
+      font-size: 11px;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 3px;
+    }
+    .qr-info .qr-url {
+      font-family: 'Roboto Mono', ui-monospace, monospace;
+      font-size: 9px;
+      color: #4a6fa5;
+    }
+    .qr-info .qr-desc {
+      font-size: 9px;
+      color: #6b7fa5;
+      margin-top: 3px;
+      line-height: 1.4;
+    }
+
+    /* ── Print overrides ── */
+    @media print {
+      body { background: #ffffff; }
+      .page { margin: 0; }
+      .side-b { background: #0a1628 !important; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════
+     SIDE A — The Platform
+══════════════════════════════════════════════════ -->
+<div class="page side-a">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="brand-block">
+      <div class="ppn">PPN</div>
+      <div class="full-name">Psychedelic Practitioner Network</div>
+      <div class="url">ppnportal.net</div>
+    </div>
+    <div class="headline-block">
+      <div class="headline">The first clinical documentation platform<br>built for psychedelic therapy practitioners.</div>
+      <div class="sub">Document every treatment. Benchmark every outcome.<br>Protect every patient — without storing a single name.</div>
+    </div>
+  </div>
+
+  <!-- Zero-PHI badge -->
+  <div class="phi-badge">
+    <div class="dot"></div>
+    <div class="phi-text">Zero PHI Architecture&nbsp;&nbsp;·&nbsp;&nbsp;Immutable Audit Trail&nbsp;&nbsp;·&nbsp;&nbsp;Founding Cohort Now Open</div>
+  </div>
+
+  <div class="rule-heavy"></div>
+
+  <!-- Three phases -->
+  <div class="phases">
+    <div class="phase-card">
+      <div class="phase-label">Phase 01</div>
+      <div class="phase-title">Preparation</div>
+      <div class="phase-feature">Structured safety screening</div>
+      <div class="phase-feature">Contraindication detection</div>
+      <div class="phase-feature">Consent documentation</div>
+      <div class="phase-feature">Set and Setting intake</div>
+    </div>
+    <div class="phase-card">
+      <div class="phase-label">Phase 02</div>
+      <div class="phase-title">Facilitation</div>
+      <div class="phase-feature">Real-time vitals monitoring</div>
+      <div class="phase-feature">Dose event logging</div>
+      <div class="phase-feature">Live session timeline</div>
+      <div class="phase-feature">Safety event classification</div>
+    </div>
+    <div class="phase-card">
+      <div class="phase-label">Phase 03</div>
+      <div class="phase-title">Integration</div>
+      <div class="phase-feature">MEQ-30, PHQ-9, GAD-7</div>
+      <div class="phase-feature">Longitudinal outcome tracking</div>
+      <div class="phase-feature">Behavioral change monitoring</div>
+      <div class="phase-feature">Integration session logs</div>
+    </div>
+  </div>
+
+  <!-- Guarantee bar -->
+  <div class="guarantee">
+    <div class="guarantee-item">
+      <div class="g-label">Architecture</div>
+      <div class="g-value">Zero PHI.<br>Zero free text.</div>
+    </div>
+    <div class="guarantee-item">
+      <div class="g-label">Record Integrity</div>
+      <div class="g-value">Every selection is a<br>governed reference code.</div>
+    </div>
+    <div class="guarantee-item">
+      <div class="g-label">Audit Compliance</div>
+      <div class="g-value">Every session is<br>immutable and permanent.</div>
+    </div>
+  </div>
+
+  <div class="rule"></div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <div class="tagline">Documenting a treatment should be as natural as conducting one.</div>
+    <div class="founding-badge">Founding Cohort Open — Spring 2026</div>
+  </div>
+
+</div><!-- /Side A -->
+
+
+<!-- ══════════════════════════════════════════════════
+     SIDE B — The Network Vision
+══════════════════════════════════════════════════ -->
+<div class="page side-b">
+
+  <div class="header">
+    <div>
+      <div class="ppn-light">PPN Portal</div>
+      <div class="wordmark" style="color:#4a6fa5;margin-top:4px;">ppnportal.net</div>
+    </div>
+    <div class="header-tag">What comes next</div>
+  </div>
+
+  <div class="rule"></div>
+
+  <!-- Network intro -->
+  <div class="network-intro">
+    <div class="section-label">The Practitioner Network</div>
+    <h2>Every session logged<br>makes you smarter.</h2>
+    <div class="body">
+      Because our database structure never changes, PPN can generate real-time visual analytics that let every practitioner benchmark their outcomes against the growing global peer network — making every practitioner smarter with every session logged. When you have documented 30 preparation sessions, the system knows you are a preparation specialist. When a colleague needs that expertise, the network surfaces you. Opt-in. Pseudonymous. Governed.
+    </div>
+  </div>
+
+  <div class="rule"></div>
+
+  <!-- Network feature cards -->
+  <div class="network-cards">
+    <div class="network-card">
+      <div class="nc-title">Clinic Performance Radar</div>
+      <div class="nc-body">Quarterly benchmarking across Efficacy, Safety, Retention, Compliance, and Speed — plotted against the anonymized network average. See exactly where your clinic stands without patient privacy risk.</div>
+    </div>
+    <div class="network-card">
+      <div class="nc-title">Cross-Site Benchmarking</div>
+      <div class="nc-body">Because PPN stores no PHI, it is the only platform that can legally benchmark outcomes across an entire clinical network — a capability no standard EHR can offer.</div>
+    </div>
+    <div class="network-card">
+      <div class="nc-title">Efficacy Trajectory</div>
+      <div class="nc-body">PHQ-9 and GAD-7 scores plotted from baseline through follow-up intervals for each anonymized protocol. Chart patient progress against the community median and clinical remission thresholds.</div>
+    </div>
+    <div class="network-card">
+      <div class="nc-title">Structured Export</div>
+      <div class="nc-body">Research-ready CSV exports for IRB, investor, or compliance review — no data wrangling required. Export a 21 CFR Part 11 compliant audit ledger with one click.</div>
+    </div>
+  </div>
+
+  <!-- Interoperability standards -->
+  <div class="standards-section">
+    <div class="section-label">For Researchers and Institutional Partners</div>
+    <div class="standards-grid">
+      <div class="standard-item">
+        <div class="std-code">RxNorm CUI</div>
+        <div class="std-label">Substance catalog</div>
+      </div>
+      <div class="standard-item">
+        <div class="std-code">MedDRA / CTCAE</div>
+        <div class="std-label">Adverse events</div>
+      </div>
+      <div class="standard-item">
+        <div class="std-code">UCUM</div>
+        <div class="std-label">Vitals units</div>
+      </div>
+      <div class="standard-item">
+        <div class="std-code">LOINC / SNOMED</div>
+        <div class="std-label">Psychometrics</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- QR codes -->
+  <div class="qr-section">
+    <div class="qr-block">
+      <div class="qr-box">
+        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAEsAQMAAABDsxw2AAAABlBMVEX///8AAABVwtN+AAAACXBIWXMAAA7EAAAOxAGVKw4bAAABTklEQVRoge3ZSQ7DIAwFUEtd5BgcJVfPUXKMLCK5xXiATluM9L1olPKy+jUQSoTKUDtbET34eH1TbhkoPnCAZWFXC23jOnBsbeRyrc+CJWGS2yaZSrQSdGU17xMsJStxIQLLzezubu0ItjCT0oHLlr4/cy/YNMZWyiTF1q5aYFnYR/EZQf8psAlMM41NpV0s2hssD4s9f4le23xNA1uPUetMG2gX1mdjQwqWgWmf1gF7uWuX79sVsMlM7sZjE3+2foKlYZfnRo9+6aOPFRAsAbNpUlM8XTPHbAm2HtMXBe1a/yH0h8xgCZjOptqZ9Yxrj0n1bM+AZWBdqdZNJY0JgyVgFl9MjKH3YVcDNp/F6TH1C917pmBLMYnXG7SvYe4FS8Z2Du0L4QGWkHF3uNUffIHlYVKRKbVpskieP/4/BZvD2EoHrOXGO7CFGGp+PQFWLzmuezqJGQAAAABJRU5ErkJggg==" alt="QR code for ppnportal.net/join" />
+      </div>
+      <div class="qr-info">
+        <div class="qr-cta">Join the Network</div>
+        <div class="qr-url">ppnportal.net/join</div>
+        <div class="qr-desc">Request founding access.<br>No payment required.</div>
+      </div>
+    </div>
+    <div class="qr-block">
+      <div class="qr-box">
+        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAEsAQMAAABDsxw2AAAABlBMVEX///8AAABVwtN+AAAACXBIWXMAAA7EAAAOxAGVKw4bAAABX0lEQVRoge2Zuw3DMAxECajwGBrFq2cUj+HCABPxJ+aDtKKBu0aw+VQdSJESEVRBO7vk6yTmSwI9Ag9gVbBTTduY+iVfIz4WpakBq4SJbxvrX+JDjJZNr8ABrCSmZnrKASuNWa6NzNv+WQ+sPiZS61+06U/tBbYM4xwYDg8XLWtVwKpgWU3oZPRvAVuFmaeWeekgdGsvYJUwKZNEkYA0aqefacDuh9kfjqIq6XrOrsWKKrAC2PDUAqq0SdSAlcEoZm+J61jgmqMesAqYd5M0N7aY4dIJCKwGJgvH1GbWeh6Gb9CuBKW6GdeXUWkbsFKYxse7zW7D3Syqh+4BVgFL0lyTt7bN6S8I2ELM7ZvdZGc/+vbUrgCrgM3bY/368LQDuyMm9sbQbX2K6H1eAFYL43DYzkNgdbHRtRyK+fL1fgpsJWYuyplnN15aJpn5bRAAthpjl/cpph4BYDfDoPV6AsX+3lY3SDi8AAAAAElFTkSuQmCC" alt="QR code for ppnportal.net" />
+      </div>
+      <div class="qr-info">
+        <div class="qr-cta">Watch the Demo</div>
+        <div class="qr-url">ppnportal.net</div>
+        <div class="qr-desc">See the platform live.<br>Two minutes. No login.</div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /Side B -->
+
+</body>
+</html>

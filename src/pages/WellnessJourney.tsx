@@ -890,12 +890,13 @@ const WellnessJourneyInternal: React.FC = () => {
             setTimeout(() => setActiveFormId(null), 320);
 
             // Part 4 — Return to Protocol Detail after form save when deep-linked from Protocol Detail
-            // Condition: URL has both sessionId AND openForm params (came from Protocol Detail action button)
+            // Condition: formId must be non-null (explicit save/completion — NOT a dismiss via X/ESC)
+            // AND URL must have both sessionId AND openForm params (came from Protocol Detail action button)
             const search = location.search;
             const navParams = new URLSearchParams(search);
             const sessionIdFromUrl = navParams.get('sessionId');
             const openFormFromUrl = navParams.get('openForm');
-            const cameFromProtocolDetail = !!(sessionIdFromUrl && openFormFromUrl);
+            const cameFromProtocolDetail = !!(formId && sessionIdFromUrl && openFormFromUrl);
             if (cameFromProtocolDetail) {
                 setTimeout(() => navigate(`/protocol/${sessionIdFromUrl}`), 340);
             }

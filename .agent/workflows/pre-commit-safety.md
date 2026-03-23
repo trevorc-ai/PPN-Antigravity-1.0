@@ -37,10 +37,10 @@ grep -r "COMPONENT_NAME" /Users/trevorcalton/Desktop/PPN-Antigravity-1.0/src --i
 List every file that imports the component. Review each one before editing.
 
 5. If the operation involves a DATABASE MIGRATION:
-- SOOP writes the `.sql` file only — never executes it
+- INSPECTOR (or BUILDER if assigned) writes the `.sql` file only — never executes it
 - Paste the migration content to the USER for review
 - USER runs it in the Supabase dashboard
-- SOOP verifies the live schema AFTER execution with a SELECT query
+- INSPECTOR verifies the live schema AFTER execution with a SELECT query
 
 6. After the risky operation completes successfully, commit again:
 ```

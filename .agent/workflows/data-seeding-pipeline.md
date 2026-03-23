@@ -1,6 +1,6 @@
 ---
 description: Multi-agent pipeline for seeding PPN database with publicly available psychedelic therapy outcome data to power the Global Benchmark Intelligence layer (WO-231).
-agents: [ANALYST, LEAD, SOOP, BUILDER, INSPECTOR, USER]
+agents: [ANALYST, LEAD, INSPECTOR, BUILDER, USER]
 ---
 
 # /data-seeding-pipeline
@@ -28,25 +28,25 @@ This workflow defines the exact handoff sequence between all agents to deliver s
    - Scope decision: Phase 1 only (no NIDA DataShare application yet — keep it achievable)
    - Confirm that `benchmark_cohorts` seed CSV will be provided by ANALYST, not scraped
 3. Split into two parallel tickets:
-   - **WO-231a** → SOOP (schema + migration SQL)
+   - **WO-231a** → INSPECTOR (schema + migration SQL → User executes)
    - **WO-231b** → BUILDER (ETL scripts + seeding logic)
-4. Move WO-231 to `01_TRIAGE`, create WO-231a in `03_BUILD` for SOOP, WO-231b in `03_BUILD` for BUILDER
+4. Move WO-231 to `02_TRIAGE`, create WO-231a in `03_REVIEW` for INSPECTOR, WO-231b in `04_BUILD` for BUILDER
 
-**Done when:** WO-231a in `03_BUILD` with `owner: SOOP`, WO-231b in `03_BUILD` with `owner: BUILDER`
+**Done when:** WO-231a in `03_REVIEW` with `owner: INSPECTOR`, WO-231b in `04_BUILD` with `owner: BUILDER`
 
 ---
 
-## STAGE 2: SOOP — Database Schema Migration
+## STAGE 2: INSPECTOR — Database Schema Migration
 
-**SOOP's job:**
-1. Read WO-231a in `_WORK_ORDERS/03_BUILD/`
+**INSPECTOR's job:**
+1. Read WO-231a in `_WORK_ORDERS/03_REVIEW/`
 2. Run the database-schema-validator skill BEFORE writing SQL
 3. Write `migrations/059_global_benchmark_tables.sql` with:
 
 ```sql
 -- ============================================================================
 -- MIGRATION 059: Global Benchmark Intelligence Tables
--- WO-231 | Owner: SOOP | Approved by: LEAD
+-- WO-231 | Owner: INSPECTOR | Approved by: LEAD
 -- Additive only. No drops. RLS enforced on all tables.
 -- ============================================================================
 
@@ -140,7 +140,7 @@ CREATE INDEX IF NOT EXISTS idx_population_baselines_source_year ON public.popula
 ```
 
 4. Run migration-manager skill to verify against live schema
-5. Move WO-231a to `04_QA` with `owner: INSPECTOR`
+5. Move WO-231a to `05_QA` with `owner: INSPECTOR`
 
 **Done when:** `migrations/059_global_benchmark_tables.sql` exists and passes schema validation.
 
@@ -151,7 +151,7 @@ CREATE INDEX IF NOT EXISTS idx_population_baselines_source_year ON public.popula
 **USER reviews:**
 - The three tables in `migrations/059_global_benchmark_tables.sql`
 - Confirms table structure matches mental model of the data
-- Approves SOOP to hand off to BUILDER for ETL scripts
+- Approves INSPECTOR to hand off migration to User for execution
 
 **USER runs in Supabase SQL Editor:**
 ```sql
@@ -319,7 +319,7 @@ export async function getBenchmarkTrialCount(modality?: string): Promise<number>
 }
 ```
 
-5. Move WO-231b to `04_QA` with `owner: INSPECTOR`
+5. Move WO-231b to `05_QA` with `owner: INSPECTOR`
 
 **Done when:** Both Python seed scripts + TypeScript API hook exist and have no TypeScript errors.
 
@@ -378,8 +378,8 @@ data_freely_usable, license, notes
 - [ ] data_freely_usable = TRUE is accurate for each row's license
 - [ ] No synthetic or invented data — every number must cite a real published source
 
-**If PASS:** Move both tickets to `05_USER_REVIEW`, `owner: USER`
-**If FAIL:** Return to BUILDER/SOOP with specific error list. Increment failure_count.
+**If PASS:** Move both tickets to `06_USER_REVIEW`, `owner: USER`
+**If FAIL:** Return to BUILDER/INSPECTOR with specific error list. Increment failure_count.
 
 ---
 
@@ -416,7 +416,7 @@ data_freely_usable, license, notes
     ↓
 [LEAD] Architecture + split into WO-231a / WO-231b
     ↓──────────────────────────────────┐
-[SOOP] WO-231a: SQL Migration 059     [BUILDER] WO-231b: ETL Scripts + TS hooks
+[INSPECTOR] WO-231a: SQL Migration 059     [BUILDER] WO-231b: ETL Scripts + TS hooks
     ↓                                      ↓ (+ ANALYST provides seed CSV)
     └──────────────┬────────────────────────┘
                [INSPECTOR] QA Gate
@@ -439,5 +439,5 @@ data_freely_usable, license, notes
 | benchmark_cohorts count | ≥ 8 records | USER query |
 | benchmark_cohorts — all have citation | 100% | INSPECTOR |
 | Analytics page can query benchmarks | No errors | BUILDER test |
-| Migration is idempotent | Run twice with no error | SOOP |
+| Migration is idempotent | Run twice with no error | INSPECTOR |
 | RLS prevents unauthenticated write | Test fails gracefully | INSPECTOR |

@@ -236,6 +236,7 @@ const ProtocolDetail: React.FC = () => {
           treatmentResult,
           patientSessionsResult,
           longitudinalAssessmentResult,
+          baselineAssessmentResult,
         ] = await Promise.all([
           // All substance names
           supabase.from('ref_substances').select('substance_id, substance_name'),
@@ -292,6 +293,19 @@ const ProtocolDetail: React.FC = () => {
             .eq('session_id', id)
             .order('assessment_date', { ascending: true })
             .limit(50),
+
+          // Gap 1 fix: Phase 1 Mental Health Screening stores PHQ-9/GAD-7 in log_baseline_assessments.
+          // Without this query, the longitudinal score from Phase 3 becomes the only point and is
+          // treated as the baseline, leaving no follow-up point — the chart requires ≥2 points.
+          // These rows are prepended into byDate so they always land at ordered[0] as true baseline.
+          patientUuid
+            ? supabase
+              .from('log_baseline_assessments')
+              .select('assessment_date, phq9_score, gad7_score')
+              .eq('patient_uuid', patientUuid)
+              .order('assessment_date', { ascending: true })
+              .limit(5)
+            : Promise.resolve({ data: [], error: null }),
         ]);
 
         if (cancelled) return;
@@ -340,8 +354,28 @@ const ProtocolDetail: React.FC = () => {
         }
         setPatientSessions(normalizedSessions);
 
-        const treatmentRows = (treatmentResult.data ?? []) as TreatmentResultRow[];
+        // Gap 1 fix: seed Phase 1 baseline (log_baseline_assessments) into byDate FIRST
+        // so these rows always sort earliest and occupy ordered[0] as the true baseline point.
+        // Phase 3 longitudinal rows (merged below) then become ordered[1..n] follow-ups.
+        const baselineRows = (baselineAssessmentResult.data ?? []) as Array<{
+          assessment_date: string | null;
+          phq9_score: number | null;
+          gad7_score: number | null;
+        }>;
         const byDate = new Map<string, { date: string; ts: number; phq9_score: number | null; gad7_score: number | null }>();
+        for (const row of baselineRows) {
+          if (row.phq9_score == null && row.gad7_score == null) continue;
+          const dateKey = row.assessment_date ?? 'Baseline';
+          // Use a sentinel ts of 0 so baseline rows always sort before all other points.
+          // Real Date.parse will be < 0 only for pre-epoch dates which are impossible here.
+          const ts = row.assessment_date ? Date.parse(row.assessment_date) : 0;
+          const existing = byDate.get(dateKey) ?? { date: dateKey, ts, phq9_score: null, gad7_score: null };
+          if (row.phq9_score != null && existing.phq9_score == null) existing.phq9_score = row.phq9_score;
+          if (row.gad7_score != null && existing.gad7_score == null) existing.gad7_score = row.gad7_score;
+          byDate.set(dateKey, existing);
+        }
+
+        const treatmentRows = (treatmentResult.data ?? []) as TreatmentResultRow[];
         for (const row of treatmentRows) {
           if (row.value_as_number == null) continue;
           const isPhq9 = scoreConceptMatch(row.concept_code, row.concept_name, 'phq9');

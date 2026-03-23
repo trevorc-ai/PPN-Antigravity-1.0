@@ -1,18 +1,18 @@
 ---
 name: database-schema-validator
-description: Validates SQL migration files for banned commands, naming conventions, live schema alignment, idempotency, and RLS completeness before execution. MANDATORY for SOOP before any handoff.
+description: Validates SQL migration files for banned commands, naming conventions, live schema alignment, idempotency, and RLS completeness before execution. MANDATORY for INSPECTOR (or delegated agent) before any SQL handoff to User.
 ---
 
 # Database Schema Validator
 
 ## Purpose
-Catch SQL errors **before** they reach the user's database. This skill must be run by SOOP on every migration file before moving a ticket to 04_QA.
+Catch SQL errors **before** they reach the user's database. This skill must be run by INSPECTOR (or delegated agent) on every migration file before the User executes it.
 
 ---
 
 ## 🛑 STEP 1: MANDATORY LIVE SCHEMA VERIFICATION — HARD STOP
 
-**THIS STEP CANNOT BE SKIPPED. SOOP MUST NOT WRITE A SINGLE LINE OF SQL UNTIL THIS IS COMPLETE.**
+**THIS STEP CANNOT BE SKIPPED. THE AUTHORING AGENT MUST NOT WRITE A SINGLE LINE OF SQL UNTIL THIS IS COMPLETE.**
 
 Do NOT rely on any hardcoded table list, any prior session's notes, or any migration file to determine what tables exist. Migrations are intentions — they may never have been executed. Only the live database is truth.
 
@@ -35,15 +35,15 @@ WHERE table_schema = 'public'
 ORDER BY ordinal_position;
 ```
 
-**Rule: If SOOP cannot confirm a table exists via live query output pasted into the ticket, SOOP treats it as non-existent. Period.**
+**Rule: If the authoring agent cannot confirm a table exists via live query output pasted into the ticket, treat it as non-existent. Period.**
 
 ### Why the Old Table Map Was Removed:
-A hardcoded table list dated 2026-02-17 was previously here. It was stale. It listed tables that never existed in the live DB (e.g., `ref_medications` was assumed to exist because a migration file referenced it — it was never actually created). This caused SOOP to write migrations against phantom tables.
+A hardcoded table list dated 2026-02-17 was previously here. It was stale. It listed tables that never existed in the live DB (e.g., `ref_medications` was assumed to exist because a migration file referenced it — it was never actually created). This caused destructive migrations to be written against phantom tables.
 
 ### STOP Check — Paste answer to ALL of these before writing SQL:
 
 ```
-## SOOP Live Schema Pre-Flight (MANDATORY — paste real query output here)
+## INSPECTOR Live Schema Pre-Flight (MANDATORY — paste real query output here)
 - [ ] Query 1 run: [PASTE TABLE LIST HERE]
 - [ ] Table I am modifying/creating confirmed: [TABLE NAME] → EXISTS / DOES NOT EXIST
 - [ ] All FK targets confirmed live (list each one): [TABLE: status]
@@ -175,21 +175,23 @@ grep -iE "^\s*(DROP TABLE|TRUNCATE|DELETE FROM)" migration.sql
 
 ---
 
-## SOOP Pre-Handoff Checklist
+## INSPECTOR Pre-Handoff Checklist
 
-Before moving any ticket to 04_QA, SOOP must append this completed checklist to the work order:
+Before moving any ticket to `03_BUILD` (from `02.5_PRE-BUILD_REVIEW`) or handing SQL to the User, INSPECTOR must append this completed checklist to the work order:
 
 ```
-## SOOP Pre-Flight Checklist
+## INSPECTOR 02.5 CLEARANCE
 - [ ] Step 1: Live table names verified via src/ grep
 - [ ] Step 2: No banned commands found
 - [ ] Step 3: All CREATE TABLE/INDEX use IF NOT EXISTS
 - [ ] Step 4: DROP POLICY count == CREATE POLICY count (N/N)
 - [ ] Step 5: All log_* tables have RLS ENABLE + SELECT + INSERT policies
 - [ ] Step 6: Final banned command scan clean
+- [ ] Index types reviewed: [B-tree / Hash / Composite / Covering / Bitmap / Full-Text as appropriate]
+Signed: INSPECTOR | Date: YYYY-MM-DD
 ```
 
-**If any box is unchecked: DO NOT move to QA. Fix first.**
+**If any box is unchecked: DO NOT move to BUILD or hand to User. Fix first.**
 
 ---
 

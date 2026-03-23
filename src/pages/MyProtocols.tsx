@@ -28,7 +28,9 @@ const DEFAULT_SUBSTANCE_COLOR = { bg: 'rgba(100,116,139,0.12)', text: '#94a3b8',
 
 interface Protocol {
     id: string;
+    patient_uuid: string;       // used for dedup keying (always present)
     patient_ref: string;        // patient_link_code (PT-XXXXXXXXXX)
+    session_count: number;      // total sessions including open/incomplete
     substance_name: string;
     session_date: string;
     submitted_at: string | null;
@@ -63,7 +65,8 @@ type SortField =
     | 'sex_label'
     | 'patient_age'
     | 'smoking_status'
-    | 'weight_label';
+    | 'weight_label'
+    | 'session_count';
 
 type SortDirection = 'asc' | 'desc';
 
@@ -221,7 +224,9 @@ export const MyProtocols = () => {
 
                     return {
                         id: record.id,
+                        patient_uuid: record.patient_uuid,
                         patient_ref: linkCode ?? `SID-${record.id.substring(0, 8).toUpperCase()}`,
+                        session_count: 1, // overwritten during dedup pass
                         substance_name: substanceMap[record.substance_id] ?? (record.substance_id ? `Substance #${record.substance_id}` : '—'),
                         session_date: record.session_date || '—',
                         submitted_at: record.created_at ?? null,
@@ -236,13 +241,25 @@ export const MyProtocols = () => {
                 });
 
                 // Deduplicate: one row per patient (keep most recent session_date).
-                // A patient with multiple sessions would otherwise appear multiple times
-                // because log_clinical_records has one row per session.
+                // Key on patient_uuid — always present and unique per patient.
+                // Using patient_ref as the key was wrong: patients without a link code
+                // received a fallback SID-{record.id} (unique per session), defeating dedup.
+
+                // Pass 1: count sessions per patient
+                const sessionCounts = new Map<string, number>();
+                for (const row of formattedData) {
+                    sessionCounts.set(row.patient_uuid, (sessionCounts.get(row.patient_uuid) ?? 0) + 1);
+                }
+
+                // Pass 2: keep most-recent session row per patient, attach count
                 const seenPatients = new Map<string, Protocol>();
                 for (const row of formattedData) {
-                    const existing = seenPatients.get(row.patient_ref);
+                    const existing = seenPatients.get(row.patient_uuid);
                     if (!existing || (row.session_date > existing.session_date)) {
-                        seenPatients.set(row.patient_ref, row);
+                        seenPatients.set(row.patient_uuid, {
+                            ...row,
+                            session_count: sessionCounts.get(row.patient_uuid) ?? 1,
+                        });
                     }
                 }
                 const deduplicatedData = Array.from(seenPatients.values());
@@ -421,6 +438,8 @@ export const MyProtocols = () => {
                                             {p.indication_name !== '—' && <span className="truncate max-w-[160px]">{p.indication_name}</span>}
                                             <span className="text-slate-700">·</span>
                                             <span className="font-mono">{p.session_date}</span>
+                                            <span className="text-slate-700">·</span>
+                                            <span>{p.session_count} session{p.session_count !== 1 ? 's' : ''}</span>
                                         </div>
                                     </div>
                                     <ChevronRight className="w-4 h-4 text-slate-600 flex-shrink-0" />
@@ -447,6 +466,7 @@ export const MyProtocols = () => {
                                         <SortableHeader field="sex_label" label="Gender" />
                                         <SortableHeader field="patient_age" label="Age" />
                                         <SortableHeader field="session_date" label="Date" />
+                                        <SortableHeader field="session_count" label="# Sessions" />
                                         <SortableHeader field="status" label="Status" />
                                         <th className="px-4 py-5 text-right text-xs font-black text-slate-500 uppercase tracking-[0.15em] pr-6">Action</th>
                                     </tr>
@@ -513,6 +533,9 @@ export const MyProtocols = () => {
 
                                             {/* Date */}
                                             <Cell value={p.session_date} mono />
+
+                                            {/* # Sessions */}
+                                            <Cell value={String(p.session_count)} />
 
                                             {/* Status — 4-state color-coded */}
                                             <td className="px-4 py-5">

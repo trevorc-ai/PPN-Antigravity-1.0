@@ -46,13 +46,15 @@ const PHASE_COLORS: Record<Phase, string> = {
 
 const ALL_PHASES: Phase[] = ['Preparation', 'Treatment', 'Integration', 'Complete'];
 
-/** Derive a Phase from the most recent session_type in log_clinical_records */
-function derivePhase(sessionType: string | null): Phase {
-    if (!sessionType) return 'Preparation';
-    const t = sessionType.toLowerCase();
-    if (t.includes('integrat')) return 'Integration';
-    if (t.includes('dos') || t.includes('treatment') || t.includes('medicine')) return 'Treatment';
-    if (t.includes('complet') || t.includes('follow')) return 'Complete';
+/** Derive a Phase from the latest session record — matches MyProtocols.tsx derivation hierarchy */
+function derivePhase(
+    sessionTypeId: number | null,
+    sessionEndedAt: string | null,
+    isSubmitted: boolean,
+): Phase {
+    if (isSubmitted) return 'Complete';
+    if (sessionEndedAt) return 'Integration';
+    if (sessionTypeId === 2) return 'Treatment';
     return 'Preparation';
 }
 
@@ -119,7 +121,7 @@ export const PatientSelectModal: React.FC<PatientSelectModalProps> = ({ onSelect
 
             let query = supabase
                 .from('log_clinical_records')
-                .select('id, patient_link_code_hash, session_date, session_type_id, session_number, ref_substances(substance_name)')
+                .select('id, patient_link_code_hash, session_date, session_type_id, session_number, session_ended_at, is_submitted, ref_substances(substance_name)')
                 .order('session_date', { ascending: false });
 
             if (siteId) {
@@ -167,7 +169,11 @@ export const PatientSelectModal: React.FC<PatientSelectModalProps> = ({ onSelect
                 return {
                     id: pid,
                     lastSession: latest?.session_date ?? 'Unknown',
-                    phase: derivePhase(sessionTypeStr),
+                    phase: derivePhase(
+                        latest?.session_type_id ?? null,
+                        latestAny?.session_ended_at ?? null,
+                        !!latestAny?.is_submitted,
+                    ),
                     sessionCount: sessions.length,
                     sessionType: sessionTypeStr,
                     substance: substanceName ?? undefined,

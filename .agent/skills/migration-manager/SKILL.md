@@ -12,9 +12,9 @@ description: Manages Supabase database migrations with proper workflow. Includes
 **Database Write/Create Authority:**
 - ✅ AUTHORIZED: USER (Admin) — executes in Supabase SQL Editor only
 - ✅ AUTHORIZED: INSPECTOR — on USER's explicit delegation only
-- ❌ FORBIDDEN: SOOP, BUILDER, LEAD, or any other agent — may WRITE sql files as text, NEVER EXECUTE them
+- ❌ FORBIDDEN: BUILDER, LEAD, or any other agent — may WRITE sql files as text, NEVER EXECUTE them
 
-**SOOP's job is to produce a `.sql` file as a work product, hand it to INSPECTOR for review, and then USER runs it manually. SOOP never runs the SQL.**
+**Database work model:** INSPECTOR (or BUILDER if assigned) produces the `.sql` migration file as a work product, appends the `INSPECTOR 02.5 CLEARANCE` checklist, then **User runs it manually in Supabase SQL Editor**. No agent ever executes SQL.
 
 ---
 
@@ -67,11 +67,11 @@ grep -rn "from('some_table')" src/
 ### Step 3: Validate with database-schema-validator skill
 Run all 6 validation steps before handing off.
 
-### Step 4: Hand off to INSPECTOR
-Move ticket to `04_QA` with completed pre-flight checklist appended.
+### Step 4: Append INSPECTOR 02.5 CLEARANCE block
+Append the completed checklist (from `database-schema-validator` SKILL) to the WO. Move ticket from `02.5_PRE-BUILD_REVIEW` to `03_BUILD` (if engineering work follows) or surface SQL file to User for execution.
 
 ### Step 5: User Executes Manually
-User runs SQL in Supabase dashboard SQL editor.
+User runs SQL in Supabase dashboard SQL editor. Docker-first protocol always applies.
 
 ---
 
@@ -154,4 +154,4 @@ CREATE POLICY "ref_new_lookup_read" ON ref_new_lookup
 - ✅ RLS on every `log_*` table — SELECT + INSERT policies
 - ✅ Live schema verified before writing any FK
 - ✅ `DROP POLICY IF EXISTS` before every `CREATE POLICY`
-- ❌ Never execute SQL yourself — user runs manually
+- ❌ Never execute SQL yourself — User runs manually

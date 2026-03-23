@@ -3,6 +3,11 @@ name: browser
 description: Essential skill for visual UI/UX verification. Use the browser tool to see what you're building, capture screenshots, and verify design implementations in real-time.
 ---
 
+> ### 🚨 PPN DEV SERVER — ALWAYS PORT 3000
+> **Local dev server runs on `http://localhost:3000` — NOT 5173.**
+> Every browser navigation in this project MUST use `http://localhost:3000`.
+> Using any other port (5173, 3001, etc.) is a mis-step — stop and use 3000.
+
 # Browser Skill
 
 ## 🎯 Purpose
@@ -40,7 +45,7 @@ Before implementing any design changes, you MUST:
 ```markdown
 ## Current State Audit
 
-Opening browser to http://localhost:5173/dashboard
+Opening browser to http://localhost:3000/dashboard
 
 [Screenshot: dashboard_before.webp]
 
@@ -130,7 +135,7 @@ For walkthroughs and documentation:
 ### **Basic Navigation**
 
 ```
-Task: "Navigate to http://localhost:5173/dashboard and capture a screenshot"
+Task: "Navigate to http://localhost:3000/dashboard and capture a screenshot"
 ```
 
 ### **Interaction Testing**
@@ -207,7 +212,7 @@ Before marking UI/UX work complete, verify in browser:
 ```
 DESIGNER: "I need to audit the current landing page design"
 
-1. Open browser to http://localhost:5173/
+1. Open browser to http://localhost:3000/
 2. Capture full-page screenshot
 3. Analyze:
    - Hero section layout
@@ -223,7 +228,7 @@ DESIGNER: "I need to audit the current landing page design"
 ```
 DESIGNER: "I've updated the Patient Flow chart. Verify the changes."
 
-1. Navigate to http://localhost:5173/analytics/patient-flow
+1. Navigate to http://localhost:3000/analytics/patient-flow
 2. Capture "before" screenshot (if not already done)
 3. Wait for hot reload after code changes
 4. Capture "after" screenshot
@@ -239,7 +244,7 @@ DESIGNER: "I've updated the Patient Flow chart. Verify the changes."
 ```
 DESIGNER: "Verify the dashboard is mobile-friendly"
 
-1. Open browser to http://localhost:5173/dashboard
+1. Open browser to http://localhost:3000/dashboard
 2. Resize to 375px width
 3. Scroll through entire page
 4. Capture screenshots of:

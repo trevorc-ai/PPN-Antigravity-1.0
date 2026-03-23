@@ -350,6 +350,9 @@ const SITE_MAP = [
         group: 'Legal & Data', icon: '📄', routes: [
             { path: '/privacy' }, { path: '/terms' }, { path: '/data-policy' }, { path: '/data-policy/print' },
         ],
+        externalLinks: [
+            { label: 'HIPAA Legal Packet (GO-651)', href: '/internal/founding-docs/HIPAA-Packet/index.html', icon: '⚖️' },
+        ],
     },
     {
         group: 'Patient-Facing (No Auth)', icon: '🧑‍⚕️', routes: [
@@ -422,7 +425,7 @@ const SiteNavigator: React.FC = () => {
 
     return (
         <div className="space-y-3">
-            {SITE_MAP.map(({ group, icon, auth, admin, routes }) => (
+            {SITE_MAP.map(({ group, icon, auth, admin, routes, externalLinks }) => (
                 <details key={group} className="rounded-2xl border border-white/8 overflow-hidden" open={false}>
                     <summary className="flex items-center gap-3 px-4 py-3 cursor-pointer bg-slate-900/30 hover:bg-slate-800/30 transition-colors list-none min-h-[44px]">
                         <ChevronRight className="w-4 h-4 text-slate-500 transition-transform [[open]_&]:rotate-90" />
@@ -446,6 +449,20 @@ const SiteNavigator: React.FC = () => {
                                         Open <ExternalLink className="w-3 h-3" />
                                     </button>
                                 )}
+                            </div>
+                        ))}
+                        {(externalLinks ?? []).map(({ label, href, icon: extIcon }) => (
+                            <div key={href} className="flex items-center gap-3 px-4 py-3 hover:bg-slate-800/20 transition-colors">
+                                <span className="text-sm">{extIcon}</span>
+                                <span className="flex-1 text-xs text-slate-400">{label}</span>
+                                <a
+                                    href={href}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold text-amber-400 hover:text-amber-300 hover:bg-amber-500/10 border border-transparent hover:border-amber-500/20 transition-all min-h-[44px]"
+                                >
+                                    Open <ExternalLink className="w-3 h-3" />
+                                </a>
                             </div>
                         ))}
                     </div>

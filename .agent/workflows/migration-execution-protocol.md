@@ -6,11 +6,7 @@ description: MANDATORY Docker-first protocol for all database migrations. No exc
 
 ## WHY THIS EXISTS
 
-A previous agent (SOOP) wrote a catastrophic destructive migration that passed INSPECTOR review.
-The USER caught it moments before execution. The downstream effects would have destroyed live
-clinical data, patient records, and the business.
-
-**SOOP has been removed. Docker has been installed. This protocol is permanent.**
+> **Historical note:** A previous agent (SOOP, now retired) wrote a catastrophic destructive migration that passed INSPECTOR review. The USER caught it moments before execution. The downstream effects would have destroyed live clinical data, patient records, and the business. SOOP has been removed from the system. This protocol exists because of that event and is permanent.
 
 ---
 
@@ -32,7 +28,7 @@ No migration file may be run against the **live Supabase cloud database** until 
 ## STEP-BY-STEP PROTOCOL
 
 ### Phase 1 — Write
-- Agent writes SQL migration file to `migrations/NNN_description.sql`
+- INSPECTOR or BUILDER (per WO assignment) writes SQL migration file to `migrations/NNN_description.sql`
 - All statements must be: `IF NOT EXISTS`, `ON CONFLICT DO NOTHING`, `DROP POLICY IF EXISTS`
 - No DROP TABLE, DROP COLUMN, RENAME, ALTER TYPE, TRUNCATE, DELETE FROM
 - INSPECTOR validates file statically (grep checks) before any execution

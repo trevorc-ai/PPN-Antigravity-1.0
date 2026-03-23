@@ -30,23 +30,17 @@ The PPN platform has a highly technical internal dashboard but lacks a clear, pu
 ---
 
 ### 3. Variations (Content Matrix Requirements)
-*MARKETER RULE: You must process these variations SERIALLY. Draft Variation 1, request USER review, then proceed to Variation 2.*
 
-*   **Variation 1: Clinical Audience (Practitioners / Therapists)**
+> **⚠️ STRATEGY AUDIT 2026-03-22:** Variations 2, 3, 4, and 5 are **CANCELLED** per the Denver launch strategy review. Only Variation 1 (Clinical) survives as the enterprise ICP. Files for Variations 2–5 moved to `_GROWTH_ORDERS/07_ARCHIVED/`. Do not regenerate them.
+
+*   **Variation 1: Clinical Audience (Practitioners / Therapists)** ✅ **KEEP — BUILT**
     *   Goal: Emphasize zero-PHI, peer benchmarking, and clinical UX. Drive "Join Network" clicks.
-    *   Status: `01_DRAFTING` (Ready for USER Review)
-*   **Variation 2: Insurance / Payor Audience**
-    *   Goal: Emphasize structured data, outcome tracking, and macro-analytics for reimbursement models. 
-    *   Status: `00_BACKLOG`
-*   **Variation 3: Privacy Shield Audience**
-    *   Goal: Focus entirely on Zero-Knowledge architecture and absolute anonymity for grey-market practitioners.
-    *   Status: `00_BACKLOG`
-*   **Variation 4: Global Intelligence Audience (Researchers)**
-    *   Goal: Highlight the aggregated, anonymized macro dataset and global benchmarking capabilities.
-    *   Status: `00_BACKLOG`
-*   **Variation 5: Curious Patient (Self-Reporter)**
-    *   Goal: Inform patients that self-reporting is available and valuable, while clearly stating the platform is built for clinical integrity.
-    *   Status: `00_BACKLOG`
+    *   Status: `IMPLEMENTED` — `src/pages/ForClinicians.tsx`
+    *   Strategy note: *"This is your core ICP. The messaging is sharp and aligns perfectly with the $3,000 enterprise pitch."*
+*   **Variation 2: Insurance / Payor Audience** ~~`00_BACKLOG`~~ **CANCELLED — Defer to Wave 2**
+*   **Variation 3: Privacy Shield Audience** ~~`00_BACKLOG`~~ **CANCELLED — Grey-market targeting is brand risk**
+*   **Variation 4: Global Intelligence Audience (Researchers)** ~~`00_BACKLOG`~~ **CANCELLED — Academic buyers are Wave 2**
+*   **Variation 5: Curious Patient (Self-Reporter)** ~~`00_BACKLOG`~~ **CANCELLED — B2C self-report pollutes clinical database**
 
 ---
 

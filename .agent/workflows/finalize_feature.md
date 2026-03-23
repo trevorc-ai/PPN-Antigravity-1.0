@@ -25,3 +25,10 @@ description: Stage, commit, and push changes after QA passes. INSPECTOR stages a
    - `git push origin main`
    - Confirm: `git log -1 --oneline` and report the live hash.
    - Move the WO to `99_COMPLETED/`.
+
+## Changelog
+
+| Version | Date | Author | Change |
+|---|---|---|---|
+| 1.0 | 2026-02-23 | INSPECTOR | Initial protocol established |
+| 2.0 | 2026-03-23 | LEAD | Pipeline Architecture Redesign. WO destination updated to `99_COMPLETED/`. USER push gate unchanged — user remains the only gate on production deploys. |
