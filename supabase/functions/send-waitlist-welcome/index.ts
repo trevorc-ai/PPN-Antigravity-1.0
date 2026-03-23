@@ -65,6 +65,31 @@ serve(async (req: Request) => {
     }
 
     console.log(`[send-waitlist-welcome] Email 1 delivered to ${email}`);
+
+    // ── Operator Notification (fire-and-forget) — WO-654-B ────────────────
+    // Failure MUST NOT block or affect the visitor-facing success state.
+    const practitionerType = record.practitioner_type ?? 'Unknown';
+    const fullName = `${record.first_name ?? ''} ${record.last_name ?? ''}`.trim() || 'Unknown';
+    const signupTime = new Date().toISOString();
+
+    fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${RESEND_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        from: FROM_EMAIL,
+        to: 'signups@ppnportal.net',
+        subject: `[PPN Waitlist] New signup: ${fullName} — ${practitionerType}`,
+        text: `New PPN waitlist signup:\n\nName: ${fullName}\nEmail: ${email}\nType: ${practitionerType}\nSource: ${source}\nSigned up: ${signupTime}`,
+        reply_to: REPLY_TO,
+      }),
+    }).catch((opErr) =>
+      console.warn('[send-waitlist-welcome] Operator notify failed (non-blocking):', opErr)
+    );
+    // ── /Operator Notification ────────────────────────────────────────────
+
     return new Response('OK', { status: 200 });
 
   } catch (err) {

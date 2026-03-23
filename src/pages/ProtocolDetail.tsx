@@ -7,7 +7,7 @@ import {
   Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
   XAxis, YAxis, CartesianGrid, Tooltip as ReTooltip,
 } from 'recharts';
-import { Info, ChevronRight, Loader2, AlertCircle, Activity, Calendar, FlaskConical, ClipboardList, CheckCircle, AlertTriangle, Minus } from 'lucide-react';
+import { Info, ChevronRight, Loader2, AlertCircle, Activity, Calendar, FlaskConical, ClipboardList, CheckCircle, AlertTriangle, Minus, Brain, TrendingUp, Zap, Heart } from 'lucide-react';
 import { PageContainer } from '../components/layouts/PageContainer';
 import { AdvancedTooltip } from '../components/ui/AdvancedTooltip';
 import { supabase } from '../supabaseClient';
@@ -25,7 +25,6 @@ interface SessionRecord {
   site_id: string | null;
   practitioner_id: string | null;
   route_id: number | null;
-  concomitant_med_ids: number[] | null;
   dosage_mg: number | null;
 }
 
@@ -210,7 +209,7 @@ const ProtocolDetail: React.FC = () => {
         // 1. Fetch the primary session (migration 079: patient_link_code dropped → patient_link_code_hash)
         const { data: sessionData, error: sessionErr } = await supabase
           .from('log_clinical_records')
-          .select('id, patient_uuid, patient_link_code_hash, session_date, session_type_id, substance_id, site_id, practitioner_id, route_id, concomitant_med_ids, dosage_mg')
+          .select('id, patient_uuid, patient_link_code_hash, session_date, session_type_id, substance_id, site_id, practitioner_id, route_id, dosage_mg')
           .eq('id', id)
           .single();
 
@@ -236,6 +235,7 @@ const ProtocolDetail: React.FC = () => {
           priorSummaryResult,
           treatmentResult,
           patientSessionsResult,
+          longitudinalAssessmentResult,
         ] = await Promise.all([
           // All substance names
           supabase.from('ref_substances').select('substance_id, substance_name'),
@@ -282,6 +282,16 @@ const ProtocolDetail: React.FC = () => {
               .order('created_at', { ascending: false })
               .limit(25)
             : Promise.resolve({ data: [], error: null }),
+
+          // Fix A (Handoff B): Phase 3 Longitudinal Assessment scores written by
+          // LongitudinalAssessmentForm → log_longitudinal_assessments (not covered by the view above).
+          // Query by session_id so data surfaces even when patient_uuid is unavailable.
+          supabase
+            .from('log_longitudinal_assessments')
+            .select('assessment_date, phq9_score, gad7_score')
+            .eq('session_id', id)
+            .order('assessment_date', { ascending: true })
+            .limit(50),
         ]);
 
         if (cancelled) return;
@@ -351,6 +361,27 @@ const ProtocolDetail: React.FC = () => {
           if (!Number.isNaN(ts)) existing.ts = Math.min(existing.ts, ts);
           if (isPhq9) existing.phq9_score = row.value_as_number;
           if (isGad7) existing.gad7_score = row.value_as_number;
+          byDate.set(dateKey, existing);
+        }
+
+        // Fix A (Handoff B): Merge Phase 3 longitudinal assessment scores from
+        // log_longitudinal_assessments into the same byDate map. This table is not
+        // covered by vw_protocol_detail_treatment_results_over_time, so without this
+        // merge the PHQ-9 Efficacy Trajectory chart shows no data after Phase 3 forms are saved.
+        const longitudinalRows = (longitudinalAssessmentResult.data ?? []) as Array<{
+          assessment_date: string | null;
+          phq9_score: number | null;
+          gad7_score: number | null;
+        }>;
+        for (const row of longitudinalRows) {
+          if (row.phq9_score == null && row.gad7_score == null) continue;
+          const dateKey = row.assessment_date ?? 'Unknown';
+          const ts = row.assessment_date ? Date.parse(row.assessment_date) : Number.MAX_SAFE_INTEGER;
+          const existing = byDate.get(dateKey) ?? { date: dateKey, ts, phq9_score: null, gad7_score: null };
+          // Prefer view data if already present (non-null wins); longitudinal fills the gap
+          if (row.phq9_score != null && existing.phq9_score == null) existing.phq9_score = row.phq9_score;
+          if (row.gad7_score != null && existing.gad7_score == null) existing.gad7_score = row.gad7_score;
+          if (!Number.isNaN(ts)) existing.ts = Math.min(existing.ts, ts);
           byDate.set(dateKey, existing);
         }
 
@@ -429,7 +460,7 @@ const ProtocolDetail: React.FC = () => {
     : lastSys > 160 ? 'red'
     : lastSys >= 140 ? 'amber'
     : 'green';
-  const medCount = (session.concomitant_med_ids ?? []).length;
+  const medCount = 0; // concomitant_med_ids removed from log_clinical_records (lives in log_phase1_safety_screen — WO-B5)
   const safetyEventCount = safetyEvents.length;
 
   const otherSessions = patientSessions.filter(s => s.id !== session.id);
@@ -851,6 +882,36 @@ const ProtocolDetail: React.FC = () => {
                 </div>
               </section>
             )}
+
+            {/* Phase 3 Integration Actions */}
+            <section className="bg-[#0b0e14] border border-purple-500/20 rounded-[2.5rem] p-6 shadow-2xl">
+              <div className="flex items-center gap-3 mb-5">
+                <div className="size-10 rounded-2xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400">
+                  <Brain className="w-5 h-5" />
+                </div>
+                <h3 className="text-sm font-black text-slate-300 uppercase tracking-widest">Phase 3 Integration</h3>
+              </div>
+              <div className="space-y-2">
+                {([
+                  { label: 'Integration Session', Icon: Brain, formNote: 'structured-integration' },
+                  { label: 'Longitudinal Assessment', Icon: TrendingUp, formNote: 'longitudinal-assessment' },
+                  { label: 'Behavioral Tracker', Icon: Activity, formNote: 'behavioral-tracker' },
+                  { label: 'MEQ-30 Assessment', Icon: Zap, formNote: 'meq30' },
+                  { label: 'Daily Pulse Check', Icon: Heart, formNote: 'daily-pulse' },
+                ] as { label: string; Icon: React.FC<{ className?: string }>; formNote: string }[]).map(({ label, Icon, formNote }) => (
+                  <button
+                    key={formNote}
+                    type="button"
+                    onClick={() => navigate(`/wellness-journey?sessionId=${session.id}&phase=3&openForm=${formNote}`)}
+                    className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-slate-900/60 hover:bg-purple-500/10 border border-slate-700/60 hover:border-purple-500/40 text-left transition-all group"
+                  >
+                    <Icon className="w-4 h-4 text-purple-400 shrink-0" />
+                    <span className="flex-1 text-xs font-bold text-slate-300 group-hover:text-white uppercase tracking-widest">{label}</span>
+                    <ChevronRight className="w-4 h-4 text-slate-600 group-hover:text-purple-400 transition-colors shrink-0" />
+                  </button>
+                ))}
+              </div>
+            </section>
 
             {/* AC #5 — Pre-Session Clearance Checklist Strip (read-only, display-only, no DB writes) */}
             <section className="bg-[#0b0e14] border border-slate-800 rounded-[2.5rem] p-6 shadow-2xl">

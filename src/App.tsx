@@ -23,7 +23,7 @@ const DataPolicy = lazy(() => import('./pages/DataPolicy')); // WO-531: Sterile 
 const DataPolicyPrint = lazy(() => import('./pages/DataPolicyPrint')); // WO-531: Print one-pager
 const Checkout = lazy(() => import('./pages/Checkout'));
 const Academy = lazy(() => import('./pages/Academy'));
-const PartnerDemoHub = lazy(() => import('./pages/PartnerDemoHub'));
+const PartnerDemoPage = lazy(() => import('./pages/PartnerDemoPage'));
 const PatientReport = lazy(() => import('./pages/PatientReport'));
 const IntegrationCompass = lazy(() => import('./pages/IntegrationCompass'));
 
@@ -419,7 +419,7 @@ const AppContent: React.FC = () => {
               <Route path="/reset-password" element={<ResetPassword />} />
               <Route path="/checkout" element={<Checkout />} />
               <Route path="/academy" element={<Academy />} />
-              <Route path="/partner-demo" element={<PartnerDemoHub />} />
+              <Route path="/partner-demo" element={<PartnerDemoPage />} />
               {/* Patient-facing shareable report — no auth required */}
               <Route path="/patient-report" element={<PatientReport />} />
               {/* WO-601: Magic link entry point — same page, different path convention.

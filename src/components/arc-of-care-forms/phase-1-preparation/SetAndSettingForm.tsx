@@ -118,7 +118,7 @@ const SetAndSettingForm: React.FC<SetAndSettingFormProps> = ({
         if (savedRef.current) return;
         savedRef.current = true;
         setSaving(true);
-        onSave?.({ treatment_expectancy: hasTouched ? expectancy : undefined, observations });
+        onSave?.({ treatment_expectancy: expectancy, observations }); // B2 fix: always send expectancy (was: hasTouched ? expectancy : undefined)
         setTimeout(() => {
             setSaving(false);
             if (onExit) onExit();
@@ -129,7 +129,7 @@ const SetAndSettingForm: React.FC<SetAndSettingFormProps> = ({
         if (savedRef.current) return;
         savedRef.current = true;
         setSaving(true);
-        onSave?.({ treatment_expectancy: hasTouched ? expectancy : undefined, observations });
+        onSave?.({ treatment_expectancy: expectancy, observations }); // B2 fix: always send expectancy (was: hasTouched ? expectancy : undefined)
         setTimeout(() => {
             setSaving(false);
             onComplete?.();

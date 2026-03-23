@@ -1,5 +1,5 @@
 # SESSION_HANDOFF.md
-**Last updated:** 2026-03-22 | **Session focus:** WO-B6 (vitals chart + baseline seeding), chart tooltip edge fix, Phase 2 regression
+**Last updated:** 2026-03-22 | **Session focus:** Pipeline restructure — SOOP removal, 02.5_PRE-BUILD_REVIEW stage, WO template updates
 
 ---
 
@@ -7,31 +7,34 @@
 
 | Ticket | Stage | Status |
 |---|---|---|
-| Phase 2 Regression S1 (Deep-Link) | Not yet testable | Timer chip not rendering on Dashboard — blocks scenario. Needs investigation. |
-| Phase 2 Regression S3 (Multi-Patient) | Not yet clean | Prior test run contaminated Tab 1. Needs fresh isolated test. |
-| Phase 2 Regression S4 (Closeout Row) | Blocked | No post-session patient found in test account to verify WO-B3 safety events row. |
+| 16 tickets | `02.5_PRE-BUILD_REVIEW` | Awaiting INSPECTOR Phase 0 clearance — fast-pass most, full DB review for DB-touching ones |
+| WO-640 | `03_BUILD` | Denver Stability Audit — INSPECTOR-owned |
+| WO-654-A, WO-654-B | `03_BUILD` | Denver partner pages — awaiting INSPECTOR 02.5 clearance |
 
 ---
 
 ## ✅ Completed This Session
 
-| Commit | What |
+| Item | Detail |
 |---|---|
-| `73b25d2` | **WO-B6a** — Added `h-full` to `SessionVitalsTrendChart.tsx` root div (line 360) — chart was 0px tall when `hideHeader=true` |
-| `73b25d2` | **WO-B6b** — New `useEffect` in `DosingSessionPhase.tsx` seeds baseline HR/BP from `ppn_dosing_protocol` into `updateLog` at T+0; dispatches `ppn:dose-registered` to `LiveSessionTimeline` |
-| `e770470` | **WO-B6b fix** — Corrected event name `ppn:session-event` → `ppn:dose-registered` (LiveSessionTimeline only listens for the latter) |
-| `33275e2` | WO-B6 → `99_COMPLETED` |
-| `ece087b` | **Chart tooltip edge clamping** — `containerRef` + left/center/right anchor zones (25%/50%/25%). Tooltip no longer clips at T+00:00. Arrow stub repositions to match. |
-| — | Phase 2 regression S2 (Hard Refresh Recovery) confirmedPASS ✅ |
+| SOOP removed | All 11 `.agent/` files (workflows, skills, rules) purged of active SOOP references |
+| `02.5_PRE-BUILD_REVIEW` stage | New pre-build INSPECTOR gate wired into all workflows (fast-pass + full DB review) |
+| `inspector-qa/SKILL.md` v1.3 | Phase 0 (pre-build checklist: schema, index types, backend efficiency) + Phase 5.5 (joint user visual confirmation) |
+| `builder-protocol.md` v1.2 | Hard Rule 6 added — BUILDER forbidden from `02.5_PRE-BUILD_REVIEW` |
+| `lead-pipeline-scan.md` v1.3 | Step 1 for 02.5_PRE-BUILD_REVIEW queue added; routing table and report table updated |
+| Folder renamed | `02.5_REVIEW` → `02.5_PRE-BUILD_REVIEW` |
+| 7 tickets moved | `03_BUILD` → `02.5_PRE-BUILD_REVIEW` retroactively (WO-641, 642, 652, 653, A2, A3, A4) |
+| WO templates updated | `database_changes`, `affects`, `admin_visibility`, `admin_section`, `growth_order_ref` added to `WO_Template.md` |
+| `PRODDY_PRD_Template.md` | Sign-off checklist requires `database_changes` classification |
 
 ---
 
 ## 🟡 Needs User Decision
 
-1. **Timer chip missing on Dashboard** — When a session is active, the amber deep-link chip is not rendering on the Dashboard view. Blocks Scenario 1 regression. Needs a dedicated bug ticket or investigation pass. Route of Administration field typing also broken (must click-select from dropdown) — both need new WOs.
-2. **GO-649 and GO-650** — Still in `06_QA` from prior session, awaiting user final approval to move to `99_PUBLISHED`.
-3. **GO-651** — Still needs MARKETER visual review before WO-654-C/D/E release from `98_HOLD`.
-4. **WO-654-E RLS gate** — USER must verify `log_waitlist` has anon `SELECT COUNT(*)` RLS policy before releasing.
+1. **`agent.yaml` agents list** — may still list SOOP as an agent. System-locked — only User can update it directly.
+2. **GO-649, GO-650** — in `_GROWTH_ORDERS/06_QA`, awaiting user final visual approval before moving to `99_PUBLISHED`.
+3. **GO-651** — needs MARKETER visual review before WO-654-C/D/E can release from `98_HOLD`.
+4. **Dashboard timer chip bug + Route of Administration dropdown** — from prior session. Need dedicated WOs.
 
 ---
 
@@ -39,30 +42,36 @@
 
 | Queue | Count | Key tickets |
 |---|---|---|
-| `_WORK_ORDERS/00_INBOX` | 2 | WO-652 (admin_visibility), WO-653 (sharing library) |
-| `_WORK_ORDERS/98_HOLD` | 3 | WO-654-C, WO-654-D, WO-654-E (need GO-651 approval) |
-| `_GROWTH_ORDERS/00_BACKLOG` | 1 | GO-651 (needs MARKETER) |
-| `_GROWTH_ORDERS/06_QA` | 2 | GO-649, GO-650 (awaiting user final approval) |
+| `02.5_PRE-BUILD_REVIEW` | 16 | All need INSPECTOR clearance — start here |
+| `03_BUILD` | 3 | WO-640, WO-654-A, WO-654-B |
+| `04_QA` | ~10 | Stable |
+| `98_HOLD` | 12 | Various — see hold_reason fields |
+| `_GROWTH_ORDERS/06_QA` | 2 | GO-649, GO-650 (user approval pending) |
 
 ---
 
 ## ⚪ Next Recommended Actions
 
-1. **Open a WO for the Dashboard timer chip bug** — Scenario 1 of Phase 2 regression cannot be verified until the amber chip renders on Dashboard for active sessions.
-2. **Open a WO for Route of Administration dropdown** — Field does not accept keyboard input; must click-select. P1 data-entry issue.
-3. **Re-run Phase 2 Regression S3 cleanly** — Fresh two-tab isolated test with no prior contamination to confirm multi-patient localStorage isolation is intact post-B6.
+1. **INSPECTOR:** Run Phase 0 on all 16 `02.5_PRE-BUILD_REVIEW` tickets — fast-pass pure UI tickets, full review for any with `database_changes: yes`
+2. **LEAD:** Architect WO-654 (Waitlist Overhaul P0) and WO-655 (Homepage Overhaul P1) — both in `02_TRIAGE`, depend on WO-636 shipping
+3. **USER:** Review GO-649 and GO-650 to unblock `99_PUBLISHED` routing
 
 ---
 
 ## 📋 Protocol Changes Made This Session
 
-None. No skills, workflows, or `agent.yaml` modified this session.
-
----
-
-## Critical Context for Next Session
-
-- `ppn_dosing_protocol` localStorage key now drives the T+0 baseline vitals in both the chart and the Live Session Timeline. Fields used: `heart_rate`, `bp_systolic`, `bp_diastolic`.
-- The `ppn:dose-registered` event is the correct bus for `LiveSessionTimeline` optimistic entries (not `ppn:session-event`).
-- `SessionVitalsTrendChart.tsx` now imports `useRef` — any future chart edits should be aware of `containerRef` attached to the inner chart wrapper div.
-- From prior session (still current): `send-waitlist-welcome` DB webhook targets `log_waitlist`. `PartnerDemoHub.tsx` still exists but is not routed.
+| File | Version | Change |
+|---|---|---|
+| `lead-pipeline-scan.md` | v1.3 | SOOP removed; Step 1 for 02.5_PRE-BUILD_REVIEW added; routing + report tables updated |
+| `inspector-qa/SKILL.md` | v1.3 | Phase 0 (pre-build DB/index/efficiency checklist) + Phase 5.5 (joint user visual confirmation) |
+| `builder-protocol.md` | v1.2 | Hard Rule 6: BUILDER forbidden from 02.5_PRE-BUILD_REVIEW |
+| `proddy-protocol/SKILL.md` | — | Routing table updated; forbidden actions table updated |
+| `migration-manager/SKILL.md` | — | SOOP → INSPECTOR/User model |
+| `database-schema-validator/SKILL.md` | — | SOOP → INSPECTOR; clearance block renamed |
+| `fast-track.md` | — | DB routing updated |
+| `migration-execution-protocol.md` | — | SOOP moved to historical note |
+| `data-seeding-pipeline.md` | — | SOOP → INSPECTOR throughout |
+| `pre-commit-safety.md` | — | SOOP → INSPECTOR |
+| `handoff_protocol.md` | — | SOOP lines replaced |
+| `WO_Template.md` | — | `database_changes`, `affects`, `admin_visibility`, `admin_section`, `growth_order_ref` added; default status updated |
+| `PRODDY_PRD_Template.md` | — | Sign-off checklist updated |
