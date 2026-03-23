@@ -90,5 +90,6 @@
 - [ ] Open Questions list is ≤5 items
 - [ ] Total PRD word count is ≤600 words
 - [ ] No code, SQL, or schema written anywhere in this document
+- [ ] **`database_changes`** field set in WO frontmatter: `yes` if this ticket requires any new table, column, index, RLS policy, or migration — `no` if purely frontend/React
 - [ ] Frontmatter updated: `owner: LEAD`, `status: 01_TRIAGE`
 - [ ] Response wrapped in `==== PRODDY ====`

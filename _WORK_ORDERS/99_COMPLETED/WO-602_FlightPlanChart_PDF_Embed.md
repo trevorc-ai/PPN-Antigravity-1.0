@@ -1,12 +1,13 @@
 ---
-owner: BUILDER
-status: 04_QA
+owner: INSPECTOR
+status: 99_COMPLETED
 authored_by: LEAD
 priority: P2
 blocks: WO-600 (PDF Completion Sprint - Flight Plan section)
 created: 2026-03-12
-completed_at: 2026-03-13
-builder_notes: "Upgraded inline PKChart to accept timelineEvents + render interpolated event dots on PK curve. Wired data.timelineEvents & data.sessionDate from usePhase3Data to Page 5 PKChart call site. Zero TS errors. Browser verified Page 5 renders correctly with full PK curve, phase bands, metadata cells, and phase table."
+completed_at: 2026-03-22
+inspector_sign_off: 2026-03-22
+builder_notes: "Implemented as inline PKChart SVG component (no external import). Placed on dedicated Page 5 (Pharmacokinetic Flight Plan) with MetricCell header bar, phase table, and clinical note. All data fields (substanceCategory, accentColor, timelineEvents, sessionDate) confirmed in usePhase3Data. Event dots plotted from timeline events. Unknown-substance fallback curve built into PKChart. No new npm dependencies. TOTAL page count already set to 8."
 ---
 
 # WO-602: Embed FlightPlanChart into ClinicalReportPDF

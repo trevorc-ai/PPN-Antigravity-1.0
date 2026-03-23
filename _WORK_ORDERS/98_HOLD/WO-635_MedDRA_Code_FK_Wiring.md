@@ -1,15 +1,15 @@
 ---
 id: WO-635
 title: "MedDRA Code: Wire FK from Free-Text Input to ref_meddra_codes Lookup"
-owner: SOOP
+owner: LEAD
 authored_by: INSPECTOR
 routed_by: LEAD
 status: 98_HOLD
 priority: P2
 created: 2026-03-13
-depends_on: "SOOP: Sub-task A (ref_meddra_codes table creation + seed)"
+depends_on: "Sub-task A (ref_meddra_codes table creation + seed — USER to execute in Supabase SQL Editor)"
 skip_approved_by: ""
-hold_reason: "BUILDER blocked: Sub-task A (verify/create ref_meddra_codes table and seed data) must be completed by SOOP before BUILDER can begin Sub-tasks B-D. No ref_meddra_codes table confirmed in live schema."
+hold_reason: "BUILDER blocked: Sub-task A (verify/create ref_meddra_codes table and seed data) must be executed by USER in Supabase before BUILDER can begin Sub-tasks B-D. No ref_meddra_codes table confirmed in live schema."
 held_at: "2026-03-14"
 failure_count: 0
 completed_at: ""
@@ -22,7 +22,7 @@ skills:
 
 **Status:** 03_BUILD
 **Priority:** P2 — LOW (completeness; AE Report form still functional without it)
-**Author:** INSPECTOR → SOOP + BUILDER
+**Author:** INSPECTOR → LEAD + BUILDER
 **Date:** 2026-03-13
 **Depends on:** None
 
@@ -49,7 +49,7 @@ The Adverse Event (AE) Report section of `SafetyAndAdverseEventForm.tsx` capture
 
 ## Scope
 
-### Sub-task A — SOOP: Verify/create `ref_meddra_codes` table
+### Sub-task A — USER: Verify/create `ref_meddra_codes` table
 
 Confirm the table `ref_meddra_codes` exists with at minimum:
 
@@ -174,6 +174,6 @@ This sub-task is **optional** — Sub-tasks A–D fully wire the FK and surface 
 
 ## LEAD ARCHITECTURE
 
-**Route to:** SOOP (Sub-task A) → BUILDER (Sub-tasks B, C, D, E)
-**SOOP must complete migration and seed before BUILDER begins Sub-task B.**
+**Route to:** USER (Sub-task A: execute migration in Supabase SQL Editor) → BUILDER (Sub-tasks B, C, D, E)
+**USER must complete migration and seed before BUILDER begins Sub-task B.**
 **Sub-task E (searchable dropdown) only if sprint capacity allows.**

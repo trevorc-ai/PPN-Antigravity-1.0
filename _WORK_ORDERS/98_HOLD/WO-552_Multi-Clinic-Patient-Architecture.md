@@ -87,4 +87,4 @@ All RLS policies referencing `log_patient_site_links` subqueries need review —
 
 ## Estimated Effort
 
-**Large** — schema migration touching 11 tables, FK rewiring, RLS audit, service layer update. Requires full SOOP / INSPECTOR cycle and staging verification before production.
+**Large** — schema migration touching 11 tables, FK rewiring, RLS audit, service layer update. Requires full BUILDER migration authorship (per `/migration-execution-protocol`), INSPECTOR review, and USER execution in Supabase SQL editor before production.

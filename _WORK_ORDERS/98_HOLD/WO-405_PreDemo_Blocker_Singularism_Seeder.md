@@ -41,7 +41,7 @@ This is not a cold sales call. This is a conversion of a warm, inbound commitmen
 
 ## WHAT NEEDS TO HAPPEN (INSPECTOR → USER APPROVAL → BUILDER)
 
-⚠️ **SOOP DISCONTINUED 2026-02-25** — INSPECTOR now owns SQL authorship. Execution requires explicit USER approval before BUILDER runs anything.
+⚠️ **SQL MIGRATION OWNERSHIP (updated 2026-02-25)** — INSPECTOR now owns SQL authorship review. Execution requires explicit USER approval before BUILDER runs anything.
 
 **INSPECTOR** must author the SQL seeder script (`supabase/tests/seed_phase3_qa_patient.sql`) per WO-400 spec:
 - Insert mock user, mock patient profile

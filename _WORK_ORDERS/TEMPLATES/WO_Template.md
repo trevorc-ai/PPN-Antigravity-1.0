@@ -4,7 +4,7 @@ title: "Human-readable title"
 owner: BUILDER
 authored_by: LEAD
 routed_by: LEAD
-status: 03_BUILD
+status: 02.5_PRE-BUILD_REVIEW
 priority: P0 | P1 | P2
 created: YYYY-MM-DD
 routed_at: YYYY-MM-DD
@@ -16,6 +16,11 @@ failure_count: 0             # INSPECTOR increments on each rejection. At 2, mov
 completed_at: ""             # BUILDER sets when moving to 04_QA
 builder_notes: ""            # BUILDER: one-sentence summary of what was implemented
 skills: []                   # e.g. [".agent/skills/frontend-surgical-standards/SKILL.md"]
+database_changes: no         # yes = INSPECTOR must run full DB review in 02.5_PRE-BUILD_REVIEW. no = fast-pass.
+affects: []                  # List key files changed — INSPECTOR uses this for Phase 3.5 regression trigger matching
+admin_visibility: no         # yes = BUILDER must wire into Admin Dashboard before QA
+admin_section: ""            # Reports / Analytics / Session Management / Settings / N/A
+growth_order_ref: ""         # Required for all public-facing WOs: GO-XXX
 ---
 
 ## Context
