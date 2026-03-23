@@ -1137,7 +1137,7 @@ const WellnessJourneyInternal: React.FC = () => {
                     safety,
                     meq30,
                 ] = await Promise.all([
-                    supabase.from('log_integration_sessions').select('id').eq('session_id', sessionId).limit(1).maybeSingle(),
+                    supabase.from('log_integration_sessions').select('id').eq('dosing_session_id', sessionId).limit(1).maybeSingle(),
                     supabase.from('log_longitudinal_assessments').select('id').eq('session_id', sessionId).limit(1).maybeSingle(),
                     supabase.from('log_behavioral_changes').select('id').eq('session_id', sessionId).limit(1).maybeSingle(),
                     supabase.from('log_pulse_checks').select('id').eq('session_id', sessionId).limit(1).maybeSingle(),
