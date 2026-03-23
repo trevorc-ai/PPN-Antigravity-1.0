@@ -210,6 +210,11 @@ const WellnessJourneyInternal: React.FC = () => {
     // Protocol Configurator Gate (wo-363)
     const [showProtocolConfigurator, setShowProtocolConfigurator] = useState(false);
 
+    // Part 3: pendingOpenFormId — stores a formId to auto-open via handleOpenForm
+    // once the deep-link useEffect resolves phase state. Avoids a forward-reference
+    // to handleOpenForm (declared later in the component after patient-select logic).
+    const [pendingOpenFormId, setPendingOpenFormId] = useState<WellnessFormId | null>(null);
+
     const PHASE_TAB_MAP: Record<string, 1 | 2 | 3> = {
         'Preparation': 1,
         'Treatment': 2,
@@ -433,6 +438,14 @@ const WellnessJourneyInternal: React.FC = () => {
                 setPatientModalView('existing');
                 // WO-B1: Sync global context so Sidebar + other pages know the active patient
                 if (patientUuid) setGlobalActivePatient(patientUuid, sessionRow.id);
+
+                // Part 3 — Auto-open a Phase 3 form from ?openForm= URL param (deep-link from Protocol Detail)
+                // We set pendingOpenFormId here; a secondary useEffect (below handleOpenForm declaration)
+                // will call handleOpenForm once state settles to avoid the forward-reference issue.
+                const openFormParam = params.get('openForm') as WellnessFormId | null;
+                if (openFormParam && derivedPhase === 3) {
+                    setPendingOpenFormId(openFormParam);
+                }
             } catch (err) {
                 console.warn('[WellnessJourney] Deep link session load failed (non-fatal):', err);
             }
@@ -872,15 +885,37 @@ const WellnessJourneyInternal: React.FC = () => {
         } else {
             setIsFormOpen(false);
             setTimeout(() => setActiveFormId(null), 320);
+
+            // Part 4 — Return to Protocol Detail after form save when deep-linked from Protocol Detail
+            // Condition: URL has both sessionId AND openForm params (came from Protocol Detail action button)
+            const search = location.search;
+            const navParams = new URLSearchParams(search);
+            const sessionIdFromUrl = navParams.get('sessionId');
+            const openFormFromUrl = navParams.get('openForm');
+            const cameFromProtocolDetail = !!(sessionIdFromUrl && openFormFromUrl);
+            if (cameFromProtocolDetail) {
+                setTimeout(() => navigate(`/protocol/${sessionIdFromUrl}`), 340);
+            }
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [activePhase, addToast]);
+    }, [activePhase, addToast, location.search, navigate]);
 
 
 
     const handleQuickAction = useCallback((formId: string) => {
         handleOpenForm(formId as WellnessFormId);
     }, [handleOpenForm]);
+
+    // Part 3 consumer: open pending form from deep-link ?openForm= param.
+    // Fires after handleOpenForm is declared and stable, clears pendingOpenFormId after triggering.
+    useEffect(() => {
+        if (!pendingOpenFormId) return;
+        const t = setTimeout(() => {
+            handleOpenForm(pendingOpenFormId);
+            setPendingOpenFormId(null);
+        }, 200);
+        return () => clearTimeout(t);
+    }, [pendingOpenFormId, handleOpenForm]);
 
 
 
@@ -1076,6 +1111,61 @@ const WellnessJourneyInternal: React.FC = () => {
         }
     }, [activePhase, journey.sessionId]);
 
+    // ── Phase 3 DB hydration: restore completedForms after navigation-away → back ──
+    // completedForms is in-memory only (new Set() on mount). This effect fires whenever
+    // journey.sessionId or activePhase changes and we are on Phase 3. It checks each
+    // Phase 3 form table for an existing row tied to this session and seeds the set.
+    // Intentionally uses direct supabase calls (not a hook) per the approved plan.
+    useEffect(() => {
+        if (!journey.sessionId || activePhase !== 3) return;
+        const sessionId = journey.sessionId;
+        let cancelled = false;
+
+        (async () => {
+            try {
+                const [
+                    integration,
+                    longitudinal,
+                    behavioral,
+                    pulse,
+                    safety,
+                    meq30,
+                ] = await Promise.all([
+                    supabase.from('log_integration_sessions').select('id').eq('session_id', sessionId).limit(1).maybeSingle(),
+                    supabase.from('log_longitudinal_assessments').select('id').eq('session_id', sessionId).limit(1).maybeSingle(),
+                    supabase.from('log_behavioral_changes').select('id').eq('session_id', sessionId).limit(1).maybeSingle(),
+                    supabase.from('log_pulse_checks').select('id').eq('session_id', sessionId).limit(1).maybeSingle(),
+                    supabase.from('log_phase1_safety_screen').select('id').eq('session_id', sessionId).limit(1).maybeSingle(),
+                    supabase.from('log_phase3_meq30').select('id').eq('session_id', sessionId).limit(1).maybeSingle(),
+                ]);
+
+                if (cancelled) return;
+
+                const hydrated = new Set<string>();
+                if (integration.data) hydrated.add('structured-integration');
+                if (longitudinal.data) hydrated.add('longitudinal-assessment');
+                if (behavioral.data) hydrated.add('behavioral-tracker');
+                if (pulse.data) hydrated.add('daily-pulse');
+                if (safety.data) hydrated.add('structured-safety');
+                // MEQ-30: prefer localStorage (score is cached there); fall back to DB row
+                const meq30LocalKey = `ppn_meq30_responses_${sessionId}`;
+                const hasMeq30Local = (() => {
+                    try { return !!localStorage.getItem(meq30LocalKey); } catch { return false; }
+                })();
+                if (hasMeq30Local || meq30.data) hydrated.add('meq30');
+
+                if (hydrated.size > 0) {
+                    setCompletedForms(prev => new Set([...prev, ...hydrated]));
+                    console.debug('[WellnessJourney] Phase 3 completedForms hydrated from DB:', [...hydrated]);
+                }
+            } catch (err) {
+                console.warn('[WellnessJourney] Phase 3 completedForms hydration failed (non-fatal):', err);
+            }
+        })();
+
+        return () => { cancelled = true; };
+    }, [journey.sessionId, activePhase]);
+
     // WO-558: patientCharacteristics removed, was hardcoded dummy data, never displayed from real source.
 
     // WO-558: totalImprovement only meaningful when baseline was actually recorded.
@@ -1250,6 +1340,21 @@ const WellnessJourneyInternal: React.FC = () => {
                 )}
 
                 {/* ─── Patient Context Bar ─── */}
+                {/* Part 1: Back to Protocol Record button — shown when deep-linked from Protocol Detail */}
+                {(() => {
+                    const sessionIdFromUrl = new URLSearchParams(location.search).get('sessionId');
+                    return sessionIdFromUrl ? (
+                        <button
+                            type="button"
+                            onClick={() => navigate(`/protocol/${sessionIdFromUrl}`)}
+                            className="self-start flex items-center gap-2 text-slate-400 hover:text-white transition-colors group px-2 py-1 mb-2"
+                            aria-label="Return to Protocol Record"
+                        >
+                            <span className="material-symbols-outlined text-lg group-hover:-translate-x-1 transition-transform">arrow_back</span>
+                            <span className="text-xs font-bold uppercase tracking-widest">Protocol Record</span>
+                        </button>
+                    ) : null;
+                })()}
                 {/* Mobile: compact single-row horizontal scroll strip + live-session collapse */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-3 sm:px-6 py-3 sm:py-4 bg-slate-800/60 border border-slate-700/50 rounded-2xl">
 
