@@ -995,7 +995,8 @@ const WellnessJourneyInternal: React.FC = () => {
                 savedDemographics = {
                     age: intake.age ? parseInt(intake.age, 10) : undefined,
                     gender: intake.gender || undefined,
-                    weightKg: intake.weight ? parseFloat(intake.weight) : undefined,
+                    // WO-655: display range label; weightKg no longer stored from intake
+                    weightKg: undefined,
                 };
             }
         } catch (_) { }
@@ -1253,7 +1254,8 @@ const WellnessJourneyInternal: React.FC = () => {
                                     ...curr.demographics,
                                     age: intake.age ? parseInt(intake.age, 10) : undefined,
                                     gender: intake.gender || undefined,
-                                    weightKg: intake.weight ? parseFloat(intake.weight) : undefined,
+                                    // WO-655: exact weightKg not stored; display shows weight_label from dropdown
+                                    weightKg: undefined,
                                 },
                             };
                         });
@@ -1268,7 +1270,9 @@ const WellnessJourneyInternal: React.FC = () => {
                                 session_id: latestSessionId,
                                 sex_label: intake.gender || undefined,
                                 age_at_intake: intake.age ? parseInt(intake.age, 10) : undefined,
-                                weight_kg: intake.weight ? parseFloat(intake.weight) : undefined,
+                                // WO-655: pass range label; resolveWeightRangeId in service layer resolves to FK
+                                weight_label: intake.weight_label || undefined,
+                                weight_kg: undefined,
                                 smoking_label: intake.smoking || undefined,
                             }).catch(err => console.warn('[WellnessJourney] createPatientProfile failed (non-fatal):', err));
 

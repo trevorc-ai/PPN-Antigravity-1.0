@@ -14,7 +14,10 @@ interface ProtocolConfiguratorModalProps {
 export interface PatientIntakeData {
     condition: string;
     age: string;
-    weight: string;
+    /** FK id from ref_weight_ranges — written directly to log_patient_profiles.weight_range_id */
+    weight_range_id: number | null;
+    /** Dual-unit range label, e.g. "80-85 kg (176-187 lbs)" — used for UI display, not storage */
+    weight_label: string;
     gender: string;
     smoking: string;
 }
@@ -153,9 +156,26 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
     // ── Step 0: Patient Intake ──────────────────────────────────────────────
     const [condition, setCondition] = useState('');
     const [age, setAge] = useState('');
-    const [weight, setWeight] = useState('');
+    // WO-655: weight is now a range FK + label from ref_weight_ranges (not a raw kg number)
+    const [weightRangeId, setWeightRangeId] = useState<number | null>(null);
+    const [weightLabel, setWeightLabel] = useState('');
+    const [weightRanges, setWeightRanges] = useState<Array<{ id: number; range_label: string }>>([]);
     const [gender, setGender] = useState('');
     const [smoking, setSmoking] = useState('');
+
+    // Fetch ref_weight_ranges on mount (Step 2 only — lazy to keep modal fast)
+    useEffect(() => {
+        import('../../supabaseClient').then(({ supabase }) => {
+            supabase
+                .from('ref_weight_ranges')
+                .select('id, range_label')
+                .eq('is_active', true)
+                .order('id', { ascending: true })
+                .then(({ data }) => {
+                    if (data) setWeightRanges(data as Array<{ id: number; range_label: string }>);
+                });
+        });
+    }, []);
 
     const [step, setStep] = useState<1 | 2>(1);
 
@@ -163,7 +183,8 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
     const stepDone = {
         condition: !!condition,
         age: !!age && !isNaN(parseFloat(age)) && parseFloat(age) >= 18,
-        weight: !!weight && !isNaN(parseFloat(weight)) && parseFloat(weight) > 0,
+        // WO-655: weight step is complete when a range is selected (weightRangeId non-null)
+        weight: weightRangeId !== null,
         gender: !!gender,
         smoking: !!smoking,
     };
@@ -171,18 +192,13 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
 
     // Ref for the Start Session button, receives focus when allComplete flips true
     const startBtnRef = useRef<HTMLButtonElement>(null);
-    // Refs for the numeric inputs, used for programmatic focus progression
+    // Ref for the age input, used for programmatic focus progression
     const ageInputRef = useRef<HTMLInputElement>(null);
-    const weightInputRef = useRef<HTMLInputElement>(null);
 
-    // Auto-focus the Start Session button the moment all 5 steps are complete —
-    // but ONLY if the weight input isn't currently being typed into.
-    // When weight has focus, the onBlur handler below takes over.
+    // Auto-focus the Start Session button the moment all 5 steps are complete
     useEffect(() => {
         if (step === 2 && allComplete && startBtnRef.current) {
-            if (document.activeElement !== weightInputRef.current) {
-                startBtnRef.current.focus();
-            }
+            startBtnRef.current.focus();
         }
     }, [step, allComplete]);
 
@@ -212,13 +228,14 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
     const handleBack = () => setStep(1);
 
     const handleSave = () => {
-        // Persist intake data to localStorage so WellnessJourney can restore it on remount.
+        // WO-655: persist weight_range_id + weight_label (no raw kg) to localStorage
         try {
-            localStorage.setItem('ppn_patient_intake', JSON.stringify({ condition, age, weight, gender, smoking }));
+            localStorage.setItem('ppn_patient_intake', JSON.stringify({
+                condition, age, weight_range_id: weightRangeId, weight_label: weightLabel, gender, smoking
+            }));
         } catch (_) { }
-        // Surface intake data to parent (WellnessJourney will store in journey.demographics)
         if (onIntakeComplete) {
-            onIntakeComplete({ condition, age, weight, gender, smoking });
+            onIntakeComplete({ condition, age, weight_range_id: weightRangeId, weight_label: weightLabel, gender, smoking });
         }
         onClose();
     };
@@ -370,7 +387,8 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
                                         onKeyDown={e => {
                                             if (e.key === 'Enter' && stepDone.age) {
                                                 e.preventDefault();
-                                                weightInputRef.current?.focus();
+                                                // Focus the weight range dropdown (WO-655: no Text input ref needed)
+                                                (document.getElementById('intake-weight') as HTMLSelectElement | null)?.focus();
                                             }
                                         }}
                                         className="w-full px-4 py-2.5 bg-slate-800/60 border border-slate-700/50 focus:border-indigo-500/60 rounded-xl text-white placeholder-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/30 transition-all"
@@ -383,42 +401,29 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
                                             {stepDone.weight ? <CheckCircle className="w-4 h-4" /> : '5'}
                                         </div>
                                         <label htmlFor="intake-weight" className="form-label" style={{ color: '#A8B5D1' }}>
-                                            Weight
-                                            <AdvancedTooltip
-                                                content="Enter weight in kilograms (kg). To convert from pounds: divide lbs by 2.205. Example: 150 lbs ÷ 2.205 = 68 kg. All mg/kg dosing calculations use this value."
-                                                tier="standard"
-                                                type="info"
-                                                side="bottom"
-                                                learnMoreUrl="/help/wellness-journey"
-                                            >
-                                                <span className="ml-1.5 text-slate-500 cursor-help text-xs font-normal normal-case tracking-normal">(kg) ⓘ</span>
-                                            </AdvancedTooltip>
+                                            Weight Range
                                         </label>
                                     </div>
-                                    <div className="relative">
-                                        <input
-                                            ref={weightInputRef}
-                                            id="intake-weight"
-                                            type="number"
-                                            min="20"
-                                            max="300"
-                                            step="0.1"
-                                            placeholder="e.g. 68"
-                                            value={weight}
-                                            onChange={e => setWeight(e.target.value)}
-                                            onFocus={e => e.target.select()}
-                                            onBlur={() => {
-                                                if (allComplete) startBtnRef.current?.focus();
-                                            }}
-                                            className="w-full px-4 py-2.5 pr-10 bg-slate-800/60 border border-slate-700/50 focus:border-indigo-500/60 rounded-xl text-white placeholder-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/30 transition-all"
-                                        />
-                                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400 pointer-events-none">kg</span>
-                                    </div>
-                                    {/* Live lbs equivalent, prevents lbs/kg entry error */}
-                                    {stepDone.weight && (
-                                        <p className="mt-1.5 text-xs text-slate-500">≈ {(parseFloat(weight) * 2.205).toFixed(1)} lbs</p>
-                                    )}
+                                    {/* WO-655: dropdown backed by ref_weight_ranges — no exact kg stored */}
+                                    <select
+                                        id="intake-weight"
+                                        value={weightRangeId ?? ''}
+                                        onChange={e => {
+                                            const id = e.target.value ? Number(e.target.value) : null;
+                                            setWeightRangeId(id);
+                                            const found = weightRanges.find(r => r.id === id);
+                                            setWeightLabel(found?.range_label ?? '');
+                                            if (allComplete || id !== null) startBtnRef.current?.focus();
+                                        }}
+                                        className="w-full px-4 py-2.5 bg-slate-800/60 border border-slate-700/50 focus:border-indigo-500/60 rounded-xl text-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/30 transition-all appearance-none"
+                                    >
+                                        <option value="">Select range...</option>
+                                        {weightRanges.map(r => (
+                                            <option key={r.id} value={r.id}>{r.range_label}</option>
+                                        ))}
+                                    </select>
                                 </div>
+
                             </div>
                         </div>
 

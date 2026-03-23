@@ -4,7 +4,7 @@ title: "ClinicianDirectory — Replace Misleading Listing Modal with Compliant I
 owner: BUILDER
 authored_by: PRODDY
 routed_by: LEAD
-status: 02_TRIAGE
+status: 04_BUILD
 priority: P1
 created: 2026-03-17
 routed_at: 2026-03-17
@@ -15,6 +15,8 @@ held_at: ""
 failure_count: 0
 completed_at: ""
 builder_notes: ""
+files:
+  - src/pages/ClinicianDirectory.tsx
 skills:
   - ".agent/skills/frontend-surgical-standards/SKILL.md"
   - ".agent/skills/frontend-best-practices/SKILL.md"

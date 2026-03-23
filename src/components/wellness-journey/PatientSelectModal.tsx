@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
-import { UserPlus, Search, ChevronRight, Clock, Activity, ArrowUp, ArrowDown, ArrowLeft, X, Loader2, AlertCircle, Camera, Lock, QrCode, FlaskConical, RotateCcw } from 'lucide-react';
+import { UserPlus, Search, ChevronRight, Clock, Activity, ArrowUp, ArrowDown, ArrowLeft, X, Loader2, AlertCircle, Camera, Lock, QrCode, FlaskConical, RotateCcw, CheckCircle } from 'lucide-react';
 import { supabase } from '../../supabaseClient';
 import { getCurrentSiteId, generatePatientId } from '../../services/identity';
 
@@ -38,10 +38,18 @@ interface LivePatient {
 }
 
 const PHASE_COLORS: Record<Phase, string> = {
-    Preparation: 'text-blue-400 bg-blue-500/10 border-blue-500/20',
+    Preparation: 'text-indigo-400 bg-indigo-500/10 border-indigo-500/20',
     Treatment: 'text-amber-400 bg-amber-500/10 border-amber-500/20',
-    Integration: 'text-purple-400 bg-purple-500/10 border-purple-500/20',
+    Integration: 'text-teal-400 bg-teal-500/10 border-teal-500/20',
     Complete: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20',
+};
+
+/** Icon paired with each phase badge — satisfies Rule 1 + Rule 6 (color-blindness) */
+const PHASE_ICONS: Record<Phase, React.ReactNode> = {
+    Preparation: <Clock className="w-3 h-3" />,
+    Treatment: <FlaskConical className="w-3 h-3" />,
+    Integration: <Activity className="w-3 h-3" />,
+    Complete: <CheckCircle className="w-3 h-3" />,
 };
 
 const ALL_PHASES: Phase[] = ['Preparation', 'Treatment', 'Integration', 'Complete'];
@@ -72,7 +80,7 @@ const FilterChip: React.FC<{ label: string; active: boolean; onClick: () => void
             <button
                 type="button"
                 onClick={onClick}
-                className={`min-h-[44px] sm:min-h-0 px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all duration-300 ease-in-out active:scale-95 ${active
+                className={`min-h-[44px] sm:min-h-0 px-3 py-1.5 rounded-lg text-sm font-semibold border transition-all duration-300 ease-in-out active:scale-95 ${active
                     ? 'bg-indigo-600 text-white border-indigo-500 shadow shadow-indigo-600/30'
                     : 'bg-slate-800/60 text-slate-400 border-slate-700/50 hover:border-slate-500 hover:text-[#A8B5D1]'
                     }`}
@@ -255,8 +263,8 @@ export const PatientSelectModal: React.FC<PatientSelectModalProps> = ({ onSelect
                                         </div>
                                         <div className="flex-1 min-w-0">
                                             <p className="text-base font-bold text-white">Resume Session</p>
-                                            <p className="text-xs font-mono text-emerald-400 mt-0.5 truncate">{activeSession.patientId}</p>
-                                            <p className="text-xs text-slate-400 mt-0.5">{PHASE_LABELS[activeSession.activePhase]} · {timeLabel}</p>
+                                            <p className="text-sm font-mono text-emerald-400 mt-0.5 truncate">{activeSession.patientId}</p>
+                                            <p className="text-sm text-slate-400 mt-0.5">{PHASE_LABELS[activeSession.activePhase]} · {timeLabel}</p>
                                         </div>
                                         <ChevronRight className="w-5 h-5 text-emerald-400 group-hover:translate-x-1 transition-transform flex-shrink-0" />
                                     </button>
@@ -291,7 +299,7 @@ export const PatientSelectModal: React.FC<PatientSelectModalProps> = ({ onSelect
                                     </div>
                                     <div className="flex-1 min-w-0">
                                         <p className="text-sm font-bold text-white">Existing Patient</p>
-                                        <p className="text-xs text-slate-400 mt-0.5">Look up a patient</p>
+                                        <p className="text-sm text-slate-400 mt-0.5">Look up a patient</p>
                                     </div>
                                     <ChevronRight className="w-4 h-4 text-slate-500 group-hover:translate-x-0.5 transition-transform flex-shrink-0 self-center" />
                                 </button>
@@ -307,8 +315,8 @@ export const PatientSelectModal: React.FC<PatientSelectModalProps> = ({ onSelect
                                         </div>
                                         <div className="flex-1 min-w-0">
                                             <p className="text-sm font-bold text-white">Most Recent</p>
-                                            <p className="text-xs font-mono text-indigo-400 mt-0.5 truncate">{patients[0].id}</p>
-                                            <p className="text-xs text-slate-500 mt-0.5">
+                                            <p className="text-sm font-mono text-indigo-400 mt-0.5 truncate">{patients[0].id}</p>
+                                            <p className="text-sm text-slate-500 mt-0.5">
                                                 {patients[0].phase} · {new Date(patients[0].lastSession).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                                             </p>
                                         </div>
@@ -331,7 +339,7 @@ export const PatientSelectModal: React.FC<PatientSelectModalProps> = ({ onSelect
                             {/* WO-599: Training/Testing separator — visually separates ephemeral Practice Session from real clinical actions */}
                             <div className="flex items-center gap-3 pt-2">
                                 <div className="flex-1 border-t border-slate-700/60" />
-                                <span className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] whitespace-nowrap">Training &amp; Testing</span>
+                                <span className="text-sm font-black text-slate-400 uppercase tracking-[0.2em] whitespace-nowrap">Training &amp; Testing</span>
                                 <div className="flex-1 border-t border-slate-700/60" />
                             </div>
 
@@ -381,7 +389,7 @@ export const PatientSelectModal: React.FC<PatientSelectModalProps> = ({ onSelect
                                                     Open Scanner
                                                 </p>
                                                 <p className="text-sm text-slate-300 mt-0.5">Point camera at wristband or chart to generate ID</p>
-                                                <div className="mt-3 inline-flex items-center gap-1.5 px-2 py-1 rounded bg-black/40 border border-teal-500/30 text-[11px] text-teal-400 font-medium tracking-wide">
+                                                <div className="mt-3 inline-flex items-center gap-1.5 px-2 py-1 rounded bg-black/40 border border-teal-500/30 text-sm text-teal-400 font-medium tracking-wide">
                                                     <Lock className="w-3 h-3" /> No data leaves your device
                                                 </div>
                                             </div>
@@ -399,7 +407,7 @@ export const PatientSelectModal: React.FC<PatientSelectModalProps> = ({ onSelect
                                             </div>
                                             <div>
                                                 <p className="text-sm font-bold text-[#A8B5D1]">Or use your phone</p>
-                                                <p className="text-xs text-slate-400 mt-1">Scan this QR code with a mobile device to use the Bridge scanner remotely.</p>
+                                                <p className="text-sm text-slate-400 mt-1">Scan this QR code with a mobile device to use the Bridge scanner remotely.</p>
                                             </div>
                                         </div>
                                     </div>
@@ -471,14 +479,14 @@ export const PatientSelectModal: React.FC<PatientSelectModalProps> = ({ onSelect
                             </div>
 
                             <div className="flex items-center gap-2 flex-wrap pb-1">
-                                <span className="text-xs text-slate-500 font-medium">Phase:</span>
+                                <span className="text-sm text-slate-400 font-medium">Phase:</span>
                                 {ALL_PHASES.map(p => (
                                     <FilterChip key={p} label={p} active={phaseFilter === p} onClick={() => togglePhase(p)} />
                                 ))}
                                 <button
                                     type="button"
                                     onClick={toggleSort}
-                                    className="ml-auto flex items-center gap-1.5 px-3 py-2 bg-slate-800/60 hover:bg-slate-800 border border-slate-700/50 hover:border-slate-600 rounded-lg text-xs font-semibold text-slate-400 hover:text-[#A8B5D1] transition-all"
+                                    className="ml-auto flex items-center gap-1.5 px-3 py-2 bg-slate-800/60 hover:bg-slate-800 border border-slate-700/50 hover:border-slate-600 rounded-lg text-sm font-semibold text-slate-400 hover:text-[#A8B5D1] transition-all"
                                     title={sortDir === 'desc' ? 'Newest first' : 'Oldest first'}
                                 >
                                     {sortDir === 'desc' ? <ArrowDown className="w-3.5 h-3.5" /> : <ArrowUp className="w-3.5 h-3.5" />}
@@ -525,24 +533,25 @@ export const PatientSelectModal: React.FC<PatientSelectModalProps> = ({ onSelect
                                             <p className="text-base font-bold text-white font-mono tracking-wide truncate">
                                                 {patient.id.length >= 32 ? `SID-${patient.id.substring(0, 8).toUpperCase()}` : patient.id}
                                             </p>
-                                            <span className={`sm:hidden text-xs font-semibold px-2 py-0.5 rounded border whitespace-nowrap ml-2 shrink-0 ${PHASE_COLORS[patient.phase]}`}>
+                                            <span className={`sm:hidden inline-flex items-center gap-1 text-sm font-semibold px-2 py-0.5 rounded border whitespace-nowrap ml-2 shrink-0 ${PHASE_COLORS[patient.phase]}`}>
+                                                {PHASE_ICONS[patient.phase]}
                                                 {patient.phase}
                                             </span>
                                         </div>
-                                        <div className="flex flex-wrap items-center gap-x-2 gap-y-1 mt-2 text-xs sm:text-sm text-slate-400">
+                                        <div className="flex flex-wrap items-center gap-x-2 gap-y-1 mt-2 text-sm text-slate-400">
                                             <span className="flex items-center gap-1.5 whitespace-nowrap">
-                                                <Clock className="w-3 h-3 sm:w-3.5 sm:h-3.5 flex-shrink-0" />
+                                                <Clock className="w-3.5 h-3.5 flex-shrink-0" />
                                                 {patient.lastSession}
                                             </span>
                                             <span className="text-slate-600 hidden sm:inline">·</span>
                                             <span className="flex items-center gap-1.5 whitespace-nowrap">
-                                                <Activity className="w-3 h-3 sm:w-3.5 sm:h-3.5 flex-shrink-0" />
+                                                <Activity className="w-3.5 h-3.5 flex-shrink-0" />
                                                 {patient.sessionCount} session{patient.sessionCount !== 1 ? 's' : ''}
                                             </span>
                                             {patient.sessionType && (
                                                 <>
                                                     <span className="text-slate-600 hidden sm:inline">·</span>
-                                                    <span className="px-1.5 py-0.5 rounded-md bg-slate-700/60 border border-slate-600/40 text-[10px] sm:text-xs truncate max-w-[120px] inline-block align-middle">
+                                                    <span className="px-1.5 py-0.5 rounded-md bg-slate-700/60 border border-slate-600/40 text-sm truncate max-w-[120px] inline-block align-middle">
                                                         {patient.sessionType}
                                                     </span>
                                                 </>
@@ -550,7 +559,7 @@ export const PatientSelectModal: React.FC<PatientSelectModalProps> = ({ onSelect
                                             {patient.substance && (
                                                 <>
                                                     <span className="text-slate-600 hidden sm:inline">·</span>
-                                                    <span className="text-[10px] sm:text-xs text-indigo-300 font-semibold px-1.5 py-0.5 rounded-md bg-indigo-500/10 border border-indigo-500/20 truncate max-w-[120px] inline-block align-middle">
+                                                    <span className="text-sm text-indigo-300 font-semibold px-1.5 py-0.5 rounded-md bg-indigo-500/10 border border-indigo-500/20 truncate max-w-[120px] inline-block align-middle">
                                                         {patient.substance}
                                                     </span>
                                                 </>
@@ -558,7 +567,8 @@ export const PatientSelectModal: React.FC<PatientSelectModalProps> = ({ onSelect
                                         </div>
                                     </div>
                                     <div className="hidden sm:flex items-center gap-3 shrink-0">
-                                        <span className={`text-sm font-semibold px-2.5 py-1 rounded-lg border whitespace-nowrap ${PHASE_COLORS[patient.phase]}`}>
+                                        <span className={`inline-flex items-center gap-1.5 text-sm font-semibold px-2.5 py-1 rounded-lg border whitespace-nowrap ${PHASE_COLORS[patient.phase]}`}>
+                                            {PHASE_ICONS[patient.phase]}
                                             {patient.phase}
                                         </span>
                                         <ChevronRight className="w-4 h-4 text-slate-600 group-hover:text-slate-400 group-hover:translate-x-0.5 transition-all" />
@@ -578,12 +588,12 @@ export const PatientSelectModal: React.FC<PatientSelectModalProps> = ({ onSelect
                                     <ArrowLeft className="w-4 h-4" />
                                     Back
                                 </button>
-                                <p className="text-xs text-slate-500 text-right">
+                                <p className="text-sm text-slate-500 text-right">
                                     {loading ? 'Fetching…' : `${patients.length} patient${patients.length !== 1 ? 's' : ''} on record`}
                                 </p>
                             </div>
-                            <p className="text-xs text-slate-500 flex items-center justify-center gap-1.5 font-medium">
-                                <Lock className="w-3 h-3 text-indigo-400/70" /> Secured and anonymized by <a href="/privacy" className="text-indigo-400 hover:text-indigo-300 hover:underline transition-colors" target="_blank" rel="noopener noreferrer">Phantom Shield</a>
+                            <p className="text-sm text-slate-500 flex items-center justify-center gap-1.5 font-medium">
+                                <Lock className="w-3.5 h-3.5 text-indigo-400/70" /> Secured and anonymized by <a href="/privacy" className="text-indigo-400 hover:text-indigo-300 hover:underline transition-colors" target="_blank" rel="noopener noreferrer">Phantom Shield</a>
                             </p>
                         </div>
                     </div>

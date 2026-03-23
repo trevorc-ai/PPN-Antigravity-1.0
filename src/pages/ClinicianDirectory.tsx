@@ -219,23 +219,20 @@ const ClinicianDirectory: React.FC = () => {
   const [activeMessagePractitioner, setActiveMessagePractitioner] = useState<any | null>(null);
   const [showFilters, setShowFilters] = useState(false);
   const [showListingModal, setShowListingModal] = useState(false);
-  const [listingForm, setListingForm] = useState({ displayName: '', role: '', city: '', country: 'United States', licenseType: '', website: '', email: '', isAnonymous: false });
   const [listingSubmitted, setListingSubmitted] = useState(false);
+  const [listingSubmitting, setListingSubmitting] = useState(false);
 
-  const handleListingSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  // WO-641: Single-button intent signal. No free-text fields — writes user_id only.
+  const handleListingSubmit = async () => {
+    setListingSubmitting(true);
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      // COMPLIANCE: Only user_id is stored. Free-text fields (name, email, role) removed per
-      // data governance policy, log tables store reference IDs only, no direct text.
-      // TODO: Create ref_feature_request_types table and store request_type_id FK instead.
-      await supabase.from('log_feature_requests').insert({
-        user_id: user?.id ?? null,
-        // request_type, category, status, requested_text removed, all free text, no ref FK exists
-      });
+      await supabase.from('log_feature_requests').insert({ user_id: user?.id ?? null });
       setListingSubmitted(true);
     } catch (err) {
-      console.error('Listing submission failed', err);
+      console.error('[WO-641] Listing submission failed', err);
+    } finally {
+      setListingSubmitting(false);
     }
   };
 
@@ -405,27 +402,17 @@ const ClinicianDirectory: React.FC = () => {
                         <span className="material-symbols-outlined text-lg">close</span>
                       </button>
                     </div>
-                    <form onSubmit={handleListingSubmit} className="space-y-4">
-                      <div className="flex items-start gap-3 bg-slate-900/50 p-4 rounded-xl border border-slate-700/50">
-                        <input type="checkbox" id="anonToggle" checked={listingForm.isAnonymous} onChange={e => setListingForm(f => ({ ...f, isAnonymous: e.target.checked }))} className="mt-1 size-4 rounded accent-cyan-500 bg-slate-800 border-slate-600" />
-                        <label htmlFor="anonToggle" className="text-sm font-medium text-slate-300 select-none cursor-pointer">
-                          List Anonymously
-                          <span className="block text-xs text-slate-500 mt-1">Your identity will remain hidden. Only your role and region will be displayed.</span>
-                        </label>
-                      </div>
-                      <input required={!listingForm.isAnonymous} placeholder={listingForm.isAnonymous ? "Clinic/Practice Name (Optional)" : "Full Name / Display Name"} value={listingForm.displayName} onChange={e => setListingForm(f => ({ ...f, displayName: e.target.value }))} className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm text-slate-300 focus:ring-1 focus:ring-cyan-500 outline-none" />
-                      <select required value={listingForm.role} onChange={e => setListingForm(f => ({ ...f, role: e.target.value }))} className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm text-slate-300 focus:ring-1 focus:ring-cyan-500 outline-none">
-                        <option value="">Select Role</option>
-                        <option>Psychiatrist</option><option>Facilitator</option><option>LCSW</option><option>LPC</option><option>PhD Researcher</option><option>Nurse Practitioner</option><option>Other</option>
-                      </select>
-                      <input required placeholder="City" value={listingForm.city} onChange={e => setListingForm(f => ({ ...f, city: e.target.value }))} className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm text-slate-300 focus:ring-1 focus:ring-cyan-500 outline-none" />
-                      <select value={listingForm.country} onChange={e => setListingForm(f => ({ ...f, country: e.target.value }))} className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm text-slate-300 focus:ring-1 focus:ring-cyan-500 outline-none">
-                        <option>United States</option><option>Canada</option><option>United Kingdom</option><option>Australia</option><option>Netherlands</option><option>Other</option>
-                      </select>
-                      <input placeholder="Website URL (optional)" value={listingForm.website} onChange={e => setListingForm(f => ({ ...f, website: e.target.value }))} className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm text-slate-300 focus:ring-1 focus:ring-cyan-500 outline-none" />
-                      <input required type="email" placeholder="Contact Email (admin use only)" value={listingForm.email} onChange={e => setListingForm(f => ({ ...f, email: e.target.value }))} className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm text-slate-300 focus:ring-1 focus:ring-cyan-500 outline-none" />
-                      <button type="submit" className="w-full py-3 rounded-xl bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-500/40 text-cyan-400 font-bold text-sm transition-all">Submit Listing Request</button>
-                    </form>
+                    <p className="text-sm text-slate-400 mb-6 leading-relaxed">
+                      Apply to join the practitioner directory. We review applications manually and will contact you directly.
+                    </p>
+                    <button
+                      id="listing-submit-interest-btn"
+                      onClick={handleListingSubmit}
+                      disabled={listingSubmitting}
+                      className="w-full py-3 rounded-xl bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-500/40 text-cyan-400 font-bold text-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {listingSubmitting ? 'Submitting...' : 'Submit Interest'}
+                    </button>
                   </>
                 )}
               </div>

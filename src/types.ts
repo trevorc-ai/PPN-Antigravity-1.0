@@ -101,7 +101,10 @@ export interface PatientRecord {
     age: number;
     sex: string;
     race: string;
+    /** @deprecated Use weight_label for HIPAA Safe Harbor compliance \u2014 WO-655 */
     weight: number;
+    /** WO-655: HIPAA Safe Harbor range label (e.g. "80-85 kg (176-187 lbs)") */
+    weight_label?: string;
     patientHash?: string;
     smokingStatus?: string;
   };

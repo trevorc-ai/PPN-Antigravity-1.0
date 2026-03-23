@@ -1,60 +1,65 @@
 # SESSION_HANDOFF.md
-**Last updated:** 2026-03-22 | **Session focus:** Pipeline restructure — SOOP removal, 02.5_PRE-BUILD_REVIEW stage, WO template updates
+**Last updated:** 2026-03-23 | **Session focus:** PRODDY strategy + pipeline remediation
 
 ---
 
 ## 🔴 Active / In-Flight
 
-| Ticket | Stage | Status |
+| Ticket | Stage | Notes |
 |---|---|---|
-| 16 tickets | `02.5_PRE-BUILD_REVIEW` | Awaiting INSPECTOR Phase 0 clearance — fast-pass most, full DB review for DB-touching ones |
-| WO-640 | `03_BUILD` | Denver Stability Audit — INSPECTOR-owned |
-| WO-654-A, WO-654-B | `03_BUILD` | Denver partner pages — awaiting INSPECTOR 02.5 clearance |
+| WO-654-A | `03_BUILD` | `/partner-demo` video route — BUILDER has it. Fixes broken link in all live confirmation emails. P0. |
+| WO-654-B | `03_BUILD` | Operator notification edge function — BUILDER has it. |
+| WO-657 | `00_INBOX` | Homepage enterprise overhaul (formerly filed as WO-655 — renumbered to avoid collision) |
+| GO-658 | `00_BACKLOG` | Denver Leave-Behind — retroactive GO filing. MARKETER must start `01_DRAFTING` ASAP. Print deadline April 5. |
+| 16 tickets | `02.5_PRE-BUILD_REVIEW` | Awaiting INSPECTOR Phase 0 clearance from prior session |
+| WO-640 | `03_BUILD` | Denver Stability Audit |
 
 ---
 
-## ✅ Completed This Session
+## ✅ Completed This Session (PRODDY session, 2026-03-22)
 
-| Item | Detail |
-|---|---|
-| SOOP removed | All 11 `.agent/` files (workflows, skills, rules) purged of active SOOP references |
-| `02.5_PRE-BUILD_REVIEW` stage | New pre-build INSPECTOR gate wired into all workflows (fast-pass + full DB review) |
-| `inspector-qa/SKILL.md` v1.3 | Phase 0 (pre-build checklist: schema, index types, backend efficiency) + Phase 5.5 (joint user visual confirmation) |
-| `builder-protocol.md` v1.2 | Hard Rule 6 added — BUILDER forbidden from `02.5_PRE-BUILD_REVIEW` |
-| `lead-pipeline-scan.md` v1.3 | Step 1 for 02.5_PRE-BUILD_REVIEW queue added; routing table and report table updated |
-| Folder renamed | `02.5_REVIEW` → `02.5_PRE-BUILD_REVIEW` |
-| 7 tickets moved | `03_BUILD` → `02.5_PRE-BUILD_REVIEW` retroactively (WO-641, 642, 652, 653, A2, A3, A4) |
-| WO templates updated | `database_changes`, `affects`, `admin_visibility`, `admin_section`, `growth_order_ref` added to `WO_Template.md` |
-| `PRODDY_PRD_Template.md` | Sign-off checklist requires `database_changes` classification |
+- **Pipeline audit** — All `_WORK_ORDERS` and `_GROWTH_ORDERS` cross-referenced against Denver strategy doc
+- **5 tickets archived** — WO-559 V2, V3, V4, V5, GO-589 moved to `_GROWTH_ORDERS/99_ARCHIVED/`
+- **GO-591 updated** — Variations 2–5 cancelled; Variation 1 (Clinical) survives as sole enterprise ICP
+- **WO-654** filed and picked up by LEAD; sub-tickets A and B in `03_BUILD`
+- **WO-657** (Homepage Overhaul) filed in `00_INBOX`
+- **WO-643 demo script** produced; saved to `public/internal/admin_uploads/denver-2026/PsyCon_Demo_Script_April9.md`
+- **WO-644 leave-behind HTML** produced with embedded QR codes; saved to `public/internal/admin_uploads/denver-2026/PPN_Leave_Behind_Print.html`
+- **GO-658** filed — retroactive GO ticket for leave-behind, per Rule Zero-B remediation
+- **WO numbering collision fixed** — WO-655 (homepage) renumbered to WO-657
+- **`ppn-ui-standards` v1.2** — Quick Reference explicitly bans JetBrains Mono
+- **`proddy-protocol` v2.0** — Major redesign (see Protocol Changes below)
 
 ---
 
 ## 🟡 Needs User Decision
 
-1. **`agent.yaml` agents list** — may still list SOOP as an agent. System-locked — only User can update it directly.
-2. **GO-649, GO-650** — in `_GROWTH_ORDERS/06_QA`, awaiting user final visual approval before moving to `99_PUBLISHED`.
-3. **GO-651** — needs MARKETER visual review before WO-654-C/D/E can release from `98_HOLD`.
-4. **Dashboard timer chip bug + Route of Administration dropdown** — from prior session. Need dedicated WOs.
+1. **WO-643 and WO-657 (demo script and homepage)** — LEAD must route both
+2. **GO-658** — MARKETER must begin `01_DRAFTING` immediately; USER approves copy at `02_USER_REVIEW`
+3. **Dedicated operator email alias** — `signups@ppnportal.net` recommended. Confirm before WO-654-B ships
+4. **GO-649, GO-650** — in `_GROWTH_ORDERS/06_QA`, awaiting USER final visual approval before `99_PUBLISHED`
+5. **`_GROWTH_ORDERS/07_ARCHIVED/`** — non-standard folder name; LEAD should consolidate into `99_ARCHIVED/`
 
 ---
 
 ## 🔵 Pipeline State
 
-| Queue | Count | Key tickets |
+| Queue | Count | Key Tickets |
 |---|---|---|
-| `02.5_PRE-BUILD_REVIEW` | 16 | All need INSPECTOR clearance — start here |
-| `03_BUILD` | 3 | WO-640, WO-654-A, WO-654-B |
-| `04_QA` | ~10 | Stable |
-| `98_HOLD` | 12 | Various — see hold_reason fields |
+| `_GROWTH_ORDERS/00_BACKLOG` | 1 | GO-658 (leave-behind, needs MARKETER NOW) |
+| `_WORK_ORDERS/00_INBOX` | 1 | WO-657 (homepage overhaul, needs LEAD routing) |
+| `02.5_PRE-BUILD_REVIEW` | 16 | All need INSPECTOR clearance |
+| `03_BUILD` | 3+ | WO-654-A, WO-654-B, WO-640 |
+| `05_USER_REVIEW` | 2 | WO-643 (demo script), WO-644 ticket |
 | `_GROWTH_ORDERS/06_QA` | 2 | GO-649, GO-650 (user approval pending) |
 
 ---
 
 ## ⚪ Next Recommended Actions
 
-1. **INSPECTOR:** Run Phase 0 on all 16 `02.5_PRE-BUILD_REVIEW` tickets — fast-pass pure UI tickets, full review for any with `database_changes: yes`
-2. **LEAD:** Architect WO-654 (Waitlist Overhaul P0) and WO-655 (Homepage Overhaul P1) — both in `02_TRIAGE`, depend on WO-636 shipping
-3. **USER:** Review GO-649 and GO-650 to unblock `99_PUBLISHED` routing
+1. **MARKETER** — Begin GO-658 `01_DRAFTING` (CONTENT_MATRIX for leave-behind copy). Print deadline April 5; no time to waste.
+2. **BUILDER** — Ship WO-654-A (`/partner-demo` route). Fixes live broken link in every confirmation email. P0.
+3. **LEAD** — Route WO-657 (Homepage Overhaul). Identify homepage component file before assigning to BUILDER.
 
 ---
 
@@ -62,16 +67,15 @@
 
 | File | Version | Change |
 |---|---|---|
-| `lead-pipeline-scan.md` | v1.3 | SOOP removed; Step 1 for 02.5_PRE-BUILD_REVIEW added; routing + report tables updated |
-| `inspector-qa/SKILL.md` | v1.3 | Phase 0 (pre-build DB/index/efficiency checklist) + Phase 5.5 (joint user visual confirmation) |
-| `builder-protocol.md` | v1.2 | Hard Rule 6: BUILDER forbidden from 02.5_PRE-BUILD_REVIEW |
-| `proddy-protocol/SKILL.md` | — | Routing table updated; forbidden actions table updated |
-| `migration-manager/SKILL.md` | — | SOOP → INSPECTOR/User model |
-| `database-schema-validator/SKILL.md` | — | SOOP → INSPECTOR; clearance block renamed |
-| `fast-track.md` | — | DB routing updated |
-| `migration-execution-protocol.md` | — | SOOP moved to historical note |
-| `data-seeding-pipeline.md` | — | SOOP → INSPECTOR throughout |
-| `pre-commit-safety.md` | — | SOOP → INSPECTOR |
-| `handoff_protocol.md` | — | SOOP lines replaced |
-| `WO_Template.md` | — | `database_changes`, `affects`, `admin_visibility`, `admin_section`, `growth_order_ref` added; default status updated |
-| `PRODDY_PRD_Template.md` | — | Sign-off checklist updated |
+| `ppn-ui-standards/SKILL.md` | v1.2 | JetBrains Mono explicitly banned in Quick Reference row |
+| `proddy-protocol/SKILL.md` | v2.0 | **Major redesign:** Rule Zero-B (full pipeline compliance, zero exceptions), USER-Only Gate Law, Mandatory Full Agent Chain, stage name updates (`03_REVIEW`, `04_BUILD`, `05_QA`, `06_USER_REVIEW`), AUTO-HANDOFF mandate, `active_sprint` + `files:` added to WO frontmatter |
+
+---
+
+## Key Context for Next Agent
+
+- **Denver is April 9, 2026.** Print deadline April 5.
+- **Broken link is live NOW:** `/#/partner-demo` in every confirmation email returns 404. WO-654-A fixes it. P0.
+- **ICP locked:** Multi-site premium clinic networks. No grey-market, no patients, no insurance, no academic researchers (all Wave 2).
+- **`proddy-protocol` v2.0 is now in effect** — agents do NOT stop after filing a ticket. AUTO-HANDOFF is mandatory. Filing and stopping = Rule Zero-B violation.
+- **WO numbering note:** WO-655 exists twice (weight range fix in `03_BUILD` + hook extraction in `02_TRIAGE`). Homepage overhaul was correctly renumbered to WO-657. LEAD must resolve the WO-655 double.

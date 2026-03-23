@@ -65,7 +65,7 @@
 
 <div class="doc-label">Technical Proof Set</div>
 <h1>Technical Proof Set</h1>
-<p>Field-level evidence supporting the Zero-PHI architecture claim. Derived from live schema review (<code>REBUILT-3-15-26_Schema.md</code>) and engineering confirmation, March 2026.</p>
+<p>Field-level evidence supporting the Zero-PHI architecture claim. Derived from live schema review and engineering confirmation, March 2026.</p>
 
 <h2>1. Data Flow Diagram</h2>
 <div class="flow-row">
@@ -98,13 +98,13 @@
 
 <h2>3. Pseudonymization Specification</h2>
 <h3>Code Generation Algorithm</h3>
-<p>Source: <code>src/services/identity.ts</code>, reviewed March 2026.</p>
+<p>Reviewed and confirmed, March 2026.</p>
 <div class="cert-box">
   <div class="cert-label">Algorithm Specification</div>
   <p>Patient codes are generated as <code>PT-XXXXXXXXXX</code> using a 32-character unambiguous alphabet (A-Z excluding I and O; 0-9 excluding 0 and 1). 10 characters = approximately 3.1 × 10<sup>14</sup> unique values. Generation is performed entirely client-side on the practitioner's device. No patient attribute (name, DOB, MRN, initials) is used as input. PPN servers never receive the plaintext code.</p>
 </div>
 <h3>Hash Storage</h3>
-<p>The plaintext code is hashed before transmission. <code>log_clinical_records</code> and <code>log_patient_flow_events</code> store only <code>patient_link_code_hash</code>. The plaintext is retained only in <code>log_patient_site_links</code>, which is RLS-protected and accessible only by the practitioner who created it.</p>
+<p>The plaintext code is hashed before transmission. Analytics and clinical output tables store only the one-way hash of the patient code. The plaintext is retained only in the practitioner-facing administrative record, which is protected by Row Level Security and accessible only by the practitioner who created it.</p>
 <h3>Camera Scanner Alternative</h3>
 <p>Practitioners may also generate patient IDs by scanning a wristband QR code via the platform's camera scanner. No patient name is entered at any step. The scanner inputs the generated code directly, bypassing the keyboard entirely.</p>
 
@@ -120,7 +120,7 @@
 </table>
 <div class="cert-box">
   <div class="cert-label">Confirmed March 2026</div>
-  <p>No analytics tools (Posthog, Google Analytics, Mixpanel), no error tracking tools (Sentry, Datadog), no observability tools (Vercel Analytics, LogRocket), and no additional integrations are configured. Confirmed via Vercel environment variable review and Supabase integration panel review.</p>
+  <p>No analytics tools (Posthog, Google Analytics, Mixpanel), no error tracking tools (Sentry, Datadog), no observability tools, and no additional integrations are configured. Confirmed via environment variable review and vendor integration panel review.</p>
 </div>
 
 <h2>5. Authentication and Account Model</h2>

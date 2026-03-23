@@ -4,7 +4,7 @@ title: "Denver Email Capture — Public /join Route and Waitlist Form"
 owner: BUILDER
 authored_by: PRODDY
 routed_by: LEAD
-status: 02_TRIAGE
+status: 04_BUILD
 priority: P1
 created: 2026-03-17
 routed_at: 2026-03-17

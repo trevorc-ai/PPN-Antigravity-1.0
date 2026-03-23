@@ -566,6 +566,7 @@ export const PATIENTS: PatientRecord[] = [
       sex: 'Male',
       race: '2106-3',
       weight: 82,
+      weight_label: "80-85 kg (176-187 lbs)",
       patientHash: '8f9a2b3c4d5e6f7a'
     },
     protocol: { substance: 'Psilocybin', dosage: '25', dosageUnit: 'mg', frequency: 'Single Session', route: 'Oral', startDate: '2024-01-15' },
@@ -600,6 +601,7 @@ export const PATIENTS: PatientRecord[] = [
       sex: 'Female',
       race: '2106-3',
       weight: 65,
+      weight_label: "65-70 kg (143-154 lbs)",
       patientHash: 'e3b0c44298fc1c14'
     },
     protocol: { substance: 'MDMA', dosage: '120', dosageUnit: 'mg', frequency: 'Single Session', route: 'Oral', startDate: '2023-10-10' },
@@ -643,6 +645,7 @@ export const PATIENTS: PatientRecord[] = [
       sex: 'Male',
       race: '2054-5',
       weight: 91,
+      weight_label: "90-95 kg (198-209 lbs)",
       patientHash: '7d793037a0b1c2d3'
     },
     protocol: { substance: 'Ketamine', dosage: '0.5', dosageUnit: 'mg/kg', frequency: 'Twice Weekly', route: 'Intravenous', startDate: '2023-05-20' },
@@ -676,6 +679,7 @@ export const PATIENTS: PatientRecord[] = [
       sex: 'Female',
       race: '2106-3',
       weight: 58,
+      weight_label: "55-60 kg (121-132 lbs)",
       patientHash: '4d5e6f7g8h9i0j1k'
     },
     protocol: { substance: 'LSD-25', dosage: '100', dosageUnit: 'ug', frequency: 'Weekly Titration', route: 'Oral', startDate: '2023-11-01' },
@@ -709,6 +713,7 @@ export const PATIENTS: PatientRecord[] = [
       sex: 'Female',
       race: '2106-3',
       weight: 68,
+      weight_label: "65-70 kg (143-154 lbs)",
       patientHash: '6f9a2b3c4d5e8f1a'
     },
     protocol: { substance: 'Psilocybin', dosage: '25', dosageUnit: 'mg', frequency: 'Monthly', route: 'Oral', startDate: '2024-01-01' },
@@ -744,6 +749,7 @@ export const PATIENTS: PatientRecord[] = [
       sex: 'Male',
       race: '2054-5',
       weight: 85,
+      weight_label: "85-90 kg (187-198 lbs)",
       patientHash: 'a1b2c3d4e5f67890'
     },
     protocol: { substance: 'Psilocybin', dosage: '50', dosageUnit: 'mg', frequency: 'Bi-Weekly', route: 'Oral', startDate: '2024-01-05' },
@@ -790,6 +796,7 @@ export const PATIENTS: PatientRecord[] = [
       sex: 'Female',
       race: '2106-3',
       weight: 62,
+      weight_label: "60-65 kg (132-143 lbs)",
       patientHash: 'b2c3d4e5f6789012'
     },
     protocol: { substance: 'MDMA', dosage: '100', dosageUnit: 'mg', frequency: 'Monthly', route: 'Oral', startDate: '2023-09-01' },
@@ -825,6 +832,7 @@ export const PATIENTS: PatientRecord[] = [
       sex: 'Male',
       race: '2054-5',
       weight: 88,
+      weight_label: "85-90 kg (187-198 lbs)",
       patientHash: 'c3d4e5f678901234'
     },
     protocol: { substance: 'Ketamine', dosage: '0.5', dosageUnit: 'mg/kg', frequency: 'Weekly', route: 'Intravenous', startDate: '2024-01-10' },
@@ -862,6 +870,7 @@ export const PATIENTS: PatientRecord[] = [
       sex: 'Female',
       race: '2106-3',
       weight: 70,
+      weight_label: "70-75 kg (154-165 lbs)",
       patientHash: 'd4e5f67890123456'
     },
     protocol: { substance: 'MDMA', dosage: '120', dosageUnit: 'mg', frequency: 'Monthly', route: 'Oral', startDate: '2024-01-03' },
@@ -898,6 +907,7 @@ export const PATIENTS: PatientRecord[] = [
       sex: 'Male',
       race: '2106-3',
       weight: 92,
+      weight_label: "90-95 kg (198-209 lbs)",
       patientHash: 'e5f678901234567a'
     },
     protocol: { substance: 'Psilocybin', dosage: '50', dosageUnit: 'mg', frequency: 'Bi-Weekly', route: 'Oral', startDate: '2024-01-02' },
@@ -935,6 +945,7 @@ export const PATIENTS: PatientRecord[] = [
       sex: 'Female',
       race: '2054-5',
       weight: 59,
+      weight_label: "55-60 kg (121-132 lbs)",
       patientHash: 'f67890123456789b'
     },
     protocol: { substance: 'Ketamine', dosage: '0.5', dosageUnit: 'mg/kg', frequency: 'Twice Weekly', route: 'Intravenous', startDate: '2024-01-08' },
@@ -974,6 +985,7 @@ export const PATIENTS: PatientRecord[] = [
       sex: 'Male',
       race: '2106-3',
       weight: 75,
+      weight_label: "75-80 kg (165-176 lbs)",
       patientHash: 'g78901234567890c'
     },
     protocol: { substance: 'Psilocybin', dosage: '30', dosageUnit: 'mg', frequency: 'Single Session', route: 'Oral', startDate: '2023-12-01' },
@@ -1009,6 +1021,7 @@ export const PATIENTS: PatientRecord[] = [
       sex: 'Female',
       race: '2106-3',
       weight: 78,
+      weight_label: "75-80 kg (165-176 lbs)",
       patientHash: 'h89012345678901d'
     },
     protocol: { substance: 'LSD-25', dosage: '150', dosageUnit: 'ug', frequency: 'Monthly', route: 'Oral', startDate: '2023-11-15' },
@@ -1063,6 +1076,7 @@ export const PATIENTS: PatientRecord[] = [
       sex: 'Male',
       race: '2054-5',
       weight: 80,
+      weight_label: "80-85 kg (176-187 lbs)",
       patientHash: 'i90123456789012e'
     },
     protocol: { substance: 'Psilocybin', dosage: '25', dosageUnit: 'mg', frequency: 'Quarterly', route: 'Oral', startDate: '2023-06-01' },
@@ -1099,6 +1113,7 @@ export const PATIENTS: PatientRecord[] = [
       sex: 'Female',
       race: '2106-3',
       weight: 64,
+      weight_label: "60-65 kg (132-143 lbs)",
       patientHash: 'j01234567890123f'
     },
     protocol: { substance: 'Ketamine', dosage: '0.75', dosageUnit: 'mg/kg', frequency: 'Weekly', route: 'Intramuscular', startDate: '2024-01-05' },
@@ -1136,6 +1151,7 @@ export const PATIENTS: PatientRecord[] = [
       sex: 'Male',
       race: '2106-3',
       weight: 77,
+      weight_label: "75-80 kg (165-176 lbs)",
       patientHash: 'k12345678901234g'
     },
     protocol: { substance: 'MDMA', dosage: '125', dosageUnit: 'mg', frequency: 'Bi-Weekly', route: 'Oral', startDate: '2024-01-04' },

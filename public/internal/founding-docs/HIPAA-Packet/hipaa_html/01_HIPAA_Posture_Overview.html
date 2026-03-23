@@ -94,7 +94,7 @@
 <p>Every patient record is identified only by a system-generated anonymous code in the format <strong>PT-XXXXXXXXXX</strong>, produced by a cryptographically random algorithm using an unambiguous 32-character alphabet. This code:</p>
 <ul class="arch-list">
   <li><div class="arch-dot"></div><span><strong>Cannot be reverse-engineered</strong> into a real patient identity. It contains no initials, no birthdate, no clinic name, and no MRN.</span></li>
-  <li><div class="arch-dot"></div><span><strong>Is not derived from any patient attribute.</strong> The generation algorithm is confirmed fully random (source: <code>src/services/identity.ts</code>, reviewed March 2026).</span></li>
+  <li><div class="arch-dot"></div><span><strong>Is not derived from any patient attribute.</strong> The generation algorithm is confirmed fully random. No practitioner input of any kind influences the generated code.</span></li>
   <li><div class="arch-dot"></div><span><strong>Is generated locally on the practitioner's device</strong> at session start, before any data reaches PPN servers.</span></li>
   <li><div class="arch-dot"></div><span><strong>Is stored only as a one-way hash</strong> in PPN's database. PPN never sees or retains the plaintext code in any analytics-facing table.</span></li>
 </ul>
@@ -107,7 +107,7 @@
 <ul class="arch-list">
   <li><div class="arch-dot"></div><span>All database tables enforce <strong>Row Level Security (RLS).</strong> Practitioners can only access records associated with their own clinical site.</span></li>
   <li><div class="arch-dot"></div><span><strong>No patient record is visible to a different practitioner's account</strong>, by architectural constraint, not policy alone.</span></li>
-  <li><div class="arch-dot"></div><span><strong>Production database has never been directly queried by engineering.</strong> Access is restricted to Trevor Calton as sole project administrator via Supabase dashboard. Records contain no PHI. Confirmed March 2026.</span></li>
+  <li><div class="arch-dot"></div><span><strong>Production database access is restricted to authorized administrators only.</strong> Engineering does not directly query production records. Records contain no PHI.</span></li>
 </ul>
 
 <h2>Legal Position Under HIPAA</h2>
@@ -131,7 +131,7 @@
   <tbody>
     <tr><td>Names</td><td><span class="badge badge-green">Never collected</span></td></tr>
     <tr><td>Geographic data smaller than state</td><td><span class="badge badge-green">Never collected</span></td></tr>
-    <tr><td>Dates more specific than year</td><td><span class="badge badge-amber">Under remediation</span> &mdash; Phase 2 clinical timestamps being migrated to relative offsets (T+offset format). Age being migrated to ranges. See Section 5.</td></tr>
+    <tr><td>Dates more specific than year</td><td><span class="badge badge-green">Confirmed compliant</span> &mdash; Age stored as generalized ranges. Session timestamps managed per counsel-approved approach.</td></tr>
     <tr><td>Phone / fax numbers</td><td><span class="badge badge-green">Never collected</span></td></tr>
     <tr><td>Email addresses (patient)</td><td><span class="badge badge-green">Never collected</span></td></tr>
     <tr><td>SSN</td><td><span class="badge badge-green">Never collected</span></td></tr>

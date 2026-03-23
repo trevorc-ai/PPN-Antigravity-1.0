@@ -4,7 +4,7 @@ title: "Replace Weight Text Input with ref_weight_ranges Dropdown — HIPAA Safe
 owner: BUILDER
 authored_by: INSPECTOR
 routed_by: LEAD
-status: 00_INBOX
+status: 04_BUILD
 priority: P1
 created: 2026-03-22
 depends_on: none
@@ -12,6 +12,8 @@ database_changes: no
 admin_visibility: no
 parked_context: ""
 target_ship: "2026-03-29"
+files:
+  - src/constants.ts
 skills:
   - ".agent/skills/frontend-best-practices/SKILL.md"
   - ".agent/skills/core-ui-engineering/SKILL.md"
