@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useActivePatient } from '../contexts/ActivePatientContext'; // WO-B1
 import { useToast } from '../contexts/ToastContext';
@@ -765,6 +765,9 @@ const WellnessJourneyInternal: React.FC = () => {
 
     // ── Phase 1 guided flow: tracks which forms have been saved ──────────────
     const [completedForms, setCompletedForms] = useState<Set<string>>(() => new Set());
+    // Tracks which sessionId has already been hydrated from DB — prevents re-firing
+    // the 6-query Phase 3 existence check every time activePhase flips back to 3.
+    const phase3HydratedRef = useRef<string | null>(null);
 
     // ── Mobile patient bar: auto-collapse when Phase 2 session is live ────────
     // A simple one-time check when entering Phase 2; the provider can also
@@ -1119,6 +1122,9 @@ const WellnessJourneyInternal: React.FC = () => {
     useEffect(() => {
         if (!journey.sessionId || activePhase !== 3) return;
         const sessionId = journey.sessionId;
+        // Skip if we already hydrated for this sessionId in this page load.
+        if (phase3HydratedRef.current === sessionId) return;
+        phase3HydratedRef.current = sessionId;
         let cancelled = false;
 
         (async () => {
