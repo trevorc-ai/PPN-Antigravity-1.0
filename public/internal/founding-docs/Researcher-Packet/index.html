@@ -165,7 +165,6 @@ const PACKET_CONFIG = {
   title:         'Researcher Founding Partner Packet',
   reference:     'GO-651',
   productionUrl: 'https://ppnportal.net/internal/founding-docs/Researcher-Packet/index.html',
-  printAllUrl:   'researcher_html/print_all.html',
   legend:        null,
   sections: [
     { icon: '📋', label: 'Cover',          num: 'CV', title: 'Cover Page',                src: 'researcher_html/00_Cover_Page.html' },
@@ -270,7 +269,29 @@ function printCurrent() {
 }
 
 function printAll() {
-  window.open(PACKET_CONFIG.printAllUrl, '_blank');
+  var sections = PACKET_CONFIG.sections;
+  var base = window.location.href.replace(/\/[^\/]*$/, '/');
+  var html = '<!DOCTYPE html><html><head><meta charset="UTF-8">' +
+    '<title>PPN Portal: ' + PACKET_CONFIG.title + ' — Full Packet</title>' +
+    '<style>' +
+    'body{margin:0;font-family:Inter,sans-serif;}' +
+    '.section{width:100%;height:100vh;page-break-after:always;border:none;display:block;}' +
+    '@media print{.no-print{display:none;}.section{page-break-after:always;}}' +
+    '.toolbar{position:fixed;top:0;left:0;right:0;z-index:999;background:#7c6ff7;color:#fff;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;font-family:Inter,sans-serif;}' +
+    '.toolbar span{font-size:13px;font-weight:700;letter-spacing:0.04em;}' +
+    '.print-btn{background:rgba(255,255,255,0.25);border:1.5px solid rgba(255,255,255,0.5);color:#fff;padding:6px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;}' +
+    '.print-btn:hover{background:rgba(255,255,255,0.4);}' +
+    '.frame-wrap{margin-top:44px;}' +
+    '</style></head><body>' +
+    '<div class="toolbar no-print"><span>📄 ' + PACKET_CONFIG.title + ' — Full Packet (' + sections.length + ' sections)</span>' +
+    '<button class="print-btn" onclick="window.print()">⬇ Save as PDF</button></div>' +
+    '<div class="frame-wrap">' +
+    sections.map(function(s) {
+      return '<iframe class="section" src="' + base + s.src + '" title="' + s.title + '"></iframe>';
+    }).join('') +
+    '</div></body></html>';
+  var w = window.open('', '_blank');
+  if (w) { w.document.write(html); w.document.close(); }
 }
 
 function copyPacketLink() {
