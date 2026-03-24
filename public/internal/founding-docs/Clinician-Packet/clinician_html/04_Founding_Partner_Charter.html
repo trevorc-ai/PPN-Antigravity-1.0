@@ -129,6 +129,41 @@
 
   .footer { display: flex; justify-content: space-between; margin-top: 14pt; padding-top: 7pt; border-top: 1px solid var(--border-light); font-size: 7pt; color: var(--ink-muted); }
   .footer-dot { color: var(--accent); margin: 0 3pt; }
+
+  /* ── Mobile responsive (injected) ── */
+  @media screen and (max-width: 767px) {
+    body { padding: 20px 16px !important; max-width: 100% !important; overflow-x: hidden; }
+    h1   { font-size: 22pt !important; line-height: 1.1 !important; }
+    h2   { font-size: 14pt !important; }
+    h3   { font-size: 12pt !important; }
+    .header { flex-direction: column !important; gap: 8pt; }
+    .doc-id { text-align: left !important; }
+    /* Stack all 3-col grids */
+    .three-props,
+    .meta-block,
+    .prop-grid,
+    .two-col,
+    .two-column,
+    .grid-2,
+    .grid-3,
+    [class*="grid-col"] { grid-template-columns: 1fr !important; }
+    /* Remove column dividers when stacked */
+    .prop, .meta-item, .prop-grid > *, .two-col > *, .two-column > * {
+      border-right: none !important;
+      padding-left: 0 !important;
+      padding-right: 0 !important;
+      border-bottom: 1px solid var(--border-light);
+    }
+    .prop:last-child, .meta-item:last-child { border-bottom: none; }
+    /* Tables */
+    table { font-size: 7.5pt !important; word-break: break-word; }
+    td, th { padding: 6pt 8pt !important; }
+    /* Footer */
+    .footer { flex-direction: column !important; gap: 4pt; }
+    /* Misc */
+    .sub-title { max-width: 100% !important; }
+  }
+
 </style>
 </head>
 <body>
