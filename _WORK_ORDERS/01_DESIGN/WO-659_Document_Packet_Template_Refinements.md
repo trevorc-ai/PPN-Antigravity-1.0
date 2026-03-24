@@ -80,3 +80,19 @@ After user review and approval of the HIPAA packet in its refined form, extract 
 - [ ] All section counts updated to "X of 5", not "X of 6"
 - [ ] Action bars hidden when document is inside an iframe
 - [ ] All ppn-ui-standards rules pass (Inspector QA)
+
+---
+
+## LEAD Architecture
+
+**Reviewed by:** LEAD
+**Date:** 2026-03-24
+**Decision:** APPROVED → route to 01_DESIGN
+
+**Architecture notes:**
+- Purely HTML/CSS/JS work — no React components, no DB changes, no frozen files
+- Work targets the document packet shell (`index.html`) and 5 section files in `public/internal/`
+- DESIGNER must produce a spec covering: (1) tablet breakpoint icon-only sidebar, (2) PDF print-all page layout, (3) `Copy Link` hardcoded URL pattern before BUILDER builds
+- No growth_order_ref required — internal tooling asset, not public-facing in itself (packet URL is public but this ticket is structural plumbing)
+
+**Routing:** 00_INBOX → 01_DESIGN (DESIGNER starts immediately)

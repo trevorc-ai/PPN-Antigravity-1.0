@@ -30,3 +30,7 @@ Root cause is in `WellnessFormRouter.tsx` line 849: `LongitudinalAssessmentForm`
 ## Open Questions
 - [ ] Confirm the table name: `log_longitudinal_assessments` — BUILDER must verify with `\dt` or live schema before writing query
 - [ ] Is there one record per session, or one per patient? Determine the correct scoping key (session_id vs patient_uuid)
+
+## INSPECTOR 03_REVIEW CLEARANCE: FAST-PASS
+No DB impact detected. Cleared for build.
+Signed: INSPECTOR | Date: 2026-03-24

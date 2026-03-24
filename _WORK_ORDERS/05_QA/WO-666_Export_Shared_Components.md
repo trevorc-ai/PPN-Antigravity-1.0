@@ -2,16 +2,18 @@
 id: WO-666
 title: "Extract Shared Export UI Components — ExportCard, FormatBadge, ComplianceFooter"
 owner: BUILDER
-status: 04_BUILD
+status: 05_QA
 authored_by: PRODDY (fast-track)
 priority: P2
 created: 2026-03-23
+completed_at: 2026-03-24
 fast_track: false
 origin: "GO-660 audit finding — duplicate UI patterns rendering 2-3x across DownloadCenter, SessionExportCenter, DataExport"
 linked_go: GO-660
 admin_visibility: no
 admin_section: ""
 parked_context: "Must be executed BEFORE or in parallel with WO-665b/665c to avoid duplicating fixes across both files"
+builder_notes: "Created src/components/exports/ with ExportCard.tsx, FormatBadge.tsx, ComplianceFooter.tsx. DownloadCenter and SessionExportCenter now use ExportCard. DataExport getFormatIcon replaced with FormatBadge. SessionExportCenter and DataExport compliance footers replaced with ComplianceFooter. Zero logic/data/layout changes. All 5 enforcement checks PASS on new components. Pre-existing text-xs in source files confirmed out of WO scope."
 files:
   - src/pages/DownloadCenter.tsx
   - src/pages/SessionExportCenter.tsx

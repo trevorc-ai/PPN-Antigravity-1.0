@@ -2,15 +2,17 @@
 id: WO-B6
 title: "Select Patient modal needs a ppn-ui-standards audit"
 owner: LEAD
-status: 04_BUILD
+status: 05_QA
 authored_by: LEAD (fast-track)
 priority: P1
 created: 2026-03-22
+completed_at: 2026-03-24
 fast_track: true
 origin: "User fast-track request + screenshot"
 admin_visibility: no
 admin_section: ""
 parked_context: ""
+builder_notes: "Fixed 3 remaining bare text-xs violations (lines 333, 355, 513). PHASE_COLORS and PHASE_ICONS were already correct (indigo/teal/icons) in live file. W1 verified: no tailwind.config found, font-mono uses browser default, no JetBrains/Courier detected. All 5 PPN UI enforcement checks PASS."
 files:
   - src/components/wellness-journey/PatientSelectModal.tsx
 ---

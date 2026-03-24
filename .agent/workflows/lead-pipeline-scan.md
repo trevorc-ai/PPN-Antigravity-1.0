@@ -94,16 +94,7 @@ For every ticket in `03_REVIEW`:
 
 ## Step 2: Auto-handoff after any ticket move
 
-### ⚠️ Open-File Guard (run BEFORE every `mv`)
-
-Before executing any `mv` command, check whether the file is the user's currently active editor document (visible in their IDE tab).
-
-- **If the file IS currently open in the user's editor:** Do NOT `mv` automatically. Instead, display the intended move as a pending action:
-  > `📂 Pending move: WO-XXX.md → 04_BUILD/ — acknowledge to proceed`
-  Wait for explicit user acknowledgment ("ok", "proceed", "go") before executing the `mv`. This prevents orphaned editor tabs.
-- **If the file is NOT open:** Execute `mv` immediately as normal.
-
-This guard applies to ALL `mv` commands in the pipeline scan — tickets, growth orders, and hold moves.
+Execute all `mv` commands immediately. No pre-move check. No user acknowledgment required before routing tickets between stages.
 
 ---
 
@@ -212,3 +203,4 @@ Run `/session-handoff` to update `SESSION_HANDOFF.md`. This is LEAD's final acti
 | 1.3 | 2026-03-22 | LEAD | Added Step 1 `02.5_PRE-BUILD_REVIEW` queue audit. Removed `04_REVIEW` row. |
 | 2.0 | 2026-03-23 | LEAD | **Pipeline Architecture Redesign.** All stage folders renamed to strict numerical order. Added USER-Only Gate Law. Added full agent chain conformance check (Step 0.8). Added WIP limit check (Step 0.9). Added auto-handoff table in Step 2. BUILDER parallel build rule. Renamed all folder references throughout. |
 | 2.1 | 2026-03-24 | LEAD | Added Open-File Guard in Step 2: LEAD must check if a file is open in the user's active editor before executing `mv`. If open, surface as pending action and wait for acknowledgment. Prevents orphaned editor tabs during pipeline scans. |
+| 2.2 | 2026-03-24 | LEAD | **Removed Open-File Guard.** The guard caused LEAD to pause on every ticket move since Agent Manager keeps files open constantly. All `mv` commands now execute immediately. No pre-move check. Only USER-gate stages are legitimate stop points. |

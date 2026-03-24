@@ -2,17 +2,20 @@
 id: WO-658
 title: "MEQ-30 questionnaire auto-advance UX regression: selecting a button no longer auto-advances to the next question; form must be completable in exactly 31 actions"
 owner: BUILDER
-status: 04_BUILD
+status: 05_QA
 authored_by: LEAD (fast-track)
 priority: P1
 created: 2026-03-23
+completed_at: 2026-03-24
 fast_track: true
 origin: "User fast-track request"
 admin_visibility: no
 admin_section: ""
 parked_context: ""
+builder_notes: "Confirmed fully built — Option B wizard already implemented in MEQ30QuestionnaireForm.tsx (478 lines). Single-question wizard with dot navigator, animation, auto-advance on answer, keyboard 0-5, and summary review screen. All PPN UI standards compliant."
 files:
   - src/components/arc-of-care-forms/phase-1-preparation/MEQ30QuestionnaireForm.tsx
+
 ---
 
 ## Request

@@ -95,3 +95,27 @@ An Ibogaine practitioner needs to administer and log an MSE and cognitive screen
 - [x] `database_changes: yes` — new assessment score fields required
 - [x] Frontmatter updated: `owner: LEAD`, `status: 00_INBOX`
 - [x] Response wrapped in `==== PRODDY ====`
+
+---
+
+## LEAD Architecture
+
+**Reviewed by:** LEAD
+**Date:** 2026-03-24
+**Decision:** ROUTE → 02_TRIAGE with open questions for USER DECISION before BUILD
+
+**Architecture notes:**
+- P2 priority — correctly deferred behind WO-668 and WO-669
+- SLUMS (interim) is public domain: safe to build immediately. Custom instrument is long-lead; no action needed yet.
+- `database_changes: yes` — new tables or columns required for `instrument_type` + structured integer score fields
+- All MSE domain captures MUST be structured dropdowns (never free text) — Zero-PHI enforcement
+- Holding on 5 open questions (see PRD section 6). USER must answer before architecture is finalized.
+
+**Open questions for USER (see PRD §6):**
+1. SLUMS/cognitive screen _Ibogaine-only_ or also for ketamine sessions?
+2. Who coordinates co-development instrument design? (PRODDY coordinates / Dr. Allen+Vega define domains)
+3. MSE: free-form checklist vs. fully structured form? (Answer expected: structured — Zero-PHI)
+4. Where do MSE + cognitive scores appear in the session PDF?
+5. Should post-session cognitive delta feed into Global Benchmark layer as an outcome metric?
+
+**Routing:** 00_INBOX → 02_TRIAGE (USER decision required on 5 open questions before routing to 03_REVIEW)

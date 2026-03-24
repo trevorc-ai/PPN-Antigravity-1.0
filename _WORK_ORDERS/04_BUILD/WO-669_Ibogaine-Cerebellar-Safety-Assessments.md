@@ -1,6 +1,6 @@
 ---
 owner: LEAD
-status: 00_INBOX
+status: 04_BUILD
 authored_by: PRODDY
 active_sprint: false
 priority: P1
@@ -12,9 +12,10 @@ files: []
 
 ## PRODDY PRD
 
-> **Work Order:** WO-669 — Ibogaine Cerebellar Safety Assessment (SARA / FTN / HKS)
+> **Work Order:** WO-669 — Ibogaine Cerebellar Safety Assessment (SARA / FTN / HKS + Ataxia Grading)
 > **Authored by:** PRODDY
 > **Date:** 2026-03-23
+> **Amended:** 2026-03-24 (Dr. Allen clinical review — see dr_allen_feedback_synthesis.md)
 > **Status:** Draft → Pending LEAD review
 
 ---
@@ -33,9 +34,9 @@ An Ibogaine practitioner needs to administer and document SARA, FTN, and HKS cer
 
 ### 3. Success Metrics
 
-1. SARA, FTN pass/fail, and HKS pass/fail render as structured assessment fields in the Phase 1 intake form for Ibogaine sessions — verified in ≥3 consecutive QA sessions.
-2. SARA total score (0–40) stores as a structured integer; FTN and HKS store as boolean pass/fail — confirmed by INSPECTOR schema review.
-3. A post-session neurological assessment option (using the same SARA/FTN/HKS fields) is accessible in the Phase 3 closeout flow within 30 days of ship.
+1. SARA, FTN pass/fail, HKS pass/fail, and ataxia severity grade (0/+1/+2/+3) all render as structured assessment fields in the Phase 1 intake form for Ibogaine sessions — verified in ≥3 consecutive QA sessions.
+2. SARA total score (0–40) stores as a structured integer; FTN and HKS store as boolean pass/fail; ataxia grade stores as a structured 4-point ordinal integer (0, 1, 2, 3) — confirmed by INSPECTOR schema review.
+3. A post-session neurological assessment option (using the same SARA/FTN/HKS/ataxia fields) is accessible in the Phase 3 closeout flow within 30 days of ship.
 
 ---
 
@@ -45,7 +46,8 @@ An Ibogaine practitioner needs to administer and document SARA, FTN, and HKS cer
 - SARA: 8-item structured scale (score 0–40), conditionally rendered for Ibogaine sessions in Phase 1
 - FTN (Finger-to-Nose): Binary pass/fail with optional severity note (structured dropdown, not free text)
 - HKS (Heel-Knee-Shin): Binary pass/fail with optional severity note (structured dropdown, not free text)
-- Pre-session baseline capture (Phase 1) and post-session comparison capture (Phase 3 closeout)
+- Ataxia severity grading: structured 4-point ordinal scale (0 = none / +1 = mild / +2 = moderate / +3 = severe) — administered alongside SARA, confirmed by Dr. Allen as his current clinical practice
+- Pre-session baseline capture (Phase 1) and post-session comparison capture (Phase 3 closeout) for all fields
 - All values stored as structured fields — no free text
 
 #### ❌ Out of Scope
@@ -87,3 +89,41 @@ An Ibogaine practitioner needs to administer and document SARA, FTN, and HKS cer
 - [x] `database_changes: yes` — new assessment score fields required
 - [x] Frontmatter updated: `owner: LEAD`, `status: 00_INBOX`
 - [x] Response wrapped in `==== PRODDY ====`
+
+---
+
+## LEAD Architecture
+
+**Reviewed by:** LEAD
+**Date:** 2026-03-24
+**Decision:** APPROVED → route to 03_REVIEW
+
+**Architecture notes:**
+- SARA (0-40 integer), FTN (boolean), HKS (boolean), ataxia grade (0-3 integer) — all additive columns
+- Ataxia grading is a new field confirmed by Dr. Allen — store as `ataxia_grade` tinyint (0-3) in `session_assessments` or extended `session_baselines`
+- Pre-session and post-session records distinguished by `timing` enum (`pre | post`) — same pattern as WO-668
+- Conditional on `session_type = ibogaine` — same pattern as WO-668
+- No frozen files touched — safe to BUILD
+
+**Routing:** 00_INBOX → 03_REVIEW → INSPECTOR fast-pass (pure UI + additive DB)
+
+---
+
+## INSPECTOR 03_REVIEW CLEARANCE
+
+**Reviewed by:** INSPECTOR
+**Date:** 2026-03-24
+**Verdict:** PRE-CLEARED — awaiting 04_BUILD WIP slot
+
+**Schema review:**
+- All changes are additive (new columns / new table rows only) ✅
+- No existing columns dropped or modified ✅
+- No frozen files in `files:` list ✅
+- RLS: new assessment tables must inherit session-level RLS policy — BUILDER to confirm before schema PR
+
+**Code review:**
+- Pure UI forms + new integer DB columns — no complex state mutations
+- Conditional rendering on `session_type = ibogaine` — existing pattern, low risk
+
+**Pre-clearance condition:** Move to 04_BUILD immediately when a WIP slot opens. No further INSPECTOR review needed at that point — this clearance is valid for the current sprint.
+

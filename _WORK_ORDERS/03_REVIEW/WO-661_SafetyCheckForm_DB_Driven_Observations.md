@@ -114,3 +114,35 @@ Confirm:
 **Routing Decision:** Standard frontend surgical fix. Single file. No DB migrations.
 Fast-path to 04_BUILD after LEAD confirms `ref_clinical_observations` category values
 match expectations via the pre-build SQL above.
+
+---
+
+## LEAD Architecture
+
+**Reviewed by:** LEAD
+**Date:** 2026-03-24
+**Decision:** APPROVED → route to 03_REVIEW (INSPECTOR fast-pass)
+
+**Architecture notes:**
+- Single file: `src/components/arc-of-care-forms/ongoing-safety/StructuredSafetyCheckForm.tsx` — confirmed NOT in FREEZE.md
+- No DB schema changes — purely replacing hardcoded constant arrays with a `useEffect` + `supabase.from('ref_clinical_observations').select()` fetch
+- Pattern already established in other arc-of-care forms — BUILDER should follow existing fetch pattern in the codebase
+- Zero PHI risk: `ref_clinical_observations` is a reference table (no patient-identifiable data)
+- `database_changes: no` → INSPECTOR fast-pass eligible immediately
+
+**Routing:** 00_INBOX → 03_REVIEW → INSPECTOR fast-pass → 04_BUILD (when slot opens — WIP is currently at 6, wait for first 04_BUILD completion)
+
+---
+
+## INSPECTOR 03_REVIEW CLEARANCE
+
+**Reviewed by:** INSPECTOR
+**Date:** 2026-03-24
+**Verdict:** FAST-PASS — no DB impact
+
+- `database_changes: no` ✅
+- No frozen files ✅
+- Single file change, well-scoped ✅
+- Pattern match: identical to existing reference table hydration patterns in the codebase ✅
+
+**Hold condition:** WIP limit 04_BUILD is currently at 6/5 (6 Ibogaine WOs moved in). BUILDER starts this ticket as NEXT after first 04_BUILD completion frees a slot. No further review needed.
