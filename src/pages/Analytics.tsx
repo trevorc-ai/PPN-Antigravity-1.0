@@ -23,11 +23,11 @@ import { useSafetyBenchmark } from '../hooks/useSafetyBenchmark';
 import InsightFeedPanel from '../components/analytics/InsightFeedPanel';
 
 const Analytics = () => {
-    const [siteId, setSiteId] = useState<string | null>(null);
     const [userEmail, setUserEmail] = useState<string>('');
     const [selectedSubstance, setSelectedSubstance] = useState<string>('all');
     const [selectedDateRange, setSelectedDateRange] = useState<string>('30');
-    const analytics = useAnalyticsData(siteId);
+    // WO-675 FIX: hook is now self-contained — no siteId prop needed
+    const analytics = useAnalyticsData();
     const { benchmark, loading: benchmarkLoading } = useSafetyBenchmark();
 
     // Filter data based on selections (Placeholder for when real array data is added)
@@ -37,22 +37,13 @@ const Analytics = () => {
         return undefined;
     }, [analytics, selectedSubstance, selectedDateRange]);
 
+    // Lightweight: fetch only userEmail for print header
     useEffect(() => {
-        const fetchUserSite = async () => {
+        const fetchEmail = async () => {
             const { data: { user } } = await supabase.auth.getUser();
-            if (!user) return;
-            setUserEmail(user.email ?? '');
-
-            const { data: userSite } = await supabase
-                .from('log_user_sites')
-                .select('site_id')
-                .eq('user_id', user.id)
-                .maybeSingle(); // maybeSingle — won't throw if user has no site yet
-
-            if (userSite) setSiteId(userSite.site_id);
+            if (user) setUserEmail(user.email ?? '');
         };
-
-        fetchUserSite();
+        fetchEmail();
     }, []);
 
     const handlePrint = () => {
@@ -217,7 +208,7 @@ const Analytics = () => {
             {/* ── CLINICAL INTELLIGENCE FEED ─────────────────────────────────────── */}
             <Section spacing="tight" className="print:hidden">
                 <div className="bg-[#0a0c12]/50 border border-indigo-500/10 rounded-2xl p-6">
-                    <InsightFeedPanel siteId={siteId} />
+                    <InsightFeedPanel siteId={analytics.siteId} />
                 </div>
             </Section>
 
