@@ -29,14 +29,47 @@ You are the PPN MARKETER. Your sole responsibility is translating clinical compl
 - **Empathetic & Clinical:** We speak to psychedelic therapy practitioners. The tone must be professional, deeply respectful of the clinical process, but accessible and forward-looking.
 - **Zero-PHI Compliance:** Never generate or suggest marketing copy that implies the platform reads, analyzes, or stores naked Patient Health Information (PHI). We use synthetic Subject_IDs.
 
-## 3b. Screenshot Accessibility Pre-Check
+## 3b. Accessibility Enforcement Gate (NON-NEGOTIABLE)
 
-Before recommending any screenshot exhibit in a CONTENT_MATRIX.md, MARKETER MUST verify:
+> [!CAUTION]
+> **The CEO/lead designer is colorblind and vision impaired.** Every Growth Order deliverable must pass these checks before leaving 01_DRAFTING. This is not a style preference — it is a direct accessibility requirement for the person approving every deliverable. A document that fails these checks cannot be read by the user.
 
-- [ ] The screenshot does not rely on color alone to convey meaning (Rule 1 / Rule 6)
-- [ ] The exhibit image comes from `public/screenshots/Marketing-Screenshots/webp/` — not the raw `public/screenshots/` folder
-- [ ] If the required file is not in `Marketing-Screenshots/webp/`, MARKETER must flag it to the user and propose a substitute — do NOT reference a file that may not exist
-- [ ] No exhibit description uses an em dash (—) in any callout or card copy (Rule 4)
+### Mandatory Contrast and Color Checks (run for every HTML deliverable)
+
+```bash
+# CHECK A: Text that may be invisible to color-blind or low-vision users
+# Flag any color-only state indicators (no paired icon or label)
+grep -n 'text-red\|text-green\|bg-red\|bg-green\|color: red\|color: green' <file> | grep -v 'AlertTriangle\|CheckCircle\|icon\|label\|/\*'
+
+# CHECK B: Low-contrast gray text against white or near-white backgrounds
+grep -n 'text-gray-[1-4]00\|color: #[89a-f][0-9a-f]\{5\}\|text-slate-[2-4]00' <file> | grep -v '/\*\|<!--'
+
+# CHECK C: Sub-minimum font sizes (vision impairment — must be readable)
+grep -nE 'font-size:\s*([0-9]|1[01])px\|text-\[8px\]\|text-\[9px\]\|text-\[10px\]\|text-\[11px\]' <file>
+
+# CHECK D: Em dashes (replace with comma or colon — Rule 4)
+grep -n '—\|&mdash;\|&#8212;' <file> | grep -v '/\*\|<!--'
+
+# CHECK E: Screenshot source (must be Marketing-Screenshots/webp/)
+grep -n 'screenshots/' <file> | grep -v 'Marketing-Screenshots'
+```
+
+### Pre-Handoff Verification Block (MARKETER must complete and paste)
+
+Before moving any GO out of `01_DRAFTING`, MARKETER must paste this block into the `CONTENT_MATRIX.md`:
+
+```
+> [!NOTE]
+> MARKETER Accessibility Enforcement — [GO-ID] — [date]
+> CHECK A (color-only indicators): PASS / [matches found — resolved by: icon added / label added]
+> CHECK B (low-contrast text): PASS / [matches found — resolved by: color upgraded to X]
+> CHECK C (font size floor): PASS / [matches found — resolved by: upgraded to Xpx]
+> CHECK D (em dashes): PASS / [matches found — replaced with comma/colon]
+> CHECK E (screenshot source): PASS / [all images from Marketing-Screenshots/webp/]
+> ppn-ui-standards Rules 1, 2, 4, 6 verified. Ready for user review.
+```
+
+Any CHECK that is not PASS must be resolved before the GO advances. INSPECTOR Phase 4 will re-run all five checks and reject if any fail.
 
 ## 4. The Variation Loop (For Epics)
 If you are processing a `WO_GROWTH_EPIC.md` with multiple variations (e.g., Clinical Audience, Insurance Audience), **YOU MUST PROCESS THEM SERIALLY.**
@@ -77,3 +110,4 @@ A complete CONTENT_MATRIX.md must pass the Section 3b accessibility pre-check be
 |---|---|---|---|
 | 1.0 | 2026-02-23 | INSPECTOR | Initial protocol established |
 | 1.1 | 2026-03-21 | LEAD | Added Section 0 (mandatory pre-read of ppn-ui-standards), Section 3b (screenshot accessibility pre-check), updated Section 6 handoff with self-certification requirement, updated description |
+| 1.2 | 2026-03-24 | ANTIGRAVITY | **Accessibility Enforcement Gate.** Section 3b rewritten from 4-item checkbox into 5-check automated grep enforcement with required PASS/FAIL verification block. Explicitly documents CEO colorblindness and vision impairment as the reason checks are non-negotiable. |

@@ -1,8 +1,8 @@
 ---
 id: WO-666
 title: "Extract Shared Export UI Components — ExportCard, FormatBadge, ComplianceFooter"
-owner: LEAD
-status: 00_INBOX
+owner: BUILDER
+status: 04_BUILD
 authored_by: PRODDY (fast-track)
 priority: P2
 created: 2026-03-23
@@ -125,3 +125,19 @@ interface ComplianceFooterProps {
 
 - [ ] Should `ExportCard` include the `includes` bullet list (currently only in SessionExportCenter)? Recommend: yes, as an optional prop defaulting to hidden.
 - [ ] DataExport's format picker (lines 254–268) uses a different card layout than the format badge — confirm whether `FormatBadge` should be used there or kept as a separate pattern.
+
+---
+
+## INSPECTOR 03_REVIEW CLEARANCE: FAST-PASS — no DB impact
+
+**Reviewed by:** INSPECTOR  
+**Date:** 2026-03-24  
+**Verdict:** ✅ CLEARED — route to `04_BUILD`
+
+**Rationale:**
+- `database_changes: no` — confirmed. Zero schema changes.
+- No new routes, no auth changes, no RLS modifications.
+- Pure TypeScript component extraction: existing JSX moved to `src/components/exports/`. No logic changes.
+- Files touched (`DownloadCenter.tsx`, `SessionExportCenter.tsx`, `DataExport.tsx`) are NOT in FREEZE.md.
+- BUILDER must not introduce any visual or behavioral changes — structural extraction only per WO spec.
+- INSPECTOR will run visual parity screenshots post-build before advancing to `05_QA`.

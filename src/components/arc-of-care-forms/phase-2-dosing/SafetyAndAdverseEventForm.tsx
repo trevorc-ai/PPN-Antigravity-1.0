@@ -5,6 +5,7 @@ import { useToast } from '../../../contexts/ToastContext';
 import { generateAEReport, type AEReportData, type CTCAEGrade } from '../../../services/aeReportGenerator';
 import { NowButton, RelativeTimeDisplay } from '../shared/NowButton';
 import { FormFooter } from '../shared/FormFooter';
+import { useFormCompletion } from '../../../hooks/useFormCompletion';
 
 /**
  * SafetyAndAdverseEventForm, Phase 2: Dosing Session
@@ -188,6 +189,11 @@ const SafetyAndAdverseEventForm: React.FC<SafetyAndAdverseEventFormProps> = ({
             onComplete();
         }
     };
+
+    // WO-662: Layer 3+4 — pulse CTA + Enter toast when form has data
+    const isComplete = Boolean(data.observation_log.length > 0 || !!data.event_type);
+    const { ctaRef, showEnterToast } = useFormCompletion(isComplete, handleSaveAndContinue);
+
 
     const update = (field: keyof SafetyAndAdverseEventData, value: unknown) => {
         setData(prev => ({ ...prev, [field]: value }));
@@ -647,6 +653,8 @@ const SafetyAndAdverseEventForm: React.FC<SafetyAndAdverseEventFormProps> = ({
                 onSaveAndContinue={handleSaveAndContinue}
                 isSaving={isSaving}
                 hasChanges={data.observation_log.length > 0 || !!data.event_type}
+                ctaRef={ctaRef}
+                showEnterToast={showEnterToast}
             />
         </div >
     );

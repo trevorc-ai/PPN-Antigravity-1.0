@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { TrendingUp, ArrowUp, ArrowDown, Minus } from 'lucide-react';
 import { FormField } from '../shared/FormField';
 import { FormFooter } from '../shared/FormFooter';
+import { useFormCompletion } from '../../../hooks/useFormCompletion';
 
 /**
  * LongitudinalAssessmentForm - Follow-up Assessments
@@ -91,6 +92,13 @@ const LongitudinalAssessmentForm: React.FC<LongitudinalAssessmentFormProps> = ({
 
     const phq9Change = getChangeIndicator(data.phq9_score, baselineScores.phq9);
     const gad7Change = getChangeIndicator(data.gad7_score, baselineScores.gad7);
+
+    // WO-662: C-SSRS is the only required field. Complete when entered.
+    const isComplete = data.cssrs_score !== undefined;
+    const { ctaRef, showEnterToast } = useFormCompletion(isComplete, handleSaveAndContinue, {
+        storageKey: `ppn_longitudinal_${patientId || 'default'}`,
+        draftValue: data,
+    });
 
     return (
         <div className="max-w-4xl mx-auto space-y-6">
@@ -221,6 +229,8 @@ const LongitudinalAssessmentForm: React.FC<LongitudinalAssessmentFormProps> = ({
                 onSaveAndContinue={handleSaveAndContinue}
                 isSaving={isSaving}
                 hasChanges={Object.keys(data).length > 1}
+                ctaRef={ctaRef}
+                showEnterToast={showEnterToast}
             />
         </div>
     );

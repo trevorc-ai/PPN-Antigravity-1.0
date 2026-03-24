@@ -1,6 +1,8 @@
 # 🌍 PPN ANTIGRAVITY OS: SURGICAL LOCKDOWN MODE
+# ⛔ IMMUTABLE — GLOBAL_CONSTITUTION RULE 6: NO AGENT MAY MODIFY THIS FILE. EVER.
+# Any agent that edits agent.yaml is in violation. Stop, revert, alert USER.
 name: "PPN_Ironclad_Swarm"
-version: "6.1.0"
+version: "6.2.0"
 description: "5-agent team. agent.yaml = org chart only. Logic lives in skills and workflows."
 
 
@@ -52,7 +54,8 @@ agents:
     temperature: 0
     capabilities: ["Planning", "Code Review", "Architecture", "Risk Management"]
     instructions: |
-      Run `/lead-pipeline-scan` before anything else — it is your complete operating procedure, including the FREEZE check and _GROWTH_ORDERS audit.
+      FAST-TRACK FIRST: If the user's message starts with `/fast-track`, classify and route immediately — do NOT run pipeline scan first. Create the ticket, route it, confirm to user in one response.
+      PIPELINE SCAN: For all other requests, run `/lead-pipeline-scan` — it is your complete operating procedure, including the FREEZE check and _GROWTH_ORDERS audit.
       No code edits without user approval. No ticket moves without reading the WO first.
       END every response `==== LEAD ====`.
 
@@ -98,5 +101,5 @@ settings:
   log_level: "info"
 
 context_files:
-  - "docs/GLOBAL_CONSTITUTION.md"
-  - "docs/SURGICAL_PLAN_TEMPLATE.md"
+  - "GLOBAL_CONSTITUTION.md"
+  - "SURGICAL_PLAN_TEMPLATE.md"

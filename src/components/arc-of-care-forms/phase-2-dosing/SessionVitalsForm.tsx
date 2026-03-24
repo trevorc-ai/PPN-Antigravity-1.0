@@ -3,6 +3,7 @@ import { Heart, Activity, Droplet, Clock, Plus, Trash2, Wind, Thermometer, Alert
 import { AdvancedTooltip } from '../../ui/AdvancedTooltip';
 import { VitalPresetsBar, VitalPreset } from '../shared/VitalPresetsBar';
 import { FormFooter } from '../shared/FormFooter';
+import { useFormCompletion } from '../../../hooks/useFormCompletion';
 import { QTIntervalTracker } from '../../arc-of-care/QTIntervalTracker';
 import { EKGComponent } from '../../arc-of-care/EKGComponent';
 import { useProtocol } from '../../../contexts/ProtocolContext';
@@ -150,6 +151,11 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
             if (onComplete) onComplete();
         }, 300);
     };
+
+    // WO-662: Layer 3+4 — pulse CTA + Enter toast when form has data
+    const isComplete = Boolean(true);
+    const { ctaRef, showEnterToast } = useFormCompletion(isComplete, handleSaveAndContinue);
+
 
     const handleSaveAndExit = () => {
         try {
@@ -767,6 +773,8 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                 onSaveAndContinue={handleSaveAndContinue}
                 isSaving={isSaving}
                 hasChanges={true}
+                ctaRef={ctaRef}
+                showEnterToast={showEnterToast}
             />
         </div>
     );

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Eye, Save, CheckCircle, X } from 'lucide-react';
 import { FormFooter } from '../shared/FormFooter';
+import { useFormCompletion } from '../../../hooks/useFormCompletion';
 
 /**
  * SessionObservationsForm - Clinical Observations During Session
@@ -100,6 +101,11 @@ const SessionObservationsForm: React.FC<SessionObservationsFormProps> = ({
             onComplete();
         }
     };
+
+    // WO-662: Layer 3+4 — pulse CTA + Enter toast when form has data
+    const isComplete = Boolean(data.observations.length > 0);
+    const { ctaRef, showEnterToast } = useFormCompletion(isComplete, handleSaveAndContinue);
+
 
     const toggleObservation = (id: string) => {
         setData(prev => ({
@@ -237,6 +243,8 @@ const SessionObservationsForm: React.FC<SessionObservationsFormProps> = ({
                 onSaveAndContinue={handleSaveAndContinue}
                 isSaving={isSaving}
                 hasChanges={data.observations.length > 0}
+                ctaRef={ctaRef}
+                showEnterToast={showEnterToast}
             />
         </div >
     );

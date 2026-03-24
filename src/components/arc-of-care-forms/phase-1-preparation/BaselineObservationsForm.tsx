@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { CheckCircle, ChevronRight, X } from 'lucide-react';
+import { useFormCompletion } from '../../../hooks/useFormCompletion';
 
 /**
  * BaselineObservationsForm - Clinical Observations at Baseline
@@ -64,6 +65,13 @@ const BaselineObservationsForm: React.FC<BaselineObservationsFormProps> = ({
             onComplete?.();
         }, 500);
     };
+
+    // WO-662 Layer 3+4: pulse CTA + Enter toast when ≥1 observation selected
+    const isComplete = data.observations.length > 0;
+    const { ctaRef, showEnterToast } = useFormCompletion(isComplete, handleSaveAndContinue, {
+        storageKey: `ppn_baseline_obs_${patientId || 'default'}`,
+        draftValue: data,
+    });
 
     const toggleObservation = (id: string) => {
         setData(prev => ({
@@ -168,21 +176,37 @@ const BaselineObservationsForm: React.FC<BaselineObservationsFormProps> = ({
             )}
 
             {/* Footer: save status + Save & Continue */}
-            <div className="flex items-center justify-between gap-4 pt-2 mr-16">
-                <span className="text-sm text-emerald-400 font-medium">
-                    {lastSaved ? `Saved at ${lastSaved.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}` : ''}
-                </span>
-                <button
-                    onClick={handleSaveAndContinue}
-                    disabled={saving}
-                    className={`flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-black uppercase tracking-widest transition-all ${saving
-                        ? 'bg-emerald-500/30 border border-emerald-500/40 text-emerald-300 cursor-not-allowed'
-                        : 'bg-blue-600 hover:bg-blue-500 text-[#A8B5D1] shadow-lg shadow-blue-900/30'
-                        }`}
-                >
-                    {saving ? <CheckCircle className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
-                    {saving ? 'Saved!' : 'Save & Continue'}
-                </button>
+            <div className="space-y-2 pt-2">
+                {/* WO-662 Layer 4: Enter toast */}
+                {showEnterToast && (
+                    <div
+                        role="status"
+                        aria-live="polite"
+                        className="flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 text-sm font-medium animate-pulse"
+                    >
+                        <CheckCircle className="w-4 h-4 text-indigo-400" aria-hidden="true" />
+                        Form complete, press{' '}
+                        <kbd className="px-1.5 py-0.5 rounded bg-indigo-500/20 border border-indigo-500/30 text-xs md:text-sm font-mono">↵ Enter</kbd>{' '}
+                        to save
+                    </div>
+                )}
+                <div className="flex items-center justify-between gap-4 mr-16">
+                    <span className="text-sm text-emerald-400 font-medium">
+                        {lastSaved ? `Saved at ${lastSaved.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}` : ''}
+                    </span>
+                    <button
+                        ref={ctaRef}
+                        onClick={handleSaveAndContinue}
+                        disabled={saving}
+                        className={`flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-black uppercase tracking-widest transition-all ${saving
+                            ? 'bg-emerald-500/30 border border-emerald-500/40 text-emerald-300 cursor-not-allowed'
+                            : 'bg-blue-600 hover:bg-blue-500 text-[#A8B5D1] shadow-lg shadow-blue-900/30'
+                            }`}
+                    >
+                        {saving ? <CheckCircle className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+                        {saving ? 'Saved!' : 'Save & Continue'}
+                    </button>
+                </div>
             </div>
         </div>
     );

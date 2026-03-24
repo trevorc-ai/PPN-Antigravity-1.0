@@ -9,9 +9,22 @@ description: LEAD session handoff protocol — update SESSION_HANDOFF.md at the 
 
 ## When to run this
 
-- When the user says "we're done for today", "let's stop here", "good session", or similar
-- When the conversation is clearly wrapping up
-- At the end of any session that modified files, moved tickets, or changed protocols
+Run automatically — do NOT wait for the user to invoke this explicitly — when ANY of these are detected:
+
+**Explicit wrap-up phrases:**
+- "wrap up", "wrap this up", "let's wrap"
+- "we're done", "done for today", "done for now"
+- "let's stop", "let's stop here", "stopping here"
+- "good session", "great session", "that's all"
+- "signing off", "that's it for today", "that's all for now"
+- "session handoff", "handoff"
+
+**Implicit signals:**
+- The user has approved a push and no new work is requested
+- The user says "thanks" or "thank you" with no follow-up question
+- The conversation has gone idle after completing a significant deliverable
+
+**Always run** at the end of any session that modified files, moved tickets, or changed workflows — even if the user doesn't signal a wrap.
 
 ## Step 1: Read the current handoff document
 

@@ -53,6 +53,15 @@ Read every `.md` file in `04_BUILD` and extract the `files:` frontmatter list fr
 **This means every single `.tsx`, `.ts`, `.css` file with visible UI must comply with ppn-ui-standards.**
 This is not a print-only or outreach-only rule. It is universal and non-negotiable.
 
+> 🗺️ **Omni-Channel Matrix (Rule 0) — cross-reference before writing ANY layout class.**
+> Every component must be designed for all 4 states in a single pass:
+> - **Mobile (default):** `flex-col`, 44px touch targets, `text-xs md:text-sm` floor
+> - **Tablet (`md:`):** `md:grid-cols-2`, top/side nav restored, no bottom-sheet
+> - **Desktop (`lg:`):** `lg:grid-cols-3+`, hover states, Deep Slate aesthetic
+> - **Print (`print:`):** `print:bg-white print:text-slate-900 print:hidden` on nav
+>
+> Do NOT design for one context and add the others as patches. One pass, four states.
+
 ### 🚨 Mobile-First Pre-Commit Grep (Rule 8c) — run before EVERY TSX handoff:
 
 ```bash
@@ -73,6 +82,39 @@ grep -n '\—\|" - "' <file>
 ```
 
 All five greps must return empty (or matches only inside block comments) before handoff. If any match hits rendered JSX, fix it before moving to 05_QA.
+
+### 🚨 PPN UI Standards Automated Enforcement — run on EVERY modified file before handoff:
+
+> This is NOT a manual read step. Run these commands. Report each result. Do not skip.
+
+```bash
+# CHECK 1: Bare text-xs without responsive upgrade (Rule 2 violation)
+grep -n 'text-xs\b' <file> | grep -v 'md:text-sm\|sm:text-sm\|print:\|/\*\|<!--'
+
+# CHECK 2: Near-invisible low-contrast text (Rule 6 violation)
+grep -n 'text-slate-700\|text-gray-[1-4]00\|text-slate-800' <file> | grep -v 'border\|bg-\|/\*'
+
+# CHECK 3: Native <details>/<summary> elements (no auto-close = UX violation)
+grep -n '<details\|<summary' <file> | grep -v '/\*\|<!--'
+
+# CHECK 4: Em dashes in rendered UI text (Rule 4 violation)
+grep -n '—' <file> | grep -v '/\*\|<!--\|//\|Changelog\|changelog'
+
+# CHECK 5: Banned fonts (Rule 2b violation)
+grep -n 'JetBrains\|Courier New\|font-serif' <file> | grep -v '/\*\|<!--'
+```
+
+**Required output before any handoff:**
+```
+PPN UI Standards Enforcement — <filename>:
+CHECK 1 (bare text-xs):   PASS / [N matches — fixed / justification]
+CHECK 2 (low contrast):   PASS / [N matches — fixed / justification]
+CHECK 3 (details/summary): PASS / [N matches — fixed]
+CHECK 4 (em dash):        PASS / [N matches — fixed]
+CHECK 5 (banned fonts):   PASS / [N matches — fixed]
+```
+
+Any FAIL that is not fixed = **do NOT move to 05_QA**. Fix first, then re-run.
 
 ### For ANY database/migration change, MUST additionally read:
 
@@ -163,3 +205,5 @@ Do NOT run `/finalize_feature`. Do NOT `git commit`. INSPECTOR owns the commit g
 | 1.2 | 2026-03-22 | LEAD | Added Hard Rule 6: BUILDER forbidden from `02.5_PRE-BUILD_REVIEW` |
 | 2.0 | 2026-03-23 | LEAD | **Pipeline Architecture Redesign.** Renamed all stage folders. Added USER-only gate law. Added parallel build rule in Step 1. Added WIP limit check. Auto-handoff to INSPECTOR in same response after build. |
 | 2.2 | 2026-03-23 | LEAD | **SYSTEMIC FIX: ppn-ui-standards is now MANDATORY for ALL React/TSX components**, not just outreach files. Added Rule 8c mobile-first pre-commit grep block (5 checks) as a required gate before every handoff to 05_QA. Root cause of recurring standards violations after WO-658. |
+| 2.3 | 2026-03-23 | LEAD | **Omni-Channel Matrix cross-reference added to Step 2.** BUILDER must check Rule 0 (Mobile/Tablet/Desktop/Print) before writing any layout class. Proactive fix prevents FLO from being the first agent to catch tablet layout and print: modifier violations. |
+| 2.4 | 2026-03-24 | ANTIGRAVITY | **PPN UI Standards Automated Enforcement gate added.** 5-check grep block (bare text-xs, low contrast, native details/summary, em dash, banned fonts) is now a mandatory pre-handoff step with required PASS/FAIL output. Root cause fix: standards were read but not verified, allowing violations to reach QA and production. |

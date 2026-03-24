@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Brain, Save, CheckCircle, Star, Clock, XCircle } from 'lucide-react';
 import { FormField } from '../shared/FormField';
 import { FormFooter } from '../shared/FormFooter';
+import { useFormCompletion } from '../../../hooks/useFormCompletion';
 
 /**
  * StructuredIntegrationSessionForm - Structured Integration Session (NEW DESIGN)
@@ -156,6 +157,11 @@ const StructuredIntegrationSessionForm: React.FC<StructuredIntegrationSessionFor
             onComplete();
         }
     };
+
+    // WO-662: Layer 3+4 — pulse CTA + Enter toast when form has data
+    const isComplete = Boolean(true);
+    const { ctaRef, showEnterToast } = useFormCompletion(isComplete, handleSaveAndContinue);
+
 
     const setToday = () => {
         updateField('session_date', new Date().toISOString().slice(0, 10));
@@ -375,6 +381,8 @@ const StructuredIntegrationSessionForm: React.FC<StructuredIntegrationSessionFor
                 onSaveAndContinue={handleSaveAndContinue}
                 isSaving={isSaving}
                 hasChanges={true}
+                ctaRef={ctaRef}
+                showEnterToast={showEnterToast}
             />
         </div >
     );

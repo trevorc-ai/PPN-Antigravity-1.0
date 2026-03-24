@@ -7,14 +7,15 @@ description: Perform a comprehensive accessibility audit of a UI component or pa
 Run this workflow anytime you need to verify WCAG 2.1 compliance, check contrast ratios, validate ARIA labels, or ensure keyboard navigation works correctly. It is highly recommended to run this before submitting any front-end PR.
 
 0. **Read PPN UI Standards Rule 6 First (mandatory)**
-   - Read `/ppn-ui-standards` Rule 6 (Color Blindness — Explicit Protections) before running any check below.
+   - Read `.agent/skills/ppn-ui-standards/SKILL.md` rules inside `<accessibility-rules>` (Rule 6) before running any check below.
    - Rule 6 is the authoritative source for PPN's WCAG AA requirements, banned color pairs, and phase palette. The steps below extend it, not replace it.
 
 1. **Verify Minimum Font Sizes**
-   - PPN minimum: body text must be at least `14px` (`text-sm`). On mobile, `12px` is the floor.
-   - Labels and tooltips: at least `12px`. Never below.
-   - `text-xs` (12px on desktop) is **banned** per ppn-ui-standards Rule 2. Flag any usage.
-   - See `/ppn-ui-standards` Rule 2 for the authoritative reference.
+   - Desktop and tablet minimum: `text-sm` (14px). Bare `text-xs` on desktop is **banned** per `ppn-ui-standards` Rule 2.
+   - Mobile, tooltips, and print footers: `text-xs` is allowed **only** when paired with a responsive upgrade: `text-xs md:text-sm`.
+   - Never below `text-xs` (12px) on any context.
+   - Flag any `text-xs` usage that does NOT have an accompanying `md:text-sm` upgrade in the same `className`.
+   - See `ppn-ui-standards` Rule 2 for the authoritative reference.
 
 2. **Check Color Usage and Contrast Compliance**
    - Verify that NO actionable item relies solely on color to convey meaning. Add icons or text labels (e.g., `<AlertTriangle /> Error` instead of just red text).

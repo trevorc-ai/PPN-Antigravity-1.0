@@ -19,10 +19,11 @@ import {
     Bug, Sparkles, MessageSquare, ChevronRight,
     RefreshCw, ExternalLink, Lock, Crown, Users,
     LayoutDashboard, Map, Activity, AlertCircle, CheckCircle, Clock,
+    Copy, Package,
 } from 'lucide-react';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
-type TabId = 'feedback' | 'users' | 'sitemap' | 'platform';
+type TabId = 'feedback' | 'users' | 'sitemap' | 'platform' | 'packets';
 type FeedbackStatus = 'open' | 'reviewed' | 'resolved';
 type UserRole = 'practitioner' | 'admin' | 'suspended';
 
@@ -182,8 +183,8 @@ const FeedbackInbox: React.FC = () => {
                                     <div className="mt-2 space-y-1 pl-3 border-l border-slate-700">
                                         {Object.entries(row.metadata).map(([k, v]) => (
                                             <div key={k} className="flex gap-2">
-                                                <span className="font-mono text-xs text-slate-600 w-24 shrink-0">{k}</span>
-                                                <span className="font-mono text-xs text-slate-400 break-all">{v}</span>
+                                                <span className="font-mono text-xs md:text-sm text-slate-500 w-24 shrink-0">{k}</span>
+                                                <span className="font-mono text-xs md:text-sm text-slate-400 break-all">{v}</span>
                                             </div>
                                         ))}
                                     </div>
@@ -319,7 +320,7 @@ const UserManagement: React.FC = () => {
                                     <td className="px-4 py-3">
                                         <a
                                             href={`#/clinician/${u.user_id}`}
-                                            className="inline-flex items-center gap-1 text-xs text-indigo-400 hover:text-indigo-300 font-bold min-h-[44px]"
+                                            className="inline-flex items-center gap-1 text-sm text-indigo-400 hover:text-indigo-300 font-bold min-h-[44px]"
                                         >
                                             Profile <ExternalLink className="w-3 h-3" />
                                         </a>
@@ -442,61 +443,125 @@ const SITE_MAP = [
 ];
 
 const SiteNavigator: React.FC = () => {
+    const [openGroup, setOpenGroup] = useState<string | null>(null);
+    const [query, setQuery] = useState('');
+
     const openInNewTab = (path: string) => {
-        // Construct the full URL using the app's hash-based routing
         const base = window.location.origin + window.location.pathname;
         window.open(`${base}#${path}`, '_blank', 'noopener,noreferrer');
     };
 
+    const toggleGroup = (group: string) => {
+        setOpenGroup(prev => prev === group ? null : group);
+    };
+
+    const q = query.trim().toLowerCase();
+
+    // When searching: auto-expand groups that have matches
+    const getFilteredRoutes = (routes: { path: string; dynamic?: boolean }[]) =>
+        q ? routes.filter(r => r.path.toLowerCase().includes(q)) : routes;
+
+    const getFilteredLinks = (links?: { label: string; href: string; icon: string }[]) =>
+        q ? (links ?? []).filter(l => l.label.toLowerCase().includes(q) || l.href.toLowerCase().includes(q)) : (links ?? []);
+
+    const groupHasMatch = (routes: { path: string; dynamic?: boolean }[], links?: { label: string; href: string; icon: string }[]) =>
+        getFilteredRoutes(routes).length > 0 || getFilteredLinks(links).length > 0;
+
+    const visibleGroups = SITE_MAP.filter(({ routes, externalLinks }) => !q || groupHasMatch(routes, externalLinks));
+    const totalMatches = visibleGroups.reduce((acc, { routes, externalLinks }) =>
+        acc + getFilteredRoutes(routes).length + getFilteredLinks(externalLinks).length, 0);
+
     return (
         <div className="space-y-3">
-            {SITE_MAP.map(({ group, icon, auth, admin, routes, externalLinks }) => (
-                <details key={group} className="rounded-2xl border border-white/8 overflow-hidden" open={false}>
-                    <summary className="flex items-center gap-3 px-4 py-3 cursor-pointer bg-slate-900/30 hover:bg-slate-800/30 transition-colors list-none min-h-[44px]">
-                        <ChevronRight className="w-4 h-4 text-slate-500 transition-transform [[open]_&]:rotate-90" />
-                        <span className="text-base">{icon}</span>
-                        <span className="ppn-label text-slate-300">{group}</span>
-                        {auth && <Lock className="w-3.5 h-3.5 text-slate-600 ml-auto" />}
-                        {admin && <Crown className="w-3.5 h-3.5 text-amber-500 ml-auto" />}
-                    </summary>
-                    <div className="divide-y divide-white/5">
-                        {routes.map(({ path, dynamic }) => (
-                            <div key={path} className="flex items-center gap-3 px-4 py-3 hover:bg-slate-800/20 transition-colors">
-                                {/* V5: break-all prevents code path overflow on 375px mobile */}
-                                <code className="flex-1 text-xs md:text-sm text-slate-400 font-mono break-all">{path}</code>
-                                {dynamic ? (
-                                    <span className="text-xs md:text-sm text-slate-600 ppn-meta shrink-0">(requires ID)</span>
-                                ) : (
-                                    <button
-                                        onClick={() => openInNewTab(path)}
-                                        aria-label={`Open ${path} in new tab`}
-                                        className="shrink-0 flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs md:text-sm font-bold text-indigo-400 hover:text-indigo-300 hover:bg-indigo-500/10 border border-transparent hover:border-indigo-500/20 transition-all min-h-[44px]"
-                                    >
-                                        Open <ExternalLink className="w-3 h-3" />
-                                    </button>
-                                )}
-                            </div>
-                        ))}
-                        {(externalLinks ?? []).map(({ label, href, icon: extIcon }) => (
-                            <div key={href} className="flex items-center gap-3 px-4 py-3 hover:bg-slate-800/20 transition-colors">
-                                <span className="text-sm shrink-0">{extIcon}</span>
-                                <span className="flex-1 text-xs md:text-sm text-slate-400 break-all">{label}</span>
-                                <a
-                                    href={href}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="shrink-0 flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs md:text-sm font-bold text-amber-400 hover:text-amber-300 hover:bg-amber-500/10 border border-transparent hover:border-amber-500/20 transition-all min-h-[44px]"
-                                >
-                                    Open <ExternalLink className="w-3 h-3" />
-                                </a>
-                            </div>
-                        ))}
-                    </div>
-                </details>
-            ))}
+            {/* Search input */}
+            <div className="relative">
+                <input
+                    type="search"
+                    placeholder="Search routes..."
+                    value={query}
+                    onChange={e => setQuery(e.target.value)}
+                    className="w-full bg-slate-900/50 border border-white/10 rounded-2xl px-4 py-3 pl-10 text-sm text-slate-200 placeholder:text-slate-600 focus:outline-none focus:border-indigo-500/50 focus:bg-slate-900/80 transition-all min-h-[44px]"
+                    aria-label="Search routes"
+                />
+                <Map className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-600 pointer-events-none" />
+                {q && (
+                    <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs md:text-sm text-slate-500">
+                        {totalMatches} result{totalMatches !== 1 ? 's' : ''}
+                    </span>
+                )}
+            </div>
+
+            {/* No results state */}
+            {q && visibleGroups.length === 0 && (
+                <p className="text-sm text-slate-500 text-center py-8">No routes matching &ldquo;{query}&rdquo;</p>
+            )}
+
+            {/* Group accordions */}
+            <div className="space-y-2">
+                {visibleGroups.map(({ group, icon, auth, admin, routes, externalLinks }) => {
+                    const filteredRoutes = getFilteredRoutes(routes);
+                    const filteredLinks = getFilteredLinks(externalLinks);
+                    const totalItems = routes.length + (externalLinks?.length ?? 0);
+                    const isOpen = q ? true : openGroup === group;
+
+                    return (
+                        <div key={group} className="rounded-2xl border border-white/8 overflow-hidden">
+                            <button
+                                onClick={() => !q && toggleGroup(group)}
+                                aria-expanded={isOpen}
+                                className={`w-full flex items-center gap-3 px-4 py-3 bg-slate-900/30 transition-colors min-h-[44px] text-left ${!q ? 'hover:bg-slate-800/30 cursor-pointer' : 'cursor-default'}`}
+                            >
+                                <ChevronRight className={`w-4 h-4 text-slate-500 transition-transform duration-200 shrink-0 ${isOpen ? 'rotate-90' : ''}`} />
+                                <span className="text-base shrink-0">{icon}</span>
+                                <span className="ppn-label text-sm text-slate-300 flex-1">{group}</span>
+                                <span className="text-xs md:text-sm text-slate-600 shrink-0">
+                                    {q ? `${filteredRoutes.length + filteredLinks.length}/${totalItems}` : `(${totalItems})`}
+                                </span>
+                                {auth && <Lock className="w-3.5 h-3.5 text-slate-600 ml-1 shrink-0" />}
+                                {admin && <Crown className="w-3.5 h-3.5 text-amber-500 ml-1 shrink-0" />}
+                            </button>
+                            {isOpen && (
+                                <div className="divide-y divide-white/5">
+                                    {filteredRoutes.map(({ path, dynamic }) => (
+                                        <div key={path} className="flex items-center gap-3 px-4 py-3 hover:bg-slate-800/20 transition-colors">
+                                            <code className="flex-1 text-xs md:text-sm text-slate-400 font-mono break-all">{path}</code>
+                                            {dynamic ? (
+                                                <span className="text-xs md:text-sm text-slate-600 ppn-meta shrink-0">(requires ID)</span>
+                                            ) : (
+                                                <button
+                                                    onClick={() => openInNewTab(path)}
+                                                    aria-label={`Open ${path} in new tab`}
+                                                    className="shrink-0 flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs md:text-sm font-bold text-indigo-400 hover:text-indigo-300 hover:bg-indigo-500/10 border border-transparent hover:border-indigo-500/20 transition-all min-h-[44px]"
+                                                >
+                                                    Open <ExternalLink className="w-3 h-3" />
+                                                </button>
+                                            )}
+                                        </div>
+                                    ))}
+                                    {filteredLinks.map(({ label, href, icon: extIcon }) => (
+                                        <div key={href} className="flex items-center gap-3 px-4 py-3 hover:bg-slate-800/20 transition-colors">
+                                            <span className="text-sm shrink-0">{extIcon}</span>
+                                            <span className="flex-1 text-xs md:text-sm text-slate-400 break-all">{label}</span>
+                                            <a
+                                                href={href}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="shrink-0 flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs md:text-sm font-bold text-amber-400 hover:text-amber-300 hover:bg-amber-500/10 border border-transparent hover:border-amber-500/20 transition-all min-h-[44px]"
+                                            >
+                                                Open <ExternalLink className="w-3 h-3" />
+                                            </a>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    );
+                })}
+            </div>
         </div>
     );
 };
+
 
 // ─── Tab 4: Platform Health ───────────────────────────────────────────────────
 interface PlatformStats {
@@ -561,33 +626,203 @@ const PlatformHealth: React.FC = () => {
                         <span className="text-4xl font-black text-slate-100 tabular-nums">{value?.toLocaleString()}</span>
                     )}
                     <span className="text-xs md:text-sm font-bold uppercase tracking-widest text-slate-500">{label}</span>
-                    <span className="text-xs text-slate-700 mt-auto">As of {updatedTime}</span>
+                    <span className="text-xs md:text-sm text-slate-500 mt-auto">As of {updatedTime}</span>
                 </div>
             ))}
         </div>
     );
 };
 
-// ─── Main Page ────────────────────────────────────────────────────────────────
-const TABS: { id: TabId; label: string; Icon: React.FC<{ className?: string }> }[] = [
-    { id: 'feedback',  label: 'Feedback Inbox', Icon: ({ className }) => <MessageSquare className={className} /> },
-    { id: 'users',     label: 'Users',          Icon: ({ className }) => <Users className={className} /> },
-    { id: 'sitemap',   label: 'Site Navigator', Icon: ({ className }) => <Map className={className} /> },
-    { id: 'platform',  label: 'Platform',       Icon: ({ className }) => <Activity className={className} /> },
+// ─── Tab 5: Packet Builder ───────────────────────────────────────────────────
+type AudienceTag = 'All' | 'Investor' | 'Clinician' | 'Researcher' | 'Technical Advisor' | 'Legal';
+
+interface PacketDoc {
+    id: string;
+    label: string;
+    description: string;
+    url: string;
+    audience: AudienceTag[];
+}
+
+const PACKET_DOCS: PacketDoc[] = [
+    { id: 'clinician-packet', label: 'Clinician Founding Partner Packet', description: 'Full clinical onboarding, Arc of Care overview, and founding charter for licensed practitioners.', url: '/internal/founding-docs/Clinician-Packet/index.html', audience: ['Clinician', 'Investor', 'Technical Advisor'] },
+    { id: 'researcher-packet', label: 'Researcher Founding Partner Packet', description: 'Data taxonomy, clinical schema, and IRB-ready technical specifications.', url: '/internal/founding-docs/Researcher-Packet/index.html', audience: ['Researcher', 'Investor', 'Legal'] },
+    { id: 'hipaa-packet', label: 'HIPAA Legal Packet', description: 'HIPAA posture overview, technical proof set, safe harbor table, and conflict resolution audit.', url: '/internal/founding-docs/HIPAA-Packet/index.html', audience: ['Legal', 'Investor', 'Technical Advisor'] },
+    { id: 'advisor-demo', label: 'Advisor Demo', description: 'Interactive platform walkthrough for technical evaluators and advisory board members.', url: '/internal/advisor-demo.html', audience: ['Technical Advisor', 'Investor'] },
+    { id: 'partner-hub', label: 'Partner Hub', description: 'Founding partner overview, tier benefits, and onboarding pathways.', url: '/internal/partner-hub.html', audience: ['Investor', 'Clinician'] },
+    { id: 'partner-preview', label: 'Partner Preview', description: 'Visual product preview optimized for first impressions and investor intros.', url: '/internal/partner-preview.html', audience: ['Investor', 'Clinician'] },
+    { id: 'vip-invite', label: 'VIP Invite Flow', description: 'Exclusive invite sequence for advisory board members and strategic contacts.', url: '/internal/vip-invite-flow.html', audience: ['Investor', 'Technical Advisor'] },
+    { id: 'email-templates', label: 'Email Templates', description: 'Pre-approved outreach templates for all audience types and use cases.', url: '/internal/ppn-email-templates.html', audience: ['All'] },
+    { id: 'bridge-camera', label: 'PPN Bridge Camera', description: 'High-impact visual narrative for platform demonstrations.', url: '/internal/PPN_Bridge_Camera.html', audience: ['Technical Advisor', 'Investor'] },
+    { id: 'jason-demo', label: 'Jason Demo', description: 'Full platform demo tailored for clinical and investor audiences.', url: '/internal/jason-demo.html', audience: ['Investor', 'Clinician'] },
+    { id: 'jason-tour', label: 'Jason Tour', description: 'Guided product tour with technical depth for evaluators.', url: '/internal/jason-tour.html', audience: ['Investor', 'Technical Advisor'] },
+    { id: 'trevor-showcase', label: 'Trevor Showcase', description: 'Comprehensive showcase of platform capabilities and design excellence.', url: '/internal/trevor-showcase.html', audience: ['Investor', 'Clinician'] },
+    { id: 'growth-sandbox', label: 'Growth Sandbox', description: 'Analytics and growth data sandbox for technical deep-dives.', url: '/internal/growth-sandbox.html', audience: ['Technical Advisor'] },
+    { id: 'denver-leave-behind', label: 'Denver Leave-Behind (PsyCon 2026)', description: 'Print-ready conference leave-behind for PsyCon 2026.', url: '/internal/admin_uploads/denver-2026/PPN_Leave_Behind_Print.html', audience: ['Clinician', 'Investor'] },
 ];
 
-const VALID_TABS: TabId[] = ['feedback', 'users', 'sitemap', 'platform'];
+const AUDIENCE_FILTERS: AudienceTag[] = ['All', 'Investor', 'Clinician', 'Researcher', 'Technical Advisor', 'Legal'];
+
+const AUDIENCE_COLORS: Record<AudienceTag, string> = {
+    'All':               'bg-slate-700/40 text-slate-300 border-slate-600/40',
+    'Investor':          'bg-amber-500/15 text-amber-300 border-amber-500/30',
+    'Clinician':         'bg-teal-500/15 text-teal-300 border-teal-500/30',
+    'Researcher':        'bg-violet-500/15 text-violet-300 border-violet-500/30',
+    'Technical Advisor': 'bg-blue-500/15 text-blue-300 border-blue-500/30',
+    'Legal':             'bg-red-500/15 text-red-300 border-red-500/30',
+};
+
+const PacketBuilder: React.FC = () => {
+    const [activeFilter, setActiveFilter] = useState<AudienceTag>('All');
+    const [selected, setSelected] = useState<Set<string>>(new Set());
+    const [copiedTray, setCopiedTray] = useState(false);
+
+    const filtered = activeFilter === 'All'
+        ? PACKET_DOCS
+        : PACKET_DOCS.filter(d => d.audience.includes(activeFilter) || d.audience.includes('All'));
+
+    const toggle = (id: string) => {
+        setSelected(prev => {
+            const next = new Set(prev);
+            next.has(id) ? next.delete(id) : next.add(id);
+            return next;
+        });
+    };
+
+    const selectedDocs = PACKET_DOCS.filter(d => selected.has(d.id));
+
+    const handleOpenAll = () => {
+        selectedDocs.forEach(d => window.open(d.url, '_blank', 'noopener,noreferrer'));
+    };
+
+    const handleCopyUrls = () => {
+        const base = window.location.origin + window.location.pathname.replace(/\/?$/, '');
+        const urls = selectedDocs.map(d => `${base}${d.url}`).join('\n');
+        navigator.clipboard.writeText(urls);
+        setCopiedTray(true);
+        setTimeout(() => setCopiedTray(false), 2500);
+    };
+
+    return (
+        <div className="space-y-4 pb-28">
+            <p className="text-sm text-slate-400 leading-relaxed">
+                Select documents to assemble a shareable packet for your contact. Filter by audience, then Open All or Copy URLs.
+            </p>
+            {/* Filter chips */}
+            <div className="flex overflow-x-auto no-scrollbar gap-2 pb-1">
+                {AUDIENCE_FILTERS.map(f => (
+                    <button
+                        key={f}
+                        onClick={() => setActiveFilter(f)}
+                        className={`shrink-0 px-3 py-1.5 rounded-xl text-xs md:text-sm font-black uppercase tracking-widest border transition-all min-h-[44px] flex items-center
+                            ${activeFilter === f
+                                ? 'bg-indigo-500/20 border-indigo-500/60 text-indigo-300'
+                                : 'bg-slate-800/50 border-slate-700 text-slate-500 hover:text-slate-300'
+                            }`}
+                    >
+                        {f}
+                    </button>
+                ))}
+                {selected.size > 0 && (
+                    <button
+                        onClick={() => setSelected(new Set())}
+                        className="shrink-0 ml-auto px-3 py-1.5 rounded-xl text-xs md:text-sm font-black border border-slate-700 text-slate-500 hover:text-red-300 hover:border-red-500/40 transition-all min-h-[44px] flex items-center gap-1"
+                    >
+                        Clear ({selected.size})
+                    </button>
+                )}
+            </div>
+
+            {/* Document grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {filtered.map(doc => {
+                    const isSelected = selected.has(doc.id);
+                    return (
+                        <button
+                            key={doc.id}
+                            onClick={() => toggle(doc.id)}
+                            className={`text-left rounded-2xl border p-4 transition-all flex flex-col gap-3 min-h-[44px]
+                                ${isSelected
+                                    ? 'bg-indigo-500/10 border-indigo-500/50 ring-1 ring-indigo-500/30'
+                                    : 'bg-slate-900/40 border-white/8 hover:bg-slate-800/40 hover:border-white/15'
+                                }`}
+                        >
+                            <div className="flex items-start gap-3">
+                                <div className={`mt-0.5 w-4 h-4 rounded border flex-shrink-0 flex items-center justify-center transition-all ${isSelected ? 'bg-indigo-500 border-indigo-500' : 'border-slate-600'}`}>
+                                    {isSelected && <CheckCircle className="w-3 h-3 text-white" />}
+                                </div>
+                                <span className="text-sm font-bold text-slate-200 leading-snug">{doc.label}</span>
+                            </div>
+                            <p className="text-xs md:text-sm text-slate-500 leading-relaxed pl-7">{doc.description}</p>
+                            <div className="flex flex-wrap gap-1.5 pl-7">
+                                {doc.audience.includes('All') ? (
+                                    <span className={`text-xs px-2 py-0.5 rounded-full border font-bold ${AUDIENCE_COLORS['All']}`}>All Audiences</span>
+                                ) : doc.audience.map(a => (
+                                    <span key={a} className={`text-xs px-2 py-0.5 rounded-full border font-bold ${AUDIENCE_COLORS[a]}`}>{a}</span>
+                                ))}
+                            </div>
+                        </button>
+                    );
+                })}
+            </div>
+
+            {/* Sticky selection tray */}
+            {selected.size > 0 && (
+                <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-40 flex items-center gap-3 px-4 py-3 rounded-2xl border border-indigo-500/40 bg-slate-900/95 backdrop-blur-xl shadow-2xl shadow-indigo-500/10 whitespace-nowrap">
+                    <span className="text-sm font-black text-indigo-300">{selected.size} doc{selected.size !== 1 ? 's' : ''} selected</span>
+                    <div className="w-px h-5 bg-slate-700" />
+                    <button
+                        onClick={handleOpenAll}
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-sm font-bold text-slate-300 hover:text-white hover:bg-slate-700/60 transition-all min-h-[44px]"
+                    >
+                        <ExternalLink className="w-3.5 h-3.5" /> Open All
+                    </button>
+                    <button
+                        onClick={handleCopyUrls}
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-sm font-bold transition-all min-h-[44px] bg-indigo-500/20 hover:bg-indigo-500/30 border border-indigo-500/40 text-indigo-300"
+                    >
+                        {copiedTray ? (
+                            <><CheckCircle className="w-3.5 h-3.5 text-teal-400" /><span className="text-teal-400">Copied</span></>
+                        ) : (
+                            <><Copy className="w-3.5 h-3.5" /> Copy URLs</>
+                        )}
+                    </button>
+                </div>
+            )}
+        </div>
+    );
+};
+
+// ─── Main Page ────────────────────────────────────────────────────────────────
+const TABS: { id: TabId; label: string; Icon: React.FC<{ className?: string }> }[] = [
+    { id: 'feedback',  label: 'Feedback',  Icon: ({ className }) => <MessageSquare className={className} /> },
+    { id: 'users',     label: 'Users',     Icon: ({ className }) => <Users className={className} /> },
+    { id: 'sitemap',   label: 'Site Nav',  Icon: ({ className }) => <Map className={className} /> },
+    { id: 'platform',  label: 'Platform',  Icon: ({ className }) => <Activity className={className} /> },
+    { id: 'packets',   label: 'Packets',   Icon: ({ className }) => <Package className={className} /> },
+];
+
+const VALID_TABS: TabId[] = ['feedback', 'users', 'sitemap', 'platform', 'packets'];
 
 const AdminDashboard: React.FC = () => {
     const location = useLocation();
     const navigate = useNavigate();
 
-    // Derive active tab from URL search param (?tab=) for deep-link & back-button support
+    // Persist last-used tab in localStorage across sessions
+    const LAST_TAB_KEY = 'ppn_admin_last_tab';
+    const savedTab = localStorage.getItem(LAST_TAB_KEY) as TabId | null;
+
+    // Priority: URL param > localStorage > default ('sitemap' — most-used)
     const tabFromUrl = new URLSearchParams(location.search).get('tab') as TabId | null;
-    const activeTab: TabId = (tabFromUrl && VALID_TABS.includes(tabFromUrl)) ? tabFromUrl : 'feedback';
+    const activeTab: TabId =
+        (tabFromUrl && VALID_TABS.includes(tabFromUrl))
+            ? tabFromUrl
+            : (savedTab && VALID_TABS.includes(savedTab))
+                ? savedTab
+                : 'sitemap';
 
     const setActiveTab = (id: TabId) => {
-        // Update URL without pushing a new history entry so native Back still works correctly
+        localStorage.setItem(LAST_TAB_KEY, id);
         navigate({ search: `?tab=${id}` }, { replace: true });
     };
 
@@ -619,8 +854,7 @@ const AdminDashboard: React.FC = () => {
                         `}
                     >
                         <Icon className="w-4 h-4" aria-hidden="true" />
-                        {/* U1: hide label text on xs screens, show from sm: up */}
-                        <span className="hidden sm:inline">{label}</span>
+                        <span className="truncate max-w-[80px] sm:max-w-none">{label}</span>
                     </button>
                 ))}
             </div>
@@ -631,6 +865,7 @@ const AdminDashboard: React.FC = () => {
                 {activeTab === 'users'     && <UserManagement />}
                 {activeTab === 'sitemap'   && <SiteNavigator />}
                 {activeTab === 'platform'  && <PlatformHealth />}
+                {activeTab === 'packets'   && <PacketBuilder />}
             </div>
         </div>
     );

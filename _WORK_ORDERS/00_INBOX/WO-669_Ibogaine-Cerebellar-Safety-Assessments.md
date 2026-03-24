@@ -1,0 +1,89 @@
+---
+owner: LEAD
+status: 00_INBOX
+authored_by: PRODDY
+active_sprint: false
+priority: P1
+created: 2026-03-23
+database_changes: yes
+source_analysis: proddy_dr_allen_analysis.md
+files: []
+---
+
+## PRODDY PRD
+
+> **Work Order:** WO-669 — Ibogaine Cerebellar Safety Assessment (SARA / FTN / HKS)
+> **Authored by:** PRODDY
+> **Date:** 2026-03-23
+> **Status:** Draft → Pending LEAD review
+
+---
+
+### 1. Problem Statement
+
+Ibogaine is directly toxic to the cerebellum at high doses — a clinical fact that the standard of care addresses with three at-bedside neurological assessments: SARA (Scale for Assessment and Rating of Ataxia), Finger-to-Nose (FTN), and Heel-Knee-Shin (HKS). Dr. Allen's session log includes all three as pre-session safety checks. PPN has no equivalent structured neuro-safety assessment. Practitioners conducting high-dose Ibogaine sessions have no platform-supported way to document these findings, creating a clinical and liability gap.
+
+---
+
+### 2. Target User + Job-To-Be-Done
+
+An Ibogaine practitioner needs to administer and document SARA, FTN, and HKS cerebellar function assessments before and after a high-dose Ibogaine session so that neurological safety can be established at baseline and compared against any post-session deficit.
+
+---
+
+### 3. Success Metrics
+
+1. SARA, FTN pass/fail, and HKS pass/fail render as structured assessment fields in the Phase 1 intake form for Ibogaine sessions — verified in ≥3 consecutive QA sessions.
+2. SARA total score (0–40) stores as a structured integer; FTN and HKS store as boolean pass/fail — confirmed by INSPECTOR schema review.
+3. A post-session neurological assessment option (using the same SARA/FTN/HKS fields) is accessible in the Phase 3 closeout flow within 30 days of ship.
+
+---
+
+### 4. Feature Scope
+
+#### ✅ In Scope
+- SARA: 8-item structured scale (score 0–40), conditionally rendered for Ibogaine sessions in Phase 1
+- FTN (Finger-to-Nose): Binary pass/fail with optional severity note (structured dropdown, not free text)
+- HKS (Heel-Knee-Shin): Binary pass/fail with optional severity note (structured dropdown, not free text)
+- Pre-session baseline capture (Phase 1) and post-session comparison capture (Phase 3 closeout)
+- All values stored as structured fields — no free text
+
+#### ❌ Out of Scope
+- Intra-session cerebellar monitoring (continuous during active session) — separate ticket if needed
+- SARA for non-Ibogaine modalities
+- Video recording of neurological exams
+- Any changes to Phase 2 (active session) monitoring interface
+
+---
+
+### 5. Priority Tier
+
+**[x] P1** — High value, ship this sprint
+
+**Reason:** Ibogaine is a Schedule I substance being administered at doses up to 25 mg/kg — among the highest-risk therapeutic protocols in the space. Cerebellar neurotoxicity is a documented dose-dependent risk. This is a patient safety documentation gap, not a UX enhancement. Clinician adoption depends on the platform matching their safety standard of care.
+
+---
+
+### 6. Open Questions for LEAD
+
+1. Should SARA be a gate (required before session start) or advisory (logged but not blocking)?
+2. Does the SARA form need to be localized/translated for international clinic partners who may use alternative scoring conventions?
+3. Should post-session SARA scores be displayed alongside pre-session baseline in the session summary (delta view)?
+4. Where do SARA/FTN/HKS results surface in the patient PDF report — pre-session assessment section or a dedicated neuro-safety section?
+5. Are SARA/FTN/HKS scores needed in the Global Benchmark analytics layer, or are they session-only documentation fields?
+
+---
+
+### PRODDY Sign-Off Checklist
+
+- [x] Problem Statement is ≤100 words and contains no solution ideas
+- [x] Job-To-Be-Done is a single sentence in the correct format
+- [x] All 3 success metrics contain a measurable number or specific observable event
+- [x] Out of Scope is populated (not empty)
+- [x] Priority tier has a named reason
+- [x] Open Questions list is ≤5 items
+- [x] Total PRD word count is ≤600 words
+- [x] No code, SQL, or schema written anywhere in this document
+- [x] `database_changes: yes` — new assessment score fields required
+- [x] Frontmatter updated: `owner: LEAD`, `status: 00_INBOX`
+- [x] Response wrapped in `==== PRODDY ====`

@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import { CheckCircle, ChevronRight, X, Info } from 'lucide-react';
 import { FormFooter } from '../shared/FormFooter';
 import { AdvancedTooltip } from '../../ui/AdvancedTooltip';
+import { useFormCompletion } from '../../../hooks/useFormCompletion';
 
 /**
  * SetAndSettingForm, Treatment Expectancy + Clinical Observations (combined)
@@ -141,6 +142,17 @@ const SetAndSettingForm: React.FC<SetAndSettingFormProps> = ({
     const interpretation = getInterpretation(expectancy);
     const pct = ((expectancy - 1) / 99) * 100;
 
+    // WO-662: form is complete when expectancy has been touched (slider moved)
+    const isComplete = hasTouched;
+    const { ctaRef, showEnterToast } = useFormCompletion(
+        isComplete,
+        handleSaveAndContinue,
+        {
+            storageKey: `ppn_set_setting_${patientId || 'default'}`,
+            draftValue: { treatment_expectancy: expectancy, observations },
+        },
+    );
+
     return (
         <div className="max-w-3xl mx-auto space-y-5">
 
@@ -231,6 +243,8 @@ const SetAndSettingForm: React.FC<SetAndSettingFormProps> = ({
                 onSaveAndContinue={handleSaveAndContinue}
                 isSaving={saving}
                 hasChanges={true}
+                ctaRef={ctaRef}
+                showEnterToast={showEnterToast}
             />
         </div>
     );

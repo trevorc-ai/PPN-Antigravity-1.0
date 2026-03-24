@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Siren, Clock } from 'lucide-react';
 import { FormField } from '../shared/FormField';
 import { FormFooter } from '../shared/FormFooter';
+import { useFormCompletion } from '../../../hooks/useFormCompletion';
 
 /**
  * RescueProtocolForm - Rescue Protocol/Intervention Tracking
@@ -71,6 +72,11 @@ const RescueProtocolForm: React.FC<RescueProtocolFormProps> = ({
             onComplete();
         }
     };
+
+    // WO-662: Layer 3+4 — pulse CTA + Enter toast when form has data
+    const isComplete = Boolean(!!data.intervention_type);
+    const { ctaRef, showEnterToast } = useFormCompletion(isComplete, handleSaveAndContinue);
+
 
     const updateField = (field: keyof RescueProtocolData, value: any) => {
         const updated = { ...data, [field]: value };
@@ -186,6 +192,8 @@ const RescueProtocolForm: React.FC<RescueProtocolFormProps> = ({
                 onSaveAndContinue={handleSaveAndContinue}
                 isSaving={isSaving}
                 hasChanges={!!data.intervention_type}
+                ctaRef={ctaRef}
+                showEnterToast={showEnterToast}
             />
         </div>
     );

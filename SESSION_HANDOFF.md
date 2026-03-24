@@ -1,5 +1,21 @@
 # SESSION_HANDOFF.md
-**Last updated:** 2026-03-23 | **Session focus:** Select Patient modal ppn-ui-standards audit + remediation (WO-B6)
+
+## ⚡ START HERE — Commands Available Every Session
+
+| Command | What it does |
+|---|---|
+| `/fast-track [one sentence]` | LEAD classifies, creates a ticket, and routes it. No pipeline knowledge required. |
+| `/ppn-ui-standards [filename]` | Audits the named file for standards violations and fixes them in-place. |
+| `/lead-pipeline-scan` | Full pipeline audit: surfaces all stuck tickets, backlogs, and next actions. |
+| `/finalize_feature` | INSPECTOR-only: stage, commit, post push confirmation to user. |
+| `/session-handoff` | LEAD updates this file at end of session. Run before signing off. |
+
+> [!NOTE]
+> Phase 5.5 of inspector-qa **requires** a browser screenshot + @USER notification before any ticket reaches `06_USER_REVIEW`. If you are not seeing screenshots and review prompts, the agent skipped Phase 5.5. Invoke INSPECTOR with `/inspector-qa-script`.
+
+---
+
+**Last updated:** 2026-03-24 | **Session focus:** System-level workflow fixes — fast-track restoration, ppn-ui-standards enforcement rewrite, agent.yaml immutability confirmed
 
 ---
 

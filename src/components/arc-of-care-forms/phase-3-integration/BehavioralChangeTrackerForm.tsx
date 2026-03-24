@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { TrendingUp, Save, CheckCircle, Star, ArrowUp, ArrowDown, Minus, AlertTriangle } from 'lucide-react';
 import { FormField } from '../shared/FormField';
 import { FormFooter } from '../shared/FormFooter';
+import { useFormCompletion } from '../../../hooks/useFormCompletion';
 
 /**
  * BehavioralChangeTrackerForm - Behavioral Change Tracker (NEW DESIGN)
@@ -123,6 +124,11 @@ const BehavioralChangeTrackerForm: React.FC<BehavioralChangeTrackerFormProps> = 
             onComplete();
         }
     };
+
+    // WO-662: Layer 3+4 — pulse CTA + Enter toast when form has data
+    const isComplete = Boolean(true);
+    const { ctaRef, showEnterToast } = useFormCompletion(isComplete, handleSaveAndContinue);
+
 
     const setToday = () => {
         updateField('change_date', new Date().toISOString().slice(0, 10));
@@ -293,6 +299,8 @@ const BehavioralChangeTrackerForm: React.FC<BehavioralChangeTrackerFormProps> = 
                 onSaveAndContinue={handleSaveAndContinue}
                 isSaving={isSaving}
                 hasChanges={true}
+                ctaRef={ctaRef}
+                showEnterToast={showEnterToast}
             />
         </div>
     );

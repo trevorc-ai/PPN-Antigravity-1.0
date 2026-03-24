@@ -3,6 +3,7 @@ import { Pill, Save, CheckCircle, Plus, AlertTriangle, AlertCircle } from 'lucid
 import { FormField } from '../shared/FormField';
 import { BatchRegistrationModal, BatchData } from '../shared/BatchRegistrationModal';
 import { FormFooter } from '../shared/FormFooter';
+import { useFormCompletion } from '../../../hooks/useFormCompletion';
 import { useReferenceData } from '../../../hooks/useReferenceData';
 import { runContraindicationEngine } from '../../../services/contraindicationEngine';
 
@@ -248,6 +249,10 @@ const DosingProtocolForm: React.FC<DosingProtocolFormProps> = ({
         data.route_of_administration
     );
 
+    // WO-662: CTA activates when form is valid AND no unacknowledged absolute contraindications
+    const isComplete = isValid && (!hasAbsoluteContraindications || contraindicationAcknowledged);
+    const { ctaRef, showEnterToast } = useFormCompletion(isComplete, handleSaveAndContinue);
+
     return (
         <div className="max-w-4xl mx-auto space-y-6">
 
@@ -433,6 +438,8 @@ const DosingProtocolForm: React.FC<DosingProtocolFormProps> = ({
                 isSaving={isSaving}
                 hasChanges={Object.keys(data).length > 0}
                 isValid={isValid && (!hasAbsoluteContraindications || contraindicationAcknowledged)}
+                ctaRef={ctaRef}
+                showEnterToast={showEnterToast}
             />
 
             {/* Modals */}

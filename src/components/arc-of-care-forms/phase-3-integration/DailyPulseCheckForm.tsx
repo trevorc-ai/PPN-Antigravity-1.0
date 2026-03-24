@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
+
 import { Heart, Save, CheckCircle } from 'lucide-react';
 import { FormField } from '../shared/FormField';
 import { StarRating } from '../shared/StarRating';
 import { FormFooter } from '../shared/FormFooter';
+import { useFormCompletion } from '../../../hooks/useFormCompletion';
 
 /**
  * DailyPulseCheckForm - Daily Wellness Check-In
@@ -71,7 +73,13 @@ const DailyPulseCheckForm: React.FC<DailyPulseCheckFormProps> = ({
         setData(prev => ({ ...prev, [field]: value }));
     };
 
-    const isComplete = data.connection_level && data.sleep_quality && data.mood_level && data.anxiety_level;
+    const isComplete = Boolean(data.connection_level && data.sleep_quality && data.mood_level && data.anxiety_level);
+
+    // WO-662: pulse CTA + Enter toast when all 4 ratings are set
+    const { ctaRef, showEnterToast } = useFormCompletion(isComplete, handleSaveAndContinue, {
+        storageKey: `ppn_daily_pulse_${patientId || 'default'}`,
+        draftValue: data,
+    });
 
     return (
         <div className="max-w-2xl mx-auto space-y-6">
@@ -138,6 +146,8 @@ const DailyPulseCheckForm: React.FC<DailyPulseCheckFormProps> = ({
                 onSaveAndContinue={handleSaveAndContinue}
                 isSaving={isSaving}
                 hasChanges={Object.keys(data).length > 1}
+                ctaRef={ctaRef}
+                showEnterToast={showEnterToast}
             />
         </div>
     );

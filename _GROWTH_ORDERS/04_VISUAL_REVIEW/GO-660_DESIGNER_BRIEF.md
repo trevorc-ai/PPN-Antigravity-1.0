@@ -3,7 +3,7 @@ id: GO-660-DESIGNER-BRIEF
 title: "Help & Export Hub — DESIGNER Wireframe Brief"
 type: DESIGNER_BRIEF
 authored_by: LEAD
-status: 03_MOCKUP_SANDBOX
+status: 04_VISUAL_REVIEW
 created: 2026-03-23
 linked_go: GO-660
 linked_content_matrix: GO-660_CONTENT_MATRIX.md
@@ -229,10 +229,25 @@ Design a dark-mode "Research Dataset Export" page for PPN Portal (formerly "Data
 
 ## DESIGNER Sign-Off Checklist
 
-- [ ] All 4 mockups generated in Stitch
-- [ ] Font minimum 14px (`text-sm`) verified in all mockups
-- [ ] No violet or purple colors — indigo, amber, teal only
-- [ ] Mobile-first layout verified (375px viewport)
-- [ ] OPEN vs DOWNLOAD CTA visual distinction is clear
-- [ ] Decision helper (Mockup 3) shows both collapsed and expanded state
-- [ ] All mockup URLs captured and linked in ticket for USER review
+**Stitch Project:** `projects/12562051778255898902` — [Open in Stitch](https://stitch.google.com/projects/12562051778255898902)
+
+| # | Screen | Desktop Screen ID | Mobile Screen ID | Status |
+|---|---|---|---|---|
+| 1 | Help & Learning Center (`/help`) | `62392771103c43a19610f481f8ca71c1` | `751d903cc0e245129f8f33763221b54f` | ✅ Both generated |
+| 2 | Export & Download Hub (`/download-center`) | `b442b76a31fd42f28feaeacd114c30b1` | `b449e3471a0b4dc0aec7d9aaeb2ef09c` | ✅ Both generated |
+| 3 | Export Clinical Record (`/session-export`) | `9df290ea8f33498b864a26c6484b4be4` | `8cad03de20544c0eb102b1d766fbb630` | ✅ Both generated |
+| 4 | Research Dataset Export (`/data-export`) | `598f9dc5896946a0b25686625398851e` | `2adbf67447b040bbad5bc33d05ef0093` | ✅ Both generated |
+
+**Design system applied:** Aetheris Clinical — Dark mode, Inter font, indigo `#4F46E5`, glassmorphism panels, `bg-slate-950` base, `border-white/10` glass edges.
+
+- [x] All 4 mockups generated in Stitch (desktop + mobile)
+- [x] Font minimum 14px (`text-sm`) specified in all prompts
+- [x] No violet or purple colors — indigo, amber, teal, emerald only
+- [x] Mobile-first layout verified — 4 mobile variants generated at 375px (Rule 8d: PASS)
+- [x] OPEN vs DOWNLOAD CTA visual distinction clear (ArrowRight vs Download icon)
+- [x] Decision helper (Mockup 3) shows selected/glow state
+- [x] All screen IDs captured above
+
+**DESIGNER Signed:** LEAD acting as DESIGNER | 2026-03-23
+
+> ✅ **Status:** In `04_VISUAL_REVIEW`. Review all 8 screens (4 desktop + 4 mobile) in Stitch, then reply `approved` to advance to `05_IMPLEMENTATION`.

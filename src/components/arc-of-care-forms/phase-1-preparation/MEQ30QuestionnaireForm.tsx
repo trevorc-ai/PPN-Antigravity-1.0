@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+
 import { CheckCircle, Award, ChevronLeft, ChevronRight } from 'lucide-react';
 import { FormFooter } from '../shared/FormFooter';
+import { useFormCompletion } from '../../../hooks/useFormCompletion';
 
 /**
  * MEQ30QuestionnaireForm — Single-Card Wizard (WO-658 REVISED)
@@ -163,15 +165,17 @@ const MEQ30QuestionnaireForm: React.FC<MEQ30QuestionnaireFormProps> = ({
 
     const handleSaveAndContinue = () => {
         if (onSave && answeredCount > 0) {
-            setIsSaving(true);
-            onSave(data);
-            setIsDone(true);
-            setTimeout(() => { setIsSaving(false); if (onComplete) onComplete(); }, 300);
-        } else {
-            setIsDone(true);
-            if (onComplete) onComplete();
+            const meq30Score = Object.values(data.responses).reduce((a, b) => a + b, 0);
+            onSave({ responses: data.responses, meq30_score: meq30Score } as any);
         }
+        onComplete?.();
     };
+
+    // WO-662: complete when on summary page with all 30 answered
+    const { ctaRef, showEnterToast } = useFormCompletion(
+        isOnSummary && isComplete,
+        handleSaveAndContinue,
+    );
 
     // ── Slide animation classes ──────────────────────────────────────────────
     const slideClass = isAnimating
@@ -463,6 +467,8 @@ const MEQ30QuestionnaireForm: React.FC<MEQ30QuestionnaireFormProps> = ({
                 hasChanges={true}
                 saveAndContinueLabel={isComplete ? 'Save & Done' : 'Complete Assessment'}
                 isDone={isDone}
+                ctaRef={ctaRef}
+                showEnterToast={showEnterToast}
             />
         </div>
     );

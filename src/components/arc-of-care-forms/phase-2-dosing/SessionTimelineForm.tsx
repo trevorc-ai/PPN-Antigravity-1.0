@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Clock, Tag, Music, AlertTriangle, Plus, Trash2, CheckCircle, Play, Stethoscope, Mic, Pill } from 'lucide-react';
 import { AdvancedTooltip } from '../../ui/AdvancedTooltip';
 import { FormFooter } from '../shared/FormFooter';
+import { useFormCompletion } from '../../../hooks/useFormCompletion';
 import { getTimelineEvents } from '../../../services/clinicalLog';
 
 /**
@@ -115,6 +116,11 @@ const SessionTimelineForm: React.FC<SessionTimelineFormProps> = ({
             onComplete();
         }
     };
+
+    // WO-662: Layer 3+4 — pulse CTA + Enter toast when form has data
+    const isComplete = Boolean(events.some(e => hasData(e)));
+    const { ctaRef, showEnterToast } = useFormCompletion(isComplete, handleSaveAndContinue);
+
 
     function createEmptyEvent(): TimelineEvent {
         // Default to current time
@@ -335,6 +341,8 @@ const SessionTimelineForm: React.FC<SessionTimelineFormProps> = ({
                 onSaveAndContinue={handleSaveAndContinue}
                 isSaving={isSaving}
                 hasChanges={events.some(e => hasData(e))}
+                ctaRef={ctaRef}
+                showEnterToast={showEnterToast}
             />
         </div>
     );

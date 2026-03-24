@@ -50,7 +50,31 @@ INSPECTOR MUST note the chosen index type for each new index in the `## INSPECTO
 
 **Trigger:** Run this check if the WO's `files:` list contains any `.tsx`, `.css`, `.html`, or any path inside `public/outreach/`. Skip for pure DB-only or migration-only tickets.
 
-Read `/ppn-ui-standards` Quick Reference table, then verify the WO spec, design notes, and any copy blocks against:
+> [!IMPORTANT]
+> **Run grep on the ACTUAL FILES, not just the WO spec.** This is the earliest catch point. Violations found here are logged in the clearance block so BUILDER knows about them before writing a single line of code.
+
+For each file in the WO's `files:` list that is `.tsx`, `.css`, or `.html`, run:
+
+```bash
+# CHECK 1: Bare text-xs without responsive upgrade (Rule 2 violation)
+grep -n 'text-xs\b' <file> | grep -v 'md:text-sm\|sm:text-sm\|print:\|/\*\|<!--'
+
+# CHECK 2: Near-invisible low-contrast text (Rule 6 violation)
+grep -n 'text-slate-700\|text-gray-[1-4]00\|text-slate-800' <file> | grep -v 'border\|bg-\|/\*'
+
+# CHECK 3: Native <details>/<summary> elements (auto-close violation)
+grep -n '<details\|<summary' <file> | grep -v '/\*\|<!--'
+
+# CHECK 4: Em dashes in rendered UI text (Rule 4 violation)
+grep -n '—' <file> | grep -v '/\*\|<!--\|//\|Changelog\|changelog'
+
+# CHECK 5: Banned fonts (Rule 2b violation)
+grep -n 'JetBrains\|Courier New\|font-serif' <file> | grep -v '/\*\|<!--'
+```
+
+**Log all findings in the clearance block.** BUILDER is not blocked by pre-existing violations, but MUST fix any violations in lines they modify. INSPECTOR will verify at Phase 2.
+
+Then verify the WO spec itself against:
 
 - [ ] **Font floor:** No `text-xs`, `JetBrains Mono`, or `Courier New` specified in design notes or code snippets
 - [ ] **Em dash:** No em dash (—) or hyphen-as-em-dash (` - `) in any body text within the WO spec or copy blocks
@@ -61,7 +85,7 @@ Read `/ppn-ui-standards` Quick Reference table, then verify the WO spec, design 
 - [ ] **Branding:** PPN Portal wordmark required in header for any outreach or PDF file _(skip if platform-only React)_
 - [ ] **Mobile-first layout:** Grid, flex, and container classes in the spec use mobile-first patterns (`grid-cols-1 md:grid-cols-N`, `flex-col md:flex-row`). No bare `grid-cols-2+` or `w-1/2` on flex children without responsive prefix. Any interactive element (button, input, card tap) has a minimum touch target of `h-12` (48px).
 
-If ANY check fails → **return ticket to `02_TRIAGE`** with `hold_reason: ppn-ui-standards violation — [specific failing check]`. Do NOT sign the clearance block.
+If ANY spec check fails → **return ticket to `02_TRIAGE`** with `hold_reason: ppn-ui-standards violation — [specific failing check]`. Do NOT sign the clearance block.
 
 If ALL checks pass → add `- [ ] UI Standards Pre-Build Gate: PASS` to the clearance block below.
 
@@ -96,6 +120,7 @@ You must evaluate BUILDER's output against this exact checklist. Paste this chec
 - [ ] **Character Check:** Does the new code or UI text contain an em dash character? (If YES -> FAIL)
 - [ ] **Input Check:** Were any uncontrolled free-text `textarea` inputs added for clinical data? (If YES -> FAIL)
 - [ ] **Mobile-First Check:** Run `grep -n 'grid-cols-[2-9]\b' <file> | grep -v 'md:\|lg:\|sm:'` — any match that cannot be manually justified as intentionally mobile-only = FAIL. Run `grep -n 'w-\[.*px\]\|min-w-\[.*px\]' <file> | grep -v 'max-w-'` — any match = FAIL. All tappable elements must be `h-12` or larger.
+- [ ] **Tablet-Viewport Screenshot:** Capture a screenshot at **768px viewport width** (iPad Mini equivalent, `md:` breakpoint) using the browser subagent. Verify: layout switches to at least `md:grid-cols-2`, top/side navigation is visible (no bottom-sheet nav), no horizontal overflow, touch targets still 44px+. Any failure = FAIL.
 
 ## PHASE 3: VERDICT (for React / TSX / platform code only)
 
@@ -159,7 +184,33 @@ Overall: ✅ REGRESSION CLEAR — proceeding to /finalize_feature
 
 **Run this phase for any file in `public/outreach/` or any GO ticket in `_GROWTH_ORDERS/06_QA/`. Skip for React/TSX platform code.**
 
-> INSPECTOR is invoked at `_GROWTH_ORDERS/06_QA/` the same way as `_WORK_ORDERS/04_QA/`. When BUILDER moves a GO to `06_QA`, it must post: `@INSPECTOR — GO-XXX is ready for QA in _GROWTH_ORDERS/06_QA/. Please run Phases 4, 5, and 6 of inspector-qa-script.`
+> [!CAUTION]
+> **The CEO/lead designer is colorblind and vision impaired.** Checks B and C below are personal accessibility requirements, not preferences. Any color-contrast or font-size failure means the user literally cannot read this deliverable. These must PASS before any other check proceeds.
+
+### Step 0: Re-run MARKETER's 5 Accessibility Checks (automated)
+
+For each HTML file in the GO, run these commands and report each result:
+
+```bash
+# CHECK A: Color-only state indicators (no paired icon/label)
+grep -n 'text-red\|text-green\|bg-red\|bg-green\|color: red\|color: green' <file> | grep -v 'AlertTriangle\|CheckCircle\|icon\|label\|/\*'
+
+# CHECK B: Low-contrast gray text (vision impairment)
+grep -n 'text-gray-[1-4]00\|color: #[89a-f][0-9a-f]\{5\}\|text-slate-[2-4]00' <file> | grep -v '/\*\|<!--'
+
+# CHECK C: Sub-minimum font sizes (vision impairment)
+grep -nE 'font-size:\s*([0-9]|1[01])px\|text-\[8px\]\|text-\[9px\]\|text-\[10px\]\|text-\[11px\]' <file>
+
+# CHECK D: Em dashes
+grep -n '—\|&mdash;\|&#8212;' <file> | grep -v '/\*\|<!--'
+
+# CHECK E: Screenshot source path
+grep -n 'screenshots/' <file> | grep -v 'Marketing-Screenshots'
+```
+
+If ANY check returns matches: **STOP. Return ticket to `05_IMPLEMENTATION` with `hold_reason: accessibility violation — [check] — [line numbers]`**. Do NOT proceed to the manual checklist below.
+
+### Step 1: Manual Inspection Checklist
 
 - [ ] **Em Dash Check:** `grep -n "—\|&mdash;\|&#8212;" <file> | grep -v "/\*" | grep -v "<!--"` must return empty
 - [ ] **Courier New Check:** `grep -n "Courier" <file> | grep -v "/\*"` must return empty
@@ -171,6 +222,7 @@ Overall: ✅ REGRESSION CLEAR — proceeding to /finalize_feature
 - [ ] **CONTENT_MATRIX Traceability:** A corresponding `GO-XXX_CONTENT_MATRIX.md` exists in `_GROWTH_ORDERS/06_QA/` or `99_PUBLISHED/`
 - [ ] **MARKETER Self-Certification:** The CONTENT_MATRIX.md contains the accessibility pre-check certification block at the end
 - [ ] **Mobile-Viewport Screenshot:** INSPECTOR must capture a screenshot at 375px viewport width using the browser subagent (iPhone SE equivalent). Layout must stack correctly — no horizontal overflow, no truncated CTAs, no unusable touch targets. Any overflow or broken layout = FAIL.
+- [ ] **Tablet-Viewport Screenshot:** INSPECTOR must capture a screenshot at **768px viewport width** (iPad Mini equivalent). Layout must show 2-column grid (`md:grid-cols-2`), top or side navigation (not bottom-sheet), and no horizontal overflow. Any failure = FAIL.
 
 ## PHASE 5: COLOR BLINDNESS AND WCAG AA ACCESSIBILITY AUDIT
 
@@ -210,11 +262,15 @@ Reply with `STATUS: APPROVED`. Update GO frontmatter `status: 99_PUBLISHED`. Mov
 
 ## PHASE 5.5: JOINT USER VISUAL CONFIRMATION (`06_USER_REVIEW`)
 
+> [!CAUTION]
+> **THIS PHASE IS NON-NEGOTIABLE AND CANNOT BE SKIPPED.** Every ticket that reaches QA APPROVED must go through Phase 5.5 before the user is expected to do anything. Skipping Phase 5.5 is the #1 cause of backlog pileup — the user never sees completed work and cannot approve what they cannot see. If you skip Phase 5.5, you have not finished QA.
+
 **Run this phase after QA APPROVED. Screenshots are mandatory — user reviews in Agent Manager without opening a browser.**
 
 When INSPECTOR issues final QA APPROVED:
 
-### Step A: Capture Screenshots (mandatory)
+### Step A: Capture Screenshots (mandatory, no exceptions)
+
 
 Use the browser subagent to navigate to every affected route and capture a screenshot. Minimum 1 screenshot per ticket. Multi-route tickets require one per affected view.
 
@@ -261,3 +317,5 @@ User replies `hold [reason]` → INSPECTOR logs the issue, moves WO back to `04_
 | 1.4 | 2026-03-23 | LEAD | Phase 5.5 rewritten — mandatory browser screenshot block required before any ticket moves to 06_USER_REVIEW. Screenshots embedded directly in WO ticket file. Updated stage name to 06_USER_REVIEW. INSPECTOR must use browser subagent to capture and append evidence before posting @USER notification. |
 | 1.5 | 2026-03-23 | LEAD | Added UI Standards Pre-Build Gate to Phase 0. Any WO with visible files (.tsx, .css, .html, public/outreach) must pass 7 ppn-ui-standards checks before INSPECTOR signs the 02.5 CLEARANCE block. Failure returns ticket to 02_TRIAGE. Updated clearance block template to include gate line. |
 | 1.6 | 2026-03-23 | LEAD | **Added mobile-first enforcement gates.** Phase 0 pre-build checklist: added mobile-first layout check (8th item). Phase 2 UI audit: added Mobile-First Check with grep commands for bare grid-cols and hardcoded px widths. Phase 4 outreach audit: added mandatory 375px mobile-viewport screenshot requirement. Root cause fix for recurring desktop-first rework. |
+| 1.7 | 2026-03-23 | LEAD | **Added 768px tablet viewport screenshot gate.** Phase 2 and Phase 4 now require both a 375px mobile screenshot AND a 768px tablet screenshot before INSPECTOR approval. Tablet check verifies: 2-column grid active, top/side nav restored, no bottom-sheet nav, 44px touch targets. Root cause fix for clinical tablet (point-of-care) rework loop. |
+| 1.8 | 2026-03-24 | ANTIGRAVITY | **Phase 5.5 CAUTION gate added.** Skipping Phase 5.5 is now explicitly named as the #1 cause of backlog pileup and a protocol violation equal in severity to pushing without user approval. Root cause fix for completed work never surfacing for user review. |

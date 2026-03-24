@@ -2,7 +2,20 @@
 id: WO-665
 title: "Help & Export Hub — Full UI/UX Overhaul (4-screen redesign)"
 owner: LEAD
-status: 00_INBOX
+status: 03_REVIEW
+go_approval_date: 2026-03-23
+wireframe_stitch_project: "3720284587757942960"
+wireframe_screens:
+  - c06931dfc1ce467a9bd6e8964f52f393  # Help & Learning Center
+  - a71861aecb8e43bf87a5e9eb6daed3ef  # Export & Download Hub
+  - 5e832166a4f940c1b849ffb17269b473  # Export Clinical Record (decision helper)
+  - ec940f493b6049d3a67306981dff8c02  # Research Dataset Export
+go_answered_questions:
+  - "Download Center + SessionExportCenter remain separate routes — Download Center restructures to 4-tab hub"
+  - "Help search stays client-side — Supabase FTS is out of scope for this WO"
+  - "Video slots = iframe placeholder cards (YouTube/Loom-ready), no recording assets yet"
+  - "DataExport stays at /data-export but gains breadcrumb + cross-nav links to Export Hub"
+  - "admin_chen_1 is a bug — P0 fix — replace with authenticated user identity"
 authored_by: LEAD (fast-track)
 priority: P1
 created: 2026-03-23

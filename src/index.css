@@ -304,6 +304,28 @@ select:focus-visible {
   }
 }
 
+/* =====================================================
+   WO-662: CTA Completion Pulse
+   One-cycle ring flash applied by useFormCompletion
+   when a form transitions to 100% complete.
+   Respects prefers-reduced-motion.
+   ===================================================== */
+@keyframes ppnCtaPulse {
+  0%   { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.7); }
+  50%  { box-shadow: 0 0 0 8px rgba(99, 102, 241, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0); }
+}
+
+.ppn-cta-pulse {
+  animation: ppnCtaPulse 0.6s ease-out forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ppn-cta-pulse {
+    animation: none;
+  }
+}
+
 /* Gradient Text Utilities (Accessible - WCAG AA Compliant) */
 .text-gradient-primary {
   background: linear-gradient(90deg, #1e40af 0%, #60a5fa 100%);

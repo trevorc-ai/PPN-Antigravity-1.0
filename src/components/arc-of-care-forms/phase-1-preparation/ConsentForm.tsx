@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import { FileCheck, Save, CheckCircle, AlertTriangle, ShieldCheck, Copy, Check } from 'lucide-react';
 import { FormField } from '../shared/FormField';
 import { FormFooter } from '../shared/FormFooter';
+import { useFormCompletion } from '../../../hooks/useFormCompletion';
 
 /**
  * ConsentForm, Informed Consent Documentation
@@ -160,6 +161,9 @@ const ConsentForm: React.FC<ConsentFormProps> = ({
             setTimeout(() => onNext?.(), 600);
         }
     };
+
+    // WO-662 Layer 3: CTA ref for pulse+scroll (consent=true = activate only, no Enter/pulse/scroll per INSPECTOR spec)
+    const { ctaRef } = useFormCompletion(canSave, handleSaveAndContinue, { consent: true });
 
     return (
         <div className="max-w-3xl mx-auto space-y-6">
@@ -365,6 +369,7 @@ const ConsentForm: React.FC<ConsentFormProps> = ({
                 onSaveAndContinue={handleSaveAndContinue}
                 isSaving={isSaving}
                 hasChanges={canSave && !lastSaved}
+                ctaRef={ctaRef}
             />
         </div>
     );
