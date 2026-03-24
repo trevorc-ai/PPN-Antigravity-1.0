@@ -821,7 +821,37 @@
 ### `ref_population_baselines`
 *Research reference data — read-only. See benchmark intelligence layer.*
 
-### `ref_practitioner_types` / `ref_practitioners`
+### `ref_practitioner_types`
+> ✅ `sort_order` column added 2026-03-23. RLS policy updated to `TO authenticated` (was missing). ND row added.
+
+| column | type |
+|---|---|
+| practitioner_type_id | bigint PK |
+| type_code | text UNIQUE |
+| type_label | text |
+| requires_license | boolean |
+| sort_order | integer (default 999) |
+| is_active | boolean |
+| created_at | timestamptz |
+
+**Seeded rows (12 total, ordered by sort_order):**
+
+| id | type_code | type_label | requires_license | sort_order |
+|---|---|---|---|---|
+| 1 | MD | Medical Doctor (MD) | true | 1 |
+| 2 | DO | Doctor of Osteopathic Medicine (DO) | true | 2 |
+| 3 | NP | Nurse Practitioner (NP) | true | 3 |
+| 4 | PA | Physician Assistant (PA) | true | 4 |
+| 12 | ND | Naturopathic Doctor (ND) | true | 5 |
+| 5 | PHD_PSYCH | Licensed Psychologist (PhD) | true | 6 |
+| 6 | LCSW | Licensed Clinical Social Worker (LCSW) | true | 7 |
+| 7 | LPC | Licensed Professional Counselor (LPC) | true | 8 |
+| 8 | LMFT | Licensed Marriage & Family Therapist (LMFT) | true | 9 |
+| 9 | FACILITATOR | Certified Psychedelic Facilitator | true | 10 |
+| 10 | RESEARCHER | Clinical Researcher | false | 11 |
+| 11 | OTHER | Other / Not Listed | false | 99 |
+
+### `ref_practitioners`
 *Practitioner directory reference data.*
 
 ### `ref_routes`
