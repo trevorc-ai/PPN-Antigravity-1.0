@@ -1,5 +1,5 @@
 /**
- * contraindicationEngine.ts — WO-309
+ * contraindicationEngine.ts — WO-309 / WO-673
  * Rule-based contraindication screening service.
  *
  * PRIVACY RULES:
@@ -11,6 +11,12 @@
  *   - Oregon OHA Psilocybin Rules OAR 333-333
  *   - MAPS Protocol S2 Facilitator Manual §8.3
  *   - CTCAE v5.0 (adverse event grading)
+ *   - Dr. Fernando Vega, MD — Hazards and Benefits of Psychedelic Medicine v5.8
+ *     (600+ documented Ibogaine sessions; submitted to WA State Medical Disciplinary Board)
+ *   - Dr. Jason Allen — QTc thresholds validated across 600+ Ibogaine sessions.
+ *     Dr. Allen's thresholds override standard references on this platform:
+ *     Green <490ms / Amber 490ms / Orange 500ms+ / Red advisory 550ms+.
+ *     NO hard session block at any tier — practitioner retains full clinical authority.
  */
 
 // ============================================================================
@@ -67,6 +73,11 @@ export interface IntakeScreeningData {
 
     // From DosingProtocolForm — calculated from weight/height
     bmi?: number;
+
+    // From EKGComponent / baseline ECG form — Ibogaine sessions only
+    // Baseline QTc interval in milliseconds. Required for ABS-IBO-QTC-GATE and REL-IBO-QTC-AMBER.
+    // QTc authority: Dr. Jason Allen (600+ sessions). Thresholds override standard references.
+    qtcBaselineMs?: number;
 }
 
 // ============================================================================
@@ -245,6 +256,108 @@ function checkAbsoluteContraindications(data: IntakeScreeningData): Contraindica
         });
     }
 
+    // ── IBOGAINE-SPECIFIC ABSOLUTE RULES (A11–A16) ────────────────────────────
+    // Source: Dr. Fernando Vega MD (v5.8) + Dr. Jason Allen (600+ sessions)
+    // Mechanism: Ibogaine blocks hERG (KCNH2) potassium channel → QT prolongation
+    //            → Torsade de Pointes → ventricular fibrillation risk.
+    //            Secondary: heavy CYP2D6 metabolism — inhibitors raise ibogaine plasma levels.
+    // All rules are substance-gated. They CANNOT fire for psilocybin, MDMA, or ketamine.
+    if (substanceLower === 'ibogaine' || substanceLower.includes('ibogaine')) {
+
+        // A11 — QT-prolonging antiarrhythmics + Ibogaine (hERG block synergy)
+        const antiarrhythmicQtDrugs = [
+            'amiodarone', 'sotalol', 'dronedarone', 'quinidine',
+            'propafenone', 'cisapride', 'pimozide', 'dofetilide',
+        ];
+        if (matchesAny(data.medications, antiarrhythmicQtDrugs)) {
+            flags.push({
+                id: 'ABS-IBO-ANTIARRHYTHMIC',
+                severity: 'ABSOLUTE',
+                category: 'CARDIOVASCULAR',
+                headline: 'QT-prolonging antiarrhythmic detected — Ibogaine absolutely contraindicated',
+                detail: 'This antiarrhythmic (amiodarone, sotalol, dronedarone, quinidine, propafenone, cisapride, pimozide, or dofetilide) blocks the hERG potassium channel. Ibogaine also blocks hERG. Simultaneous blockade produces additive QT prolongation with a high risk of Torsade de Pointes and ventricular fibrillation. This combination is an absolute contraindication.',
+                source: 'Baseline Observations — Medication List',
+                regulatoryBasis: 'Vega MD — Hazards and Benefits of Psychedelic Medicine v5.8; Dr. Allen clinical review 2026-03-24',
+            });
+        }
+
+        // A12 — Methadone + Ibogaine (hERG block synergy + opioid withdrawal risk)
+        if (matchesAny(data.medications, ['methadone'])) {
+            flags.push({
+                id: 'ABS-IBO-METHADONE',
+                severity: 'ABSOLUTE',
+                category: 'CARDIOVASCULAR',
+                headline: 'Methadone detected — Ibogaine absolutely contraindicated',
+                detail: 'Methadone is both a potent hERG potassium channel blocker (additive QT prolongation with ibogaine) and a full opioid agonist. The combination poses dual risk: (1) Torsade de Pointes from hERG synergy, and (2) acute precipitated opioid withdrawal during the session. Minimum washout protocol required under physician supervision before any Ibogaine session.',
+                source: 'Baseline Observations — Medication List',
+                regulatoryBasis: 'Vega MD — Hazards and Benefits of Psychedelic Medicine v5.8',
+            });
+        }
+
+        // A13 — Antipsychotics with hERG block + Ibogaine
+        const antipsychoticQtDrugs = ['haloperidol', 'ziprasidone', 'iloperidone'];
+        // Note: pimozide is already covered by A11 (antiarrhythmic list) — not duplicated here
+        if (matchesAny(data.medications, antipsychoticQtDrugs)) {
+            flags.push({
+                id: 'ABS-IBO-HALOPERIDOL-CLASS',
+                severity: 'ABSOLUTE',
+                category: 'CARDIOVASCULAR',
+                headline: 'Antipsychotic hERG blocker detected — Ibogaine absolutely contraindicated',
+                detail: 'Haloperidol, ziprasidone, and iloperidone are antipsychotics with confirmed hERG potassium channel blocking activity. Combined with ibogaine, additive QT prolongation significantly elevates Torsade de Pointes risk. This combination is absolutely contraindicated per Dr. Vega case reviews.',
+                source: 'Baseline Observations — Medication List',
+                regulatoryBasis: 'Vega MD — Hazards and Benefits of Psychedelic Medicine v5.8',
+            });
+        }
+
+        // A14 — QT-prolonging antibiotics + Ibogaine (CYP3A4 + hERG block)
+        const macrolideQtDrugs = ['azithromycin', 'erythromycin', 'clarithromycin', 'moxifloxacin'];
+        if (matchesAny(data.medications, macrolideQtDrugs)) {
+            flags.push({
+                id: 'ABS-IBO-MACROLIDE-QT',
+                severity: 'ABSOLUTE',
+                category: 'CARDIOVASCULAR',
+                headline: 'QT-prolonging antibiotic detected — Ibogaine absolutely contraindicated',
+                detail: 'Macrolide antibiotics (azithromycin, erythromycin, clarithromycin) and fluoroquinolone moxifloxacin combine CYP3A4 inhibition with direct hERG channel block. Both effects amplify ibogaine QT prolongation. This combination is an absolute contraindication.',
+                source: 'Baseline Observations — Medication List',
+                regulatoryBasis: 'Vega MD — Hazards and Benefits of Psychedelic Medicine v5.8',
+            });
+        }
+
+        // A15 — Baseline QTc > 550ms (Dr. Allen threshold — hard stop)
+        // QTc authority: Dr. Jason Allen (600+ sessions, paper in preparation).
+        // Threshold overrides standard references. Green <490 / Amber 490 / Orange 500+ / Red advisory 550+.
+        // No hard block at any tier EXCEPT >550ms which is the clinical hard stop.
+        if (data.qtcBaselineMs !== undefined && data.qtcBaselineMs > 550) {
+            flags.push({
+                id: 'ABS-IBO-QTC-GATE',
+                severity: 'ABSOLUTE',
+                category: 'CARDIOVASCULAR',
+                headline: `Baseline QTc ${data.qtcBaselineMs}ms — Ibogaine session contraindicated (threshold: >550ms)`,
+                detail: `Baseline QTc of ${data.qtcBaselineMs}ms exceeds the clinical hard stop threshold of 550ms established by Dr. Jason Allen across 600+ documented Ibogaine sessions. Session must not proceed. Cardiology consultation required before rescheduling. Note: QTc 500–549ms (orange tier) is advisory monitoring only — not a hard stop.`,
+                source: 'EKG Component — Baseline ECG / QTc',
+                regulatoryBasis: 'Dr. Jason Allen clinical threshold (600+ sessions); Vega MD v5.8',
+            });
+        }
+
+        // A16 — Full opioid agonist active (withdrawal + post-session overdose risk)
+        const fullOpioidAgonists = [
+            'heroin', 'fentanyl', 'oxycodone', 'hydrocodone', 'morphine',
+            'hydromorphone', 'oxymorphone', 'buprenorphine',
+        ];
+        if (matchesAny(data.medications, fullOpioidAgonists)) {
+            flags.push({
+                id: 'ABS-IBO-ACTIVE-OPIOID-FULL-AGONIST',
+                severity: 'ABSOLUTE',
+                category: 'MEDICATION',
+                headline: 'Full opioid agonist detected — Ibogaine session requires washout protocol',
+                detail: 'Active full opioid agonist use (heroin, fentanyl, oxycodone, hydrocodone, morphine, hydromorphone, oxymorphone, or buprenorphine at full agonist doses) poses dual risk with ibogaine: (1) ibogaine can precipitate acute opioid withdrawal during the session; (2) ibogaine dramatically reduces opioid tolerance post-session, elevating overdose risk on any relapse. A physician-supervised opioid washout protocol is required before any Ibogaine session.',
+                source: 'Baseline Observations — Medication List',
+                regulatoryBasis: 'Vega MD — Hazards and Benefits of Psychedelic Medicine v5.8; Dr. Allen clinical review 2026-03-24',
+            });
+        }
+
+    } // end Ibogaine absolute rules block
+
     return flags;
 }
 
@@ -386,6 +499,150 @@ function checkRelativeContraindications(data: IntakeScreeningData): Contraindica
             regulatoryBasis: 'MAPS Protocol S2 §7.2',
         });
     }
+
+    // ── IBOGAINE-SPECIFIC RELATIVE RULES (R10–R17) ───────────────────────────
+    // Source: Dr. Fernando Vega MD (v5.8) + Dr. Jason Allen (600+ sessions)
+    // All rules are substance-gated. They CANNOT fire for psilocybin, MDMA, or ketamine.
+    const relSubstanceLower = data.sessionSubstance.toLowerCase();
+    if (relSubstanceLower === 'ibogaine' || relSubstanceLower.includes('ibogaine')) {
+
+        // R10 — Elevated baseline QTc 490–549ms (amber monitoring tier)
+        // Range check avoids double-flagging with ABS-IBO-QTC-GATE (>550ms).
+        if (
+            data.qtcBaselineMs !== undefined &&
+            data.qtcBaselineMs >= 490 &&
+            data.qtcBaselineMs <= 549
+        ) {
+            flags.push({
+                id: 'REL-IBO-QTC-AMBER',
+                severity: 'RELATIVE',
+                category: 'CARDIOVASCULAR',
+                headline: `Elevated baseline QTc ${data.qtcBaselineMs}ms — heightened cardiac monitoring required (Amber tier)`,
+                detail: `Baseline QTc of ${data.qtcBaselineMs}ms falls in the amber monitoring tier (490–549ms) per Dr. Jason Allen's clinical thresholds. Session may proceed with heightened monitoring. ECG should be repeated at 30-minute intervals during active session. No hard block at this tier — practitioner retains full clinical authority. (Orange tier: 500ms+ requires assessment of HR, RR, diaphoresis, and cognition.)`,
+                source: 'EKG Component — Baseline ECG / QTc',
+                regulatoryBasis: 'Dr. Jason Allen clinical thresholds (600+ sessions)',
+            });
+        }
+
+        // R11 — CYP2D6 strong inhibitors (elevated ibogaine plasma concentration risk)
+        // Ibogaine is heavily metabolized by CYP2D6. Strong inhibitors raise plasma levels
+        // and amplify all ibogaine effects including QT prolongation.
+        const cyp2d6StrongInhibitors = [
+            'paroxetine', 'fluoxetine', 'propafenone',
+            'terbinafine', 'chlorpromazine', 'quinidine',
+        ];
+        if (matchesAny(data.medications, cyp2d6StrongInhibitors)) {
+            flags.push({
+                id: 'REL-IBO-CYP2D6-STRONG',
+                severity: 'RELATIVE',
+                category: 'MEDICATION',
+                headline: 'CYP2D6 strong inhibitor detected — elevated ibogaine plasma concentration risk',
+                detail: 'Ibogaine is primarily metabolized by CYP2D6. Strong CYP2D6 inhibitors (paroxetine, fluoxetine, propafenone, terbinafine, chlorpromazine, quinidine) significantly reduce ibogaine clearance, producing higher and more prolonged plasma levels. This amplifies QT prolongation and all ibogaine effects. Physician review and dose adjustment planning required.',
+                source: 'Baseline Observations — Medication List',
+                regulatoryBasis: 'Vega MD — Hazards and Benefits of Psychedelic Medicine v5.8',
+            });
+        }
+
+        // R12 — CYP2D6 moderate inhibitors (enhanced ibogaine effect — monitor)
+        const cyp2d6ModerateInhibitors = [
+            'duloxetine', 'fluvoxamine', 'haloperidol',
+            'clozapine', 'cinacalcet', 'fluphenazine',
+        ];
+        if (matchesAny(data.medications, cyp2d6ModerateInhibitors)) {
+            flags.push({
+                id: 'REL-IBO-CYP2D6-MODERATE',
+                severity: 'RELATIVE',
+                category: 'MEDICATION',
+                headline: 'CYP2D6 moderate inhibitor detected — monitor for enhanced ibogaine effect',
+                detail: 'Moderate CYP2D6 inhibitors (duloxetine, fluvoxamine, haloperidol, clozapine, cinacalcet, fluphenazine) partially reduce ibogaine clearance. Monitor for prolonged or intensified ibogaine effect. Document clinical decision to proceed.',
+                source: 'Baseline Observations — Medication List',
+                regulatoryBasis: 'Vega MD — Hazards and Benefits of Psychedelic Medicine v5.8',
+            });
+        }
+
+        // R13 — Tricyclic antidepressants (additive hERG block + QT prolongation)
+        const tcaDrugs = [
+            'amitriptyline', 'imipramine', 'nortriptyline',
+            'desipramine', 'clomipramine',
+        ];
+        if (matchesAny(data.medications, tcaDrugs)) {
+            flags.push({
+                id: 'REL-IBO-TCA',
+                severity: 'RELATIVE',
+                category: 'CARDIOVASCULAR',
+                headline: 'Tricyclic antidepressant detected — additive hERG block and QT prolongation risk',
+                detail: 'Tricyclic antidepressants (amitriptyline, imipramine, nortriptyline, desipramine, clomipramine) independently block the hERG potassium channel. Combined with ibogaine, the additive effect increases QT prolongation and Torsade de Pointes risk. Document clinical rationale. Baseline QTc should be established and closely monitored.',
+                source: 'Baseline Observations — Medication List',
+                regulatoryBasis: 'Vega MD — Hazards and Benefits of Psychedelic Medicine v5.8',
+            });
+        }
+
+        // R14 — Diuretics (electrolyte depletion amplifies TdP risk)
+        // Hypokalemia, hypomagnesemia, and hypocalcemia all increase TdP risk in the
+        // context of QT prolongation. Electrolyte correction is mandatory before session.
+        const diureticDrugs = [
+            'furosemide', 'hydrochlorothiazide', 'bumetanide',
+            'torsemide', 'chlorthalidone', 'spironolactone',
+        ];
+        if (matchesAny(data.medications, diureticDrugs)) {
+            flags.push({
+                id: 'REL-IBO-DIURETIC',
+                severity: 'RELATIVE',
+                category: 'CARDIOVASCULAR',
+                headline: 'Diuretic detected — electrolyte correction (K⁺, Mg²⁺, Ca²⁺) mandatory before session',
+                detail: 'Diuretics (furosemide, hydrochlorothiazide, bumetanide, torsemide, chlorthalidone, spironolactone) cause electrolyte loss (potassium, magnesium, calcium). Electrolyte deficiencies substantially amplify QT prolongation and Torsade de Pointes risk when combined with ibogaine. Serum electrolyte panel and correction is mandatory before the session proceeds.',
+                source: 'Baseline Observations — Medication List',
+                regulatoryBasis: 'Vega MD — Hazards and Benefits of Psychedelic Medicine v5.8',
+            });
+        }
+
+        // R15 — Digoxin (electrolyte instability amplifies TdP risk)
+        if (matchesAny(data.medications, ['digoxin'])) {
+            flags.push({
+                id: 'REL-IBO-DIGOXIN',
+                severity: 'RELATIVE',
+                category: 'CARDIOVASCULAR',
+                headline: 'Digoxin detected — electrolyte instability amplifies Torsade de Pointes risk',
+                detail: 'Digoxin has a narrow therapeutic window and sensitizes the heart to electrolyte fluctuations. Combined with ibogaine-related QT prolongation, any hypokalemia or hypomagnesemia significantly elevates Torsade de Pointes risk. Serum digoxin level and electrolyte panel required before session.',
+                source: 'Baseline Observations — Medication List',
+                regulatoryBasis: 'Vega MD — Hazards and Benefits of Psychedelic Medicine v5.8',
+            });
+        }
+
+        // R16 — Hepatic impairment (ibogaine metabolism severely impaired)
+        // Ibogaine is CYP2D6-dependent. Hepatic disease depletes CYP2D6 reserves,
+        // causing prolonged ibogaine exposure and amplified cardiac risk.
+        const hepaticTerms = [
+            'liver disease', 'cirrhosis', 'hepatitis',
+            'alcoholic liver disease', 'child-pugh',
+        ];
+        if (matchesAny(data.psychiatricHistory, hepaticTerms) || matchesAny(data.medications, hepaticTerms)) {
+            flags.push({
+                id: 'REL-IBO-HEPATIC',
+                severity: 'RELATIVE',
+                category: 'MEDICATION',
+                headline: 'Hepatic impairment identified — ibogaine metabolism severely impaired',
+                detail: 'Ibogaine is heavily metabolised by hepatic CYP2D6. Liver disease, cirrhosis, hepatitis, or alcoholic liver disease significantly reduces CYP2D6 reserves, causing accumulation of ibogaine and its active metabolites. This prolongs and amplifies all effects including QT prolongation. Hepatology clearance and LFT panel required before session.',
+                source: 'Baseline Observations — Psychiatric / Medical History',
+                regulatoryBasis: 'Vega MD — Hazards and Benefits of Psychedelic Medicine v5.8',
+            });
+        }
+
+        // R17 — Antimalarials (IK1 channel block + QT prolongation)
+        const antimalarialDrugs = ['chloroquine', 'hydroxychloroquine'];
+        if (matchesAny(data.medications, antimalarialDrugs)) {
+            flags.push({
+                id: 'REL-IBO-CHLOROQUINE',
+                severity: 'RELATIVE',
+                category: 'CARDIOVASCULAR',
+                headline: 'Antimalarial detected — IK1 channel block and QT prolongation risk with Ibogaine',
+                detail: 'Chloroquine and hydroxychloroquine block both hERG (IKr) and IK1 (KCNJ2) potassium channels, producing independent QT prolongation. Combined with ibogaine, cumulative channel blockade significantly elevates cardiac risk. Cardiology review and baseline QTc confirmation required.',
+                source: 'Baseline Observations — Medication List',
+                regulatoryBasis: 'Vega MD — Hazards and Benefits of Psychedelic Medicine v5.8',
+            });
+        }
+
+    } // end Ibogaine relative rules block
 
     return flags;
 }
