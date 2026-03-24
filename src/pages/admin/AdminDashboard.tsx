@@ -72,7 +72,7 @@ function StatusBadge({ status }: { status: FeedbackStatus }) {
     };
     const { label, cls, Icon } = cfg[status];
     return (
-        <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-lg border text-xs font-bold ${cls}`}>
+        <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-lg border text-xs md:text-sm font-bold ${cls}`}>
             <Icon className="w-3 h-3" />
             {label}
         </span>
@@ -80,13 +80,18 @@ function StatusBadge({ status }: { status: FeedbackStatus }) {
 }
 
 function TypeBadge({ type }: { type: FeedbackRow['type'] }) {
-    const cfg = {
-        bug:     { label: 'Bug',     cls: 'bg-red-500/20 text-red-300 border-red-500/30' },
-        feature: { label: 'Feature', cls: 'bg-violet-500/20 text-violet-300 border-violet-500/30' },
-        comment: { label: 'Comment', cls: 'bg-slate-500/20 text-slate-300 border-slate-600/30' },
+    const cfg: Record<FeedbackRow['type'], { label: string; cls: string; Icon: React.FC<{ className?: string }> }> = {
+        bug:     { label: 'Bug',     cls: 'bg-red-500/20 text-red-300 border-red-500/30',         Icon: ({ className }) => <Bug className={className} /> },
+        feature: { label: 'Feature', cls: 'bg-violet-500/20 text-violet-300 border-violet-500/30', Icon: ({ className }) => <Sparkles className={className} /> },
+        comment: { label: 'Comment', cls: 'bg-slate-500/20 text-slate-300 border-slate-600/30',   Icon: ({ className }) => <MessageSquare className={className} /> },
     };
-    const { label, cls } = cfg[type];
-    return <span className={`inline-flex items-center px-2 py-0.5 rounded-lg border text-xs font-bold ${cls}`}>{label}</span>;
+    const { label, cls, Icon } = cfg[type];
+    return (
+        <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-lg border text-xs md:text-sm font-bold ${cls}`}>
+            <Icon className="w-3 h-3" />
+            {label}
+        </span>
+    );
 }
 
 // ─── Tab 1: Feedback Inbox ────────────────────────────────────────────────────
@@ -117,25 +122,27 @@ const FeedbackInbox: React.FC = () => {
 
     return (
         <div className="space-y-4">
-            {/* Filter chips */}
-            <div className="flex flex-wrap gap-2">
+            {/* Filter chips — horizontally scrollable on mobile (V4 fix) */}
+            <div className="flex overflow-x-auto no-scrollbar gap-2 pb-1">
                 {(['all', 'bug', 'feature', 'comment'] as const).map(f => (
                     <button
                         key={f}
                         onClick={() => setFilter(f)}
-                        className={`px-3 py-1.5 rounded-xl text-xs font-black uppercase tracking-widest border transition-all min-h-[44px] flex items-center
+                        className={`shrink-0 px-3 py-1.5 rounded-xl text-xs md:text-sm font-black uppercase tracking-widest border transition-all min-h-[44px] flex items-center gap-1
                             ${filter === f
                                 ? 'bg-indigo-500/20 border-indigo-500/60 text-indigo-300'
                                 : 'bg-slate-800/50 border-slate-700 text-slate-500 hover:text-slate-300'
                             }`}
                     >
-                        {f === 'bug' && '🐛 '}{f === 'feature' && '✨ '}{f === 'comment' && '💬 '}
+                        {f === 'bug' && <Bug className="w-3.5 h-3.5" />}
+                        {f === 'feature' && <Sparkles className="w-3.5 h-3.5" />}
+                        {f === 'comment' && <MessageSquare className="w-3.5 h-3.5" />}
                         {f.charAt(0).toUpperCase() + f.slice(1)}
                     </button>
                 ))}
                 <button
                     onClick={load}
-                    className="ml-auto px-3 py-1.5 rounded-xl text-xs font-black border border-slate-700 text-slate-500 hover:text-slate-300 transition-all min-h-[44px] flex items-center gap-1"
+                    className="shrink-0 ml-auto px-3 py-1.5 rounded-xl text-xs md:text-sm font-black border border-slate-700 text-slate-500 hover:text-slate-300 transition-all min-h-[44px] flex items-center gap-1"
                 >
                     <RefreshCw className="w-3.5 h-3.5" /> Refresh
                 </button>
@@ -152,20 +159,20 @@ const FeedbackInbox: React.FC = () => {
                     {filtered.map(row => (
                         <div key={row.id} className="rounded-2xl border border-white/8 bg-slate-900/40 p-4 space-y-3">
                             {/* Row 1: type + submitter + time */}
-                            <div className="flex flex-wrap items-center gap-2 text-sm">
+                            <div className="flex flex-wrap items-center gap-2">
                                 <TypeBadge type={row.type} />
-                                <span className="text-slate-300 font-bold">{row.log_user_profiles?.display_name ?? 'Unknown'}</span>
+                                <span className="text-sm text-slate-300 font-bold">{row.log_user_profiles?.display_name ?? 'Unknown'}</span>
                                 {row.log_user_profiles?.email && (
-                                    <span className="text-slate-500 ppn-meta">{row.log_user_profiles.email}</span>
+                                    <span className="text-xs md:text-sm text-slate-500 ppn-meta">{row.log_user_profiles.email}</span>
                                 )}
-                                <span className="ml-auto text-slate-600 ppn-meta">{relativeTime(row.created_at)}</span>
+                                <span className="ml-auto text-xs md:text-sm text-slate-600 ppn-meta">{relativeTime(row.created_at)}</span>
                             </div>
                             {/* Row 2: page URL */}
                             {row.page_url && (
-                                <p className="ppn-meta text-slate-500 font-mono">{row.page_url}</p>
+                                <p className="text-xs md:text-sm text-slate-500 font-mono break-all ppn-meta">{row.page_url}</p>
                             )}
                             {/* Row 3: message */}
-                            <p className="ppn-body text-slate-300 whitespace-pre-wrap">{row.message}</p>
+                            <p className="text-sm ppn-body text-slate-300 whitespace-pre-wrap">{row.message}</p>
                             {/* Row 4: BUG metadata */}
                             {row.type === 'bug' && row.metadata && (
                                 <details className="text-sm">
@@ -352,6 +359,8 @@ const SITE_MAP = [
         ],
         externalLinks: [
             { label: 'HIPAA Legal Packet (GO-651)', href: '/internal/founding-docs/HIPAA-Packet/index.html', icon: '⚖️' },
+            { label: 'Clinician Founding Partner Packet (GO-651)', href: '/internal/founding-docs/Clinician-Packet/index.html', icon: '🩺' },
+            { label: 'Researcher Founding Partner Packet (GO-651)', href: '/internal/founding-docs/Researcher-Packet/index.html', icon: '🔬' },
         ],
     },
     {
@@ -403,6 +412,22 @@ const SITE_MAP = [
         ],
     },
     {
+        group: 'Outreach Assets (Internal)', icon: '📤', routes: [],
+        externalLinks: [
+            { label: 'Denver Leave-Behind · PsyCon 2026', href: '/internal/admin_uploads/denver-2026/PPN_Leave_Behind_Print.html', icon: '🎯' },
+            { label: 'Advisor Demo', href: '/internal/advisor-demo.html', icon: '💼' },
+            { label: 'Partner Hub', href: '/internal/partner-hub.html', icon: '🤝' },
+            { label: 'Partner Preview', href: '/internal/partner-preview.html', icon: '👁️' },
+            { label: 'VIP Invite Flow', href: '/internal/vip-invite-flow.html', icon: '⭐' },
+            { label: 'Email Templates', href: '/internal/ppn-email-templates.html', icon: '📧' },
+            { label: 'Bridge Camera', href: '/internal/PPN_Bridge_Camera.html', icon: '🎥' },
+            { label: 'Jason Demo', href: '/internal/jason-demo.html', icon: '🖥️' },
+            { label: 'Jason Tour', href: '/internal/jason-tour.html', icon: '🗺️' },
+            { label: 'Trevor Showcase', href: '/internal/trevor-showcase.html', icon: '✨' },
+            { label: 'Growth Sandbox', href: '/internal/growth-sandbox.html', icon: '🌱' },
+        ],
+    },
+    {
         group: 'Admin Only', icon: '👑', admin: true, routes: [
             { path: '/admin/dashboard' }, { path: '/admin/invite' },
         ],
@@ -437,14 +462,15 @@ const SiteNavigator: React.FC = () => {
                     <div className="divide-y divide-white/5">
                         {routes.map(({ path, dynamic }) => (
                             <div key={path} className="flex items-center gap-3 px-4 py-3 hover:bg-slate-800/20 transition-colors">
-                                <code className="flex-1 text-xs text-slate-400 font-mono">{path}</code>
+                                {/* V5: break-all prevents code path overflow on 375px mobile */}
+                                <code className="flex-1 text-xs md:text-sm text-slate-400 font-mono break-all">{path}</code>
                                 {dynamic ? (
-                                    <span className="ppn-meta text-slate-600 text-xs">(requires ID)</span>
+                                    <span className="text-xs md:text-sm text-slate-600 ppn-meta shrink-0">(requires ID)</span>
                                 ) : (
                                     <button
                                         onClick={() => openInNewTab(path)}
                                         aria-label={`Open ${path} in new tab`}
-                                        className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold text-indigo-400 hover:text-indigo-300 hover:bg-indigo-500/10 border border-transparent hover:border-indigo-500/20 transition-all min-h-[44px]"
+                                        className="shrink-0 flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs md:text-sm font-bold text-indigo-400 hover:text-indigo-300 hover:bg-indigo-500/10 border border-transparent hover:border-indigo-500/20 transition-all min-h-[44px]"
                                     >
                                         Open <ExternalLink className="w-3 h-3" />
                                     </button>
@@ -453,13 +479,13 @@ const SiteNavigator: React.FC = () => {
                         ))}
                         {(externalLinks ?? []).map(({ label, href, icon: extIcon }) => (
                             <div key={href} className="flex items-center gap-3 px-4 py-3 hover:bg-slate-800/20 transition-colors">
-                                <span className="text-sm">{extIcon}</span>
-                                <span className="flex-1 text-xs text-slate-400">{label}</span>
+                                <span className="text-sm shrink-0">{extIcon}</span>
+                                <span className="flex-1 text-xs md:text-sm text-slate-400 break-all">{label}</span>
                                 <a
                                     href={href}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold text-amber-400 hover:text-amber-300 hover:bg-amber-500/10 border border-transparent hover:border-amber-500/20 transition-all min-h-[44px]"
+                                    className="shrink-0 flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs md:text-sm font-bold text-amber-400 hover:text-amber-300 hover:bg-amber-500/10 border border-transparent hover:border-amber-500/20 transition-all min-h-[44px]"
                                 >
                                     Open <ExternalLink className="w-3 h-3" />
                                 </a>
@@ -519,8 +545,10 @@ const PlatformHealth: React.FC = () => {
         { label: 'New This Week', value: stats?.newThisWeek, icon: RefreshCw },
     ];
 
+    const updatedTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
     return (
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {tiles.map(({ label, value, icon: Icon }) => (
                 <div
                     key={label}
@@ -532,7 +560,8 @@ const PlatformHealth: React.FC = () => {
                     ) : (
                         <span className="text-4xl font-black text-slate-100 tabular-nums">{value?.toLocaleString()}</span>
                     )}
-                    <span className="ppn-label text-slate-500">{label}</span>
+                    <span className="text-xs md:text-sm font-bold uppercase tracking-widest text-slate-500">{label}</span>
+                    <span className="text-xs text-slate-700 mt-auto">As of {updatedTime}</span>
                 </div>
             ))}
         </div>
@@ -580,8 +609,9 @@ const AdminDashboard: React.FC = () => {
                         aria-controls={`tabpanel-${id}`}
                         id={`tab-${id}`}
                         onClick={() => setActiveTab(id)}
+                        title={label}
                         className={`
-                            flex items-center gap-2 px-4 py-3 whitespace-nowrap text-sm font-black border-b-2 transition-all min-h-[44px]
+                            shrink-0 flex items-center gap-2 px-3 sm:px-4 py-3 whitespace-nowrap text-sm font-black border-b-2 transition-all min-h-[44px]
                             ${activeTab === id
                                 ? 'text-indigo-300 border-indigo-500'
                                 : 'text-slate-500 border-transparent hover:text-slate-300 hover:border-slate-600'
@@ -589,7 +619,8 @@ const AdminDashboard: React.FC = () => {
                         `}
                     >
                         <Icon className="w-4 h-4" aria-hidden="true" />
-                        {label}
+                        {/* U1: hide label text on xs screens, show from sm: up */}
+                        <span className="hidden sm:inline">{label}</span>
                     </button>
                 ))}
             </div>

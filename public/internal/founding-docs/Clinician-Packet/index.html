@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PPN Portal: Clinician Founding Partner Packet</title>
+<title>PPN Portal: Clinician Founding Partner Packet</title><!-- Overwritten by buildShell() -->
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -16,23 +16,57 @@
     --topbar-h: 52px; --bottom-nav-h: 60px;
   }
   html, body { height: 100%; margin: 0; }
-  body { font-family: 'Inter', -apple-system, sans-serif; background: var(--bg-subtle); display: flex; flex-direction: column; color: var(--ink-body); overflow: hidden; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-  .topbar { height: var(--topbar-h); background: var(--accent); flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; z-index: 200; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: var(--bg-subtle);
+    display: flex; flex-direction: column;
+    color: var(--ink-body); overflow: hidden;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+  .topbar {
+    height: var(--topbar-h); background: var(--accent); flex-shrink: 0;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 16px; z-index: 200;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
   .topbar-left { display: flex; align-items: center; gap: 10px; }
   .topbar-brand { display: flex; align-items: center; gap: 8px; }
   .topbar-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.5); flex-shrink: 0; }
   .topbar-name { font-size: 13px; font-weight: 700; color: #fff; letter-spacing: 0.04em; text-transform: uppercase; }
   .topbar-sub { font-size: 11px; color: rgba(255,255,255,0.55); }
   .topbar-actions { display: flex; align-items: center; gap: 6px; }
-  .topbar-btn { display: inline-flex; align-items: center; gap: 5px; padding: 6px 12px; border-radius: 6px; border: 1.5px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.12); font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.9); cursor: pointer; transition: background 0.15s, border-color 0.15s; font-family: 'Inter', sans-serif; min-height: 34px; }
+  .topbar-btn {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 6px 12px; border-radius: 6px;
+    border: 1.5px solid rgba(255,255,255,0.3);
+    background: rgba(255,255,255,0.12);
+    font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.9);
+    cursor: pointer; transition: background 0.15s, border-color 0.15s;
+    font-family: 'Inter', sans-serif; min-height: 34px;
+  }
   .topbar-btn:hover { background: rgba(255,255,255,0.22); border-color: rgba(255,255,255,0.6); }
   .topbar-btn.primary { background: rgba(255,255,255,0.25); border-color: rgba(255,255,255,0.5); }
-  .hamburger { display: none; background: transparent; border: none; cursor: pointer; padding: 8px; border-radius: 6px; color: rgba(255,255,255,0.8); transition: background 0.15s; }
+  .hamburger {
+    display: none; background: transparent; border: none; cursor: pointer;
+    padding: 8px; border-radius: 6px; color: rgba(255,255,255,0.8); transition: background 0.15s;
+  }
   .hamburger:hover { background: rgba(255,255,255,0.12); }
   .body-row { display: flex; flex: 1; min-height: 0; position: relative; }
-  .sidebar { width: var(--sidebar-w); flex-shrink: 0; background: var(--bg); border-right: 1px solid var(--border-light); display: flex; flex-direction: column; overflow-y: auto; z-index: 100; transition: transform 0.25s ease; }
+  .sidebar {
+    width: var(--sidebar-w); flex-shrink: 0;
+    background: var(--bg); border-right: 1px solid var(--border-light);
+    display: flex; flex-direction: column; overflow-y: auto;
+    z-index: 100; transition: transform 0.25s ease;
+  }
   .sidebar-section-label { padding: 18px 20px 8px; font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-muted); }
-  .nav-item { display: flex; align-items: center; gap: 10px; padding: 11px 20px; cursor: pointer; font-size: 12px; font-weight: 500; color: var(--ink-body); border: none; background: transparent; width: 100%; text-align: left; transition: background 0.12s, color 0.12s; border-left: 3px solid transparent; min-height: 44px; }
+  .nav-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 11px 20px; cursor: pointer;
+    font-size: 12px; font-weight: 500; color: var(--ink-body);
+    border: none; background: transparent; width: 100%; text-align: left;
+    transition: background 0.12s, color 0.12s;
+    border-left: 3px solid transparent; min-height: 44px;
+  }
   .nav-item:hover { background: var(--accent-light); color: var(--accent); }
   .nav-item.active { background: var(--accent-light); color: var(--accent); border-left-color: var(--accent); font-weight: 700; }
   .nav-item-icon { font-size: 14px; flex-shrink: 0; }
@@ -40,23 +74,47 @@
   .nav-item-num { flex-shrink: 0; font-size: 9px; font-weight: 600; color: var(--ink-muted); letter-spacing: 0.06em; }
   .nav-item.active .nav-item-num { color: var(--accent); }
   .sidebar-divider { height: 1px; background: var(--border-light); margin: 8px 16px; }
-  .action-group { padding: 0 12px 12px; }
-  .sidebar-btn { padding: 9px 14px; border-radius: 8px; border: 1.5px solid var(--border); background: var(--bg-subtle); font-size: 11px; font-weight: 600; color: var(--ink-muted); cursor: pointer; display: flex; align-items: center; gap: 6px; transition: border-color 0.15s, color 0.15s; font-family: 'Inter', sans-serif; min-height: 44px; width: 100%; }
+  .action-group { padding: 0 12px 12px; display: flex; flex-direction: column; gap: 6px; }
+  .sidebar-btn {
+    padding: 9px 14px; border-radius: 8px;
+    border: 1.5px solid var(--border); background: var(--bg-subtle);
+    font-size: 11px; font-weight: 600; color: var(--ink-muted);
+    cursor: pointer; display: flex; align-items: center; gap: 6px;
+    transition: border-color 0.15s, color 0.15s; font-family: 'Inter', sans-serif;
+    min-height: 44px; width: 100%;
+  }
   .sidebar-btn:hover { border-color: var(--accent); color: var(--accent); }
   .btn-text { white-space: nowrap; }
+  .status-legend { padding: 12px 16px 20px; }
+  .legend-label { font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-muted); margin-bottom: 8px; }
+  .legend-row { display: flex; align-items: center; gap: 6px; font-size: 10px; margin-bottom: 5px; color: var(--ink-muted); }
+  .dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .dot-green { background: var(--green); }
   .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 99; }
   .main { flex: 1; overflow: hidden; position: relative; }
   .doc-frame { position: absolute; inset: 0; width: 100%; height: 100%; border: none; background: var(--bg-subtle); display: none; }
   .doc-frame.active { display: block; }
-  .bottom-nav { display: none; position: fixed; bottom: 0; left: 0; right: 0; height: var(--bottom-nav-h); background: var(--bg); border-top: 1px solid var(--border-light); z-index: 200; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .bottom-nav {
+    display: none; position: fixed; bottom: 0; left: 0; right: 0;
+    height: var(--bottom-nav-h); background: var(--bg); border-top: 1px solid var(--border-light);
+    z-index: 200; overflow-x: auto; -webkit-overflow-scrolling: touch;
+  }
   .bottom-nav-inner { display: flex; height: 100%; }
-  .bottom-nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; flex: 1; min-width: 48px; padding: 0 4px; border: none; background: transparent; cursor: pointer; font-size: 8px; font-weight: 600; color: var(--ink-muted); text-transform: uppercase; letter-spacing: 0.04em; min-height: 44px; transition: color 0.12s; border-top: 2.5px solid transparent; }
+  .bottom-nav-item {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 2px; flex: 1; min-width: 52px; padding: 0 4px;
+    border: none; background: transparent; cursor: pointer;
+    font-size: 8.5px; font-weight: 600; color: var(--ink-muted);
+    text-transform: uppercase; letter-spacing: 0.04em; min-height: 44px;
+    transition: color 0.12s; border-top: 2.5px solid transparent;
+  }
   .bottom-nav-item.active { color: var(--accent); border-top-color: var(--accent); }
   .bottom-nav-item:hover { color: var(--accent); }
-  .bottom-nav-icon { font-size: 15px; }
+  .bottom-nav-icon { font-size: 16px; }
+  /* ─── Tablet (768-1024px) ─── */
   @media (min-width: 768px) and (max-width: 1024px) {
     :root { --sidebar-w: 56px; }
-    .nav-item-label, .sidebar-section-label, .btn-text { display: none; }
+    .nav-item-label, .sidebar-section-label, .status-legend, .btn-text { display: none; }
     .nav-item { padding: 10px 0; justify-content: center; flex-direction: column; gap: 2px; }
     .nav-item-icon { font-size: 18px; }
     .nav-item-num { font-size: 8px; font-weight: 700; }
@@ -67,6 +125,7 @@
     .bottom-nav { display: none !important; }
     .topbar-sub { display: none; }
   }
+  /* ─── Mobile (<768px) ─── */
   @media (max-width: 767px) {
     body { overflow: hidden; }
     .hamburger { display: flex; align-items: center; justify-content: center; }
@@ -78,7 +137,12 @@
     .bottom-nav { display: flex; }
     .main { margin-bottom: var(--bottom-nav-h); }
   }
-  @media print { body { overflow: visible; } .topbar, .sidebar, .bottom-nav, .sidebar-overlay { display: none; } .main { height: auto; margin: 0; } .doc-frame.active { position: static; height: auto; } }
+  @media print {
+    body { overflow: visible; }
+    .topbar, .sidebar, .bottom-nav, .sidebar-overlay { display: none; }
+    .main { height: auto; margin: 0; }
+    .doc-frame.active { position: static; height: auto; }
+  }
 </style>
 </head>
 <body>
@@ -94,6 +158,9 @@
 </nav>
 
 <script>
+// ═══════════════════════════════════════════════════════════
+// PACKET CONFIG — edit only this block
+// ─────────────────────────────────────────────────────────
 const PACKET_CONFIG = {
   title:         'Clinician Founding Partner Packet',
   reference:     'GO-651',
@@ -101,57 +168,136 @@ const PACKET_CONFIG = {
   printAllUrl:   'clinician_html/print_all.html',
   legend:        null,
   sections: [
-    { icon: '📋', label: 'Cover',          num: 'CV', title: 'Cover Page',              src: 'clinician_html/00_Cover_Page.html' },
-    { icon: '☰',  label: 'Contents',       num: 'TC', title: 'Table of Contents',       src: 'clinician_html/00_Table_of_Contents.html' },
-    { icon: '🔒', label: 'Phantom Shield', num: '§1', title: '§1 Phantom Shield',       src: 'clinician_html/01_Phantom_Shield.html' },
+    { icon: '📋', label: 'Cover',          num: 'CV', title: 'Cover Page',               src: 'clinician_html/00_Cover_Page.html' },
+    { icon: '☰',  label: 'Contents',       num: 'TC', title: 'Table of Contents',        src: 'clinician_html/00_Table_of_Contents.html' },
+    { icon: '🔒', label: 'Phantom Shield', num: '§1', title: '§1 Phantom Shield',        src: 'clinician_html/01_Phantom_Shield.html' },
     { icon: '⚡', label: 'Visual Brief',   num: '§2', title: '§2 Platform Visual Brief', src: 'clinician_html/02_Platform_Visual_Brief.html' },
-    { icon: '✅', label: 'Compliance',     num: '§3', title: '§3 Compliance Assurance', src: 'clinician_html/03_Compliance_Assurance.html' },
+    { icon: '✅', label: 'Compliance',     num: '§3', title: '§3 Compliance Assurance',  src: 'clinician_html/03_Compliance_Assurance.html' },
     { icon: '📝', label: 'Charter',        num: '§4', title: '§4 Founding Partner Charter', src: 'clinician_html/04_Founding_Partner_Charter.html' },
     { icon: '🌿', label: 'Patient Story',  num: '§5', title: '§5 Patient Integration Story', src: 'clinician_html/05_Patient_Integration_Story.html' },
-    { icon: '🚀', label: 'Rollout',        num: '§6', title: '§6 Frictionless Rollout', src: 'clinician_html/06_Frictionless_Rollout.html' }
+    { icon: '🚀', label: 'Rollout',        num: '§6', title: '§6 Frictionless Rollout',  src: 'clinician_html/06_Frictionless_Rollout.html' }
   ]
 };
 
+// ═══════════════════════════════════════════════════════════
+// SHELL ENGINE — do not modify below this line
+// ═══════════════════════════════════════════════════════════
+
 function buildShell() {
-  var cfg = PACKET_CONFIG;
+  const cfg = PACKET_CONFIG;
   document.title = 'PPN Portal: ' + cfg.title;
+
+  // Topbar
   document.getElementById('topbar').innerHTML =
     '<div class="topbar-left">' +
-      '<button class="hamburger" id="hamburger-btn" aria-label="Open navigation" onclick="toggleSidebar()"><svg width="20" height="20" viewBox="0 0 20 20" fill="rgba(255,255,255,0.85)"><rect x="2" y="4" width="16" height="2" rx="1"/><rect x="2" y="9" width="16" height="2" rx="1"/><rect x="2" y="14" width="16" height="2" rx="1"/></svg></button>' +
-      '<div class="topbar-brand"><div class="topbar-dot"></div><span class="topbar-name">PPN Portal</span><span class="topbar-sub">\u00a0\u00b7\u00a0' + cfg.title + ' \u00b7 ' + cfg.reference + '</span></div>' +
+      '<button class="hamburger" id="hamburger-btn" aria-label="Open navigation" onclick="toggleSidebar()">' +
+        '<svg width="20" height="20" viewBox="0 0 20 20" fill="rgba(255,255,255,0.85)">' +
+          '<rect x="2" y="4" width="16" height="2" rx="1"/>' +
+          '<rect x="2" y="9" width="16" height="2" rx="1"/>' +
+          '<rect x="2" y="14" width="16" height="2" rx="1"/>' +
+        '</svg>' +
+      '</button>' +
+      '<div class="topbar-brand">' +
+        '<div class="topbar-dot"></div>' +
+        '<span class="topbar-name">PPN Portal</span>' +
+        '<span class="topbar-sub">\u00a0\u00b7\u00a0' + cfg.title + ' \u00b7 ' + cfg.reference + '</span>' +
+      '</div>' +
     '</div>' +
     '<div class="topbar-actions">' +
-      '<button class="topbar-btn" id="copy-link-btn" onclick="copyPacketLink()" aria-label="Copy shareable link">&#x1f517; <span class="btn-text-sm">Copy Link</span></button>' +
-      '<button class="topbar-btn primary" onclick="printAll()" aria-label="Save complete packet as PDF">&#x1f4e5; <span class="btn-text-sm">Save All as PDF</span></button>' +
+      '<button class="topbar-btn" id="copy-link-btn" onclick="copyPacketLink()" aria-label="Copy shareable link">' +
+        '&#x1f517; <span class="btn-text-sm">Copy Link</span>' +
+      '</button>' +
+      '<button class="topbar-btn primary" onclick="printAll()" aria-label="Save complete packet as PDF">' +
+        '&#x1f4e5; <span class="btn-text-sm">Save All as PDF</span>' +
+      '</button>' +
     '</div>';
+
+  // Sidebar nav
+  const navItems = cfg.sections.map(function(s, i) {
+    return '<button class="nav-item' + (i === 0 ? ' active' : '') + '" data-frame="frame-' + i + '" data-bn="bn-' + i + '" onclick="switchSection(this)" title="' + s.title + '">' +
+      '<span class="nav-item-icon">' + s.icon + '</span>' +
+      '<span class="nav-item-label">' + s.label + '</span>' +
+      '<span class="nav-item-num">' + s.num + '</span>' +
+    '</button>';
+  }).join('');
+
+  const legendHtml = cfg.legend
+    ? '<div class="status-legend"><div class="legend-label">Status Key</div>' +
+        cfg.legend.map(function(l) { return '<div class="legend-row"><div class="dot ' + l.dot + '"></div> ' + l.label + '</div>'; }).join('') +
+      '</div>'
+    : '';
+
   document.getElementById('sidebar').innerHTML =
     '<div class="sidebar-section-label">Documents</div>' +
-    cfg.sections.map(function(s,i){ return '<button class="nav-item'+(i===0?' active':'')+'" data-frame="frame-'+i+'" data-bn="bn-'+i+'" onclick="switchSection(this)" title="'+s.title+'"><span class="nav-item-icon">'+s.icon+'</span><span class="nav-item-label">'+s.label+'</span><span class="nav-item-num">'+s.num+'</span></button>'; }).join('') +
+    navItems +
     '<div class="sidebar-divider"></div>' +
-    '<div class="action-group"><button class="sidebar-btn" onclick="printCurrent()" title="Print this section">&#x1f5a8; <span class="btn-text">Print This Section</span></button></div>';
-  document.getElementById('main').innerHTML = cfg.sections.map(function(s,i){ return '<iframe class="doc-frame'+(i===0?' active':'')+'" id="frame-'+i+'" src="'+s.src+'" title="'+s.title+'"></iframe>'; }).join('');
-  document.getElementById('bottom-nav-inner').innerHTML = cfg.sections.map(function(s,i){ return '<button class="bottom-nav-item'+(i===0?' active':'')+'" id="bn-'+i+'" data-frame="frame-'+i+'" onclick="switchSection(this)"><span class="bottom-nav-icon">'+s.icon+'</span>'+s.num+'</button>'; }).join('');
+    '<div class="action-group">' +
+      '<button class="sidebar-btn" onclick="printCurrent()" title="Print this section">' +
+        '&#x1f5a8; <span class="btn-text">Print This Section</span>' +
+      '</button>' +
+    '</div>' +
+    legendHtml;
+
+  // Iframes
+  document.getElementById('main').innerHTML = cfg.sections.map(function(s, i) {
+    return '<iframe class="doc-frame' + (i === 0 ? ' active' : '') + '" id="frame-' + i + '" src="' + s.src + '" title="' + s.title + '"></iframe>';
+  }).join('');
+
+  // Bottom nav
+  document.getElementById('bottom-nav-inner').innerHTML = cfg.sections.map(function(s, i) {
+    return '<button class="bottom-nav-item' + (i === 0 ? ' active' : '') + '" id="bn-' + i + '" data-frame="frame-' + i + '" onclick="switchSection(this)">' +
+      '<span class="bottom-nav-icon">' + s.icon + '</span>' + s.num +
+    '</button>';
+  }).join('');
 }
 
 function switchSection(el) {
-  var frameId=el.getAttribute('data-frame'), bnId=el.getAttribute('data-bn');
-  document.querySelectorAll('.nav-item').forEach(function(b){b.classList.remove('active');});
-  document.querySelectorAll('.bottom-nav-item').forEach(function(b){b.classList.remove('active');});
-  document.querySelectorAll('.doc-frame').forEach(function(f){f.classList.remove('active');});
-  document.querySelectorAll('[data-frame="'+frameId+'"]').forEach(function(b){b.classList.add('active');});
-  var bn=document.getElementById(bnId); if(bn)bn.classList.add('active');
+  const frameId = el.getAttribute('data-frame');
+  const bnId    = el.getAttribute('data-bn');
+  document.querySelectorAll('.nav-item').forEach(function(b) { b.classList.remove('active'); });
+  document.querySelectorAll('.bottom-nav-item').forEach(function(b) { b.classList.remove('active'); });
+  document.querySelectorAll('.doc-frame').forEach(function(f) { f.classList.remove('active'); });
+  document.querySelectorAll('[data-frame="' + frameId + '"]').forEach(function(b) { b.classList.add('active'); });
+  if (bnId) { var bn = document.getElementById(bnId); if (bn) bn.classList.add('active'); }
   document.getElementById(frameId).classList.add('active');
   closeSidebar();
 }
-function printCurrent() { var f=document.querySelector('.doc-frame.active'); if(!f)return; var w=window.open(f.src,'_blank'); if(w)w.onload=function(){w.focus();w.print();}; }
-function printAll() { window.open(PACKET_CONFIG.printAllUrl,'_blank'); }
-function copyPacketLink() {
-  var btn=document.getElementById('copy-link-btn');
-  navigator.clipboard.writeText(PACKET_CONFIG.productionUrl).then(function(){ btn.innerHTML='&#x2713; Copied!'; setTimeout(function(){ btn.innerHTML='&#x1f517; <span class="btn-text-sm">Copy Link</span>'; },2000); });
-}
-function toggleSidebar() { var s=document.getElementById('sidebar'),o=document.getElementById('sidebar-overlay'),open=s.classList.contains('open'); s.classList.toggle('open',!open); o.classList.toggle('visible',!open); }
-function closeSidebar() { document.getElementById('sidebar').classList.remove('open'); document.getElementById('sidebar-overlay').classList.remove('visible'); }
 
+function printCurrent() {
+  var f = document.querySelector('.doc-frame.active');
+  if (!f) return;
+  var win = window.open(f.src, '_blank');
+  if (win) win.onload = function() { win.focus(); win.print(); };
+}
+
+function printAll() {
+  window.open(PACKET_CONFIG.printAllUrl, '_blank');
+}
+
+function copyPacketLink() {
+  var btn = document.getElementById('copy-link-btn');
+  navigator.clipboard.writeText(PACKET_CONFIG.productionUrl).then(function() {
+    btn.innerHTML = '&#x2713; Copied!';
+    setTimeout(function() {
+      btn.innerHTML = '&#x1f517; <span class="btn-text-sm">Copy Link</span>';
+    }, 2000);
+  });
+}
+
+function toggleSidebar() {
+  var s = document.getElementById('sidebar');
+  var o = document.getElementById('sidebar-overlay');
+  var open = s.classList.contains('open');
+  s.classList.toggle('open', !open);
+  o.classList.toggle('visible', !open);
+}
+
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebar-overlay').classList.remove('visible');
+}
+
+// Boot
 buildShell();
 </script>
 
