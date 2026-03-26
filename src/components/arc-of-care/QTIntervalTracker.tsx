@@ -1,6 +1,13 @@
 import React, { useState, useCallback } from 'react';
 import { Activity, Plus, Trash2, AlertTriangle, Clock } from 'lucide-react';
 import { AdvancedTooltip } from '../ui/AdvancedTooltip';
+// WO-672: 4-tier Ibogaine QTc alert system — thresholds in separate constants file
+import {
+    IBOGAINE_QTC_TIERS,
+    IBOGAINE_QTC_TIER_META,
+    getIbogaineQtcTier,
+    type IbogaineQtcTier,
+} from '../../constants/ibogaineCardiacThresholds';
 
 // ─── Device Preset List ──────────────────────────────────────────────────────
 // 12 clinical ECG devices known to be used in psychedelic-assisted therapy
@@ -57,18 +64,21 @@ interface QTIntervalTrackerProps {
      */
     divergenceThresholdMs?: number;
     /**
-     * Absolute QTc danger threshold (ms). Any single-device reading ≥ this value
-     * triggers [STATUS: DANGER, QTc ≥ 500ms]. Default: 500ms, Dr. Allen confirmed.
+     * WO-672: 4-tier QTc alert system thresholds are now sourced from
+     * ibogaineCardiacThresholds.ts. dangerThresholdMs and cautionThresholdMs
+     * props are deprecated and ignored — kept for backward compat only.
+     * @deprecated Use ibogaineCardiacThresholds.ts constants instead.
      */
     dangerThresholdMs?: number;
-    /**
-     * Absolute QTc caution threshold (ms). Readings in [cautionThresholdMs, dangerThresholdMs)
-     * trigger [STATUS: CAUTION, Approaching 500ms]. Default: 475ms.
-     * Implements Dr. Allen's "approaching 500ms" directive (2026-02-25).
-     */
+    /** @deprecated */
     cautionThresholdMs?: number;
     /** Called whenever readings change, parent can persist or display summary. */
     onReadingsChange?: (readings: QTReading[]) => void;
+    /**
+     * WO-672: Baseline QTc from Phase 1 (ms). Displayed as persistent reference
+     * in Phase 2. Null if not yet captured.
+     */
+    baselineQtcMs?: number | null;
 }
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -101,10 +111,15 @@ export const QTIntervalTracker: React.FC<QTIntervalTrackerProps> = ({
     deviceALabel = 'Philips IntelliVue',
     deviceBLabel = 'Schiller ETM',
     divergenceThresholdMs = 50,   // ✅ Confirmed by Dr. Allen 2026-02-25
-    dangerThresholdMs = 500,      // ✅ Confirmed by Dr. Allen 2026-02-25, hERG channel block risk
-    cautionThresholdMs = 475,     // ✅ "Approaching 500ms", Dr. Allen 2026-02-25
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    dangerThresholdMs: _dangerDeprecated,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    cautionThresholdMs: _cautionDeprecated,
     onReadingsChange,
+    baselineQtcMs = null,
 }) => {
+    // WO-672: concurrent symptoms flag — escalates any reading to RED tier
+    const [hasConcurrentSymptoms, setHasConcurrentSymptoms] = useState(false);
     const [readings, setReadings] = useState<QTReading[]>([makeEmptyReading()]);
 
     const updateReading = useCallback(
@@ -196,23 +211,29 @@ export const QTIntervalTracker: React.FC<QTIntervalTrackerProps> = ({
                     const isDivergent = delta !== null && delta >= divergenceThresholdMs;
                     const bothEntered = reading.deviceAValue !== '' && reading.deviceBValue !== '';
 
-                    // Per-device absolute QTc threshold evaluation (Dr. Allen 2026-02-25)
+                    // WO-672: 4-tier QTc alert system per ibogaineCardiacThresholds.ts
                     const aVal = parseInt(reading.deviceAValue, 10);
                     const bVal = parseInt(reading.deviceBValue, 10);
-                    const aIsDanger = !isNaN(aVal) && aVal >= dangerThresholdMs;
-                    const bIsDanger = !isNaN(bVal) && bVal >= dangerThresholdMs;
-                    const aIsCaution = !isNaN(aVal) && aVal >= cautionThresholdMs && aVal < dangerThresholdMs;
-                    const bIsCaution = !isNaN(bVal) && bVal >= cautionThresholdMs && bVal < dangerThresholdMs;
-                    const anyDanger = aIsDanger || bIsDanger;
-                    const anyCaution = !anyDanger && (aIsCaution || bIsCaution);
+                    const aTier: IbogaineQtcTier = getIbogaineQtcTier(isNaN(aVal) ? null : aVal, hasConcurrentSymptoms);
+                    const bTier: IbogaineQtcTier = getIbogaineQtcTier(isNaN(bVal) ? null : bVal, hasConcurrentSymptoms);
+
+                    // Highest tier across both devices drives the row-level alert banner
+                    const tierPriority: IbogaineQtcTier[] = ['red', 'orange', 'amber', 'green', 'unknown'];
+                    const worstTier: IbogaineQtcTier = tierPriority.find(
+                        t => aTier === t || bTier === t
+                    ) ?? 'unknown';
+                    const meta = worstTier !== 'unknown' ? IBOGAINE_QTC_TIER_META[worstTier as Exclude<IbogaineQtcTier, 'unknown'>] : null;
 
                     return (
                         <div
                             key={reading.id}
-                            className={`rounded-xl border transition-all duration-200 ${isDivergent
-                                ? 'border-red-500/50 bg-red-950/10'
-                                : 'border-slate-700/40 bg-slate-800/20'
-                                }`}
+                            className={`rounded-xl border transition-all duration-200 ${
+                                isDivergent
+                                    ? 'border-red-500/50 bg-red-950/10'
+                                    : meta && bothEntered
+                                        ? `${meta.borderClass} ${meta.bgClass}`
+                                        : 'border-slate-700/40 bg-slate-800/20'
+                            }`}
                             role="row"
                             aria-label={`QT Reading ${index + 1}${isDivergent ? ', DIVERGENCE' : ''}`}
                         >
@@ -228,7 +249,7 @@ export const QTIntervalTracker: React.FC<QTIntervalTrackerProps> = ({
                                             value={reading.recordedAt}
                                             onChange={e => updateReading(reading.id, 'recordedAt', e.target.value)}
                                             aria-label={`Reading ${index + 1} time`}
-                                            className={inputCls + ' text-xs'}
+                                            className={inputCls + ' text-xs md:text-sm'}
                                         />
                                         <button
                                             type="button"
@@ -254,13 +275,13 @@ export const QTIntervalTracker: React.FC<QTIntervalTrackerProps> = ({
                                         onChange={e => updateReading(reading.id, 'deviceAValue', e.target.value)}
                                         placeholder="420"
                                         aria-label={`${deviceALabel} QT reading in milliseconds, 5ms increments`}
-                                        className={`${inputCls} ${aIsDanger ? 'border-red-500/70 bg-red-950/20' : aIsCaution ? 'border-amber-500/70 bg-amber-950/20' : ''}`}
+                                        className={`${inputCls} ${aTier === 'red' ? 'border-red-500/70 bg-red-950/20' : aTier === 'orange' ? 'border-orange-500/60 bg-orange-950/10' : aTier === 'amber' ? 'border-amber-500/60 bg-amber-950/10' : ''}`}
                                     />
                                     <select
                                         value={reading.methodA}
                                         onChange={e => updateReading(reading.id, 'methodA', e.target.value)}
                                         aria-label={`${deviceALabel} QT calculation method`}
-                                        className={selectCls + ' text-xs py-1.5'}
+                                        className={selectCls + ' text-xs md:text-sm py-1.5'}
                                     >
                                         <option value="">Method...</option>
                                         {QT_METHODS.map(m => (
@@ -282,13 +303,13 @@ export const QTIntervalTracker: React.FC<QTIntervalTrackerProps> = ({
                                         onChange={e => updateReading(reading.id, 'deviceBValue', e.target.value)}
                                         placeholder="415"
                                         aria-label={`${deviceBLabel} QT reading in milliseconds, 5ms increments`}
-                                        className={`${inputCls} ${bIsDanger ? 'border-red-500/70 bg-red-950/20' : bIsCaution ? 'border-amber-500/70 bg-amber-950/20' : ''}`}
+                                        className={`${inputCls} ${bTier === 'red' ? 'border-red-500/70 bg-red-950/20' : bTier === 'orange' ? 'border-orange-500/60 bg-orange-950/10' : bTier === 'amber' ? 'border-amber-500/60 bg-amber-950/10' : ''}`}
                                     />
                                     <select
                                         value={reading.methodB}
                                         onChange={e => updateReading(reading.id, 'methodB', e.target.value)}
                                         aria-label={`${deviceBLabel} QT calculation method`}
-                                        className={selectCls + ' text-xs py-1.5'}
+                                        className={selectCls + ' text-xs md:text-sm py-1.5'}
                                     >
                                         <option value="">Method...</option>
                                         {QT_METHODS.map(m => (
@@ -311,7 +332,7 @@ export const QTIntervalTracker: React.FC<QTIntervalTrackerProps> = ({
                                     )}
                                 </div>
 
-                                {/* Status badge */}
+                                {/* Status badge — WO-672 4-tier */}
                                 <div className="flex flex-col items-center justify-center min-h-[52px]">
                                     {!bothEntered ? (
                                         <span className="ppn-meta text-slate-600 text-center leading-tight">—</span>
@@ -328,29 +349,29 @@ export const QTIntervalTracker: React.FC<QTIntervalTrackerProps> = ({
                                                 role="status"
                                                 aria-label="Status: Divergence detected"
                                             >
-                                                <AlertTriangle
-                                                    className="w-4 h-4 text-red-400"
-                                                    aria-hidden="true"
-                                                />
+                                                <AlertTriangle className="w-4 h-4 text-red-400" aria-hidden="true" />
                                                 <span className="ppn-meta text-red-400 font-black uppercase tracking-wide leading-tight text-center">
                                                     DIVERG.
                                                 </span>
                                             </div>
                                         </AdvancedTooltip>
-                                    ) : (
+                                    ) : meta ? (
+                                        // WO-672: 4-tier advisory badge (no icon-only color — labeled per a11y rule)
                                         <div
-                                            className="flex flex-col items-center gap-0.5"
+                                            className={`flex flex-col items-center gap-0.5 px-1.5 py-1 rounded-lg border ${meta.badgeClass}`}
                                             role="status"
-                                            aria-label="Status: Within threshold"
+                                            aria-label={`QTc tier: ${meta.label}`}
                                         >
-                                            <span className="material-symbols-outlined text-base text-teal-400" aria-hidden="true">
-                                                check_circle
-                                            </span>
-                                            <span className="ppn-meta text-teal-400 font-semibold leading-tight text-center">
-                                                OK
+                                            {worstTier === 'green' ? (
+                                                <span className="material-symbols-outlined text-base text-teal-400" aria-hidden="true">check_circle</span>
+                                            ) : (
+                                                <AlertTriangle className="w-3.5 h-3.5" aria-hidden="true" />
+                                            )}
+                                            <span className={`ppn-meta font-black uppercase tracking-wide leading-tight text-center ${meta.textClass}`}>
+                                                {meta.label}
                                             </span>
                                         </div>
-                                    )}
+                                    ) : null}
                                 </div>
 
                                 {/* Remove button */}
@@ -368,38 +389,29 @@ export const QTIntervalTracker: React.FC<QTIntervalTrackerProps> = ({
                                 </div>
                             </div>
 
-                            {/* ── Absolute QTc DANGER banner (≥ 500ms), patient safety critical ── */}
-                            {anyDanger && (
+                            {/* ── WO-672: 4-tier QTc alert banner — advisory only, no blocks ── */}
+                            {bothEntered && meta && worstTier !== 'green' && (
                                 <div
-                                    className="flex items-center gap-2 px-4 py-2.5 bg-red-600/20 border-t border-red-500/60 rounded-b-xl"
+                                    className={`flex items-start gap-2 px-4 py-2.5 border-t rounded-b-xl ${meta.bgClass} border-${worstTier === 'red' ? 'red' : worstTier === 'orange' ? 'orange' : 'amber'}-500/${worstTier === 'red' ? '60' : '40'}`}
                                     role="alert"
-                                    aria-live="assertive"
+                                    aria-live={worstTier === 'red' ? 'assertive' : 'polite'}
                                     aria-atomic="true"
                                 >
-                                    <AlertTriangle className="w-4 h-4 text-red-300 flex-shrink-0" aria-hidden="true" />
-                                    <span className="text-sm font-black text-red-200 uppercase tracking-wide">
-                                        [STATUS: DANGER, QTc ≥ {dangerThresholdMs}ms]
-                                    </span>
-                                    <span className="ppn-meta text-red-300 ml-1">
-                                        {aIsDanger && `${deviceALabel}: ${aVal}ms`}{aIsDanger && bIsDanger && ' · '}{bIsDanger && `${deviceBLabel}: ${bVal}ms`}.
-                                        Arrhythmia risk elevated. Assess for Torsades de Pointes.
-                                    </span>
-                                </div>
-                            )}
-
-                            {/* ── Absolute QTc CAUTION banner (475–499ms), approaching danger ── */}
-                            {anyCaution && (
-                                <div
-                                    className="flex items-center gap-2 px-4 py-2 bg-amber-500/10 border-t border-amber-500/30 rounded-b-xl"
-                                    role="alert"
-                                    aria-live="polite"
-                                >
-                                    <AlertTriangle className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" aria-hidden="true" />
-                                    <span className="ppn-meta text-amber-300 font-semibold">
-                                        [STATUS: CAUTION, Approaching {dangerThresholdMs}ms]
-                                        {aIsCaution && ` ${deviceALabel}: ${aVal}ms`}{aIsCaution && bIsCaution && ' ·'}{bIsCaution && ` ${deviceBLabel}: ${bVal}ms`}.
-                                        Monitor closely. Increase reading frequency.
-                                    </span>
+                                    <AlertTriangle className={`w-4 h-4 flex-shrink-0 mt-0.5 ${meta.textClass}`} aria-hidden="true" />
+                                    <div>
+                                        <span className={`text-sm font-black uppercase tracking-wide ${meta.textClass}`}>
+                                            [QTc TIER: {meta.label}]
+                                        </span>
+                                        <span className="ppn-meta ml-2 text-slate-300">
+                                            {meta.sublabel}.
+                                            {aTier === worstTier && !isNaN(aVal) && ` ${deviceALabel}: ${aVal}ms`}
+                                            {aTier === worstTier && bTier === worstTier && !isNaN(bVal) && ' ·'}
+                                            {bTier === worstTier && !isNaN(bVal) && ` ${deviceBLabel}: ${bVal}ms`}
+                                        </span>
+                                        <span className="ppn-meta block mt-0.5 text-slate-500">
+                                            Advisory only — practitioner retains full clinical decision authority.
+                                        </span>
+                                    </div>
                                 </div>
                             )}
 
@@ -421,6 +433,39 @@ export const QTIntervalTracker: React.FC<QTIntervalTrackerProps> = ({
                 })}
             </div>
 
+            {/* ── WO-672: Concurrent symptoms flag + Baseline QTc reference ── */}
+            <div className="px-5 py-3 border-t border-slate-800/60 bg-slate-900/20 space-y-2">
+                {/* Baseline QTc reference pin */}
+                {baselineQtcMs != null && (
+                    <div className="flex items-center gap-2 text-sm">
+                        <span className="material-symbols-outlined text-base text-blue-400" aria-hidden="true">ecg_heart</span>
+                        <span className="ppn-meta text-slate-400">Phase 1 Baseline QTc:</span>
+                        <span className="font-black text-blue-300 font-mono">{baselineQtcMs}ms</span>
+                    </div>
+                )}
+                {/* Concurrent symptoms toggle — escalates any reading to RED per Dr. Allen */}
+                <label className="flex items-center gap-3 cursor-pointer group" aria-label="Flag concurrent clinical symptoms">
+                    <input
+                        type="checkbox"
+                        id="qtc-concurrent-symptoms"
+                        checked={hasConcurrentSymptoms}
+                        onChange={e => setHasConcurrentSymptoms(e.target.checked)}
+                        className="w-4 h-4 rounded border-slate-600 bg-slate-800 text-red-500 focus:ring-2 focus:ring-red-500 focus:ring-offset-slate-900 cursor-pointer"
+                    />
+                    <span className={`ppn-meta transition-colors ${
+                        hasConcurrentSymptoms ? 'text-red-300 font-semibold' : 'text-slate-400 group-hover:text-slate-300'
+                    }`}>
+                        Concurrent clinical symptoms present
+                        <span className="text-slate-600 ml-1">(diaphoresis, HR irregularity, altered cognition)</span>
+                    </span>
+                    {hasConcurrentSymptoms && (
+                        <span className="ml-auto px-2 py-0.5 rounded bg-red-500/20 border border-red-500/40 ppn-meta text-red-300 font-black uppercase">
+                            All readings escalated to RED
+                        </span>
+                    )}
+                </label>
+            </div>
+
             {/* ── Footer, Add Reading ── */}
             <div className="flex items-center gap-3 px-5 py-4 border-t border-slate-800/60 bg-slate-900/30">
                 <button
@@ -434,7 +479,7 @@ export const QTIntervalTracker: React.FC<QTIntervalTrackerProps> = ({
                 </button>
                 <span className="ppn-meta text-slate-500 ml-1">
                     {readings.length} reading{readings.length !== 1 ? 's' : ''} this session
-                    &nbsp;·&nbsp; Display only, DB persist after INSPECTOR migration
+                    &nbsp;·&nbsp; DB persist pending migration 082 execution
                 </span>
             </div>
         </div>

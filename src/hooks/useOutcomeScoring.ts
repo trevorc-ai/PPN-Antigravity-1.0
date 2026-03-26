@@ -176,22 +176,26 @@ export function useOutcomeScoring(
                 let duplicateBaseline = false;
 
                 if (config.baselineField) {
-                    const { data: baselineRows, error: baselineErr } = await supabase
+                    const { data: rawBaseline, error: baselineErr } = await supabase
                         .from('log_baseline_assessments')
-                        .select(`assessment_date, ${config.baselineField}`)
+                        .select('*')
                         .eq('patient_uuid', patientUuid)
                         .order('assessment_date', { ascending: true });
 
                     if (baselineErr) throw baselineErr;
 
-                    const validBaselineRows = (baselineRows as BaselineRow[] || [])
-                        .filter(r => r[config.baselineField as keyof BaselineRow] != null);
+                    // Cast via unknown to avoid Supabase TS inference false positives on select('*')
+                    const baselineRows = (rawBaseline as unknown as BaselineRow[]) || [];
+                    const field = config.baselineField as keyof BaselineRow;
+
+                    const validBaselineRows = baselineRows
+                        .filter(r => r[field] != null);
 
                     if (validBaselineRows.length > 1) duplicateBaseline = true;
 
                     if (validBaselineRows.length > 0) {
                         const first = validBaselineRows[0];
-                        baselineScore = first[config.baselineField as keyof BaselineRow] as number;
+                        baselineScore = first[field] as number;
                         baselineDate = first.assessment_date;
                     }
                 }
@@ -201,21 +205,25 @@ export function useOutcomeScoring(
                 let latestDate: string | null = null;
 
                 if (config.longitudinalField) {
-                    const { data: longitudinalRows, error: longErr } = await supabase
+                    const { data: rawLong, error: longErr } = await supabase
                         .from('log_longitudinal_assessments')
-                        .select(`assessment_date, days_post_session, ${config.longitudinalField}`)
+                        .select('*')
                         .eq('patient_uuid', patientUuid)
                         .order('assessment_date', { ascending: false })
                         .limit(20);
 
                     if (longErr) throw longErr;
 
-                    const validLongRows = (longitudinalRows as LongitudinalRow[] || [])
-                        .filter(r => r[config.longitudinalField as keyof LongitudinalRow] != null);
+                    // Cast via unknown to avoid Supabase TS inference false positives on select('*')
+                    const longitudinalRows = (rawLong as unknown as LongitudinalRow[]) || [];
+                    const longField = config.longitudinalField as keyof LongitudinalRow;
+
+                    const validLongRows = longitudinalRows
+                        .filter(r => r[longField] != null);
 
                     if (validLongRows.length > 0) {
                         const latest = validLongRows[0];
-                        latestScore = latest[config.longitudinalField as keyof LongitudinalRow] as number;
+                        latestScore = latest[longField] as number;
                         latestDate = latest.assessment_date;
                     }
                 }

@@ -8,6 +8,7 @@ import { PhaseIndicator } from '../components/wellness-journey/PhaseIndicator';
 import { PreparationPhase } from '../components/wellness-journey/PreparationPhase';
 import { TreatmentPhase, Phase2ErrorBoundary } from '../components/wellness-journey/DosingSessionPhase';
 import { MobileCockpit } from '../components/wellness-journey/MobileCockpit';
+import { MedicationSafetyBanner } from '../components/wellness-journey/MedicationSafetyBanner'; // WO-691
 import { IntegrationPhase } from '../components/wellness-journey/IntegrationPhase';
 import { SlideOutPanel } from '../components/wellness-journey/SlideOutPanel';
 import { WorkflowActionCard } from '../components/wellness-journey/WorkflowCards';
@@ -1544,15 +1545,19 @@ const WellnessJourneyInternal: React.FC = () => {
                                         />
                                     )}
                                     {activePhase === 2 && (
-                                        <Phase2ErrorBoundary onReset={() => setActivePhase(2)}>
-                                            {/* Mobile Cockpit: renders on viewports < 768px. DosingSessionPhase unchanged on desktop. */}
-                                            <div className="block md:hidden">
-                                                <MobileCockpit journey={journey} completedForms={completedForms} onOpenForm={handleOpenForm} onCompletePhase={completeCurrentPhase} />
-                                            </div>
-                                            <div className="hidden md:block">
-                                                <TreatmentPhase journey={journey} completedForms={completedForms} onOpenForm={handleOpenForm} onCompletePhase={completeCurrentPhase} />
-                                            </div>
-                                        </Phase2ErrorBoundary>
+                                        <>
+                                            {/* WO-691: Active medication banner — reads from localStorage, renders null when no meds */}
+                                            <MedicationSafetyBanner />
+                                            <Phase2ErrorBoundary onReset={() => setActivePhase(2)}>
+                                                {/* Mobile Cockpit: renders on viewports < 768px. DosingSessionPhase unchanged on desktop. */}
+                                                <div className="block md:hidden">
+                                                    <MobileCockpit journey={journey} completedForms={completedForms} onOpenForm={handleOpenForm} onCompletePhase={completeCurrentPhase} />
+                                                </div>
+                                                <div className="hidden md:block">
+                                                    <TreatmentPhase journey={journey} completedForms={completedForms} onOpenForm={handleOpenForm} onCompletePhase={completeCurrentPhase} />
+                                                </div>
+                                            </Phase2ErrorBoundary>
+                                        </>
                                     )}
 
                                     {activePhase === 3 && (
