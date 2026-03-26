@@ -97,7 +97,7 @@ export const PracticeExportButton: React.FC<PracticeExportButtonProps> = ({
                     ) : (
                         <Download className="w-4 h-4" />
                     )}
-                    {xlsxState === 'done' ? 'Downloaded!' : xlsxState === 'error' ? 'Error — retry' : 'Download Practice Export'}
+                    {xlsxState === 'done' ? 'Downloaded!' : xlsxState === 'error' ? 'Error: retry' : 'Download Practice Export'}
                 </button>
 
                 {/* Tooltip */}
@@ -112,7 +112,7 @@ export const PracticeExportButton: React.FC<PracticeExportButtonProps> = ({
                             transition-opacity duration-200
                         "
                     >
-                        Your de-identified patient panel. Add names and contacts in Sheet 2 — stays on your device.
+                        Your de-identified patient panel. Add names and contacts in Sheet 2. Stays on your device.
                         <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-800" />
                     </div>
                 )}
@@ -124,8 +124,8 @@ export const PracticeExportButton: React.FC<PracticeExportButtonProps> = ({
                 type="button"
                 onClick={handleCsvDownload}
                 disabled={isDisabled || csvState === 'loading'}
-                aria-label="Download Refresh CSV — Sheet 1 data only, for pasting into an existing workbook"
-                title="Refresh PPN Data (CSV) — paste into existing workbook to update Sheet 1"
+                aria-label="Download Refresh CSV: Sheet 1 data only, for pasting into an existing workbook"
+                title="Refresh PPN Data (CSV): paste into existing workbook to update Sheet 1"
                 className={`
                     flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold
                     border transition-all duration-200 active:scale-[0.98] min-h-[44px]
