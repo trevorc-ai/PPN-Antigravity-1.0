@@ -119,6 +119,25 @@ type LongitudinalRow = {
     gad7_score?: number | null;
 };
 
+// ── MV fast-path types (mv_outcome_deltas_by_timepoint) ──────────────────────
+// Source: mv_outcome_deltas_by_timepoint (capability #6 — session-to-follow-up delta analytics)
+// Zero-state: returns null when patient has no follow-up data — handled below
+interface MvOutcomeDeltaRow {
+    patient_uuid: string;
+    baseline_assessment_date: string | null;
+    f_assessment_date: string | null;
+    timepoint_days: number | null;
+    baseline_phq9: number | null;
+    f_phq9: number | null;
+    phq9_delta: number | null;
+    baseline_gad7: number | null;
+    f_gad7: number | null;
+    gad7_delta: number | null;
+}
+
+// Instruments covered by mv_outcome_deltas_by_timepoint
+const MV_SUPPORTED: InstrumentCode[] = ['PHQ9', 'GAD7'];
+
 // ── Main hook ────────────────────────────────────────────────────────────────
 
 export function useOutcomeScoring(
@@ -144,20 +163,102 @@ export function useOutcomeScoring(
 
             const config = INSTRUMENT_CONFIG[instrumentCode];
 
-            // Fast path — instrument not in live schema
+            // ── MV fast-path: PHQ9 and GAD7 read from mv_outcome_deltas_by_timepoint ──
+            // MV-First policy (2026-03-26 amendment to WO-687):
+            //   If the instrument is covered by the MV, do NOT join raw log_* tables.
+            //   Source: mv_outcome_deltas_by_timepoint (capability #6 — delta analytics)
+            if (MV_SUPPORTED.includes(instrumentCode)) {
+                try {
+                    const { data: mvRows, error: mvErr } = await supabase
+                        .from('mv_outcome_deltas_by_timepoint')
+                        .select('baseline_assessment_date,f_assessment_date,timepoint_days,baseline_phq9,f_phq9,phq9_delta,baseline_gad7,f_gad7,gad7_delta')
+                        .eq('patient_uuid', patientUuid)
+                        .order('timepoint_days', { ascending: false })
+                        .limit(10);
+
+                    if (mvErr) throw mvErr;
+
+                    if (!mvRows || mvRows.length === 0) {
+                        if (!cancelled) {
+                            setData({
+                                instrument_code: instrumentCode,
+                                baseline_score: null, latest_score: null,
+                                baseline_date: null, latest_date: null,
+                                window_days: null, absolute_change: null, percent_change: null,
+                                response_flag: null, remission_flag: null,
+                                response_definition: config.responseDefinition,
+                                remission_definition: config.remissionDefinition,
+                                confidence: 'not_computable',
+                                algorithm_id: config.algorithmId,
+                                missing_data_flag: true,
+                            });
+                            setLoading(false);
+                        }
+                        return;
+                    }
+
+                    // Use most recent follow-up row (order DESC → first row)
+                    const row = mvRows[0];
+                    const duplicateMv = mvRows.length > 1;
+
+                    const baselineScore = instrumentCode === 'PHQ9' ? (row.baseline_phq9 ?? null) : (row.baseline_gad7 ?? null);
+                    const latestScore   = instrumentCode === 'PHQ9' ? (row.f_phq9 ?? null)        : (row.f_gad7 ?? null);
+                    const absoluteChange = instrumentCode === 'PHQ9' ? (row.phq9_delta ?? null)   : (row.gad7_delta ?? null);
+                    const missingData = baselineScore === null || latestScore === null;
+
+                    let percentChange: number | null = null;
+                    let responseFlag: boolean | null = null;
+                    let remissionFlag: boolean | null = null;
+                    let confidence: OutcomeScore['confidence'] = 'not_computable';
+
+                    if (!missingData) {
+                        percentChange = baselineScore !== 0
+                            ? (baselineScore! - latestScore!) / baselineScore!
+                            : null;
+                        responseFlag = percentChange !== null ? percentChange >= 0.5 : null;
+                        remissionFlag = config.remissionThreshold !== null
+                            ? latestScore! < config.remissionThreshold
+                            : null;
+                        confidence = duplicateMv ? 'provisional' : 'rule_based';
+                    }
+
+                    if (!cancelled) {
+                        setData({
+                            instrument_code: instrumentCode,
+                            baseline_score: baselineScore,
+                            latest_score: latestScore,
+                            baseline_date: row.baseline_assessment_date ?? null,
+                            latest_date: row.f_assessment_date ?? null,
+                            window_days: row.timepoint_days ?? null,
+                            absolute_change: absoluteChange,
+                            percent_change: percentChange,
+                            response_flag: responseFlag,
+                            remission_flag: remissionFlag,
+                            response_definition: config.responseDefinition,
+                            remission_definition: config.remissionDefinition,
+                            confidence,
+                            algorithm_id: config.algorithmId,
+                            missing_data_flag: missingData,
+                        });
+                        setLoading(false);
+                    }
+                } catch (mvCatchErr: unknown) {
+                    const msg = mvCatchErr instanceof Error ? mvCatchErr.message : 'MV query error';
+                    console.error('[useOutcomeScoring] MV fast-path error:', msg); // allow-console
+                    if (!cancelled) { setError(msg); setLoading(false); }
+                }
+                return; // Always return after MV path — do not fall through to raw-table path
+            }
+
+            // Fast path — instrument not in live schema at all (CAPS5, MADRS)
             if (!config.baselineField && !config.longitudinalField) {
                 if (!cancelled) {
                     setData({
                         instrument_code: instrumentCode,
-                        baseline_score: null,
-                        latest_score: null,
-                        baseline_date: null,
-                        latest_date: null,
-                        window_days: null,
-                        absolute_change: null,
-                        percent_change: null,
-                        response_flag: null,
-                        remission_flag: null,
+                        baseline_score: null, latest_score: null,
+                        baseline_date: null, latest_date: null,
+                        window_days: null, absolute_change: null, percent_change: null,
+                        response_flag: null, remission_flag: null,
                         response_definition: config.responseDefinition,
                         remission_definition: config.remissionDefinition,
                         confidence: 'not_computable',

@@ -7,6 +7,7 @@ import {
 import { ArrowRight, CheckCircle2, AlertTriangle, User, ShieldOff } from 'lucide-react';
 import { getPatientOutcomeData, type PatientOutcomeData, type PatientTimepoint } from '../../services/patientOutcomes';
 import { useProtocol } from '../../contexts/ProtocolContext';
+import { useOutcomeDeltas } from '../../hooks/useOutcomeDeltas';
 
 interface PatientOutcomePanelProps {
     patientId: string;
@@ -19,8 +20,6 @@ interface PatientOutcomePanelProps {
 const OutcomeTooltip = ({ active, payload, label }: any) => {
     if (!active || !payload?.length) return null;
     const patientScore = payload.find((p: any) => p.dataKey === 'patientScore')?.value;
-    const trialMin = payload.find((p: any) => p.dataKey === 'trialMin')?.value;
-    const trialMax = payload.find((p: any) => p.dataKey === 'trialMax')?.value;
 
     return (
         <div className="bg-slate-800 border border-slate-700 rounded-xl p-3 shadow-xl text-sm min-w-[200px]">
@@ -29,12 +28,6 @@ const OutcomeTooltip = ({ active, payload, label }: any) => {
                 <div className="flex justify-between items-center mb-1">
                     <span className="text-violet-300 font-semibold">Patient Score:</span>
                     <span className="text-white font-bold">{patientScore}</span>
-                </div>
-            )}
-            {trialMin !== undefined && trialMax !== undefined && (
-                <div className="flex justify-between items-center text-slate-400 text-xs">
-                    <span>Phase 3 Cohort Range:</span>
-                    <span>{trialMin} – {trialMax}</span>
                 </div>
             )}
         </div>
@@ -65,6 +58,10 @@ export const PatientOutcomePanel: FC<PatientOutcomePanelProps> = ({
 
     const isTrackingEnabled = config.enabledFeatures.includes('mental-health') && config.enabledFeatures.includes('longitudinal-assessment');
 
+    // Source: mv_outcome_deltas_by_timepoint (capability #3 — session-to-follow-up delta analytics)
+    // Zero-state: deltaRows === [] — renders "Baseline-to-follow-up data not yet available"
+    const { data: deltaRows } = useOutcomeDeltas({ sessionId });
+
     useEffect(() => {
         setLoading(true);
         getPatientOutcomeData(patientId, sessionId).then(res => {
@@ -76,24 +73,14 @@ export const PatientOutcomePanel: FC<PatientOutcomePanelProps> = ({
     const chartData = useMemo(() => {
         if (!data) return [];
 
-        // Mocking Phase 3 benchmark data matching the primary instrument
         return data.timepoints.map(t => {
             const score = t[data.primaryInstrument.toLowerCase().replace('-', '') as keyof PatientTimepoint] as number | null;
-
-            // Synthetic benchmark data for demonstration
-            let trialMin, trialMax, realWorldAvg;
-            if (t.week === 0) { trialMin = 22; trialMax = 26; realWorldAvg = 24; }
-            else if (t.week === 3) { trialMin = 12; trialMax = 18; realWorldAvg = 15; }
-            else if (t.week === 6) { trialMin = 10; trialMax = 16; realWorldAvg = 13; }
-            else if (t.week === 12) { trialMin = 9; trialMax = 15; realWorldAvg = 12; }
-
+            // WO-698: No synthetic benchmark constants. Benchmark ribbon removed.
+            // Live deltas available in deltaRows from mv_outcome_deltas_by_timepoint.
             return {
                 week: t.week,
                 label: t.label,
                 patientScore: score,
-                trialMin,
-                trialMax,
-                realWorldAvg
             };
         });
     }, [data]);
@@ -198,12 +185,8 @@ export const PatientOutcomePanel: FC<PatientOutcomePanelProps> = ({
                                 <YAxis stroke="#475569" tick={{ fill: '#94a3b8', fontSize: 12 }} axisLine={false} tickLine={false} dx={-10} domain={[0, 'dataMax + 4']} />
                                 <Tooltip content={<OutcomeTooltip />} cursor={{ fill: 'rgba(255,255,255,0.05)' }} />
 
-                                {/* L1: Phase 3 trial range ribbon */}
-                                <Area dataKey="trialMin" fill="transparent" stroke="transparent" animationBegin={200} animationDuration={600} />
-                                <Area dataKey="trialMax" fill="url(#trialRibbon)" stroke="rgba(148,163,184,0.3)" strokeDasharray="5 3" animationBegin={200} animationDuration={600} name="Phase 3 Trial Range" />
-
-                                {/* L2: Real-world average dashed line */}
-                                <Line type="monotone" dataKey="realWorldAvg" stroke="#64748b" strokeWidth={1.5} strokeDasharray="6 4" dot={false} animationBegin={500} animationDuration={600} />
+                                {/* Source: mv_outcome_deltas_by_timepoint — benchmark ribbon removed (WO-698) */}
+                                {/* Re-add when network-average MV is available */}
 
                                 {/* L3: Reference Lines */}
                                 <ReferenceLine y={responseThreshold} stroke="#f59e0b" strokeWidth={1} strokeDasharray="3 3" label={{ value: 'Response Threshold', position: 'insideTopLeft', fill: '#f59e0b', fontSize: 10, opacity: 0.8 }} />
@@ -217,8 +200,9 @@ export const PatientOutcomePanel: FC<PatientOutcomePanelProps> = ({
 
                     <div className="flex flex-wrap gap-4 mt-4 justify-center">
                         <LegendItem color="#a78bfa" solid label="This Patient" />
-                        <LegendItem color="#94a3b8" dashed label="Phase 3 Trial Range" />
-                        <LegendItem color="#64748b" dashed label="Real-World Average" />
+                        {deltaRows.length > 0 && (
+                            <span className="ppn-meta text-slate-500 self-center">Live · mv_outcome_deltas_by_timepoint</span>
+                        )}
                     </div>
                 </div>
 

@@ -11,6 +11,8 @@ import {
 import { PageContainer } from '../components/layouts/PageContainer';
 import { Section } from '../components/layouts/Section';
 import { usePractitionerProtocols } from '../hooks/usePractitionerProtocols';
+import { useSiteDashboard } from '../hooks/useSiteDashboard';
+import { DataQualityPanel } from '../components/admin/DataQualityPanel';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../supabaseClient';
 import { PatientJourneyValidation } from '../features/patient-portal';
@@ -363,6 +365,11 @@ export default function Dashboard() {
   const firstName = userProfile?.first_name?.trim() || null;
   const { protocols, loading: protocolsLoading, refetch, lastFetchedAt } = usePractitionerProtocols();
 
+  // ── WO-697: mv_site_dashboard_summary ───────────────────────────────────
+  // Source: mv_site_dashboard_summary (capability #10 — site dashboard rollups)
+  // Zero-state: null when site has no data — cards render "—" not 0
+  const { data: siteKpi } = useSiteDashboard(user?.id);
+
   const hasProtocols = protocols.length > 0;
 
   // ── Search state ────────────────────────────────────────────────────────────
@@ -607,34 +614,68 @@ export default function Dashboard() {
               isEmpty={!hasProtocols}
             />
             <ClinicPerformanceCard
-              title="Benchmark Score"
-              value={hasProtocols ? '71%' : '--'}
-              change={hasProtocols ? '+3%' : 'No data'}
-              comparison={hasProtocols ? 'Network avg: 68%' : 'Log first session'}
+              title="Follow-up Completion"
+              value={
+                siteKpi?.followup_completion_rate != null
+                  ? `${Math.round(siteKpi.followup_completion_rate * 100)}%`
+                  : hasProtocols ? '—' : '--'
+              }
+              change={siteKpi?.followup_completion_rate != null ? 'Live' : 'No data'}
+              comparison={siteKpi != null ? 'Live · mv_site_dashboard_summary' : 'Log first session'}
               icon={Target}
               color="emerald"
-              isEmpty={!hasProtocols}
+              isEmpty={!hasProtocols && siteKpi == null}
             />
             <ClinicPerformanceCard
               title="Safety Alerts"
-              value="2"
-              change="Monitoring"
-              comparison="Review required"
+              value={
+                siteKpi?.unresolved_safety_count != null
+                  ? String(siteKpi.unresolved_safety_count)
+                  : hasProtocols ? '—' : '--'
+              }
+              change={siteKpi?.unresolved_safety_count != null ? 'Monitoring' : 'No data'}
+              comparison={
+                siteKpi?.unresolved_safety_count != null
+                  ? 'Review required'
+                  : 'Log first session'
+              }
               icon={AlertTriangle}
               color="amber"
-              link="/deep-dives/molecular-pharmacology"
             />
             <ClinicPerformanceCard
-              title="Avg Session"
-              value={hasProtocols ? '4.2 hrs' : '--'}
-              change={hasProtocols ? '+0.3' : 'No data'}
-              comparison={hasProtocols ? 'Network avg: 4.0 hrs' : 'Log first session'}
+              title="Documentation"
+              value={
+                siteKpi?.documentation_completeness_pct != null
+                  ? `${Math.round(siteKpi.documentation_completeness_pct * 100)}%`
+                  : hasProtocols ? '—' : '--'
+              }
+              change={siteKpi?.documentation_completeness_pct != null ? 'Live' : 'No data'}
+              comparison={
+                siteKpi != null
+                  ? (import.meta.env.DEV ? 'Live · mv_site_dashboard_summary' : 'Avg completeness')
+                  : 'Log first session'
+              }
               icon={Clock}
               color="blue"
-              isEmpty={!hasProtocols}
+              isEmpty={!hasProtocols && siteKpi == null}
             />
           </div>
         </Section>
+
+
+        {/* ══════════════════════════════════════════════════════════════════
+            ADMIN: DATA QUALITY PANEL — WO-701 / WO-702
+            Role-gated: site_admin / admin only.
+            Source: mv_site_documentation_summary, mv_site_followup_compliance
+        ══════════════════════════════════════════════════════════════════ */}
+        {userRole === 'admin' && user?.id && (
+          <Section spacing="tight">
+            <DataQualityPanel
+              practitionerId={user.id}
+              userRole={userRole}
+            />
+          </Section>
+        )}
 
         {/* ══════════════════════════════════════════════════════════════════
             QUICK ACTIONS - uniform 2x3 on mobile, 6-col on lg
