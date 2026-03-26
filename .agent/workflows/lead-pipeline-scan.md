@@ -2,9 +2,34 @@
 description: LEAD mandatory pipeline scan — audit all queues for misrouted tickets and unblock stalled agents
 ---
 
-# LEAD Pipeline Scan Protocol
+## ⚡ RULE 0 — FULL CHAIN EXECUTION (HIGHEST PRIORITY)
 
-Run this at the START of every LEAD session, before doing anything else.
+**LEAD must complete the entire agent chain for every actionable ticket in a single response.**
+
+This means all of the following happen inline, without stopping:
+
+**_WORK_ORDERS chain:**
+- LEAD triages → INSPECTOR fast-passes or rejects → ticket reaches `04_BUILD` or `98_HOLD`
+- INSPECTOR QA (Phases 1–5.5) → ticket screenshots embedded → ticket reaches `06_USER_REVIEW`
+- DESIGNER produces spec → INSPECTOR reviews → BUILDER notified with ticket in `04_BUILD`
+
+**_GROWTH_ORDERS chain:**
+- GO lands in `00_BACKLOG` → MARKETER produces CONTENT_MATRIX immediately → GO moves to `02_USER_REVIEW` *(USER gate — stop here)*
+- After USER approves copy → DESIGNER produces mockup → GO moves to `04_VISUAL_REVIEW` *(USER gate — stop here)*
+- After USER approves design → BUILDER implements → INSPECTOR QAs → GO moves to `99_PUBLISHED`
+
+**LEAD does not stop between agent steps. Ever.**
+
+The only 3 permitted stop points are:
+1. **BUILDER writing actual code** — requires a separate session (can't be inlined)
+2. **`06_USER_REVIEW`** — USER visual sign-off before commit
+3. **`_GROWTH_ORDERS/02_USER_REVIEW`** and **`_GROWTH_ORDERS/04_VISUAL_REVIEW`** — USER copy/design gates
+
+Everything else — FREEZE check, conformance check, INSPECTOR fast-pass, DESIGNER spec, routing moves — is automated and must happen in the same response that triggered LEAD.
+
+If LEAD finds itself about to stop and ask the user before completing an agent step that doesn't hit one of the 3 gates above, that is a violation of Rule 0. Do the step and continue.
+
+---
 
 ## 🔑 Core Law: USER Is the Only Bottleneck
 
@@ -204,3 +229,4 @@ Run `/session-handoff` to update `SESSION_HANDOFF.md`. This is LEAD's final acti
 | 2.0 | 2026-03-23 | LEAD | **Pipeline Architecture Redesign.** All stage folders renamed to strict numerical order. Added USER-Only Gate Law. Added full agent chain conformance check (Step 0.8). Added WIP limit check (Step 0.9). Added auto-handoff table in Step 2. BUILDER parallel build rule. Renamed all folder references throughout. |
 | 2.1 | 2026-03-24 | LEAD | Added Open-File Guard in Step 2: LEAD must check if a file is open in the user's active editor before executing `mv`. If open, surface as pending action and wait for acknowledgment. Prevents orphaned editor tabs during pipeline scans. |
 | 2.2 | 2026-03-24 | LEAD | **Removed Open-File Guard.** The guard caused LEAD to pause on every ticket move since Agent Manager keeps files open constantly. All `mv` commands now execute immediately. No pre-move check. Only USER-gate stages are legitimate stop points. |
+| 2.3 | 2026-03-25 | LEAD | Added Rule 0 — Full Chain Execution. LEAD must complete entire LEAD→INSPECTOR→DESIGNER chain in a single response. Only 3 permitted stops: BUILDER writing code, 06_USER_REVIEW, and Growth Order user gates. |
