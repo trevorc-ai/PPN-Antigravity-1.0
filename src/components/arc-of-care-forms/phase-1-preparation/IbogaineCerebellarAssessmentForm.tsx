@@ -104,11 +104,11 @@ function saraSeverityLabel(score: number): { label: string; colorClass: string }
 
 const HKS_OPTIONS: Array<{ value: HKSResult; label: string }> = [
     { value: null, label: 'Select result...' },
-    { value: 'normal', label: 'Normal — smooth, accurate movement' },
-    { value: 'mild', label: 'Mild — slight dysmetria, minimal tremor' },
-    { value: 'moderate', label: 'Moderate — notable decomposition or tremor' },
-    { value: 'severe', label: 'Severe — unable to maintain contact or gross ataxia' },
-    { value: 'unable', label: 'Unable — patient unable to complete test' },
+    { value: 'normal', label: 'Normal: smooth, accurate movement' },
+    { value: 'mild', label: 'Mild: slight dysmetria, minimal tremor' },
+    { value: 'moderate', label: 'Moderate: notable decomposition or tremor' },
+    { value: 'severe', label: 'Severe: unable to maintain contact or gross ataxia' },
+    { value: 'unable', label: 'Unable: patient unable to complete test' },
 ];
 
 const TIMING_LABELS: Record<CerebellarTimingType, string> = {
@@ -213,11 +213,11 @@ const IbogaineCerebellarAssessmentForm: React.FC<IbogaineCerebellarAssessmentFor
                         <span className={`material-symbols-outlined text-lg ${data.saraEnabled ? 'text-indigo-400' : 'text-slate-500'}`} aria-hidden="true">directions_walk</span>
                     </div>
                     <div className="flex-1 text-left">
-                        <p className="ppn-card-title text-slate-200">SARA — Scale for the Assessment and Rating of Ataxia</p>
+                        <p className="ppn-card-title text-slate-200">SARA: Scale for the Assessment and Rating of Ataxia</p>
                         <p className="ppn-meta text-slate-500 mt-0.5">8-item clinician-rated ataxia scale · Total 0–40</p>
                     </div>
                     {data.saraEnabled && saraTotal > 0 && (
-                        <span className={`ppn-meta font-black mr-2 ${saraSeverity.colorClass}`}>{saraTotal}/40 — {saraSeverity.label}</span>
+                        <span className={`ppn-meta font-black mr-2 ${saraSeverity.colorClass}`}>{saraTotal}/40 · {saraSeverity.label}</span>
                     )}
                     <div className={`w-5 h-5 rounded border-2 flex items-center justify-center flex-shrink-0 transition-all ${data.saraEnabled ? 'bg-indigo-500 border-indigo-400' : 'border-slate-600'}`} aria-hidden="true">
                         {data.saraEnabled && <CheckCircle className="w-3 h-3 text-white" />}
@@ -265,7 +265,7 @@ const IbogaineCerebellarAssessmentForm: React.FC<IbogaineCerebellarAssessmentFor
                         <span className={`material-symbols-outlined text-lg ${data.ftnEnabled ? 'text-violet-400' : 'text-slate-500'}`} aria-hidden="true">back_hand</span>
                     </div>
                     <div className="flex-1 text-left">
-                        <p className="ppn-card-title text-slate-200">FTN — Finger-to-Nose Test</p>
+                        <p className="ppn-card-title text-slate-200">FTN: Finger-to-Nose Test</p>
                         <p className="ppn-meta text-slate-500 mt-0.5">Dysmetria severity per side · 0–5 each</p>
                     </div>
                     {data.ftnEnabled && (
@@ -324,7 +324,7 @@ const IbogaineCerebellarAssessmentForm: React.FC<IbogaineCerebellarAssessmentFor
                         <span className={`material-symbols-outlined text-lg ${data.hksEnabled ? 'text-emerald-400' : 'text-slate-500'}`} aria-hidden="true">accessibility</span>
                     </div>
                     <div className="flex-1 text-left">
-                        <p className="ppn-card-title text-slate-200">HKS — Heel-Knee-Shin Test</p>
+                        <p className="ppn-card-title text-slate-200">HKS: Heel-Knee-Shin Test</p>
                         <p className="ppn-meta text-slate-500 mt-0.5">Categorical result per side</p>
                     </div>
                     {data.hksEnabled && (

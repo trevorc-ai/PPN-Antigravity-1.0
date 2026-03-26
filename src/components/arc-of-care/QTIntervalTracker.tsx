@@ -409,7 +409,7 @@ export const QTIntervalTracker: React.FC<QTIntervalTrackerProps> = ({
                                             {bTier === worstTier && !isNaN(bVal) && ` ${deviceBLabel}: ${bVal}ms`}
                                         </span>
                                         <span className="ppn-meta block mt-0.5 text-slate-500">
-                                            Advisory only — practitioner retains full clinical decision authority.
+                                            Advisory only. Practitioner retains full clinical decision authority.
                                         </span>
                                     </div>
                                 </div>

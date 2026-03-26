@@ -354,12 +354,12 @@ const IbogaineWithdrawalAssessmentForm: React.FC<IbogaineWithdrawalAssessmentFor
                         <span className={`material-symbols-outlined text-lg ${data.cowsEnabled ? 'text-indigo-400' : 'text-slate-500'}`} aria-hidden="true">monitor_heart</span>
                     </div>
                     <div className="flex-1 text-left">
-                        <p className="ppn-card-title text-slate-200">COWS — Clinical Opiate Withdrawal Scale</p>
+                        <p className="ppn-card-title text-slate-200">COWS: Clinical Opiate Withdrawal Scale</p>
                         <p className="ppn-meta text-slate-500 mt-0.5">11-item clinician-rated scale · Total 0–55</p>
                     </div>
                     {data.cowsEnabled && cowsTotal > 0 && (
                         <span className={`ppn-meta font-black mr-2 ${cowsSeverity.colorClass}`}>
-                            {cowsTotal}/55 — {cowsSeverity.label}
+                            {cowsTotal}/55 · {cowsSeverity.label}
                         </span>
                     )}
                     <div className={`w-5 h-5 rounded border-2 flex items-center justify-center flex-shrink-0 transition-all ${data.cowsEnabled ? 'bg-indigo-500 border-indigo-400' : 'border-slate-600'}`} aria-hidden="true">
@@ -415,7 +415,7 @@ const IbogaineWithdrawalAssessmentForm: React.FC<IbogaineWithdrawalAssessmentFor
                         <span className={`material-symbols-outlined text-lg ${data.sowsEnabled ? 'text-violet-400' : 'text-slate-500'}`} aria-hidden="true">self_improvement</span>
                     </div>
                     <div className="flex-1 text-left">
-                        <p className="ppn-card-title text-slate-200">SOWS — Subjective Opiate Withdrawal Scale</p>
+                        <p className="ppn-card-title text-slate-200">SOWS: Subjective Opiate Withdrawal Scale</p>
                         <p className="ppn-meta text-slate-500 mt-0.5">Patient-rated · Total 0–64</p>
                     </div>
                     {data.sowsEnabled && data.sowsTotalScore !== null && (
@@ -459,7 +459,7 @@ const IbogaineWithdrawalAssessmentForm: React.FC<IbogaineWithdrawalAssessmentFor
                         <span className={`material-symbols-outlined text-lg ${data.bawsEnabled ? 'text-amber-400' : 'text-slate-500'}`} aria-hidden="true">liquor</span>
                     </div>
                     <div className="flex-1 text-left">
-                        <p className="ppn-card-title text-slate-200">BAWS — Brief Alcohol Withdrawal Scale</p>
+                        <p className="ppn-card-title text-slate-200">BAWS: Brief Alcohol Withdrawal Scale</p>
                         <p className="ppn-meta text-slate-500 mt-0.5">AUD withdrawal severity · Total 0–19</p>
                     </div>
                     {data.bawsEnabled && data.bawsTotalScore !== null && (
@@ -503,7 +503,7 @@ const IbogaineWithdrawalAssessmentForm: React.FC<IbogaineWithdrawalAssessmentFor
                         <span className={`material-symbols-outlined text-lg ${data.asiEnabled ? 'text-emerald-400' : 'text-slate-500'}`} aria-hidden="true">assignment</span>
                     </div>
                     <div className="flex-1 text-left">
-                        <p className="ppn-card-title text-slate-200">ASI — Addiction Severity Index</p>
+                        <p className="ppn-card-title text-slate-200">ASI: Addiction Severity Index</p>
                         <p className="ppn-meta text-slate-500 mt-0.5">7-domain structured intake · Composite 0–280</p>
                     </div>
                     {data.asiEnabled && asiComposite > 0 && (

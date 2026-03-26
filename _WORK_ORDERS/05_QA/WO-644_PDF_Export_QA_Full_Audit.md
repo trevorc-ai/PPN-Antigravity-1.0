@@ -1,7 +1,7 @@
 ---
 id: WO-644
 title: "PDF & Export QA — Full Platform Audit"
-status: 04_QA
+status: 05_QA
 owner: INSPECTOR
 priority: P1
 phase: Cross-Phase
