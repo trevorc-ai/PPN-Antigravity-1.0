@@ -76,6 +76,45 @@ This tells you what the app expects to query. Cross-reference with the live quer
 
 ---
 
+## STEP 1.5: Benchmark FK Check *(Required for `ref_` and `mv_` migrations)*
+
+**Trigger:** Run this step if the migration creates or modifies any table or view that will be used for cross-site comparisons, benchmarking aggregations, or the `data-seeding-pipeline` workflow.
+
+### What to Check
+
+For each field that will appear in a `GROUP BY`, `WHERE`, or cross-site comparison in a `v_` or `mv_` view:
+
+```bash
+# Find columns that look like free-text comparison fields
+grep -n "TEXT\|VARCHAR" migration.sql | grep -iv "label\|description\|note\|name"
+```
+
+**❌ FAIL if any of the following are stored as `TEXT` or `VARCHAR` instead of FK integers:**
+- Substance / drug name
+- Indication / condition
+- Protocol type / modality
+- Severity grade
+- Instrument / assessment tool name
+- Site tier / type
+
+**The fix:** The field must be an FK integer referencing the corresponding `ref_` table:
+
+```sql
+-- WRONG (free text — degrades cross-site comparability)
+modality TEXT,
+
+-- CORRECT (FK integer to ref_ table)
+modality_id INTEGER REFERENCES ref_modalities(modality_id),
+```
+
+### Why This Matters
+
+Free-text benchmark fields cannot be compared across sites (different spellings, capitalization, abbreviations destroy joins). Correcting them after a benchmark table is seeded requires a destructive migration — the entire seeding pipeline must re-run.
+
+**If any FK violation is found:** STOP. Return ticket to `02_TRIAGE` with `hold_reason: Benchmark FK Check — [field] must be FK integer referencing ref_[table] before this migration executes.`
+
+---
+
 ## STEP 2: Banned Commands Check
 
 ```bash
@@ -166,6 +205,31 @@ grep -n "FOR INSERT" migration.sql
 
 ---
 
+## STEP 5.5: Benchmark Suppression Check *(Required for `mv_` views only)*
+
+**Trigger:** Run if the migration contains any `CREATE MATERIALIZED VIEW mv_` statement.
+
+```bash
+# Verify suppression clause exists in mv_ view definition
+grep -n "HAVING COUNT" migration.sql
+```
+
+**❌ FAIL if:** The `mv_` view aggregates data across multiple sites or subjects AND has no `HAVING COUNT(DISTINCT subject_id) >= 5` (or equivalent) clause.
+
+**Why:** Statistical conclusions drawn from cohorts of fewer than 5 subjects are clinically misleading and create re-identification risk. Every benchmark `mv_` view must suppress micro-cohorts.
+
+**Correct pattern:**
+```sql
+-- Required for any mv_ with cross-site or cross-group comparison
+HAVING COUNT(DISTINCT subject_id) >= 5
+```
+
+**If clause is missing:** Return ticket to `02_TRIAGE` with `hold_reason: Benchmark Suppression Check — mv_[name] aggregates subjects without HAVING COUNT >= 5 suppression.`
+
+`ref_*` tables and `v_` views: this check does not apply.
+
+---
+
 ## STEP 6: Banned Commands Final Scan
 
 ```bash
@@ -181,13 +245,16 @@ Before moving any ticket to `03_BUILD` (from `02.5_PRE-BUILD_REVIEW`) or handing
 
 ```
 ## INSPECTOR 02.5 CLEARANCE
-- [ ] Step 1: Live table names verified via src/ grep
+- [ ] Step 1: Live table names verified via src/ grep or live Supabase query
+- [ ] Step 1.5: Benchmark FK Check — all comparison fields are FK integers (N/A if not a benchmark table)
 - [ ] Step 2: No banned commands found
 - [ ] Step 3: All CREATE TABLE/INDEX use IF NOT EXISTS
 - [ ] Step 4: DROP POLICY count == CREATE POLICY count (N/N)
 - [ ] Step 5: All log_* tables have RLS ENABLE + SELECT + INSERT policies
+- [ ] Step 5.5: Suppression clause (HAVING COUNT >= 5) present in all mv_ views (N/A if no mv_)
 - [ ] Step 6: Final banned command scan clean
 - [ ] Index types reviewed: [B-tree / Hash / Composite / Covering / Bitmap / Full-Text as appropriate]
+- [ ] /analysis-first gate: Pre-conditions = YES | N/A (not a v_ or mv_ object)
 Signed: INSPECTOR | Date: YYYY-MM-DD
 ```
 

@@ -519,7 +519,7 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                                 }`}
                                             placeholder="16"
                                         />
-                                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs">br/min</span>
+                                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs md:text-sm">br/min</span>
                                     </div>
                                     {reading.respiratory_rate !== undefined && getVitalStatus('rr', reading.respiratory_rate) !== 'normal' && (
                                         <p className={`text-sm ${getVitalStatus('rr', reading.respiratory_rate) === 'critical' ? 'text-red-400' : 'text-yellow-400'}`}>
@@ -549,7 +549,7 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                                 }`}
                                             placeholder="98.6"
                                         />
-                                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs">°F</span>
+                                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs md:text-sm">°F</span>
                                     </div>
                                     {reading.temperature !== undefined && getVitalStatus('temp', reading.temperature) !== 'normal' && (
                                         <p className={`text-sm ${getVitalStatus('temp', reading.temperature) === 'critical' ? 'text-red-400' : 'text-yellow-400'}`}>
@@ -574,10 +574,10 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                             }`}
                                     >
                                         <option value="">Select...</option>
-                                        <option value="0">0 — None (dry skin)</option>
-                                        <option value="1">1 — Mild (slight moisture)</option>
-                                        <option value="2">2 — Moderate (visible sweating)</option>
-                                        <option value="3">3 — Severe (profuse sweating)</option>
+                                        <option value="0">0: None (dry skin)</option>
+                                        <option value="1">1: Mild (slight moisture)</option>
+                                        <option value="2">2: Moderate (visible sweating)</option>
+                                        <option value="3">3: Severe (profuse sweating)</option>
                                     </select>
                                     {reading.diaphoresis_score !== undefined && getDiaphoresisStatus(reading.diaphoresis_score) !== 'normal' && (
                                         <p className={`text-sm ${getDiaphoresisStatus(reading.diaphoresis_score) === 'critical' ? 'text-red-400' : 'text-yellow-400'}`}>
@@ -602,17 +602,17 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                             }`}
                                     >
                                         <option value="">Select...</option>
-                                        <option value="alert">Alert — Fully awake and oriented</option>
-                                        <option value="dreamy">Dreamy — Eyes-closed, responsive to voice</option>
-                                        <option value="deep_trance">Deep Trance — Minimal responsiveness, expected</option>
-                                        <option value="agitated">Agitated — Distressed or combative</option>
-                                        <option value="non_responsive">Non-Responsive — No response to voice or touch</option>
+                                        <option value="alert">Alert: Fully awake and oriented</option>
+                                        <option value="dreamy">Dreamy: Eyes-closed, responsive to voice</option>
+                                        <option value="deep_trance">Deep Trance: Minimal responsiveness, expected</option>
+                                        <option value="agitated">Agitated: Distressed or combative</option>
+                                        <option value="non_responsive">Non-Responsive: No response to voice or touch</option>
                                     </select>
                                     {reading.level_of_consciousness && getLOCStatus(reading.level_of_consciousness) !== 'normal' && (
                                         <p className={`text-sm ${getLOCStatus(reading.level_of_consciousness) === 'critical' ? 'text-red-400' : 'text-yellow-400'}`}>
-                                            {reading.level_of_consciousness === 'non_responsive' ? '🚨 Non-Responsive — review rescue protocol immediately' :
-                                                reading.level_of_consciousness === 'agitated' ? '⚠️ Agitated — consider grounding or intervention' :
-                                                    '⚠️ Monitor closely — reduced responsiveness'}
+                                            {reading.level_of_consciousness === 'non_responsive' ? '🚨 Non-Responsive, review rescue protocol immediately' :
+                                                reading.level_of_consciousness === 'agitated' ? '⚠️ Agitated, consider grounding or intervention' :
+                                                    '⚠️ Monitor closely, reduced responsiveness'}
                                         </p>
                                     )}
                                 </div>
@@ -677,7 +677,7 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                             <AlertTriangle className="w-4 h-4 text-amber-400 flex-shrink-0" aria-hidden="true" />
                                             <div>
                                                 <p className="text-sm font-bold text-amber-300 leading-tight">QT Interval Tracker</p>
-                                                <p className="text-xs text-amber-600 mt-0.5">
+                                                <p className="text-xs md:text-sm text-amber-600 mt-0.5">
                                                     Auto-hidden, not Ibogaine protocol.
                                                     Enable to capture baseline QTc.
                                                 </p>
@@ -687,7 +687,7 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                             type="button"
                                             onClick={() => setQtManualOverride(v => !v)}
                                             aria-label={qtManualOverride ? 'Hide QT Interval Tracker' : 'Show QT Interval Tracker for baseline'}
-                                            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-bold uppercase tracking-wide transition-all ${qtManualOverride
+                                            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs md:text-sm font-bold uppercase tracking-wide transition-all ${qtManualOverride
                                                 ? 'bg-amber-600/20 border-amber-500/40 text-amber-300 hover:bg-amber-600/30'
                                                 : 'bg-slate-800/60 border-slate-600/50 text-slate-400 hover:border-amber-500/40 hover:text-amber-300'
                                                 }`}

@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HIPAA Legal Counsel Packet — PPN Portal</title>
+  <meta name="description" content="PPN Portal HIPAA Legal Counsel Review Packet — Confidential. For attorney-client review only." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=Roboto+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    /* ── PPN Print Standards (Rule 5) ── */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=Roboto+Mono:wght@400;600&display=swap');
+
+    @page {
+      size: letter;
+      margin: 0.6in;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --brand:     #7c6ff7;
+      --brand-dk:  #5b52d4;
+      --ink:       #1a1a2e;
+      --ink-light: #475569;
+      --rule:      #e2e8f0;
+      --tint:      #ede9ff;
+      --tint-dark: #3730a3;
+      --warn:      #fff3cd;
+      --warn-ink:  #854d0e;
+    }
+
+    html, body {
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: 11pt;
+      line-height: 1.65;
+      color: var(--ink);
+      background: #ffffff;
+    }
+
+    /* ── Screen wrapper ── */
+    @media screen {
+      body { max-width: 8.5in; margin: 0 auto; padding: 0.6in; background: #f8f9fc; }
+      .page-wrapper { background: #ffffff; padding: 0.6in; box-shadow: 0 4px 32px rgba(0,0,0,0.10); border-radius: 4px; }
+    }
+
+    @media print {
+      .no-print { display: none !important; }
+      body { background: #ffffff; padding: 0; }
+      .page-wrapper { box-shadow: none; padding: 0; }
+      a { color: inherit; text-decoration: none; }
+      /* Compact table rules for print — legal docs exempt from app font-size minimums */
+      .tbl-wrap { overflow: visible !important; }
+      table { font-size: 7pt !important; width: 100% !important; table-layout: auto; }
+      th { font-size: 6.5pt !important; padding: 4px 5px !important; }
+      td { font-size: 7pt !important; padding: 4px 5px !important; word-break: break-word; }
+      code, .mono { font-size: 6.5pt !important; }
+      .diagram { font-size: 6.5pt !important; padding: 8px 10px !important; }
+      .counsel-note { font-size: 8pt !important; }
+      p, li { font-size: 9.5pt !important; }
+    }
+
+    /* ── Print action bar (screen only) ── */
+    .print-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      background: #1e1b4b;
+      color: #e0e7ff;
+      padding: 14px 20px;
+      border-radius: 8px;
+      margin-bottom: 24px;
+      font-size: 13px;
+    }
+    .print-bar strong { color: #fff; }
+    .print-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--brand);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 20px;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.15s;
+    }
+    .print-btn:hover { background: var(--brand-dk); }
+
+    /* ── Document header ── */
+    .doc-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      padding-bottom: 20px;
+      border-bottom: 2px solid var(--brand);
+      margin-bottom: 24px;
+    }
+    .wordmark {
+      font-size: 16pt;
+      font-weight: 900;
+      color: var(--brand);
+      letter-spacing: -0.5px;
+    }
+    .wordmark span { color: var(--ink); }
+    .doc-meta {
+      text-align: right;
+      font-size: 9pt;
+      color: var(--ink-light);
+      line-height: 1.5;
+    }
+    .confidential-badge {
+      display: inline-block;
+      background: #fee2e2;
+      color: #991b1b;
+      font-size: 8pt;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 2px 8px;
+      border-radius: 4px;
+      border: 1px solid #fca5a5;
+      margin-top: 4px;
+    }
+
+    /* ── print-chunk ── */
+    .print-chunk {
+      break-inside: avoid;
+      page-break-inside: avoid;
+      margin-bottom: 20px;
+    }
+
+    /* ── Typography ── */
+    h1 {
+      font-size: 18pt;
+      font-weight: 900;
+      color: var(--ink);
+      margin-bottom: 6px;
+      line-height: 1.2;
+    }
+    h2 {
+      font-size: 13pt;
+      font-weight: 700;
+      color: var(--brand-dk);
+      margin-top: 32px;
+      margin-bottom: 8px;
+      padding-bottom: 4px;
+      border-bottom: 1px solid var(--rule);
+      page-break-after: avoid;
+    }
+    h3 {
+      font-size: 11pt;
+      font-weight: 700;
+      color: var(--ink);
+      margin-top: 20px;
+      margin-bottom: 6px;
+      page-break-after: avoid;
+    }
+    h4 {
+      font-size: 10pt;
+      font-weight: 700;
+      color: var(--ink-light);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-top: 16px;
+      margin-bottom: 4px;
+    }
+    p { margin-bottom: 10px; font-size: 10.5pt; }
+    ul, ol { padding-left: 20px; margin-bottom: 10px; }
+    li { margin-bottom: 4px; font-size: 10.5pt; }
+    code, .mono {
+      font-family: 'Roboto Mono', ui-monospace, monospace;
+      font-size: 9.5pt;
+      background: #f1f5f9;
+      padding: 1px 4px;
+      border-radius: 3px;
+      color: var(--brand-dk);
+    }
+
+    /* ── Tables ── */
+    .tbl-wrap {
+      break-inside: avoid;
+      page-break-inside: avoid;
+      margin-bottom: 20px;
+      overflow-x: auto;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 9pt;
+    }
+    thead tr { background: var(--tint); }
+    th {
+      text-align: left;
+      color: var(--tint-dark);
+      font-weight: 700;
+      padding: 7px 10px;
+      border: 1px solid #c7d2fe;
+      font-size: 8.5pt;
+    }
+    td {
+      padding: 6px 10px;
+      border: 1px solid var(--rule);
+      vertical-align: top;
+      color: var(--ink);
+    }
+    tr:nth-child(even) td { background: #f8fafc; }
+    td strong, .flag { color: #9f1239; font-weight: 700; }
+
+    /* ── Status badges ── */
+    .status-supported  { color: #065f46; font-weight: 700; }
+    .status-remove     { color: #991b1b; font-weight: 700; }
+    .status-pending    { color: #92400e; font-weight: 700; }
+
+    /* ── Warning callout ── */
+    .counsel-note {
+      background: var(--warn);
+      border-left: 3px solid #f59e0b;
+      color: var(--warn-ink);
+      padding: 10px 14px;
+      border-radius: 0 6px 6px 0;
+      font-size: 9.5pt;
+      margin-bottom: 12px;
+      break-inside: avoid;
+    }
+    .counsel-note strong { color: #78350f; }
+
+    /* ── Signature block ── */
+    .sig-block {
+      border-top: 1px solid var(--rule);
+      margin-top: 20px;
+      padding-top: 16px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+    .sig-line {
+      border-top: 1px solid var(--ink);
+      margin-top: 32px;
+      padding-top: 6px;
+      font-size: 9.5pt;
+      color: var(--ink-light);
+    }
+
+    /* ── ASCII diagram ── */
+    .diagram {
+      font-family: 'Roboto Mono', ui-monospace, monospace;
+      font-size: 8pt;
+      background: #f8fafc;
+      border: 1px solid var(--rule);
+      border-radius: 6px;
+      padding: 14px 16px;
+      white-space: pre;
+      overflow-x: auto;
+      break-inside: avoid;
+      line-height: 1.5;
+      margin-bottom: 16px;
+    }
+
+    /* ── Running footer (screen via pseudo — real footer for print set below) ── */
+    .doc-footer {
+      border-top: 1px solid var(--rule);
+      margin-top: 48px;
+      padding-top: 12px;
+      font-size: 8.5pt;
+      color: var(--ink-light);
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+
+    @media print {
+      @page {
+        @bottom-left   { content: "HIPAA Legal Counsel Packet — PPN Portal · Confidential"; font-size: 8pt; color: #64748b; font-family: 'Inter', sans-serif; }
+        @bottom-center { content: counter(page) " of " counter(pages); font-size: 8pt; color: #64748b; font-family: 'Inter', sans-serif; }
+        @bottom-right  { content: "© 2026 PPN Portal · ppnportal.net"; font-size: 8pt; color: #64748b; font-family: 'Inter', sans-serif; }
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Print action bar (screen only) ── -->
+<div class="print-bar no-print">
+  <div>
+    <strong>HIPAA Legal Counsel Packet</strong>
+    &nbsp;·&nbsp; PPN Portal, LLC &nbsp;·&nbsp; March 2026 &nbsp;·&nbsp;
+    <span style="color:#a5b4fc;">Confidential — Attorney-Client Privilege</span>
+  </div>
+  <button class="print-btn" onclick="window.print()">
+    ⬇ Print / Save as PDF
+  </button>
+</div>
+
+<div class="page-wrapper">
+
+  <!-- ── Document Header ── -->
+  <div class="doc-header">
+    <div>
+      <div class="wordmark">PPN <span>Portal</span></div>
+      <div style="font-size:9pt;color:#64748b;margin-top:2px;">ppnportal.net</div>
+    </div>
+    <div class="doc-meta">
+      HIPAA Applicability Review Packet<br>
+      Technical Memorandum for Legal Counsel<br>
+      Version 1.0 &nbsp;·&nbsp; March 2026<br>
+      <span class="confidential-badge">Confidential — Attorney-Client Privilege</span>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       PART I — HIPAA APPLICABILITY REVIEW PACKET
+       ══════════════════════════════════════════════ -->
+
+  <div class="print-chunk">
+    <h1>HIPAA Applicability Review Packet</h1>
+    <p><strong>PPN Portal, LLC</strong> &nbsp;·&nbsp; ppnportal.net &nbsp;·&nbsp; Q1 2026</p>
+    <p>Prepared for: Legal Counsel and Authorized Recipients<br>
+    Prepared by: PPN Portal Technical and Strategy Team</p>
+    <div class="counsel-note">
+      <strong>Privilege Notice:</strong> This packet is intended to assist legal counsel in providing legal advice regarding HIPAA applicability. It is intended to be treated as confidential and subject to attorney-client privilege and attorney work product protections to the fullest extent available.
+    </div>
+  </div>
+
+  <!-- Section 1 -->
+  <div class="print-chunk">
+    <h2>1. Executive Summary and Purpose</h2>
+    <p>PPN Portal is a cloud-based structured clinical documentation, outcomes tracking, and benchmarking platform for licensed psychedelic therapy practitioners and clinical programs. This packet is submitted to obtain legal counsel's independent analysis of whether PPN Portal creates, receives, maintains, or transmits Protected Health Information on behalf of Covered Entities under HIPAA.</p>
+    <p>This packet does not state final legal conclusions. PPN Portal requests counsel's analysis of the facts and assumptions described below.</p>
+  </div>
+
+  <div class="print-chunk">
+    <h2>2. Material Assumptions for Counsel's Review</h2>
+    <ul>
+      <li>PPN Portal is a SaaS platform for licensed practitioners and clinical facilities for structured documentation, longitudinal outcomes tracking, quality improvement, safety surveillance, and aggregate benchmarking.</li>
+      <li>PPN Portal is not intended to function as an EHR, billing platform, claims processor, or healthcare clearinghouse.</li>
+      <li>Direct patient identity is intended to remain outside the in-scope PPN clinical data model.</li>
+      <li>Patient continuity relies on a two-layer pseudonymous subject-linking model: internal <code>subject_id</code> and practitioner-facing <code>PT-XXXXXX</code> display code.</li>
+      <li>The current platform retains certain date-related fields, including <code>session_date</code>. The legal significance of these fields is presented as an open issue for counsel.</li>
+      <li>This memorandum addresses the current implemented fact pattern and does not rely on deprecated architecture or future work not yet completed.</li>
+    </ul>
+  </div>
+
+  <!-- Section 2 — Covered Entity -->
+  <div class="print-chunk">
+    <h2>3. Covered Entity Analysis</h2>
+    <p>PPN Portal does not believe it is a Covered Entity, but requests counsel's independent analysis. Based on current understanding:</p>
+    <ul>
+      <li><strong>Health plan:</strong> PPN Portal is not a health plan. It does not provide or pay for medical care.</li>
+      <li><strong>Healthcare clearinghouse:</strong> PPN Portal does not process HIPAA standard transactions.</li>
+      <li><strong>Healthcare provider:</strong> PPN Portal does not diagnose, treat, or prescribe. It is a software platform used by providers.</li>
+    </ul>
+    <p>Counsel is asked to confirm whether PPN Portal should be analyzed as outside the Covered Entity definition under the facts described in this packet.</p>
+  </div>
+
+  <!-- Section 3 — Business Associate -->
+  <div class="print-chunk">
+    <h2>4. Business Associate Analysis</h2>
+    <p>PPN Portal understands that the more important question is whether it is a Business Associate with respect to customers who are themselves Covered Entities. PPN Portal requests counsel's analysis of whether the platform's intended data model, two-layer pseudonymous subject-linking approach, operational boundaries, and supporting vendor stack are sufficient to avoid Business Associate status.</p>
+    <div class="counsel-note">
+      <strong>Counsel Focus:</strong> PPN Portal is not asking counsel to assume the answer. PPN Portal is asking counsel to evaluate the actual implemented fact pattern.
+    </div>
+  </div>
+
+  <!-- Section 4 — Data Elements -->
+  <div class="print-chunk">
+    <h2>5. Data Elements Intended to Enter the Platform</h2>
+    <ol>
+      <li>Internal canonical subject identifier: <code>subject_id</code> (BIGINT, system-generated)</li>
+      <li>Practitioner-facing pseudonymous display code: <code>PT-XXXXXX</code> (6-character alphanumeric)</li>
+      <li>Structured clinical codes and controlled-vocabulary references</li>
+      <li>Treatment-related structured values (substance, dosage, route)</li>
+      <li>Vital sign values and structured safety fields</li>
+      <li>Outcome scores and assessment values (PHQ-9, GAD-7, MEQ-30, etc.)</li>
+      <li>Session sequence and structured workflow values</li>
+      <li>Date-related fields including <code>session_date</code> <strong class="flag">— open legal issue</strong></li>
+      <li>Practitioner account information for authentication and access</li>
+      <li>Site and organization identifiers for access scoping</li>
+      <li>Subscription and payment information handled through Stripe</li>
+    </ol>
+  </div>
+
+  <div class="print-chunk">
+    <h2>6. Data Elements Intended to Be Excluded</h2>
+    <p>The platform is intended not to store in the in-scope clinical schema the following direct patient identifiers:</p>
+    <ul>
+      <li>Patient legal name</li>
+      <li>Patient date of birth</li>
+      <li>Patient street address</li>
+      <li>Patient phone number</li>
+      <li>Patient email address</li>
+      <li>Social Security Number</li>
+      <li>Insurance identifiers</li>
+      <li>Medical record number</li>
+      <li>Free-text narrative patient identity fields</li>
+      <li>Patient photographs in ordinary clinical workflows</li>
+    </ul>
+    <p>These exclusions are intended to be architectural constraints, not policy preferences. Counsel is asked to assess whether the exclusions, if accurate in production, are sufficient to support the legal conclusions sought.</p>
+  </div>
+
+  <!-- Section 5 — Dates -->
+  <div class="print-chunk">
+    <h2>7. Date-Related Fields — Open Legal Issue</h2>
+    <div class="counsel-note">
+      <strong>Specific Counsel Analysis Requested:</strong> Although the platform is intended to exclude direct patient identity, the current application retains <code>session_date</code> and other temporal fields. PPN Portal is not asking counsel to assume this has already been resolved.
+    </div>
+    <p>Counsel is asked to analyze whether:</p>
+    <ol>
+      <li>Retention of <code>session_date</code> prevents reliance on Safe Harbor</li>
+      <li>Date-related fields require Expert Determination or narrower use-boundary analysis</li>
+      <li>Date-related fields may remain acceptable for internal use while requiring different treatment in exports</li>
+      <li>Additional suppression, generalization, or year-only transformation is required</li>
+    </ol>
+  </div>
+
+  <!-- Section 6 — Identifier Model -->
+  <div class="print-chunk">
+    <h2>8. Two-Layer Pseudonymous Subject-Linking Architecture</h2>
+    <h3>Layer 1 — Internal Canonical Database Identifier</h3>
+    <p>The internal canonical identifier is <code>subject_id</code>. It is a system-generated BIGINT value used as the database-level primary key for patient-level linkage across sessions and related clinical records.</p>
+    <ul>
+      <li>Generated by the system; not derived from any patient attribute</li>
+      <li>Not intended to encode patient-identifying information</li>
+      <li>Not ordinarily exposed to practitioners in the UI</li>
+    </ul>
+    <h3>Layer 2 — Practitioner-Facing Display Code</h3>
+    <p>The practitioner-facing display code uses the format <code>PT-XXXXXX</code>, where the suffix is a 6-character alphanumeric value generated client-side at patient creation.</p>
+    <ul>
+      <li>Contains no patient-derived information</li>
+      <li>Not intended to encode any direct patient identifier</li>
+      <li>Functions as the practitioner-facing pseudonymous patient reference in the UI</li>
+    </ul>
+    <h4>Identity Boundary</h4>
+    <p>The practitioner holds the only mapping between the display code and the real patient identity. PPN Portal stores the internal canonical identifier and the display code, but does not use patient name, DOB, MRN, or other direct patient identity as the patient-linking value in the clinical data model.</p>
+    <div class="counsel-note">
+      <strong>Canonical Statement for All Legal Materials:</strong> PPN Portal uses a two-layer patient-linking model consisting of an internal system-generated database identifier (<code>subject_id</code>) and a practitioner-facing pseudonymous display code in the format <code>PT-XXXXXX</code>. The internal identifier is the canonical database linkage key. The display code is the practitioner-visible reference used in the UI. Neither identifier is derived from patient name, date of birth, or other direct patient identity.
+    </div>
+  </div>
+
+  <!-- Section 7 — Safe Harbor -->
+  <div class="print-chunk">
+    <h2>9. Safe Harbor Analysis Summary</h2>
+    <p>PPN Portal is not asking counsel to assume that all 18 Safe Harbor categories have already been fully satisfied. The narrower position is:</p>
+    <ol>
+      <li>Direct patient identity fields appear intentionally excluded from the in-scope clinical schema</li>
+      <li>Date-related fields and patient-linking identifiers require legal confirmation against the actual implemented fact pattern</li>
+      <li>Counsel should evaluate whether the current design supports Safe Harbor, whether Expert Determination is more appropriate, or whether PPN should narrow its claims pending further changes</li>
+    </ol>
+  </div>
+
+  <!-- Section 8 — Vendors -->
+  <div class="print-chunk">
+    <h2>10. Vendor and Metadata Boundaries</h2>
+    <p>Current vendor footprint — production environment:</p>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Vendor</th><th>Function</th><th>Clinical Data Path</th><th>Compliance</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Supabase</strong></td><td>Database (PostgreSQL) + Authentication</td><td>Yes — all log_* tables reside here; RLS enforced</td><td>SOC 2 Type II / DPA</td></tr>
+          <tr><td><strong>Vercel</strong></td><td>Frontend hosting + CDN</td><td>No clinical data stored; request/IP logs only</td><td>SOC 2 / DPA</td></tr>
+          <tr><td><strong>Stripe</strong></td><td>Subscription and payment processing</td><td>No — outside clinical data path</td><td>PCI DSS Level 1 / DPA</td></tr>
+          <tr><td><strong>Resend</strong></td><td>Transactional email delivery</td><td>No — practitioner email only</td><td>DPA</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>No separate analytics, error-tracking, or observability tools (e.g., Sentry, Datadog, Mixpanel) are intentionally enabled in the reviewed production environment.</p>
+  </div>
+
+  <!-- Section 9 — Public Claims Risk -->
+  <div class="print-chunk">
+    <h2>11. Public Documentation Risk and Recommended Posture</h2>
+    <p>Until counsel review is complete, the public-facing posture uses language such as:</p>
+    <ul>
+      <li>"Designed to avoid storing direct patient identifiers"</li>
+      <li>"Built around pseudonymized structured clinical data"</li>
+      <li>"Formal legal review is in progress"</li>
+    </ul>
+    <p>The following language has been removed or is being removed from public materials:</p>
+    <ul>
+      <li>"HIPAA does not apply"</li>
+      <li>"All 18 Safe Harbor identifiers are confirmed compliant"</li>
+      <li>"No BAA is required" as a final categorical statement</li>
+      <li>"Zero-PHI architecture confirmed"</li>
+      <li>"Immunity to Subpoenas"</li>
+    </ul>
+  </div>
+
+  <!-- Section 10 — Questions for Counsel -->
+  <div class="print-chunk">
+    <h2>12. Specific Questions for Counsel</h2>
+    <ol>
+      <li>Based on the facts described, is PPN Portal a HIPAA Covered Entity?</li>
+      <li>Based on the facts described, is PPN Portal a HIPAA Business Associate?</li>
+      <li>Do the records stored in the in-scope environment constitute PHI, individually or in combination?</li>
+      <li>Does the two-layer subject-linking architecture support de-identification under Safe Harbor, Expert Determination, or neither?</li>
+      <li>Do retained date-related fields, including <code>session_date</code>, prevent reliance on Safe Harbor?</li>
+      <li>Do operational logs, vendor systems, backups, or metadata create PHI risk even if the clinical schema excludes direct patient identifiers?</li>
+      <li>Is a Business Associate Agreement required for any current workflow?</li>
+      <li>Are any current public claims too strong relative to the current implemented architecture?</li>
+      <li>What additional materials are needed before counsel could issue a reliable written opinion?</li>
+    </ol>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       PART II — APPENDIX PACK
+       ══════════════════════════════════════════════ -->
+
+  <div class="print-chunk" style="margin-top:40px;padding-top:20px;border-top:3px solid var(--brand);">
+    <h1>Appendix Pack</h1>
+    <p><strong>PPN Portal HIPAA Counsel Review Materials</strong> &nbsp;·&nbsp; Version 1.0 &nbsp;·&nbsp; March 2026</p>
+  </div>
+
+  <!-- Appendix A -->
+  <div class="print-chunk">
+    <h2>Appendix A — Document Control and Scope Statement</h2>
+    <p>Document Version: 1.0 &nbsp;·&nbsp; Prepared: March 2026 &nbsp;·&nbsp; Environment: Production (ppnportal.net)<br>
+    Prepared By: Trevor Calton, Co-Founder, PPN Portal &nbsp;·&nbsp; Reviewed By: Jason Bluth, Co-Founder, PPN Portal</p>
+    <p><strong>Source-of-Truth Rule:</strong> If any narrative statement conflicts with the current in-scope schema snapshot, direct engineering verification, or current live configuration review, the schema snapshot and engineering verification control.</p>
+    <p><strong>Out of Scope:</strong> Deprecated workflows, superseded schema versions, abandoned design concepts, unrelated domains, and roadmap concepts not currently implemented.</p>
+  </div>
+
+  <!-- Appendix B -->
+  <div class="print-chunk">
+    <h2>Appendix B — Technical Declaration</h2>
+    <p>I, Trevor Calton, serve as Co-Founder and Chief Technology Officer for PPN Portal and have direct knowledge of the application architecture, schema, and implemented environment under review.</p>
+    <p>I declare the following to the best of my knowledge as of the date below:</p>
+    <ol>
+      <li>The schema reviewed is the current schema for the production environment identified in Appendix A.</li>
+      <li>The field inventory in Appendix C accurately reflects the current in-scope schema snapshot.</li>
+      <li>Direct patient identifiers (name, DOB, phone, email, SSN, address, MRN) are not intended to be stored in the in-scope clinical data model, subject to the field-level inventory in Appendix C.</li>
+      <li>The current subject-linking workflow is described in Appendix D.</li>
+      <li>The vendor list in Appendix G is accurate for the current in-scope environment.</li>
+      <li>The access-control and RLS summary in Appendix H accurately reflects the intended current platform posture.</li>
+      <li>This declaration is limited to technical and operational facts and does not offer legal conclusions.</li>
+    </ol>
+    <div class="sig-block">
+      <div>
+        <div class="sig-line">Trevor Calton, Co-Founder / CTO, PPN Portal</div>
+        <div class="sig-line" style="margin-top:32px;">Date</div>
+      </div>
+      <div>
+        <div class="sig-line">Jason Bluth, Co-Founder, PPN Portal</div>
+        <div class="sig-line" style="margin-top:32px;">Date</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Appendix C -->
+  <div class="print-chunk">
+    <h2>Appendix C — Current Schema Snapshot and Field Inventory</h2>
+    <p>Sourced from migration files 000–050 series, March 2026. Reference tables (ref_*) contain controlled vocabulary only and are not directly patient-linked.</p>
+    <div class="counsel-note"><strong>Flags:</strong> Fields marked <strong class="flag">OPEN LEGAL ISSUE</strong> require direct counsel analysis. Free-text fields require review for identifier risk.</div>
+  </div>
+
+  <!-- Table C-1: Schema overview (5 cols — fits letter width) -->
+  <p style="font-size:9pt;font-weight:700;margin-bottom:4px;">Table C-1 — Schema and Export Overview</p>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Table</th><th>Column</th><th>Type</th><th>Category</th><th>In Exports</th><th>In Analytics</th></tr></thead>
+      <tbody>
+        <tr><td>log_clinical_records</td><td>subject_id</td><td>BIGINT</td><td>Pseudonymous ID</td><td>Yes (CSV)</td><td>Yes</td></tr>
+        <tr><td>log_clinical_records</td><td>patient_link_code</td><td>TEXT</td><td>Pseudonymous ID</td><td>No</td><td>No</td></tr>
+        <tr><td>log_clinical_records</td><td>session_date</td><td>DATE</td><td>Operational metadata</td><td>Yes (CSV)</td><td>Yes</td></tr>
+        <tr><td>log_clinical_records</td><td>session_number</td><td>INTEGER</td><td>Clinical data</td><td>Yes</td><td>Yes</td></tr>
+        <tr><td>log_clinical_records</td><td>dosage_mg</td><td>DECIMAL(6,2)</td><td>Clinical data</td><td>Yes</td><td>Yes</td></tr>
+        <tr><td>log_clinical_records</td><td>dosage_route</td><td>VARCHAR(20)</td><td>Clinical data</td><td>Yes</td><td>Yes</td></tr>
+        <tr><td>log_clinical_records</td><td>meq30_score</td><td>INTEGER</td><td>Clinical data</td><td>Yes</td><td>Yes</td></tr>
+        <tr><td>log_clinical_records</td><td>session_notes</td><td>TEXT</td><td>Free text</td><td>No</td><td>No</td></tr>
+        <tr><td>log_clinical_records</td><td>created_by</td><td>UUID</td><td>Account data</td><td>No</td><td>No</td></tr>
+        <tr><td>log_safety_events</td><td>subject_id</td><td>BIGINT</td><td>Pseudonymous ID</td><td>No</td><td>Yes</td></tr>
+        <tr><td>log_safety_events</td><td>event_type</td><td>VARCHAR(50)</td><td>Clinical data</td><td>No</td><td>Yes</td></tr>
+        <tr><td>log_safety_events</td><td>event_description</td><td>TEXT</td><td>Free text</td><td>No</td><td>No</td></tr>
+        <tr><td>log_safety_events</td><td>occurred_at</td><td>TIMESTAMPTZ</td><td>Operational metadata</td><td>No</td><td>No</td></tr>
+        <tr><td>log_session_vitals</td><td>session_id</td><td>UUID</td><td>Pseudonymous ID</td><td>No</td><td>No</td></tr>
+        <tr><td>log_session_vitals</td><td>recorded_at</td><td>TIMESTAMP</td><td>Operational metadata</td><td>No</td><td>No</td></tr>
+        <tr><td>log_session_vitals</td><td>heart_rate</td><td>INTEGER</td><td>Clinical data</td><td>No</td><td>Yes</td></tr>
+        <tr><td>log_session_vitals</td><td>bp_systolic / bp_diastolic</td><td>INTEGER</td><td>Clinical data</td><td>No</td><td>Yes</td></tr>
+        <tr><td>log_baseline_assessments</td><td>patient_id</td><td>VARCHAR(10)</td><td>Pseudonymous ID</td><td>No</td><td>Yes</td></tr>
+        <tr><td>log_baseline_assessments</td><td>assessment_date</td><td>TIMESTAMP</td><td>Operational metadata</td><td>No</td><td>No</td></tr>
+        <tr><td>log_baseline_assessments</td><td>phq9_score / gad7_score / pcl5_score</td><td>INTEGER</td><td>Clinical data</td><td>Yes</td><td>Yes</td></tr>
+        <tr><td>log_longitudinal_assessments</td><td>patient_id</td><td>VARCHAR(10)</td><td>Pseudonymous ID</td><td>No</td><td>Yes</td></tr>
+        <tr><td>log_longitudinal_assessments</td><td>days_post_session</td><td>INTEGER</td><td>Clinical data</td><td>Yes</td><td>Yes</td></tr>
+        <tr><td>log_longitudinal_assessments</td><td>assessment_date</td><td>DATE</td><td>Operational metadata</td><td>No</td><td>No</td></tr>
+        <tr><td>log_red_alerts</td><td>patient_id</td><td>VARCHAR(10)</td><td>Pseudonymous ID</td><td>No</td><td>No</td></tr>
+        <tr><td>log_red_alerts</td><td>response_notes</td><td>TEXT</td><td>Free text</td><td>No</td><td>No</td></tr>
+        <tr><td>log_consent</td><td>subject_id</td><td>BIGINT</td><td>Pseudonymous ID</td><td>No</td><td>No</td></tr>
+        <tr><td>log_consent</td><td>verified_at</td><td>TIMESTAMPTZ</td><td>Operational metadata</td><td>No</td><td>No</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Table C-2: Flags and notes (3 cols) -->
+  <p style="font-size:9pt;font-weight:700;margin-bottom:4px;margin-top:16px;">Table C-2 — Field Flags and Counsel Notes</p>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th style="width:30%">Table · Column</th><th style="width:20%">Flag</th><th>Counsel Notes</th></tr></thead>
+      <tbody>
+        <tr><td>log_clinical_records · subject_id</td><td>—</td><td>Canonical internal linkage key. Not patient name or DOB.</td></tr>
+        <tr><td>log_clinical_records · patient_link_code</td><td>—</td><td>PT-XXXXXX display code (legacy field).</td></tr>
+        <tr><td>log_clinical_records · session_date</td><td><strong class="flag">OPEN LEGAL ISSUE</strong></td><td>Date field present in exports. Counsel review required.</td></tr>
+        <tr><td>log_clinical_records · session_number</td><td>—</td><td>Ordinal sequence value, not an absolute date.</td></tr>
+        <tr><td>log_clinical_records · session_notes</td><td><strong class="flag">FREE TEXT</strong></td><td>Potential identifier risk if practitioner enters identifying information.</td></tr>
+        <tr><td>log_clinical_records · created_by</td><td>—</td><td>Practitioner user UUID, not patient-linked.</td></tr>
+        <tr><td>log_safety_events · event_description</td><td><strong class="flag">FREE TEXT</strong></td><td>Potential identifier risk.</td></tr>
+        <tr><td>log_safety_events · occurred_at</td><td><strong class="flag">OPEN LEGAL ISSUE</strong></td><td>Date-related field — counsel review required.</td></tr>
+        <tr><td>log_session_vitals · recorded_at</td><td><strong class="flag">OPEN LEGAL ISSUE</strong></td><td>Date-related field — counsel review required.</td></tr>
+        <tr><td>log_baseline_assessments · assessment_date</td><td><strong class="flag">OPEN LEGAL ISSUE</strong></td><td>Date-related field — counsel review required.</td></tr>
+        <tr><td>log_longitudinal_assessments · assessment_date</td><td><strong class="flag">OPEN LEGAL ISSUE</strong></td><td>Date-related field — counsel review required.</td></tr>
+        <tr><td>log_red_alerts · response_notes</td><td><strong class="flag">FREE TEXT</strong></td><td>Potential identifier risk.</td></tr>
+        <tr><td>log_consent · verified_at</td><td><strong class="flag">OPEN LEGAL ISSUE</strong></td><td>Date-related field — counsel review required.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Appendix D -->
+  <div class="print-chunk">
+    <h2>Appendix D — Canonical Subject Identifier Workflow</h2>
+    <p><strong>Layer 1 — Internal canonical identifier:</strong> <code>subject_id</code> (BIGINT). System-generated. Not derived from patient name, DOB, MRN, or any other patient attribute. Not ordinarily exposed in the UI.</p>
+    <p><strong>Layer 2 — Practitioner-facing display code:</strong> <code>PT-XXXXXX</code> (6-character alphanumeric). Generated client-side at patient creation. Shown in the UI as the ordinary patient reference. Contains no patient-derived information.</p>
+    <p><strong>Identity boundary:</strong> The practitioner holds the only mapping between the display code and the real patient identity. PPN Portal stores neither a patient's legal name nor any other direct patient identity as the patient-linking value in the clinical data model.</p>
+    <p><strong>What the platform stores:</strong> <code>subject_id</code> (canonical), <code>PT-XXXXXX</code> (display alias), and structured clinical records linked through the internal canonical identifier.</p>
+  </div>
+
+  <!-- Appendix E -->
+  <div class="print-chunk">
+    <h2>Appendix E — Data Flow Diagram</h2>
+    <div class="diagram">PRACTITIONER BROWSER (Client-Side)
+  PT-XXXXXX generated here — client-side only
+  Direct patient identity remains here (not transmitted)
+  Structured form entry only
+         |
+         | HTTPS — structured JSON payload
+         | No patient name, DOB, SSN, MRN, address
+         |
+         v
+VERCEL (Frontend Hosting / CDN)
+  Application delivery + CDN layer
+  May generate: request logs, IP logs (practitioner-linked, not patient-linked)
+         |
+         | Authenticated API requests
+         |
+         v
+SUPABASE (Database + Authentication)
+  Stores: subject_id (canonical), PT-XXXXXX, structured clinical data
+  session_date present — open legal issue
+  RLS enforced on all clinical log_* tables
+  PITR backup managed by Supabase
+      /       \
+     v         v
+RESEND            STRIPE
+Transactional     Subscription + payment
+email delivery    PCI DSS Level 1
+Practitioner      Payment card not stored
+email only        in PPN clinical database
+
+OUTBOUND PATHS:
+  Dashboard views       — Site-scoped, practitioner-authenticated
+  Research CSV export   — Includes subject_id, session_date, assessment scores
+                          (subject_id + session_date present — counsel review required)
+  Aggregate benchmarks  — Network-level aggregate counts, no subject-level records
+
+IDENTITY BOUNDARY:
+  PT-XXXXXX display code  <->  Real patient identity  [Practitioner holds this mapping]
+  PPN Portal stores: subject_id + PT-XXXXXX + structured clinical data
+  PPN Portal does NOT store: patient name, DOB, SSN, MRN, address, phone, email</div>
+  </div>
+
+  <!-- Appendix F -->
+  <div class="print-chunk">
+    <h2>Appendix F — Operational Metadata and Logging Boundaries</h2>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Category</th><th>Exists</th><th>Vendor</th><th>Data Elements</th><th>Patient-Linked Risk</th></tr></thead>
+        <tbody>
+          <tr><td>Authentication logs</td><td>Yes</td><td>Supabase Auth</td><td>User UUID, practitioner email, timestamp, IP, session token</td><td>Practitioner-linked only. No patient identity in auth path.</td></tr>
+          <tr><td>Application request logs</td><td>Yes</td><td>Vercel</td><td>IP address, request path, timestamp, HTTP status, user-agent</td><td>Practitioner-session-linked. Counsel should evaluate.</td></tr>
+          <tr><td>Hosting / CDN logs</td><td>Yes</td><td>Vercel</td><td>IP address, CDN cache events, request metadata</td><td>No clinical data in CDN layer.</td></tr>
+          <tr><td>Database logs</td><td>Yes</td><td>Supabase</td><td>Query logs, access events, schema change events</td><td>Contains structured clinical queries. subject_id and session_date present.</td></tr>
+          <tr><td>Backup / recovery (PITR)</td><td>Yes</td><td>Supabase</td><td>Full database state at point-in-time</td><td>Backs up subject_id, session_date, all clinical records. Counsel should evaluate backup scope.</td></tr>
+          <tr><td>Email event logs</td><td>Yes</td><td>Resend</td><td>Practitioner email, message type, delivery status</td><td>Practitioner email only. No patient identity.</td></tr>
+          <tr><td>Support access logs</td><td>Limited</td><td>Internal (none confirmed)</td><td>Access details if support workflows exist</td><td>Not formally documented. Counsel should inquire.</td></tr>
+          <tr><td>Error / observability</td><td>No</td><td>None</td><td>N/A</td><td>No tooling (e.g., Sentry, Datadog) intentionally enabled.</td></tr>
+          <tr><td>Analytics systems</td><td>No</td><td>None</td><td>N/A</td><td>No analytics tool (e.g., Mixpanel, GA) intentionally enabled.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Appendix G already covered in Section 10 vendor table — referenced -->
+  <div class="print-chunk">
+    <h2>Appendix G — Vendor and Subprocessor Summary</h2>
+    <p>See vendor table in Section 10. Current in-scope vendors: Supabase, Vercel, Stripe, Resend. No additional subprocessors or analytics vendors are intentionally enabled.</p>
+  </div>
+
+  <!-- Appendix H -->
+  <div class="print-chunk">
+    <h2>Appendix H — Authentication, Access Control, and RLS Summary</h2>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Role</th><th>Can View Site Data</th><th>Can Edit</th><th>Can Export</th><th>Can Administer</th></tr></thead>
+        <tbody>
+          <tr><td>network_admin</td><td>Yes — all sites</td><td>Yes — all sites</td><td>Yes</td><td>Yes</td></tr>
+          <tr><td>site_admin</td><td>Yes — own site</td><td>Yes — own site</td><td>Yes</td><td>Yes</td></tr>
+          <tr><td>clinician</td><td>Yes — own site</td><td>Yes — own site</td><td>Limited</td><td>No</td></tr>
+          <tr><td>analyst</td><td>Yes — own site</td><td>No</td><td>Yes</td><td>No</td></tr>
+          <tr><td>auditor</td><td>Yes — own site</td><td>No</td><td>No</td><td>No</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p><strong>RLS:</strong> Row Level Security is enabled on all <code>log_*</code> clinical tables and enforced via <code>log_user_sites</code> site membership. Reference tables (<code>ref_*</code>) are read-only for all authenticated users. Direct SQL access to production is restricted to authorized administrators via Supabase access controls.</p>
+  </div>
+
+  <!-- Appendix I -->
+  <div class="print-chunk">
+    <h2>Appendix I — Sample Synthetic Database Output</h2>
+    <p>All values below are synthetic and are provided solely for structural review.</p>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Field</th><th>Example Value</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td>subject_id</td><td>10452</td><td>Internal canonical database identifier</td></tr>
+          <tr><td>patient_display_code</td><td>PT-X9L2M4</td><td>Practitioner-facing display code</td></tr>
+          <tr><td>session_number</td><td>3</td><td>Structured clinical sequence</td></tr>
+          <tr><td>session_date</td><td>2026-03-14</td><td><strong class="flag">Date field retained — open legal issue</strong></td></tr>
+          <tr><td>dosage_mg</td><td>25.00</td><td>Structured numeric</td></tr>
+          <tr><td>meq30_score</td><td>72</td><td>0-100 validated scale</td></tr>
+          <tr><td>phq9_score (baseline)</td><td>14</td><td>0-27 validated scale</td></tr>
+          <tr><td>gad7_score (baseline)</td><td>11</td><td>0-21 validated scale</td></tr>
+          <tr><td>site_id</td><td>17</td><td>Site-scoped access value</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Appendix J -->
+  <div class="print-chunk">
+    <h2>Appendix J — Export and Benchmarking Boundaries</h2>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Output Type</th><th>Audience</th><th>Includes subject_id</th><th>Includes PT-XXXXXX</th><th>Includes Dates</th><th>Suppression</th></tr></thead>
+        <tbody>
+          <tr><td>Research CSV (exportResearchCSV)</td><td>Authorized practitioner/researcher</td><td><strong class="flag">Yes</strong></td><td>No</td><td><strong class="flag">Yes — session_date</strong></td><td>None currently implemented</td></tr>
+          <tr><td>Dashboard views</td><td>Authenticated practitioner (own site)</td><td>Yes (backend)</td><td>Yes (UI)</td><td>Yes — session_date visible</td><td>Site-scoped by RLS</td></tr>
+          <tr><td>Aggregate benchmarks</td><td>Authenticated practitioner (network)</td><td>No (aggregate only)</td><td>No</td><td>No direct dates</td><td>Not formally documented</td></tr>
+          <tr><td>PDF/compliance exports</td><td>Authorized practitioner</td><td>Yes</td><td>Yes</td><td>Yes</td><td>None</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="counsel-note"><strong>Counsel Review Required:</strong> Both <code>subject_id</code> and <code>session_date</code> are present in the research CSV export. No small-sample suppression rule is currently implemented.</div>
+  </div>
+
+  <!-- Appendix K -->
+  <div class="print-chunk">
+    <h2>Appendix K — Public Claims Crosswalk</h2>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Public Claim</th><th>Status</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td>"Patient name not stored in core clinical data model"</td><td><span class="status-supported">Supported</span></td><td>Schema confirmed. Subject to production verification.</td></tr>
+          <tr><td>"DOB not stored in core clinical data model"</td><td><span class="status-supported">Supported</span></td><td>Schema confirmed. No DOB column in any log_* table.</td></tr>
+          <tr><td>"SSN, MRN, address, phone, email not stored"</td><td><span class="status-supported">Supported</span></td><td>Schema confirmed. Subject to production verification.</td></tr>
+          <tr><td>"Two-layer pseudonymous linking: subject_id + PT-XXXXXX"</td><td><span class="status-supported">Supported</span></td><td>Confirmed in schema and codebase.</td></tr>
+          <tr><td>"RLS enforced on all clinical tables"</td><td><span class="status-supported">Supported</span></td><td>Confirmed in migration 050 series.</td></tr>
+          <tr><td>"Vendor footprint: Supabase, Vercel, Stripe, Resend; no analytics tooling"</td><td><span class="status-supported">Supported</span></td><td>Verify against current environment config before submission.</td></tr>
+          <tr><td>"Formal legal review is in progress"</td><td><span class="status-supported">Supported</span></td><td>This packet is the formal submission.</td></tr>
+          <tr><td>"HIPAA does not apply" (categorical)</td><td><span class="status-remove">Remove</span></td><td>Being replaced in public materials per revised posture.</td></tr>
+          <tr><td>"No BAA is required" (categorical)</td><td><span class="status-remove">Remove</span></td><td>Replace with "depends on final legal analysis."</td></tr>
+          <tr><td>"Zero-PHI architecture confirmed"</td><td><span class="status-remove">Remove</span></td><td>session_date and subject_id present in exports; not yet confirmed non-PHI.</td></tr>
+          <tr><td>"All 18 Safe Harbor identifiers confirmed compliant"</td><td><span class="status-remove">Remove</span></td><td>session_date and identifier 18 (unique codes) require counsel confirmation.</td></tr>
+          <tr><td>"Immunity to Subpoenas"</td><td><span class="status-remove">Remove</span></td><td>Overclaim; creates legal risk. Being removed from DataPolicy.tsx.</td></tr>
+          <tr><td>"PT-XXXXXX is the canonical database identifier"</td><td><span class="status-remove">Remove / Correct</span></td><td>Incorrect. subject_id is the canonical DB key. All docs now corrected.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Appendix M -->
+  <div class="print-chunk">
+    <h2>Appendix M — Open Questions for Counsel</h2>
+    <ol>
+      <li>Is PPN Portal a HIPAA Covered Entity under the current fact pattern?</li>
+      <li>Is PPN Portal a HIPAA Business Associate under the current fact pattern?</li>
+      <li>Do the records stored constitute PHI, individually or in combination with reasonably available information?</li>
+      <li>Does the two-layer subject-linking architecture support de-identification under Safe Harbor, Expert Determination, or neither?</li>
+      <li>Do retained date-related fields, including <code>session_date</code>, change the legal analysis or public-claims posture?</li>
+      <li>Do operational logs, vendor systems, PITR backups, or metadata create PHI risk even if the clinical schema excludes direct patient identifiers?</li>
+      <li>Is a BAA required for any current workflow?</li>
+      <li>Are any current public claims too strong relative to the current implemented architecture?</li>
+      <li>Does any cross-domain aggregate count transfer create separate risk?</li>
+      <li>What additional materials are needed before counsel could issue a reliable written opinion?</li>
+    </ol>
+  </div>
+
+  <!-- Appendix N -->
+  <div class="print-chunk">
+    <h2>Appendix N — Evidence Map</h2>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Appendix</th><th>Title</th><th>Owner</th><th>Status</th><th>Source</th></tr></thead>
+        <tbody>
+          <tr><td>A</td><td>Document Control</td><td>Trevor Calton</td><td>Complete</td><td>Packet + current schema</td></tr>
+          <tr><td>B</td><td>Technical Declaration</td><td>Trevor Calton</td><td>Awaiting signature</td><td>Engineering verification</td></tr>
+          <tr><td>C</td><td>Schema Field Inventory</td><td>Trevor Calton</td><td>Complete — confirm vs. live DB</td><td>Migrations 000-050 series</td></tr>
+          <tr><td>D</td><td>Canonical Identifier Workflow</td><td>Trevor Calton</td><td>Complete</td><td>subjectIdGenerator.ts + schema</td></tr>
+          <tr><td>E</td><td>Data Flow Diagram</td><td>Trevor Calton</td><td>Complete (ASCII)</td><td>Architecture + vendor stack</td></tr>
+          <tr><td>F</td><td>Operational Metadata Boundaries</td><td>Trevor Calton</td><td>Complete — verify support path</td><td>Vendor review + config</td></tr>
+          <tr><td>G</td><td>Vendor Summary</td><td>Trevor Calton</td><td>Complete</td><td>Vendor inventory + legal packet</td></tr>
+          <tr><td>H</td><td>Auth, Access Control, RLS</td><td>Trevor Calton</td><td>Complete</td><td>Migrations 021, 050</td></tr>
+          <tr><td>I</td><td>Synthetic Database Output</td><td>Trevor Calton</td><td>Complete</td><td>Synthetic sample set</td></tr>
+          <tr><td>J</td><td>Export and Benchmarking Boundaries</td><td>Trevor Calton</td><td>Complete — counsel review flagged</td><td>csvExporter.ts</td></tr>
+          <tr><td>K</td><td>Public Claims Crosswalk</td><td>Trevor Calton</td><td>Complete — 13 claims reviewed</td><td>DataPolicy.tsx, PrivacyPolicy.tsx, HIPAA overview</td></tr>
+          <tr><td>L</td><td>Trade Secret Boundary</td><td>Trevor Calton</td><td>Complete</td><td>Memorandum</td></tr>
+          <tr><td>M</td><td>Open Questions for Counsel</td><td>Trevor Calton</td><td>Complete</td><td>Memorandum + packet</td></tr>
+          <tr><td>N</td><td>Evidence Map</td><td>Trevor Calton</td><td>Complete</td><td>Entire package</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Document footer -->
+  <div class="doc-footer">
+    <div>HIPAA Legal Counsel Packet &nbsp;·&nbsp; PPN Portal, LLC &nbsp;·&nbsp; Version 1.0 &nbsp;·&nbsp; March 2026</div>
+    <div>© 2026 PPN Portal &nbsp;·&nbsp; ppnportal.net &nbsp;·&nbsp; info@ppnportal.net &nbsp;·&nbsp; Confidential and Proprietary</div>
+  </div>
+
+</div><!-- /page-wrapper -->
+
+<script>
+  // Keyboard shortcut: Cmd/Ctrl + P triggers natural print dialog
+  // The print bar button is the primary UI affordance
+</script>
+</body>
+</html>

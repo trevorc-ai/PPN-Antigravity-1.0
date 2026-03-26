@@ -1,4 +1,5 @@
 # SESSION_HANDOFF.md
+**Last updated:** 2026-03-24 15:35 PDT | **Session focus:** Pipeline scan + WO-673 Ibogaine contraindication engine (COMPLETE)
 
 ## ⚡ START HERE — Commands Available Every Session
 
@@ -15,42 +16,41 @@
 
 ---
 
-**Last updated:** 2026-03-24 | **Session focus:** System-level workflow fixes — fast-track restoration, ppn-ui-standards enforcement rewrite, agent.yaml immutability confirmed
-
----
-
 ## 🔴 Active / In-Flight
 
 | Ticket | Stage | Notes |
 |---|---|---|
-| WO-654-A | `04_BUILD` | `/partner-demo` video route — BUILDER has it. Fixes broken link in all live confirmation emails. P0. |
-| WO-654-B | `04_BUILD` | Operator notification edge function — BUILDER has it. |
-| WO-657 | `00_INBOX` | Homepage enterprise overhaul — needs LEAD routing. |
-| GO-658 | `00_BACKLOG` | Denver Leave-Behind — MARKETER must start `01_DRAFTING` ASAP. Print deadline April 5. |
-| 16 tickets | `02.5_PRE-BUILD_REVIEW` | Awaiting INSPECTOR Phase 0 clearance from prior session. |
-| WO-640 | `04_BUILD` | Denver Stability Audit. |
-| WO-B6 | `05_QA` | Select Patient modal UI standards fix — awaiting INSPECTOR close-out + W1 check. |
+| **WO-673** | `06_USER_REVIEW` → **PUSH PENDING** | Committed at `9085749`. User must reply `push` to deploy. |
+| WO-665 | `04_BUILD` | Help & Export Hub full UI/UX overhaul. |
+| WO-668 | `04_BUILD` | COWS/SOWS/BAWS/ASI assessment cards. |
+| WO-669 | `04_BUILD` | SARA/FTN/HKS cerebellar assessments. |
+| WO-671 | `04_BUILD` | Ibogaine dosing logger + real-time mg/kg calculator. |
+| WO-672 | `04_BUILD` | QTc 4-tier alert system (no hard block). |
 
 ---
 
-## ✅ Completed This Session (2026-03-23)
+## ✅ Completed This Session (2026-03-24)
 
-- **WO-B6 filed, built, and moved to `05_QA`** — Select Patient modal fully remediated:
-  - `PHASE_COLORS` fixed: Preparation→indigo, Integration→teal (was blue/purple)
-  - `PHASE_ICONS` map added: Clock/FlaskConical/Activity/CheckCircle — colorblind-safe Rule 1 + 6 compliance
-  - All `text-xs`, `text-[10px]`, `text-[11px]` upgraded to `text-sm` across the modal
-  - TypeScript zero errors; browser verified live
+- **Pipeline scan** — All queues audited. WO-668/669/671/672 moved from 03_REVIEW to 04_BUILD (INSPECTOR pre-cleared).
+- **WO-659** — Routed from 00_INBOX to 01_DESIGN (DESIGNER spec needed for tablet sidebar).
+- **WO-661** — Routed from 00_INBOX to 03_REVIEW with INSPECTOR fast-pass; queued for 04_BUILD when slot opens.
+- **WO-670** — Routed from 00_INBOX to 02_TRIAGE; 5 open questions for user before architecture can be finalized.
+- **WO-673 (P0)** — **COMPLETE.** 6 absolute + 8 relative Ibogaine contraindication rules implemented in `contraindicationEngine.ts`. 9/9 test cases passed. QA approved. Committed `9085749`. **PUSH PENDING.**
+- **FREEZE.md** — `contraindicationEngine.ts` re-frozen by user post-commit.
 
 ---
 
 ## 🟡 Needs User Decision
 
-1. **WO-B6 W1 (Advisory)** — Confirm `tailwind.config.ts` maps `font-mono` → Roboto Mono (not JetBrains Mono or Courier New). INSPECTOR to verify before archiving.
-2. **WO-643 and WO-657** — Demo script and homepage overhaul need LEAD routing.
-3. **GO-658** — MARKETER must begin `01_DRAFTING` immediately; USER approves copy at `02_USER_REVIEW`.
-4. **Dedicated operator email alias** — `signups@ppnportal.net` recommended. Confirm before WO-654-B ships.
-5. **GO-649, GO-650** — in `_GROWTH_ORDERS/06_QA`, awaiting USER final visual approval before `99_PUBLISHED`.
-6. **WO-655 double-filing** — Two different tickets both numbered WO-655 exist. LEAD must resolve.
+1. **WO-673 — PUSH** — Committed at `9085749`. Reply `push` to deploy to production.
+2. **WO-670 (P2) — 5 open questions** before architecture finalized:
+   - SLUMS scope: Ibogaine-only or also ketamine sessions?
+   - Co-development lead: PRODDY coordinates, Dr. Allen + Vega define domains — confirm?
+   - MSE format: Fully structured dropdowns (Zero-PHI) — confirmed?
+   - PDF placement: Where do MSE + cognitive scores appear in session PDF?
+   - Global Benchmark: Should post-session cognitive delta feed the benchmark layer?
+3. **Morphology flags (ECG)** — Dr. Allen meeting Dr. Vega Wednesday. Update WO-669 + DESIGNER mockup after that call.
+4. **WO-655 double-filing** — Two tickets both numbered WO-655 exist. LEAD must resolve before new WOs in that range.
 
 ---
 
@@ -58,20 +58,20 @@
 
 | Queue | Count | Key Tickets |
 |---|---|---|
-| `_GROWTH_ORDERS/00_BACKLOG` | 1 | GO-658 (leave-behind, needs MARKETER NOW) |
-| `_WORK_ORDERS/00_INBOX` | 1 | WO-657 (homepage overhaul, needs LEAD routing) |
-| `02.5_PRE-BUILD_REVIEW` | 16 | All need INSPECTOR clearance |
-| `04_BUILD` | 3+ | WO-654-A (P0), WO-654-B, WO-640 |
-| `05_QA` | 1 | WO-B6 (Select Patient modal — needs INSPECTOR close-out) |
-| `_GROWTH_ORDERS/06_QA` | 2 | GO-649, GO-650 (user approval pending) |
+| `04_BUILD` | 5 | WO-665, WO-668, WO-669, WO-671, WO-672 — start WO-668 (lowest #) |
+| `03_REVIEW` | 1 | WO-661 (fast-passed — waiting for 04_BUILD slot) |
+| `05_QA` | 5 | WO-642, WO-644, WO-658, WO-666, WO-B6 |
+| `06_USER_REVIEW` | 1 | WO-673 — PUSH PENDING |
+| `02_TRIAGE` | ~9 | WO-670 + 8 analytics WOs (WO-677 through WO-687 range) |
+| `98_HOLD` | ~30 | No changes this session |
 
 ---
 
 ## ⚪ Next Recommended Actions
 
-1. **INSPECTOR** — Close out WO-B6 in `05_QA`: verify `tailwind.config.ts` font-mono mapping (W1), then move to `99_COMPLETED`.
-2. **BUILDER** — Ship WO-654-A (`/partner-demo` route). Fixes live broken link in every confirmation email. P0.
-3. **MARKETER** — Begin GO-658 `01_DRAFTING`. Print deadline April 5; no time to waste.
+1. **USER → reply `push`** to deploy WO-673 to production (commit `9085749` is staged).
+2. **BUILDER → WO-668** — Start COWS/SOWS/BAWS/ASI assessment cards (next in 04_BUILD queue after WO-673 slot freed).
+3. **After Dr. Allen/Vega Wednesday call** — Update morphology flags in WO-669, then DESIGNER updates Stitch mockup for ECG morphology chip set.
 
 ---
 
@@ -79,14 +79,17 @@
 
 | File | Version | Change |
 |---|---|---|
-| `PatientSelectModal.tsx` | WO-B6 | Phase colors corrected, PHASE_ICONS map added, sub-pixel fonts removed |
+| `contraindicationEngine.ts` | WO-673 | 14 Ibogaine rules added (6 abs, 8 rel). Re-frozen in FREEZE.md. |
+| `FREEZE.md` | 2026-03-24 | `contraindicationEngine.ts` re-frozen by user post-commit. |
 
 ---
 
-## Key Context for Next Agent
+## Key Clinical Context (Do Not Lose)
 
-- **Denver is April 9, 2026.** Print deadline April 5.
-- **Broken link is live NOW:** `/#/partner-demo` 404. WO-654-A is P0.
-- **ICP locked:** Multi-site premium clinic networks only.
-- **`proddy-protocol` v2.0 in effect** — AUTO-HANDOFF mandatory. Filing + stopping = Rule Zero-B violation.
-- **WO-655 double-filing** needs resolution before any new WOs are created.
+- **Dr. Allen** — 600+ Ibogaine sessions, paper in preparation on QTc thresholds. His numbers override standard references on this platform.
+- **QTc thresholds (FINAL):** Green <490 / Amber 490 / Orange 500+ / Red advisory 550+ — **NO hard block at any level**
+- **Substance types:** Ibogaine HCL and TPA (Total Plant Alkaloid) are co-equal primary substances — not alternatives
+- **No ibogaine + ketamine mixing** in Dr. Allen's protocol
+- **Assessments are elective** — no assessment is a hard gate on Phase 2 entry, per Dr. Allen
+- **Ataxia grading:** 0 / +1 / +2 / +3 ordinal scale used alongside SARA
+- **mg/kg running total:** Real-time per-dose cumulative calculation — computed client-side, not stored in DB

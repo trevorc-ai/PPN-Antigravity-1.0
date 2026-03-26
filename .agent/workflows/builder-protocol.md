@@ -19,26 +19,22 @@ BUILDER never waits for another agent and never asks the user for permission bet
 5. **If 04_BUILD is empty, BUILDER reports that and STOPS.** Does not self-assign work from other queues.
 6. **BUILDER does NOT touch `03_REVIEW/`.** That queue is INSPECTOR-only. A ticket only enters `04_BUILD` after INSPECTOR has signed the `## INSPECTOR 03_REVIEW CLEARANCE` block. If BUILDER sees a ticket without that block, STOP and notify LEAD.
 
-## Step 1: Read the WO and check for parallel lanes (mandatory)
+## Step 1: Start on the lowest-numbered WO immediately
 
 ```bash
 ls /Users/trevorcalton/Desktop/PPN-Antigravity-1.0/_WORK_ORDERS/04_BUILD/
 ```
 
-Read every `.md` file in `04_BUILD` and extract the `files:` frontmatter list from each.
+Pick the **lowest WO number** in `04_BUILD` and open it. Do not scan every ticket before starting. Do not produce a pre-build summary report. Start coding immediately after Step 1.5.
 
-**WIP Check:** `04_BUILD` must have 5 or fewer tickets. If it has more, flag to LEAD before starting. LEAD will reroute excess tickets.
+**WIP Check:** If `04_BUILD` has more than 5 tickets, note it to LEAD in one line and proceed — do not stop.
 
-**Parallel Build Rule:**
-- If two or more tickets have **zero `files:` overlap**, they MAY be built in parallel within the same response.
-- If tickets share any file, they remain sequential — lowest WO number first.
-- Report at the top of your response: `Building WO-A + WO-B in parallel (no file conflicts). WO-C queued after (shares file X with WO-B).`
-- A WO with a vague or wildcard `files:` entry (e.g. `files: [src/components/*]`) is treated as conflicting with everything — build it last, alone. Flag to LEAD to fix the frontmatter.
+**Parallel Build (opportunistic only):** If you notice a second ticket with zero file overlap while building, you MAY build it in the same response. Never delay the first ticket to analyse overlap.
 
 **If you are BLOCKED on a ticket:**
 1. Update frontmatter: `status: 98_HOLD`, `hold_reason: [exact reason]`, `held_at: [today's date]`
 2. Move it: `mv _WORK_ORDERS/04_BUILD/WO-XXX.md _WORK_ORDERS/98_HOLD/`
-3. Report to LEAD, then continue to the next-lowest WO number.
+3. Note the block in one line, then immediately start the next-lowest WO number. Do not stop.
 
 > **Never leave a stuck WO in `04_BUILD`.** A WO stays in `04_BUILD` only while actively being built.
 
@@ -60,14 +56,14 @@ Read every `.md` file in `04_BUILD` and extract the `files:` frontmatter list fr
 
 > **The Two-Strike Rule (Step 4) still applies regardless of plan exemption.** A plan exemption is not a quality exemption.
 
-**When a plan IS required — non-blocking submission:**
-1. Write the plan and post it via `notify_user` (`BlockedOnUser: false` — user reviews async)
+**When a plan IS required — non-blocking:**
+1. Write the plan as a comment block inside the WO ticket file under `## BUILDER PLAN — PENDING REVIEW`
 2. Tag the WO frontmatter `plan_status: pending_review`
-3. **Immediately pick up the next ticket** in `04_BUILD` that has no dependency on this plan
-4. When the user approves, implement the held ticket inline in that same response
+3. **Immediately pick up the next ticket** in `04_BUILD` with no dependency on this plan — do NOT call `notify_user`, do NOT stop
+4. When the user approves in chat, implement the held ticket in that response
 5. If the user rejects the plan, move the ticket back to `03_REVIEW` with `hold_reason: plan rejected — [reason]`
 
-> BUILDER does not sit idle waiting for plan approval. The next conflict-free ticket starts immediately.
+> BUILDER does not sit idle. No `notify_user` calls for plans. Keep building.
 
 ## Step 2: Read mandatory skills BEFORE writing any code
 
@@ -183,11 +179,11 @@ git diff --stat HEAD
 git checkout -- <file>
 ```
 
-## Step 5: Self-QA before handoff
+## Step 5: Pre-handoff grep gate (Builder-owned only)
 
-Run the inspector QA script after every build:
-- Read `.agent/skills/inspector-qa/SKILL.md` and follow the checklist
-- Take a browser screenshot to confirm UI renders correctly
+⛔ **BUILDER does NOT run inspector-qa.** That is INSPECTOR's job exclusively.
+
+Before handoff, run only the 5 automated greps already required in Step 2 (bare text-xs, low contrast, details/summary, em dash, banned fonts) and report PASS/FAIL. If any FAIL, fix it before moving the ticket. Do not call `notify_user`. Do not stop.
 
 ## Step 6: Hand off to INSPECTOR — immediately, same response
 
@@ -210,20 +206,20 @@ For Growth Order files:
 mv _GROWTH_ORDERS/05_IMPLEMENTATION/GO-XXX.md _GROWTH_ORDERS/06_QA/
 ```
 
-**In the same response — immediately after the move — call INSPECTOR:**
+**In the same response — immediately after the move — log the handoff:**
 
-> 🔔 **@INSPECTOR** — `WO-XXX` is in `05_QA/`. Run `/inspector-qa-script` Phases 1–3 now.
+> 🔔 **@INSPECTOR** — `WO-XXX` is in `05_QA/`. Run `/inspector-qa-script` Phases 1–3.
 
 For Growth Orders:
-> 🔔 **@INSPECTOR** — `GO-XXX` is in `_GROWTH_ORDERS/06_QA/`. Run `/inspector-qa-script` Phases 4, 5, and 6 now.
+> 🔔 **@INSPECTOR** — `GO-XXX` is in `_GROWTH_ORDERS/06_QA/`. Run `/inspector-qa-script` Phases 4, 5, and 6.
 
 Do NOT run `/finalize_feature`. Do NOT `git commit`. INSPECTOR owns the commit gate.
 
 > ⛔ **`/finalize_feature` is marked `// turbo-all` but is INSPECTOR-ONLY.** BUILDER is forbidden from running this workflow.
 
-**After handing off one WO:** immediately `ls 04_BUILD/`, pick the next ticket (parallel or sequential per Step 1), and start building. Only stop when `04_BUILD` is empty, then report: "04_BUILD is empty. All tickets complete. Awaiting INSPECTOR QA."
+**After handing off one WO: do not stop. Do not wait for INSPECTOR.** Immediately run `ls 04_BUILD/`, pick the next ticket, and start building in the same response. Repeat until `04_BUILD` is empty, then and only then report: `04_BUILD is empty. All tickets complete. Awaiting INSPECTOR QA.`
 
-**⛔ BUILDER does NOT present a walkthrough to the user.** Write a `## BUILDER Walkthrough` block directly in the WO ticket file summarising what was built. It surfaces to the user at `06_USER_REVIEW` alongside INSPECTOR's screenshots. Do not call `notify_user` with a walkthrough. Do not create a standalone `walkthrough.md` artifact and wait for the user to read it. Keep moving.
+**⛔ BUILDER does NOT present a walkthrough to the user.** Write a `## BUILDER Walkthrough` block directly in the WO ticket file. Do not call `notify_user`. Do not create a standalone `walkthrough.md`. Keep moving.
 
 
 ## Changelog
@@ -238,3 +234,4 @@ Do NOT run `/finalize_feature`. Do NOT `git commit`. INSPECTOR owns the commit g
 | 2.3 | 2026-03-23 | LEAD | **Omni-Channel Matrix cross-reference added to Step 2.** BUILDER must check Rule 0 (Mobile/Tablet/Desktop/Print) before writing any layout class. Proactive fix prevents FLO from being the first agent to catch tablet layout and print: modifier violations. |
 | 2.5 | 2026-03-25 | LEAD | **WO-as-Plan rule added (Step 1.5).** INSPECTOR-cleared WOs with defined files: list satisfy Rule 8 automatically — BUILDER skips implementation_plan.md and starts coding immediately. Exceptions: DB migrations, wildcards, frozen-adjacent files. |
 | 2.4 | 2026-03-24 | ANTIGRAVITY | **PPN UI Standards Automated Enforcement gate added.** 5-check grep block (bare text-xs, low contrast, native details/summary, em dash, banned fonts) is now a mandatory pre-handoff step with required PASS/FAIL output. Root cause fix: standards were read but not verified, allowing violations to reach QA and production. |
+| 3.0 | 2026-03-25 | INSPECTOR | **Stop-gate elimination.** Step 1 simplified — start on lowest WO number immediately, no pre-build scan preamble. Step 1.5 plan-required path no longer calls `notify_user` — plan written into WO file, Builder continues immediately. Step 5 gutted — Builder does NOT run inspector-qa (INSPECTOR-only); only the 5 pre-handoff greps remain. Step 6 hardened — after handoff, Builder starts next ticket in the same response with no waiting. Root cause fix for Builder stopping between tickets. |

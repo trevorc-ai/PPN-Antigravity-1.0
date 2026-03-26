@@ -57,6 +57,17 @@ Overwrite `SESSION_HANDOFF.md` using this exact template. Do NOT append — repl
 
 ## 📋 Protocol Changes Made This Session
 [Any amendments to skills, workflows, or agent.yaml. Include version numbers.]
+
+## 🏛 Pillar State (copy from MASTER_PLAN.md — update if changed this session)
+[Paste the current Pillar State table. Flag any pillar that moved state this session.]
+
+## 🔒 Locked Decisions (standing — only update if a decision was added or overturned this session)
+- Additive-only schema (no DROP, RENAME, ALTER TYPE)
+- Zero-PHI (Subject_ID only in clinical tables)
+- RLS on all log_* tables
+- log_/ref_/v_/mv_ four-layer naming convention
+- No mock data made permanent once a real mv_ view exists
+[Add new decisions here with date if added this session]
 ```
 
 ## Step 3: Verify the file saved correctly

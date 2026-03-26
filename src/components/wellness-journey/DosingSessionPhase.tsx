@@ -361,8 +361,15 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
 
             // 2. Notify LiveSessionTimeline via ppn:dose-registered so it can add an
             //    optimistic entry immediately (before the next 30-sec DB poll).
+            //    WO-694 BUG-04: pass dosingDesc (rich detail string) as label for additional dose,
+            //    not the bare 'Additional Dose' eventLabel that showed no details in the timeline.
+            const dispatchLabel = isRedose
+                // dosingDesc is built below — capture it first (lazy build via closure).
+                // For initial dose_admin, keep eventLabel (detail already in handleStartSession).
+                ? undefined  // placeholder — set after dosingDesc is computed below
+                : eventLabel;
             window.dispatchEvent(new CustomEvent('ppn:dose-registered', {
-                detail: { type: eventType, label: eventLabel, elapsedSec: elSec }
+                detail: { type: eventType, label: dispatchLabel ?? eventLabel, elapsedSec: elSec }
             }));
 
             // 3. Persist to log_session_timeline_events if we have a real session UUID
@@ -389,6 +396,12 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                         parts.push(`T+${eH}:${eM}:${eS}`);
                         if (parts.length > 1) dosingDesc = parts.join(' · ');
                     } catch { /* localStorage unavailable, keep default */ }
+
+                    // WO-694 BUG-04: re-dispatch with the rich dosingDesc label now that we have it.
+                    // The earlier dispatch above used a placeholder — update the timeline entry.
+                    window.dispatchEvent(new CustomEvent('ppn:dose-registered', {
+                        detail: { type: eventType, label: dosingDesc, elapsedSec: elSec }
+                    }));
 
                     createTimelineEvent({
                         session_id: sid,
@@ -711,7 +724,12 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
     useEffect(() => {
         const sessionId = journey.sessionId || journey.session?.sessionNumber?.toString();
         if (!sessionId || !UUID_RE_V.test(sessionId)) return;
-        if (updateLog.length > 0) return; // Don't overwrite live session entries
+        // WO-694 BUG-07: changed threshold from > 0 to > 1.
+        // WO-B6b baseline seeder adds 1 synthetic entry ([baseline]) to updateLog.
+        // The old guard `> 0` would prevent DB hydration in post mode (remount after session end),
+        // leaving only the baseline entry in the chart instead of the full session vitals.
+        // With > 1: hydration runs when only the synthetic baseline is present.
+        if (updateLog.length > 1) return; // Don't overwrite 2+ live session entries
 
         (async () => {
             try {
@@ -1131,7 +1149,6 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
               .catch(err => console.warn('[DosingSessionPhase] dose_admin timeline write failed:', err));
         }
     };
-
     // ── Phase 2 prep steps (derived from completedForms) ──────────────────────
     type Phase2Step = { id: WellnessFormId | '__start__'; label: string; icon: string; isComplete: boolean };
     const PHASE2_STEPS: Phase2Step[] = [

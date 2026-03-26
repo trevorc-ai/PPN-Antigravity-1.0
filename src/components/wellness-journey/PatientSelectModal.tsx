@@ -330,7 +330,7 @@ export const PatientSelectModal: React.FC<PatientSelectModalProps> = ({ onSelect
                                         </div>
                                         <div>
                                             <p className="text-sm font-bold text-slate-500">Most Recent</p>
-                                            <p className="text-xs text-slate-600 mt-0.5">No prior sessions</p>
+                                            <p className="text-sm text-slate-600 mt-0.5">No prior sessions</p>
                                         </div>
                                     </div>
                                 )}
@@ -352,7 +352,7 @@ export const PatientSelectModal: React.FC<PatientSelectModalProps> = ({ onSelect
                                     <FlaskConical className="w-6 h-6 text-amber-400" />
                                 </div>
                                 <div className="flex-1">
-                                    <p className="text-base font-bold text-amber-400">Practice Session <span className="text-xs font-semibold text-amber-500/70 ml-1">(No data saved)</span></p>
+                                    <p className="text-base font-bold text-amber-400">Practice Session <span className="text-sm font-semibold text-amber-500/70 ml-1">(No data saved)</span></p>
                                     <p className="text-sm text-amber-400/70 mt-0.5">Explore the Wellness Journey without creating a real patient record</p>
 
                                 </div>
@@ -510,7 +510,7 @@ export const PatientSelectModal: React.FC<PatientSelectModalProps> = ({ onSelect
                                 <div className="flex items-center gap-3 p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-sm">
                                     <AlertCircle className="w-4 h-4 flex-shrink-0" />
                                     <span>{error}</span>
-                                    <button onClick={fetchPatients} className="ml-auto text-xs underline hover:no-underline">Retry</button>
+                                    <button onClick={fetchPatients} className="ml-auto text-sm underline hover:no-underline">Retry</button>
                                 </div>
                             )}
 

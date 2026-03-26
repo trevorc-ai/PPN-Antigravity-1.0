@@ -5,7 +5,38 @@ description: Manages Supabase database migrations with proper workflow. Includes
 
 # Migration Manager
 
-## 🔒 GOVERNANCE AUTHORITY (Read Before Anything Else)
+## Section 0 — Four-Layer Architecture Contract *(read before any SQL)*
+
+Every database object must belong to exactly one of these four layers. Naming convention violations are grounds for INSPECTOR rejection at pre-flight.
+
+| Layer | Prefix | Purpose | RLS Required? | Example |
+|-------|--------|---------|:---:|---------|
+| Operational | `log_` | Append-only clinical records. Never DELETE or TRUNCATE. | ✅ YES | `log_episodes_of_care`, `log_sites` |
+| Reference | `ref_` | Structured lookup tables. Seeded. Read-only for practitioners. | SELECT only | `ref_substances`, `ref_severity_grades` |
+| Analytical View | `v_` | Real-time SQL joins/aggregations over `log_` tables. | Inherits from source | `v_patient_episode_summary` |
+| Materialized Benchmark | `mv_` | Pre-computed views, refreshed on schedule. Powers analytics UI. | Inherits from source | `mv_open_risk_queue`, `mv_site_monthly_quality` |
+
+### Naming Rules
+
+- `log_` tables: snake_case, descriptive, plural. Must encode clinical context (not generic names like `records`, `data`, `entries`).
+- `ref_` tables: snake_case, plural noun. Primary key must be named `{table_name_singular}_id` (e.g., `ref_substances` PK = `substance_id`).
+- `v_` views: `v_` prefix, describe the output, not the source (e.g., `v_patient_latest_status` not `v_from_log_episodes`).
+- `mv_` views: `mv_` prefix, describe the dashboard or operational output (e.g., `mv_open_risk_queue`, `mv_benchmark_by_subgroup`).
+
+### Before Writing Any SQL for a `v_` or `mv_` Object
+
+Run `/analysis-first` workflow. Do not write analytical SQL without confirming:
+1. All source `log_` and `ref_` tables are confirmed live (paste query output)
+2. All join column names are confirmed (named PKs, not generic `id`)
+3. Suppression rule is defined if any comparison group can have n < 5
+
+### Benchmark FK Rule
+
+Any field used in cross-site comparisons (substance, indication, protocol type, severity grade, modality) MUST be a FK integer referencing a `ref_` table. Free-text fields in these positions are a fatal data quality error — correcting them after seeding requires a destructive migration.
+
+---
+
+
 
 > **MANDATORY:** Read `DATABASE_GOVERNANCE_CHARTER.md` before starting any migration work.
 

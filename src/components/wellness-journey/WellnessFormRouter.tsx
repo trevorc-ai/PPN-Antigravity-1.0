@@ -36,6 +36,7 @@ import {
     createIntegrationSession,
     createBehavioralChange,
     createLongitudinalAssessment,
+    getLatestLongitudinalAssessment,  // WO-665: read latest record to pre-populate form on open
     updateDosingProtocol,
     createMEQ30Score,
     createSafetyScreen,
@@ -845,8 +846,30 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
         case 'behavioral-tracker':
             return <BehavioralChangeTrackerForm onSave={handleBehavioralChangeSave} onComplete={onComplete} onBack={onClose ?? onComplete} onExit={onExit ?? onClose ?? onComplete} />;
 
-        case 'longitudinal-assessment':
-            return <LongitudinalAssessmentForm onSave={handleLongitudinalAssessmentSave} onComplete={onComplete} onBack={onClose ?? onComplete} onExit={onExit ?? onClose ?? onComplete} />;
+        case 'longitudinal-assessment': {
+            // WO-665 fix: fetch the most recent longitudinal assessment for this patient
+            // so the form pre-populates on re-open instead of starting blank every time.
+            // Pattern mirrors the MEQ-30 case above (localStorage + DB fetch on mount).
+            // eslint-disable-next-line react-hooks/rules-of-hooks
+            const [longitudinalInitialData, setLongitudinalInitialData] =
+                useState<LongitudinalAssessmentData | null>(null);
+            // eslint-disable-next-line react-hooks/rules-of-hooks
+            useEffect(() => {
+                const resolvedId = patientUuidProp ?? patientId;
+                if (!resolvedId) return;
+                getLatestLongitudinalAssessment(resolvedId, sessionId)
+                    .then(row => { if (row) setLongitudinalInitialData(row); })
+                    .catch(() => { /* non-blocking — form starts blank */ });
+            }, []);
+
+            return <LongitudinalAssessmentForm
+                onSave={handleLongitudinalAssessmentSave}
+                initialData={longitudinalInitialData ?? undefined}
+                onComplete={onComplete}
+                onBack={onClose ?? onComplete}
+                onExit={onExit ?? onClose ?? onComplete}
+            />;
+        }
 
         default:
             return (

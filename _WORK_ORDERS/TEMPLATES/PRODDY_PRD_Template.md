@@ -24,6 +24,19 @@
 
 ---
 
+### 1.5 Strategic Fit
+*(Required. INSPECTOR will reject this PRD if any field is blank.)*
+
+**Pillar(s) supported:** [ ] Safety Surveillance  [ ] Comparative Intelligence  [ ] QA/Governance  [ ] Benchmarking  [ ] Research  [ ] ⚠️ NONE — escalate to USER before proceeding
+
+**Operational decision this improves:** [One sentence — what will a practitioner be able to decide or do that they cannot do today?]
+
+**Key dependency:** [What must exist before this can ship? e.g. "mv_open_risk_queue must be live"]
+
+**Risk if skipped:** [What breaks or degrades if this isn't built?]
+
+---
+
 ### 2. Target User + Job-To-Be-Done
 *(One sentence. Format: "[User role] needs to [accomplish X] so that [outcome Y].")*
 
@@ -90,6 +103,7 @@
 - [ ] Open Questions list is ≤5 items
 - [ ] Total PRD word count is ≤600 words
 - [ ] No code, SQL, or schema written anywhere in this document
+- [ ] **`pillar_supported`** field is populated — at least one pillar checked, or ⚠️ NONE is checked and USER has been notified
 - [ ] **`database_changes`** field set in WO frontmatter: `yes` if this ticket requires any new table, column, index, RLS policy, or migration — `no` if purely frontend/React
 - [ ] Frontmatter updated: `owner: LEAD`, `status: 01_TRIAGE`
 - [ ] Response wrapped in `==== PRODDY ====`

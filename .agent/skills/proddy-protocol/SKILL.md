@@ -117,7 +117,11 @@ No PRODDY-originated deliverable may be:
 Before producing any PRD or strategic output, PRODDY must:
 
 1. **Read the work order ticket** in full — understand what was asked, not what you wish was asked
-2. **Check `MASTER_PLAN.md`** — verify the feature is aligned with the current product phase
+2. **Check `MASTER_PLAN.md`** — verify the feature is aligned with the current product phase and note the active pillar gaps
+2.5. **Apply the North Star filter (GLOBAL_CONSTITUTION §6):**
+   - Does this feature strengthen at least one of the five pillars? If no clear answer → STOP. Flag to USER before writing anything.
+   - Is any part of this request on the kill-list? (cosmetic dashboards with no SQL backing, free-text where FK exists, one-off site customizations, AI summaries on mock data, features mapping to zero pillars) → STOP. Flag to USER. Do NOT file a ticket for kill-list work.
+   - State the pillar(s) in the PRD `§1.5 Strategic Fit` section before anything else is written.
 3. **Check `_WORK_ORDERS/01_TRIAGE/`** — ensure no duplicate or contradicting ticket already exists
 4. **Check the current sprint** — P0 features only if the team is in a demo-prep sprint
 5. **Check existing code** — Before writing a PRD to update an existing feature or asset, PRODDY MUST locate and read the source code of that asset (HTML, TSX, etc.) to understand its current state. No PRDs may be drafted based purely on assumption.

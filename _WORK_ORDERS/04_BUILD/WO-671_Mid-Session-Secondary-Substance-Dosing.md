@@ -7,7 +7,7 @@ priority: P1
 created: 2026-03-23
 database_changes: yes
 source_analysis: proddy_dr_allen_analysis.md
-files: []
+files: []  # ⚠️ LEAD ACTION REQUIRED: files: [] is a wildcard per BUILDER protocol. BUILDER cannot safely sequence or parallelize this WO. Populate with specific filenames before BUILDER picks it up. (Flagged 2026-03-25)
 ---
 
 ## PRODDY PRD

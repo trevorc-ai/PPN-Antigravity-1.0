@@ -80,6 +80,7 @@ const WellnessJourney = lazy(() => import('./pages/WellnessJourney'));
 const PatientCompanionPage = lazy(() => import('./pages/PatientCompanionPage'));
 const MEQ30Page = lazy(() => import('./pages/MEQ30Page'));
 const PatientFormPage = lazy(() => import('./pages/PatientFormPage'));
+const PatientListPage = lazy(() => import('./pages/PatientListPage')); // WO-677: Practice Export — patient panel download
 const AdaptiveAssessmentPage = lazy(() => import('./pages/AdaptiveAssessmentPage'));
 const SecureGate = lazy(() => import('./pages/SecureGate'));
 
@@ -91,7 +92,6 @@ const ProtocolEfficiencyPage = lazy(() => import('./pages/deep-dives/ProtocolEff
 const ComparativeEfficacyPage = lazy(() => import('./pages/deep-dives/ComparativeEfficacyPage'));
 const PatientJourneyPage = lazy(() => import('./pages/deep-dives/PatientJourneyPage'));
 const PatientRetentionPage = lazy(() => import('./pages/deep-dives/PatientRetentionPage'));
-const RevenueAuditPage = lazy(() => import('./pages/deep-dives/RevenueAuditPage'));
 const RiskMatrixPage = lazy(() => import('./pages/deep-dives/RiskMatrixPage'));
 const SafetySurveillancePage = lazy(() => import('./pages/deep-dives/SafetySurveillancePage'));
 const PatientFlowPage = lazy(() => import('./pages/deep-dives/PatientFlowPage'));
@@ -487,6 +487,8 @@ const AppContent: React.FC = () => {
                   {/* WELLNESS JOURNEY / ARC OF CARE */}
                   <Route path="/wellness-journey" element={<WellnessJourney />} />
                   <Route path="/arc-of-care-god-view" element={<Navigate to="/wellness-journey" replace />} />
+                  {/* WO-677: Patient Panel — full-page list with Practice Export .xlsx download */}
+                  <Route path="/patients" element={<PatientListPage />} />
                   <Route path="/companion/:sessionId" element={<PatientCompanionPage />} />
 
                   {/* PROTOCOL BUILDER */}

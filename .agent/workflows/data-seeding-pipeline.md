@@ -6,6 +6,16 @@ agents: [ANALYST, LEAD, INSPECTOR, BUILDER, USER]
 # /data-seeding-pipeline
 ## WO-231: Public Data Seeding — Global Benchmark Intelligence Layer
 
+> [!CAUTION]
+> **BLOCKED — DO NOT EXECUTE until two technical corrections are resolved.**
+> This pipeline targets Pillar 4 (Network Benchmarking) — valid work. The hold is purely structural:
+>
+> 1. **Table naming:** Rename `benchmark_trials` → `ref_benchmark_trials`, `benchmark_cohorts` → `ref_benchmark_cohorts`, `population_baselines` → `ref_population_baselines` in all DDL and ETL scripts. The `ref_` prefix is mandatory per the four-layer architecture contract (`log_`/`ref_`/`v_`/`mv_`).
+> 2. **Free-text benchmark fields:** `.modality`, `.condition`, `.instrument` columns are currently `TEXT`. These must be converted to FK integer references to `ref_` lookup tables before seeding. Free-text degrades cross-site comparability — the core value proposition of this pillar.
+>
+> Correcting table names or field types **after** seeding is a destructive migration. Resolve structurally first.
+> *Flagged 2026-03-25 per INSPECTOR SQL-Layers alignment audit.*
+
 This workflow defines the exact handoff sequence between all agents to deliver seeded benchmark data into the PPN database. It is designed to be run start-to-finish with USER checkpoints at stages 3 and 6.
 
 ---

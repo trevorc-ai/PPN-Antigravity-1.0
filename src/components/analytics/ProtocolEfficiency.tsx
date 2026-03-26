@@ -1,14 +1,15 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import {
     ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip,
-    ResponsiveContainer, ReferenceLine, Cell
+    ResponsiveContainer, Cell
 } from 'recharts';
 import {
     DollarSign, Clock, TrendingUp, AlertCircle,
-    Calculator, PieChart, ArrowUpRight, Filter
+    Calculator, PieChart, ArrowUpRight, Filter, BarChart2
 } from 'lucide-react';
 import { ChartSkeleton } from './ChartSkeleton';
 import { CustomTooltip } from './CustomTooltip';
+import { useProtocolEfficiencyData, EFFICIENCY_MIN_N } from '../../hooks/useProtocolEfficiencyData';
 
 // --- MOCK DATA ---
 interface ProtocolData {
@@ -32,7 +33,9 @@ const PROTOCOLS: ProtocolData[] = [
 
 // CustomTooltip imported from shared
 
-export default function ProtocolEfficiency({ data }: { data?: any[] }) {
+export default function ProtocolEfficiency() {
+    // WO-681: Live efficiency data from log_clinical_records + log_safety_events
+    const efficiencyData = useProtocolEfficiencyData();
     const [overhead, setOverhead] = useState(150); // Hourly cost
     const [chartReady, setChartReady] = useState(false);
 
@@ -43,19 +46,91 @@ export default function ProtocolEfficiency({ data }: { data?: any[] }) {
 
     // Dynamic Calculations
     const processedData = useMemo(() => {
-        const baseData = data || PROTOCOLS;
-        return baseData.map(p => ({
+        return PROTOCOLS.map(p => ({
             ...p,
             cost: p.hours * overhead,
             profit: p.revenue - (p.hours * overhead),
             roi: ((p.revenue - (p.hours * overhead)) / (p.hours * overhead)) * 100
         })).sort((a, b) => b.profit - a.profit);
-    }, [overhead, data]);
+    }, [overhead]);
 
     const totalPotentialProfit = processedData.reduce((acc, curr) => acc + (curr.profit > 0 ? curr.profit : 0), 0);
 
     return (
         <div className="w-full bg-[#0f1218] p-6 rounded-2xl border border-slate-800 shadow-2xl flex flex-col gap-8 h-full overflow-y-auto custom-scrollbar">
+
+            {/* ── WO-681: LIVE EFFICIENCY PANEL ─────────────────────────── */}
+            <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-5">
+                <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-2">
+                        <BarChart2 className="w-4 h-4 text-indigo-400" />
+                        <h3 className="ppn-card-title text-slate-300">Protocol Efficiency Score</h3>
+                    </div>
+                    <span className="ppn-meta font-black text-slate-600 uppercase tracking-widest">Live Data</span>
+                </div>
+
+                {efficiencyData.loading ? (
+                    <ChartSkeleton height="80px" />
+                ) : efficiencyData.suppressed || efficiencyData.error ? (
+                    <div className="flex items-center gap-3 py-4">
+                        <div className="w-8 h-8 rounded-xl bg-slate-800/60 border border-slate-700 flex items-center justify-center">
+                            <BarChart2 className="w-4 h-4 text-slate-500" />
+                        </div>
+                        <p className="ppn-body text-slate-500">
+                            {efficiencyData.error ?? `Need ${EFFICIENCY_MIN_N} sessions to compute efficiency. ${efficiencyData.totalSessions > 0 ? `${efficiencyData.totalSessions} logged so far.` : ''}`}
+                        </p>
+                    </div>
+                ) : (
+                    <div className="space-y-4">
+                        {/* KPI row */}
+                        <div className="grid grid-cols-3 gap-4">
+                            <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-4">
+                                <p className="ppn-meta font-black text-slate-500 uppercase tracking-widest mb-1">Efficiency</p>
+                                <p className={`text-3xl font-black tracking-tight ${efficiencyData.overallEfficiency >= 80 ? 'text-emerald-400' : efficiencyData.overallEfficiency >= 60 ? 'text-amber-400' : 'text-rose-400'}`}>
+                                    {efficiencyData.overallEfficiency}%
+                                </p>
+                            </div>
+                            <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-4">
+                                <p className="ppn-meta font-black text-slate-500 uppercase tracking-widest mb-1">Efficient</p>
+                                <p className="text-3xl font-black text-slate-300 tracking-tight">
+                                    {efficiencyData.efficientSessions}
+                                </p>
+                            </div>
+                            <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-4">
+                                <p className="ppn-meta font-black text-slate-500 uppercase tracking-widest mb-1">Total</p>
+                                <p className="text-3xl font-black text-slate-300 tracking-tight">
+                                    {efficiencyData.totalSessions}
+                                </p>
+                            </div>
+                        </div>
+
+                        {/* Monthly trend */}
+                        {efficiencyData.monthlyTrend.length >= 3 && (
+                            <div className="space-y-2">
+                                <p className="ppn-meta font-black text-slate-500 uppercase tracking-widest">Monthly Trend</p>
+                                {efficiencyData.monthlyTrend.slice(-6).map(m => (
+                                    <div key={m.monthKey} className="flex items-center gap-3">
+                                        <span className="ppn-meta text-slate-500 w-20 shrink-0">{m.month}</span>
+                                        <div className="flex-1 h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                                            <div
+                                                className={`h-full rounded-full transition-all ${m.efficiency >= 80 ? 'bg-emerald-500' : m.efficiency >= 60 ? 'bg-amber-500' : 'bg-rose-500'}`}
+                                                style={{ width: `${m.efficiency}%` }}
+                                            />
+                                        </div>
+                                        <span className="ppn-meta font-black text-slate-400 w-10 text-right">{m.efficiency}%</span>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+
+                        {/* Provenance */}
+                        <p className="ppn-caption text-slate-600 italic">
+                            Based on {efficiencyData.totalSessions} sessions, {efficiencyData.dateRange}.
+                            Efficiency = completed sessions with no adverse events / total sessions.
+                        </p>
+                    </div>
+                )}
+            </div>
             {/* HEADER */}
             <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
                 <div title="Forecasting financial efficiency and margin analysis for selected protocols">

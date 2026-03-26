@@ -1,12 +1,13 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import {
-    RadialBarChart, RadialBar, PolarAngleAxis, ResponsiveContainer, Layer
+    RadialBarChart, RadialBar, PolarAngleAxis, ResponsiveContainer
 } from 'recharts';
 import {
-    Dna, AlertTriangle, CheckCircle2, Zap,
-    Activity, Pill, ArrowRight, Gauge
+    Dna, AlertTriangle, CheckCircle2,
+    Activity, Pill, Gauge, Heart
 } from 'lucide-react';
 import { ChartSkeleton } from './ChartSkeleton';
+import { useMetabolicRiskData } from '../../hooks/useMetabolicRiskData';
 
 // --- MOCK PHARMACOGENOMIC RULES ---
 // In production, this comes from 'ref_metabolic_rules' table
@@ -37,6 +38,8 @@ const METABOLIC_RULES: MetabolicRule[] = [
 ];
 
 export default function MetabolicRiskGauge() {
+    // WO-682: Live vitals risk data from log_session_vitals
+    const vitalsRisk = useMetabolicRiskData();
     const [selectedSubstance, setSelectedSubstance] = useState('MDMA');
     const [selectedStatus, setSelectedStatus] = useState('Normal');
     const [chartReady, setChartReady] = useState(false);
@@ -62,14 +65,74 @@ export default function MetabolicRiskGauge() {
             <div className={`absolute top-0 right-0 w-64 h-64 rounded-full blur-[100px] opacity-10 transition-colors duration-700 pointer-events-none`}
                 style={{ backgroundColor: activeRule.color }}></div>
 
-            {/* HEADER */}
-            <div className="relative z-10" title="Assessing toxicity risk interactions using patient CYP450 genomic markers">
+            {/* ── WO-682: LIVE VITALS RISK PANEL ───────────────────────── */}
+            <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-5 relative z-10">
+                <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-2">
+                        <Heart className="w-4 h-4 text-rose-400" />
+                        <h3 className="ppn-card-title text-slate-300">Live Vitals Risk</h3>
+                    </div>
+                    <span className="ppn-meta font-black text-slate-600 uppercase tracking-widest">Session Data</span>
+                </div>
+
+                {vitalsRisk.loading ? (
+                    <ChartSkeleton height="60px" />
+                ) : vitalsRisk.suppressed || vitalsRisk.error ? (
+                    <div className="flex items-center gap-3 py-2">
+                        <Activity className="w-5 h-5 text-slate-500" />
+                        <p className="ppn-body text-slate-500">
+                            {vitalsRisk.error ?? 'Vitals data not yet available for risk calculation. Log vitals during a dosing session to enable this panel.'}
+                        </p>
+                    </div>
+                ) : (
+                    <div className="space-y-3">
+                        {/* Most recent vitals row */}
+                        {vitalsRisk.mostRecentVitals && (
+                            <div className="grid grid-cols-4 gap-3">
+                                <div className={`p-3 rounded-xl border ${vitalsRisk.mostRecentVitals.riskLevel === 'HIGH' ? 'bg-rose-500/10 border-rose-500/30' : vitalsRisk.mostRecentVitals.riskLevel === 'ELEVATED' ? 'bg-amber-500/10 border-amber-500/30' : 'bg-emerald-500/10 border-emerald-500/30'}`}>
+                                    <p className="ppn-meta font-black text-slate-500 uppercase tracking-widest mb-0.5">Status</p>
+                                    <p className={`ppn-body font-black ${vitalsRisk.mostRecentVitals.riskLevel === 'HIGH' ? 'text-rose-400' : vitalsRisk.mostRecentVitals.riskLevel === 'ELEVATED' ? 'text-amber-400' : 'text-emerald-400'}`}>
+                                        {vitalsRisk.mostRecentVitals.riskLevel}
+                                    </p>
+                                </div>
+                                <div className="p-3 rounded-xl border bg-slate-900/60 border-slate-800">
+                                    <p className="ppn-meta font-black text-slate-500 uppercase tracking-widest mb-0.5">SBP</p>
+                                    <p className="ppn-body font-black text-slate-300">{vitalsRisk.mostRecentVitals.bpSystolic ?? '—'}</p>
+                                </div>
+                                <div className="p-3 rounded-xl border bg-slate-900/60 border-slate-800">
+                                    <p className="ppn-meta font-black text-slate-500 uppercase tracking-widest mb-0.5">HR</p>
+                                    <p className="ppn-body font-black text-slate-300">{vitalsRisk.mostRecentVitals.heartRate ?? '—'}</p>
+                                </div>
+                                <div className="p-3 rounded-xl border bg-slate-900/60 border-slate-800">
+                                    <p className="ppn-meta font-black text-slate-500 uppercase tracking-widest mb-0.5">SpO2</p>
+                                    <p className="ppn-body font-black text-slate-300">{vitalsRisk.mostRecentVitals.oxygenSaturation != null ? `${vitalsRisk.mostRecentVitals.oxygenSaturation}%` : '—'}</p>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Summary */}
+                        <p className="ppn-caption text-slate-600 italic">
+                            {vitalsRisk.flaggedCount > 0 ? (
+                                <span className="text-amber-400">{vitalsRisk.flaggedCount} session{vitalsRisk.flaggedCount !== 1 ? 's' : ''} flagged for elevated vitals · </span>
+                            ) : null}
+                            {vitalsRisk.sessionCount} session{vitalsRisk.sessionCount !== 1 ? 's' : ''} · {vitalsRisk.totalVitalsRecords} vitals records · Live from log_session_vitals
+                        </p>
+                    </div>
+                )}
+            </div>
+
+
+            {/* CYP450 PHARMACOGENOMIC REFERENCE TOOL (reference data, not live measurements) */}
+            <div className="relative z-10" title="Pharmacogenomic reference tool for CYP450 metabolizer-based risk assessment. Not derived from live session data.">
                 <h2 className="text-xl font-black text-slate-300 tracking-tighter flex items-center gap-2">
                     <Gauge className="text-indigo-500" />
                     Metabolic Risk Gauge
                 </h2>
-                <p className="text-sm text-slate-300 font-medium mt-1">
-                    CYP450 Genomic Safety Check.
+                <p className="ppn-meta text-slate-500 font-medium mt-1 flex items-center gap-1.5">
+                    CYP450 Pharmacogenomic Reference Tool
+                    <span className="px-2 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-[10px] font-black uppercase tracking-widest">
+                        Reference data · Not live measurements
+                    </span>
                 </p>
             </div>
 

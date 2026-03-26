@@ -196,32 +196,27 @@ interface EventDotProps {
     cx?: number;
     cy?: number;
     payload?: any;
-    onHover?: (ev: SessionEventPin, cx: number, cy: number) => void;
-    onHoverEnd?: () => void;
+    onClick?: (ev: SessionEventPin, cx: number, cy: number) => void;
 }
 
-const EventDot: React.FC<EventDotProps> = ({ cx, cy, payload, onHover, onHoverEnd }) => {
+// WO-694 BUG-01: EventDot now fires onClick (not onMouseEnter/onMouseLeave).
+// The Recharts <Tooltip> was removed from ComposedChart — it fired on any crosshair
+// hover over the canvas, not just on dot contact, causing spurious tooltip popups.
+// Clicking a dot calls onClick → sets selectedEvent state in the parent.
+// Clicking anywhere else on the chart wrapper clears selectedEvent (dismiss).
+const EventDot: React.FC<EventDotProps> = ({ cx, cy, payload, onClick }) => {
     const p = getPinStyle(payload?.type ?? '');
-    const [hovered, setHovered] = useState(false);
     if (!cx || !cy) return null;
     return (
         <g>
-            {/* Outer glow ring on hover */}
-            {hovered && (
-                <circle cx={cx} cy={cy} r={14} fill={p.fill} fillOpacity={0.18} stroke={p.stroke} strokeWidth={1} />
-            )}
             {/* Main dot */}
             <circle
                 cx={cx} cy={cy} r={8}
                 fill={p.fill} stroke={p.stroke} strokeWidth={1.5}
                 style={{ cursor: 'pointer' }}
-                onMouseEnter={() => {
-                    setHovered(true);
-                    onHover?.(payload as SessionEventPin, cx, cy);
-                }}
-                onMouseLeave={() => {
-                    setHovered(false);
-                    onHoverEnd?.();
+                onClick={(e) => {
+                    e.stopPropagation(); // prevent click from bubbling to chart dismiss handler
+                    onClick?.(payload as SessionEventPin, cx, cy);
                 }}
             />
             {/* Emoji glyph inside dot */}
@@ -320,8 +315,9 @@ export const SessionVitalsTrendChart: FC<SessionVitalsTrendChartProps> = ({
         return next;
     });
 
-    // Hovered event dot, lifted state for the custom tooltip overlay
-    const [hoveredEvent, setHoveredEvent] = useState<{
+    // WO-694 BUG-01: renamed hoveredEvent → selectedEvent (click-triggered, not hover).
+    // Clicking anywhere on the chart wrapper div (see onClick below) clears this.
+    const [selectedEvent, setSelectedEvent] = useState<{
         ev: SessionEventPin; cx: number; cy: number;
     } | null>(null);
 
@@ -406,8 +402,13 @@ export const SessionVitalsTrendChart: FC<SessionVitalsTrendChartProps> = ({
             </div>
 
             {/* ── Chart ──────────────────────────────────────────────────── */}
+            {/* onClick on wrapper dismisses the click-tooltip (BUG-01 fix)   */}
             {/* position:relative anchors the absolute event tooltip overlay   */}
-            <div ref={containerRef} className="h-full min-h-[220px] w-full relative">
+            <div
+                ref={containerRef}
+                className="h-full min-h-[220px] w-full relative"
+                onClick={() => setSelectedEvent(null)}
+            >
                 {/* WO-B0c: show loading skeleton while parent is fetching DB vitals on mount */}
                 {isLoading ? (
                     <div className="flex flex-col items-center justify-center h-full min-h-[220px] gap-3">
@@ -460,7 +461,13 @@ export const SessionVitalsTrendChart: FC<SessionVitalsTrendChartProps> = ({
                                 allowDataOverflow={false}
                             />
 
-                            <Tooltip content={<ChartTooltip />} />
+                            {/* ── Recharts Tooltip REMOVED (WO-694 BUG-01) ──────────────────────
+                             *  The built-in <Tooltip> fired on any onMouseMove over the chart canvas
+                             *  (including the crosshair line), not just on dot contact. This caused
+                             *  spurious vitals readouts whenever the cursor crossed event dot Y-bands.
+                             *  Event dots now use click-triggered selectedEvent state instead.
+                             *  Vitals line dot values are visible via the activeDot highlight.
+                             */}
 
                             {/* ── Threshold reference lines ─────────────── */}
                             <ReferenceLine
@@ -518,12 +525,10 @@ export const SessionVitalsTrendChart: FC<SessionVitalsTrendChartProps> = ({
                                     label={{ value: 'HR↑', position: 'bottom', fill: '#ef4444', fontSize: 10, fontWeight: 'bold' }} />
                             ))}
 
-                            {/*
-                             * ── Event dots, plotted at their clinical severity band Y ──
-                             * Each event type maps to a fixed Y row on the severity gradient:
-                             * RED/top (Y≈165) = adverse/crisis → GREEN/bottom (Y≈58) = rescue/pleasant.
-                             * Dots are styled by type and reveal details on hover.
-                             */}
+                            {/* ── Event dots, plotted at their clinical severity band Y ──
+                              * Each event type maps to a fixed Y row on the severity gradient.
+                              * Dots are styled by type and reveal details on CLICK (BUG-01 fix).
+                              */}
                             {visible.events && (
                                 <Scatter
                                     name="events"
@@ -532,8 +537,7 @@ export const SessionVitalsTrendChart: FC<SessionVitalsTrendChartProps> = ({
                                     shape={(props: any) => (
                                         <EventDot
                                             {...props}
-                                            onHover={(ev, cx, cy) => setHoveredEvent({ ev, cx, cy })}
-                                            onHoverEnd={() => setHoveredEvent(null)}
+                                            onClick={(ev, cx, cy) => setSelectedEvent({ ev, cx, cy })}
                                         />
                                     )}
                                     isAnimationActive={false}
@@ -551,28 +555,44 @@ export const SessionVitalsTrendChart: FC<SessionVitalsTrendChartProps> = ({
                     </div>
                 )}
 
-                {/* ── Event dot hover tooltip overlay ────────────────────────────────
+                {/* ── Event dot CLICK tooltip overlay ────────────────────────────────
+                 *  WO-694 BUG-01: triggered by click, not hover (renamed hoveredEvent → selectedEvent).
+                 *  WO-694 BUG-02: top-edge detection — if cy < 80, tooltip flips BELOW the dot
+                 *  to prevent clipping against the chart container top boundary.
                  *  Sibling of the ternary, always present in the relative wrapper div.
-                 *  Positioned using cx/cy pixel coords from the hovered EventDot.
+                 *  Positioned using cx/cy pixel coords from the clicked EventDot.
                  */}
-                {hoveredEvent && (() => {
-                    const { ev, cx, cy } = hoveredEvent;
+                {selectedEvent && (() => {
+                    const { ev, cx, cy } = selectedEvent;
                     const p = getPinStyle(ev.type);
-                    // Edge-aware anchor: decide whether to left-, center-, or right-anchor
-                    // the tooltip based on where cx falls within the container width.
                     const containerWidth = containerRef.current?.offsetWidth ?? 600;
                     const zone =
                         cx < containerWidth * 0.25 ? 'left'
                         : cx > containerWidth * 0.75 ? 'right'
                         : 'center';
-                    const tooltipTransform =
-                        zone === 'left'  ? 'translate(0%, -115%)'
-                        : zone === 'right' ? 'translate(-100%, -115%)'
-                        : 'translate(-50%, -115%)';
-                    const arrowClass =
-                        zone === 'left'  ? 'absolute left-4 -bottom-[6px] w-3 h-3 rotate-45 bg-slate-800/95 border-r border-b border-slate-600/80'
-                        : zone === 'right' ? 'absolute right-4 -bottom-[6px] w-3 h-3 rotate-45 bg-slate-800/95 border-r border-b border-slate-600/80'
-                        : 'absolute left-1/2 -translate-x-1/2 -bottom-[6px] w-3 h-3 rotate-45 bg-slate-800/95 border-r border-b border-slate-600/80';
+
+                    // BUG-02: if dot is near the top edge (cy < 80), flip tooltip BELOW the dot.
+                    const isNearTop = cy < 80;
+                    const tooltipTransform = isNearTop
+                        // Below the dot — arrow points up
+                        ? (zone === 'left'  ? 'translate(0%, 16px)'
+                          : zone === 'right' ? 'translate(-100%, 16px)'
+                          : 'translate(-50%, 16px)')
+                        // Above the dot (default) — arrow points down
+                        : (zone === 'left'  ? 'translate(0%, -115%)'
+                          : zone === 'right' ? 'translate(-100%, -115%)'
+                          : 'translate(-50%, -115%)');
+
+                    const arrowClass = isNearTop
+                        // Top-pointing arrow (tooltip is below the dot)
+                        ? (zone === 'left'  ? 'absolute left-4 -top-[6px] w-3 h-3 rotate-45 bg-slate-800/95 border-l border-t border-slate-600/80'
+                          : zone === 'right' ? 'absolute right-4 -top-[6px] w-3 h-3 rotate-45 bg-slate-800/95 border-l border-t border-slate-600/80'
+                          : 'absolute left-1/2 -translate-x-1/2 -top-[6px] w-3 h-3 rotate-45 bg-slate-800/95 border-l border-t border-slate-600/80')
+                        // Bottom-pointing arrow (tooltip is above the dot)
+                        : (zone === 'left'  ? 'absolute left-4 -bottom-[6px] w-3 h-3 rotate-45 bg-slate-800/95 border-r border-b border-slate-600/80'
+                          : zone === 'right' ? 'absolute right-4 -bottom-[6px] w-3 h-3 rotate-45 bg-slate-800/95 border-r border-b border-slate-600/80'
+                          : 'absolute left-1/2 -translate-x-1/2 -bottom-[6px] w-3 h-3 rotate-45 bg-slate-800/95 border-r border-b border-slate-600/80');
+
                     return (
                         <div
                             className="absolute z-50 pointer-events-none"
@@ -600,7 +620,7 @@ export const SessionVitalsTrendChart: FC<SessionVitalsTrendChartProps> = ({
                                     </p>
                                 )}
                             </div>
-                            {/* Downward arrow — repositions to match tooltip anchor */}
+                            {/* Arrow — repositions to match tooltip anchor and edge */}
                             <div className={arrowClass} />
                         </div>
                     );

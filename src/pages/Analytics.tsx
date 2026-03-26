@@ -18,7 +18,7 @@ import { GlassmorphicCard } from '../components/ui/GlassmorphicCard';
 import { supabase } from '../supabaseClient';
 import { useAnalyticsData } from '../hooks/useAnalyticsData';
 import SafetyBenchmark from '../components/analytics/SafetyBenchmark';
-import { useSafetyBenchmark } from '../hooks/useSafetyBenchmark';
+
 
 import InsightFeedPanel from '../components/analytics/InsightFeedPanel';
 
@@ -28,7 +28,7 @@ const Analytics = () => {
     const [selectedDateRange, setSelectedDateRange] = useState<string>('30');
     // WO-675 FIX: hook is now self-contained — no siteId prop needed
     const analytics = useAnalyticsData();
-    const { benchmark, loading: benchmarkLoading } = useSafetyBenchmark();
+
 
     // Filter data based on selections (Placeholder for when real array data is added)
     const filteredData = useMemo(() => {
@@ -173,35 +173,11 @@ const Analytics = () => {
                     <div className="flex items-center justify-between mb-5">
                         <div>
                             <h2 className="text-lg font-black tracking-tight" style={{ color: '#A8B5D1' }}>Safety Performance</h2>
-                            <p className="text-sm mt-0.5" style={{ color: '#8B9DC3' }}>Your adverse event rate vs. network average</p>
+                            <p className="text-sm mt-0.5" style={{ color: '#8B9DC3' }}>Your adverse event rate vs. network average · Live Data</p>
                         </div>
-                        {!benchmark && !benchmarkLoading && (
-                            <span className="text-xs font-black px-3 py-1.5 rounded-full border bg-indigo-500/10 border-indigo-500/30 text-indigo-400 uppercase tracking-widest">
-                                Preview, sample data
-                            </span>
-                        )}
                     </div>
-                    {benchmarkLoading ? (
-                        <div className="flex items-center justify-center py-12">
-                            <div className="text-center">
-                                <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-500 mb-4"></div>
-                                <p className="text-sm" style={{ color: '#8B9DC3' }}>Loading safety benchmark...</p>
-                            </div>
-                        </div>
-                    ) : benchmark ? (
-                        <SafetyBenchmark
-                            practitionerRate={benchmark.practitioner_adverse_event_rate}
-                            networkRate={benchmark.network_average_rate}
-                            literatureRate={benchmark.literature_adverse_event_rate}
-                            totalSessions={benchmark.total_sessions}
-                            adverseEvents={benchmark.adverse_events}
-                            percentile={benchmark.percentile}
-                            status={benchmark.status}
-                        />
-                    ) : (
-                        /* No data yet, show sample / preview state */
-                        <SafetyBenchmark />
-                    )}
+                    {/* WO-678: SafetyBenchmark is now self-contained — calls useSafetyBenchmark internally */}
+                    <SafetyBenchmark />
                 </div>
             </Section>
 
@@ -266,7 +242,8 @@ const Analytics = () => {
                             </div>
                             <div className="flex-1 min-h-0 w-full overflow-x-auto overflow-y-hidden touch-pan-x scrollbar-hide pb-6" style={{ minHeight: '460px' }}>
                                 <div style={{ minWidth: '600px', height: '100%' }}>
-                                    <ClinicPerformanceRadar data={filteredData} />
+                                    {/* WO-677: ClinicPerformanceRadar is now self-contained — no data prop */}
+                                    <ClinicPerformanceRadar />
                                 </div>
                             </div>
                         </div>

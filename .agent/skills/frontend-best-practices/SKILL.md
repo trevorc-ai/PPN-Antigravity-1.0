@@ -232,10 +232,25 @@ const { data } = await supabase.from('ref_clinical_interactions').select('substa
 const unique = [...new Set(data.map(r => r.substance_name))].sort();
 ```
 
-### Exception (the ONLY acceptable hardcoding)
+### Exception (Temporary Scaffold — NOT a Permanent Feature)
 
-Mock/demo data in `src/constants/analyticsData.ts` is intentionally synthetic and does not shadow any DB table.
-It is placeholder for the future analytics-from-live-data build and is clearly marked as `MOCK_*`.
+`src/constants/analyticsData.ts` mock constants are a **temporary build scaffold only**. They exist because the required `v_`/`mv_` SQL views have not yet been built.
+
+**Rules:**
+1. Mock data (`MOCK_*` constants) must **not** be introduced into any new component.
+2. Any component currently using mock data **must** be migrated to read from its target `v_` or `mv_` SQL view as soon as that view exists.
+3. A WO that creates a new `mv_` view is **incomplete** until the consuming component is updated to read from it. INSPECTOR will reject at QA if this is not done.
+
+**Current mock-data migration queue** *(do not close until migrated)*:
+
+| Component | Mock Constant | Target `mv_` View | Pillar |
+|-----------|--------------|------------------|--------|
+| `SafetyRiskMatrix.tsx` | `MOCK_RISK_DATA` | `mv_open_risk_queue` | 1 — Safety |
+| `PatientJourneySnapshot.tsx` | `MOCK_JOURNEY_DATA` | `mv_patient_latest_status` | 1 — Safety |
+| `PatientFlowSankey.tsx` | `MOCK_FLOW_DATA` | `mv_site_monthly_quality` | 3 — QA |
+| `ConfidenceCone.tsx` | `MOCK_TRAJECTORY_DATA` | `mv_benchmark_by_subgroup` | 2 — Comparative |
+
+*Updated 2026-03-25 per INSPECTOR SQL-Layers alignment audit.*
 
 ---
 

@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Map, Radio, Activity, ExternalLink, CheckCircle, Lock } from 'lucide-react';
+import { Map, Radio, Activity, ExternalLink, CheckCircle, Lock, Info } from 'lucide-react';
+import regulatoryJSON from '../../data/regulatory/us_states.json';
 
-// State regulatory data
+// WO-683: Governed regulatory data — all 50 states + DC with provenance
+// Source: src/data/regulatory/us_states.json (versioned, last_verified_at per entry)
 interface StateRegulation {
     code: string;
     name: string;
@@ -10,6 +12,10 @@ interface StateRegulation {
     license: string;
     keyForm?: string;
     color: string;
+    last_verified_at: string;
+    source_url: string;
+    verified_by: string;
+    notes?: string;
 }
 
 // Props for external control (filter synchronization)
@@ -20,20 +26,11 @@ interface RegulatoryMosaicProps {
     showDetailPanel?: boolean;
 }
 
-const STATE_DATA: Record<string, StateRegulation> = {
-    OR: { code: 'OR', name: 'Oregon', status: 'Legal (Regulated)', license: 'Facilitator Required', keyForm: 'Consent for Touch', color: 'bg-[#5B8FA3]' },
-    CO: { code: 'CO', name: 'Colorado', status: 'Decriminalized', license: 'Pending Regulations', color: 'bg-[#7BA05B]' },
-    CA: { code: 'CA', name: 'California', status: 'Medical Only', license: 'Research Protocol', color: 'bg-[#4A6B8A]' },
-    WA: { code: 'WA', name: 'Washington', status: 'Pending', license: 'Under Review', color: 'bg-slate-600' },
-    TX: { code: 'TX', name: 'Texas', status: 'Medical Only', license: 'Research (HB 1802)', color: 'bg-[#4A6B8A]' },
-    ny: { code: 'NY', name: 'New York', status: 'Medical Only', license: 'Research Protocol', color: 'bg-[#4A6B8A]' },
-    FL: { code: 'FL', name: 'Florida', status: 'Illegal', license: 'N/A', color: 'bg-slate-700' },
-    MA: { code: 'MA', name: 'Massachusetts', status: 'Medical Only', license: 'Research Protocol', color: 'bg-[#4A6B8A]' },
-    MI: { code: 'MI', name: 'Michigan', status: 'Pending', license: 'Under Review', color: 'bg-slate-600' },
-    AZ: { code: 'AZ', name: 'Arizona', status: 'Illegal', license: 'N/A', color: 'bg-slate-700' },
-    NV: { code: 'NV', name: 'Nevada', status: 'Decriminalized', license: 'Pending Regulations', color: 'bg-[#7BA05B]' },
-    CT: { code: 'CT', name: 'Connecticut', status: 'Medical Only', license: 'Research Protocol', color: 'bg-[#4A6B8A]' },
-};
+// Pull governed state data from versioned JSON
+const STATE_DATA: Record<string, StateRegulation> =
+    regulatoryJSON.states as unknown as Record<string, StateRegulation>;
+
+const DATA_META = regulatoryJSON._meta;
 
 export default function RegulatoryMosaic({
     onStateSelect,
@@ -161,7 +158,7 @@ export default function RegulatoryMosaic({
                                     <span className="text-sm font-medium text-slate-300">{stateData.license}</span>
                                 </div>
 
-                                {stateData.keyForm && (
+                            {stateData.keyForm && (
                                     <div>
                                         <span className="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-1">
                                             Key Form
@@ -169,6 +166,24 @@ export default function RegulatoryMosaic({
                                         <span className="text-sm font-medium text-indigo-400">{stateData.keyForm}</span>
                                     </div>
                                 )}
+                                {stateData.notes && (
+                                    <div>
+                                        <span className="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-1">Notes</span>
+                                        <span className="text-xs text-slate-400 italic">{stateData.notes}</span>
+                                    </div>
+                                )}
+                                <div>
+                                    <span className="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-1">Verified</span>
+                                    <a
+                                        href={stateData.source_url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-xs text-indigo-400 hover:text-indigo-300 flex items-center gap-1 transition-colors"
+                                    >
+                                        <ExternalLink className="w-3 h-3" />
+                                        {stateData.last_verified_at} · {stateData.verified_by}
+                                    </a>
+                                </div>
                             </div>
 
                             {/* View News Button */}
@@ -196,6 +211,15 @@ export default function RegulatoryMosaic({
                         </div>
                     </div>
                 )}
+            </div>
+
+            {/* WO-683: Mandatory legal disclaimer footer */}
+            <div className="shrink-0 mt-3 pt-3 border-t border-slate-800 flex items-start gap-2">
+                <Info className="w-3 h-3 text-slate-600 mt-0.5 shrink-0" />
+                <p className="ppn-caption text-slate-600 italic leading-snug">
+                    Last verified {DATA_META.last_verified_at} by {DATA_META.verified_by}.
+                    {' '}{DATA_META.disclaimer}
+                </p>
             </div>
         </div>
     );

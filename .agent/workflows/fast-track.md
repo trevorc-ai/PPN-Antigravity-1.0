@@ -42,6 +42,8 @@ origin: "User fast-track request"
 admin_visibility: no          # yes = BUILDER must wire into Admin Dashboard before QA
 admin_section: ""             # Reports / Analytics / Session Management / Settings / N/A
 parked_context: ""            # Fill if this WO was parked and is being resumed
+pillar_supported: ""          # REQUIRED at triage: Safety | Comparative Intelligence | QA/Governance | Benchmarking | Research | none→escalate
+task_type: ""                 # REQUIRED at triage: schema | sql-view | ui-analytics | ui-feature | bug-fix | workflow | documentation | qa-testing
 files: []
 ---
 ## Request
@@ -49,6 +51,7 @@ files: []
 
 ## LEAD Architecture
 [2-3 sentences: what needs to change and which files are likely affected]
+**Pillar:** [State which pillar(s) this strengthens, or flag as "none — escalate to USER" per GLOBAL_CONSTITUTION §6]
 
 ## Open Questions
 - [ ] [Any clarification needed before routing to BUILDER?]

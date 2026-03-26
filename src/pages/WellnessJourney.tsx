@@ -1099,16 +1099,20 @@ const WellnessJourneyInternal: React.FC = () => {
         setStoredActiveSession(payload);
     }, [journey.patientId, journey.sessionId, journey.patientUuid, activePhase]);
 
-    // ── Live session: strip main's pb-28 and scroll to bottom so action buttons are immediately visible ──
+    // ── Live session: strip main's pb-28 and (mobile only) scroll to bottom so action buttons are immediately visible ──
+    // WO-688: Desktop keeps action buttons above the fold — scrolling to bottom showed the footer. Guard with < 768px.
     useEffect(() => {
         const main = document.querySelector('main');
         if (!main) return;
         const isLive = activePhase === 2 && !!journey.sessionId;
         if (isLive) {
             main.classList.add('!pb-0');
-            const t = setTimeout(() => main.scrollTo({ top: main.scrollHeight, behavior: 'smooth' }), 150);
+            const isMobile = window.innerWidth < 768;
+            const t = isMobile
+                ? setTimeout(() => main.scrollTo({ top: main.scrollHeight, behavior: 'smooth' }), 150)
+                : undefined;
             return () => {
-                clearTimeout(t);
+                if (t !== undefined) clearTimeout(t);
                 main.classList.remove('!pb-0');
             };
         } else {

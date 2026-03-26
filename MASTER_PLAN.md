@@ -39,3 +39,20 @@ Build the Practice Operating System for Psychedelic Therapy - unifying safety, o
 - Scaling the application for public beta while ruthlessly defending the schema from PHI/PII leakage.
 
 *(Note: Old operational roadmaps and strategy brainstorming artifacts have been archived to save LLM context window space).*
+
+---
+
+## 🏛 Pillar State *(updated 2026-03-25)*
+
+Pillars are concurrent. All five are valid build targets. This section declares where **active infrastructure gaps exist** so agents can prioritize within pillars and flag zero-pillar work.
+
+| Pillar | Status | Active Gap |
+|--------|--------|-----------|
+| 1 — Safety Surveillance | 🔴 **Gap** | `mv_open_risk_queue`, `mv_patient_latest_status` do not yet exist. `SafetyRiskMatrix` + `PatientJourneySnapshot` are on mock data. |
+| 2 — Comparative Intelligence | 🟡 Partial | `ConfidenceCone` on mock data. `mv_benchmark_by_subgroup` not yet built. |
+| 3 — QA / Governance | 🟡 Partial | `PatientFlowSankey` on mock data. `mv_site_monthly_quality` not yet built. Core clinical forms (Phase 1-3) are functional. |
+| 4 — Network Benchmarking | 🟡 Defined | `data-seeding-pipeline` designed but blocked on two technical corrections (ref_ naming, FK fields). |
+| 5 — Research Infrastructure | ⚪ Not started | No analytical export views exist yet. |
+
+**Near-term must-wins:** Build `mv_open_risk_queue` and `mv_patient_latest_status` → migrate `SafetyRiskMatrix` and `PatientJourneySnapshot` off mock data. Clinical trust cannot be grounded on fake risk intelligence.
+

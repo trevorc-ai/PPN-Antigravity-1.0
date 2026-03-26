@@ -17,6 +17,8 @@ When the user types `_WORK_ORDERS`, the agent will execute the following standar
 ## 2. Touch 1: Preliminary Inspection (Pre-Execution)
 - For newly surfaced or escalated tickets, perform a rapid inspection of the referenced files or database schemas to ensure the Work Order's context is accurate.
 - Flag any architectural discrepancies or missing prerequisite templates BEFORE assigning the ticket to an agent queue.
+- **Pillar Classification Check:** For every ticket in `00_INBOX` and `02_TRIAGE`, verify the `pillar_supported:` and `task_type:` fields are populated. If either is blank, add `hold_reason: Missing pillar_supported or task_type — required per GLOBAL_CONSTITUTION §6` and move to `98_HOLD`. Surface to USER.
+- **Zero-Pillar Flag:** If `pillar_supported: none`, STOP. Do NOT route to `04_BUILD`. Surface to USER with `/request-triage` verdict before proceeding.
 - This serves as the mandatory initial touchpoint to proactively evaluate the plan.
 
 ## 3. Organize

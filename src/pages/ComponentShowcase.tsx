@@ -20,7 +20,6 @@ import SafetyBenchmark from '../components/analytics/SafetyBenchmark';
 // Deep-Dive Orphan Components
 import RegulatoryMosaic from '../components/analytics/RegulatoryMosaic';
 import PatientJourneySnapshot from '../components/analytics/PatientJourneySnapshot';
-import RevenueForensics from '../components/analytics/RevenueForensics';
 import ConfidenceCone from '../components/analytics/ConfidenceCone';
 import SafetyRiskMatrix from '../components/analytics/SafetyRiskMatrix';
 import PatientFlowSankey from '../components/analytics/PatientFlowSankey';
@@ -314,20 +313,6 @@ const ComponentShowcase: React.FC = () => {
                     </div>
                     <GlassmorphicCard className="min-h-[500px] relative">
                         <PatientJourneySnapshot />
-                    </GlassmorphicCard>
-                </div>
-
-                {/* Revenue Forensics */}
-                <div className="mb-12">
-                    <div className="mb-4">
-                        <h3 className="text-xl font-black text-slate-300">Revenue Forensics</h3>
-                        <p className="text-sm text-slate-400 font-mono mb-2">Clinic Financial Audit & Trend Analysis</p>
-                        <p className="text-sm text-slate-400 leading-relaxed max-w-3xl">
-                            <span className="font-semibold text-slate-300">What this shows:</span> A deep look at where your clinic's money is coming from, and where it's leaking out. This view breaks revenue down by service type, time period, and patient category, then highlights unusual patterns worth investigating. If a certain protocol is generating much less revenue than expected, or costs have spiked, this chart will surface it. It's a financial magnifying glass for practice operators.
-                        </p>
-                    </div>
-                    <GlassmorphicCard className="min-h-[500px] relative">
-                        <RevenueForensics />
                     </GlassmorphicCard>
                 </div>
 

@@ -3,6 +3,9 @@ import { Download, FileText, AlertCircle, CheckCircle, XCircle, Eye, Shield } fr
 import { PageContainer } from '../components/layouts/PageContainer';
 import { Section } from '../components/layouts/Section';
 import { DateInput } from '../components/forms/DateInput';
+import { FormatBadge } from '../components/exports/FormatBadge';
+import { ComplianceFooter } from '../components/exports/ComplianceFooter';
+
 
 interface ExportConfig {
     dateStart: string;
@@ -132,14 +135,8 @@ const DataExport: React.FC = () => {
     };
 
     const getFormatIcon = (format: string) => {
-        switch (format) {
-            case 'csv':
-                return <span className="text-xs font-black text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded uppercase tracking-widest">CSV</span>;
-            case 'json':
-                return <span className="text-xs font-black text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 px-2 py-0.5 rounded uppercase tracking-widest">JSON</span>;
-            case 'pdf':
-                return <span className="text-xs font-black text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded uppercase tracking-widest">PDF</span>;
-        }
+        const fmt = format as 'pdf' | 'csv' | 'json';
+        return <FormatBadge format={fmt} />;
     };
 
     return (
@@ -427,22 +424,7 @@ const DataExport: React.FC = () => {
                     </div>
                 </div>
 
-                {/* Footer Compliance */}
-                <Section spacing="tight">
-                    <div className="flex items-center justify-center gap-6 text-xs text-slate-600">
-                        <div className="flex items-center gap-2">
-                            <Shield size={14} />
-                            <span>HIPAA Compliant</span>
-                        </div>
-                        <div className="h-3 w-px bg-slate-800" />
-                        <div className="flex items-center gap-2">
-                            <Shield size={14} />
-                            <span>FDA 21 CFR PART 11</span>
-                        </div>
-                        <div className="h-3 w-px bg-slate-800" />
-                        <span>© 2026 PPN Portal • Data Version: 2.1.0-BETA • Clinical Platform</span>
-                    </div>
-                </Section>
+                <ComplianceFooter showCopyright={true} />
             </PageContainer>
         </div>
     );

@@ -222,7 +222,23 @@ export const LiveSessionTimeline: FC<LiveSessionTimelineProps> = ({
             if (mappedEvents.length > 0) {
                 // DB returns newest-first; reverse to chronological (oldest top, newest bottom)
                 // so the timeline reads naturally and scroll-to-bottom shows the latest entry.
-                setEvents(mappedEvents.reverse());
+                const reversed = mappedEvents.reverse();
+                setEvents(prev => {
+                    // BUG-03 fix: deduplicate DB rows against optimistic entries already in state.
+                    // Without this, ppn:dose-registered adds an optimistic entry AND
+                    // fetchLocalEvents (called after save) adds the same row from DB → duplicate.
+                    const existingOptimisticIds = new Set(
+                        prev.filter(e => e.id.startsWith('dose-reg-') || e.id.startsWith('optimistic-')).map(e => e.id)
+                    );
+                    // Keep all DB rows (authoritative) plus any optimistic entries whose IDs
+                    // don't yet exist in the DB result set (still pending server confirmation).
+                    const dbIds = new Set(reversed.map(e => e.id));
+                    const stillPendingOptimistic = prev.filter(
+                        e => (e.id.startsWith('dose-reg-') || e.id.startsWith('optimistic-') || e.id.startsWith('session-ev-'))
+                            && !dbIds.has(e.id)
+                    );
+                    return [...reversed, ...stillPendingOptimistic];
+                });
             }
             // Intentionally NOT calling setEvents([]) for empty result:
             // preserves optimistic events for TEST sessions and new sessions
@@ -262,6 +278,28 @@ export const LiveSessionTimeline: FC<LiveSessionTimelineProps> = ({
         };
         window.addEventListener('ppn:dose-registered', handleDoseRegistered);
         return () => window.removeEventListener('ppn:dose-registered', handleDoseRegistered);
+    }, []);
+
+    // WO-694 BUG-05/06: listen for ppn:session-event so Session Updates (handleSaveUpdate)
+    // and Adverse Events (WellnessFormRouter) appear in the timeline immediately as
+    // optimistic entries — without waiting for a DB refetch.
+    // Root cause: DosingSessionPhase dispatches ppn:session-event but LiveSessionTimeline
+    // previously had no listener for it (only ppn:dose-registered).
+    useEffect(() => {
+        const handleSessionEvent = (e: Event) => {
+            const { type, label, timestamp } = (e as CustomEvent).detail ?? {};
+            if (!type) return;
+            const optimistic: TimelineEvent = {
+                id: `session-ev-${Date.now()}`,
+                type,
+                timestamp: timestamp ? new Date(timestamp) : new Date(),
+                description: label ?? type,
+                author: 'Clinician',
+            };
+            setEvents(prev => [...prev, optimistic]);
+        };
+        window.addEventListener('ppn:session-event', handleSessionEvent);
+        return () => window.removeEventListener('ppn:session-event', handleSessionEvent);
     }, []);
 
 

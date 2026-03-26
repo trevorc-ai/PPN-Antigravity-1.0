@@ -9,6 +9,8 @@ import { Section } from '../components/layouts/Section';
 import { exportAllData } from '../services/exportService';
 import { AdvancedTooltip } from '../components/ui/AdvancedTooltip';
 import { useToast } from '../contexts/ToastContext';
+import { ExportCard } from '../components/exports/ExportCard';
+
 
 // --- Type Definitions ---
 interface DownloadItem {
@@ -227,78 +229,29 @@ const DownloadCenter: React.FC = () => {
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                                     {category.items.map(item => {
-                                        const Icon = item.icon;
                                         const isDownloading = downloading === item.id;
                                         const isDone = done.has(item.id);
                                         const isDisabled = !!downloading && !isDownloading;
 
                                         return (
-                                            <div
+                                            <ExportCard
                                                 key={item.id}
-                                                className={`relative bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-3xl p-6 transition-all group flex flex-col h-full
-                                                ${isDisabled ? 'opacity-50' : 'hover:bg-slate-900/80 hover:border-slate-600'}
-                                            `}
-                                            >
-                                                {/* Badge */}
-                                                {item.badge && (
-                                                    <div className={`absolute top-4 right-4 px-2.5 py-1 rounded-lg text-xs font-black uppercase tracking-widest ${item.bgColor} ${item.textColor} border ${item.borderColor}`}>
-                                                        {item.badge}
-                                                    </div>
-                                                )}
-
-                                                {/* Header */}
-                                                <div className="flex items-start gap-4 mb-4">
-                                                    <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 ${item.bgColor} border ${item.borderColor}`}>
-                                                        <Icon className={`w-6 h-6 ${item.accentColor}`} />
-                                                    </div>
-                                                    <div className="flex-1 pr-16">
-                                                        <h3 className="text-base font-black text-[#A8B5D1] leading-tight mb-2">{item.title}</h3>
-                                                    </div>
-                                                </div>
-
-                                                {/* Description */}
-                                                <p className="text-sm text-slate-400 mb-6 flex-1 leading-relaxed">
-                                                    {item.description}
-                                                </p>
-
-                                                {/* Footer: Format Label + Button */}
-                                                <div className="flex items-center justify-between pt-4 border-t border-slate-800/80 mt-auto">
-                                                    <div className="flex items-center gap-2">
-                                                        <span className={`text-[10px] font-black uppercase tracking-widest px-2 py-1 rounded border ${item.bgColor} ${item.borderColor} ${item.textColor}`}>
-                                                            {item.format}
-                                                        </span>
-                                                    </div>
-
-                                                    <AdvancedTooltip
-                                                        content={isDone ? 'Completed!' : item.actionType === 'route' ? 'Go to Generator' : `Download ${item.format.toUpperCase()}`}
-                                                        tier="micro"
-                                                    >
-                                                        <button
-                                                            onClick={() => handleAction(item)}
-                                                            disabled={isDisabled || isDownloading}
-                                                            className={`
-                                                            flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider
-                                                            transition-all border focus:outline-none focus:ring-2 focus:ring-indigo-500
-                                                            active:scale-95 disabled:cursor-not-allowed
-                                                            ${isDone
-                                                                    ? 'bg-emerald-500/20 border-emerald-500/40 text-emerald-400'
-                                                                    : `bg-slate-800 border-slate-700 text-slate-300 hover:text-white hover:border-slate-500`
-                                                                }
-                                                        `}
-                                                        >
-                                                            {isDownloading ? (
-                                                                <><Loader2 className="w-4 h-4 animate-spin" /><span>Fetching</span></>
-                                                            ) : isDone ? (
-                                                                <><CheckCircle className="w-4 h-4" /><span>Done</span></>
-                                                            ) : item.actionType === 'route' ? (
-                                                                <span>Open Tool</span>
-                                                            ) : (
-                                                                <><Download className="w-3.5 h-3.5" /><span>Download</span></>
-                                                            )}
-                                                        </button>
-                                                    </AdvancedTooltip>
-                                                </div>
-                                            </div>
+                                                id={item.id}
+                                                title={item.title}
+                                                description={item.description}
+                                                icon={item.icon}
+                                                format={item.format}
+                                                badge={item.badge}
+                                                accentColor={item.accentColor}
+                                                bgColor={item.bgColor}
+                                                borderColor={item.borderColor}
+                                                textColor={item.textColor}
+                                                actionType={item.actionType === 'simulated' ? 'download' : item.actionType as 'route' | 'function' | 'new-tab' | 'download'}
+                                                onAction={() => handleAction(item)}
+                                                isDownloading={isDownloading}
+                                                isDone={isDone}
+                                                isDisabled={isDisabled}
+                                            />
                                         );
                                     })}
                                 </div>

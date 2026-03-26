@@ -107,7 +107,7 @@ export const useSafetyBenchmark = () => {
                     .not('adverse_event_rate_pct', 'is', null);
 
                 const litRates = (litCohorts || [])
-                    .map((c: any) => c.adverse_event_rate_pct as number)
+                    .map((c: { adverse_event_rate_pct: number }) => c.adverse_event_rate_pct)
                     .filter((r) => r !== null && r >= 0 && r <= 100);
 
                 const literatureAdverseEventRate = litRates.length > 0

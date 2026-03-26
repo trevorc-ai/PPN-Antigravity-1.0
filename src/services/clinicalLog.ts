@@ -923,6 +923,73 @@ export async function createLongitudinalAssessment(data: LongitudinalAssessmentD
     }
 }
 
+/**
+ * WO-665: Retrieves the most recent longitudinal assessment for a patient.
+ * Used by WellnessFormRouter to pre-populate LongitudinalAssessmentForm on open.
+ *
+ * Scoping:
+ * - Always scoped to patient_uuid (required)
+ * - If sessionId is provided, prefer the record for that session; if none exists fall
+ *   back to the most recent record for the patient across all sessions.
+ *
+ * @returns  LongitudinalAssessmentData on success, null if no record or on error.
+ * @throws   Never — failure returns null (non-blocking; form simply starts blank).
+ */
+export async function getLatestLongitudinalAssessment(
+    patientId: string,
+    sessionId?: string,
+): Promise<LongitudinalAssessmentData | null> {
+    if (!patientId) return null;
+    try {
+        // Prefer session-scoped record first
+        if (sessionId) {
+            const { data: sessionRow, error: sessionErr } = await supabase
+                .from('log_longitudinal_assessments')
+                .select('patient_uuid, session_id, assessment_date, days_post_session, phq9_score, gad7_score, cssrs_score')
+                .eq('patient_uuid', patientId)
+                .eq('session_id', sessionId)
+                .order('assessment_date', { ascending: false })
+                .limit(1)
+                .maybeSingle();
+            if (!sessionErr && sessionRow) {
+                return {
+                    patient_id: sessionRow.patient_uuid,
+                    session_id: sessionRow.session_id ?? undefined,
+                    assessment_date: sessionRow.assessment_date,
+                    days_post_session: sessionRow.days_post_session ?? undefined,
+                    phq9_score: sessionRow.phq9_score ?? undefined,
+                    gad7_score: sessionRow.gad7_score ?? undefined,
+                    cssrs_score: sessionRow.cssrs_score ?? undefined,
+                };
+            }
+        }
+
+        // Fall back to most recent record for this patient (any session)
+        const { data: row, error } = await supabase
+            .from('log_longitudinal_assessments')
+            .select('patient_uuid, session_id, assessment_date, days_post_session, phq9_score, gad7_score, cssrs_score')
+            .eq('patient_uuid', patientId)
+            .order('assessment_date', { ascending: false })
+            .limit(1)
+            .maybeSingle();
+
+        if (error || !row) return null;
+
+        return {
+            patient_id: row.patient_uuid,
+            session_id: row.session_id ?? undefined,
+            assessment_date: row.assessment_date,
+            days_post_session: row.days_post_session ?? undefined,
+            phq9_score: row.phq9_score ?? undefined,
+            gad7_score: row.gad7_score ?? undefined,
+            cssrs_score: row.cssrs_score ?? undefined,
+        };
+    } catch (err) {
+        console.warn('[clinicalLog] getLatestLongitudinalAssessment: error (non-blocking)', err);
+        return null;
+    }
+}
+
 // ============================================================================
 // PHASE 3: NEW CLINICAL LOG FUNCTIONS
 // ============================================================================

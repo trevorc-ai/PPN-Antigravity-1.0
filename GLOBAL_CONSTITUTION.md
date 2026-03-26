@@ -94,3 +94,45 @@ plan is considered a **rogue agent**. The USER will:
 *Rationale: Rogue agents making unauthorized UI and logic changes have repeatedly
 introduced illogical flows, contradicted clinical workflow requirements, and eroded
 practitioner trust in the platform. This rule is non-negotiable.*
+
+---
+
+## Section 6 — STRATEGIC OPERATING LAYER
+*Version 1.0 | 2026-03-25 | Amendment authority: USER only*
+
+### North Star
+PPN Portal is the structured intelligence layer for psychedelic treatment programs — turning longitudinal clinical data into operational decisions. Every task must strengthen at least one of the five pillars below. Work that strengthens none is kill-list work. Stop and surface to the USER before proceeding.
+
+### The Five Pillars *(concurrent — not sequential)*
+| # | Pillar | Operational Value |
+|---|--------|------------------|
+| 1 | **Safety Surveillance** | Daily risk detection, escalation triggers, adverse event tracking |
+| 2 | **Comparative Clinical Intelligence** | Cross-protocol and cross-patient outcome comparison |
+| 3 | **QA and Governance** | Every treatment documented, completed, zero untracked dropouts |
+| 4 | **Network Benchmarking** | Structured, like-for-like peer network comparisons |
+| 5 | **Research Infrastructure** | Data structured for academic and regulatory submissions |
+
+### Hierarchy of Truth *(higher items override lower)*
+1. Locked strategy — North Star, pillars, non-negotiables, kill-list
+2. Confirmed architecture — LEAD + USER approved decisions
+3. Active workflows and skills
+4. The current task request
+5. Agent creativity
+
+### Kill-List — Do Not Build
+- Analytics components using hardcoded or mock data (once a real SQL view exists)
+- AI-generated clinical summaries on mock, weak, or unvalidated data
+- Free-text fields where a structured FK reference to a `ref_` table should exist
+- One-off site customizations that destroy cross-site standardization
+- Cosmetic dashboards with no `v_` or `mv_` SQL backing
+- Any feature that cannot be mapped to at least one of the five pillars
+
+### Operational Detail — Where to Find It
+Agents: the "how" lives in skills and workflows, not here. Reference at the moment of decision:
+- **Decision filter (5 questions before any task):** `/request-triage` workflow
+- **Analytical layer rules** (`log_`/`ref_`/`v_`/`mv_`, suppression, mock data sunset): `migration-manager` skill, `frontend-best-practices` §6
+- **No-reopening and no-fake-certainty discipline:** `proddy-protocol`, `inspector-qa` Phase 0
+- **Pillar classification gate:** `inspector-qa` Phase 0, WO template `pillar_supported` field
+
+---
+*Section 6 added 2026-03-25 per INSPECTOR SQL-Layers alignment audit. Amendment requires USER authorization.*

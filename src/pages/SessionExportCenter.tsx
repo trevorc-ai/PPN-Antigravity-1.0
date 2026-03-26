@@ -8,6 +8,9 @@ import {
 import { downloadReport, PatientReportData, ReportType } from '../services/reportGenerator';
 import { exportResearchCSV, ResearchRecord } from '../utils/csvExporter';
 import { AdvancedTooltip } from '../components/ui/AdvancedTooltip';
+import { ExportCard } from '../components/exports/ExportCard';
+import { ComplianceFooter } from '../components/exports/ComplianceFooter';
+
 
 // ─── Mock patient / session context ──────────────────────────────────────────
 // In production this would come from route params / Supabase context
@@ -488,100 +491,36 @@ const SessionExportCenter: React.FC = () => {
                 </div>
 
                 {/* ── Export Package Cards ─────────────────────────────────── */}
-                <div>
-                    <h2 className="text-lg font-black text-slate-300 mb-4 uppercase tracking-widest">Choose Export Package</h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {EXPORT_PACKAGES.map(pkg => {
-                            const Icon = pkg.icon;
                             const isDownloading = downloading === pkg.id;
                             const isDone = done.has(pkg.id);
                             const isDisabled = !!downloading && !isDownloading;
 
                             return (
-                                <div
+                                <ExportCard
                                     key={pkg.id}
-                                    className={`relative bg-slate-900/60 backdrop-blur-xl border rounded-3xl p-6 transition-all group
-                                        ${isDone ? 'border-emerald-500/40' : pkg.borderColor}
-                                        ${isDisabled ? 'opacity-50' : 'hover:bg-slate-900/80'}
-                                    `}
-                                >
-                                    {/* Badge */}
-                                    {pkg.badge && (
-                                        <div className={`absolute top-4 right-4 px-2.5 py-1 rounded-lg text-xs font-black uppercase tracking-widest ${pkg.bgColor} ${pkg.textColor} border ${pkg.borderColor}`}>
-                                            {pkg.badge}
-                                        </div>
-                                    )}
-
-                                    {/* Header */}
-                                    <div className="flex items-start gap-4 mb-4">
-                                        <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 ${pkg.bgColor} border ${pkg.borderColor}`}>
-                                            <Icon className={`w-6 h-6 ${pkg.accentColor}`} />
-                                        </div>
-                                        <div className="flex-1 pr-20">
-                                            <h3 className="text-lg font-black text-[#A8B5D1]">{pkg.title}</h3>
-                                            <p className={`text-xs font-bold uppercase tracking-widest ${pkg.textColor} mt-0.5`}>{pkg.subtitle}</p>
-                                        </div>
-                                    </div>
-
-                                    {/* Description */}
-                                    <p className="text-sm text-slate-400 mb-5 leading-relaxed">{pkg.description}</p>
-
-                                    {/* Includes list */}
-                                    <div className="space-y-1.5 mb-6">
-                                        {pkg.includes.map((item, i) => (
-                                            <div key={i} className="flex items-start gap-2">
-                                                <ChevronRight className={`w-3.5 h-3.5 mt-0.5 shrink-0 ${pkg.accentColor}`} />
-                                                <span className="text-xs text-slate-400">{item}</span>
-                                            </div>
-                                        ))}
-                                    </div>
-
-                                    {/* Footer: format tag + download button */}
-                                    <div className="flex items-center justify-between pt-4 border-t border-slate-800">
-                                        <div className="flex items-center gap-2">
-                                            <FileText className="w-4 h-4 text-slate-500" />
-                                            <span className={`text-xs font-black uppercase tracking-widest px-2 py-0.5 rounded border ${pkg.bgColor} ${pkg.borderColor} ${pkg.textColor}`}>
-                                                {pkg.formatLabel}
-                                            </span>
-                                            {pkg.id === 'full-bundle' && (
-                                                <span className="text-xs text-slate-500 font-bold">· 3 files</span>
-                                            )}
-                                        </div>
-
-                                        <AdvancedTooltip
-                                            content={isDone ? 'Download complete!' : `Download ${pkg.title} as ${pkg.formatLabel}`}
-                                            tier="micro"
-                                        >
-                                            <button
-                                                onClick={() => handleExport(pkg)}
-                                                disabled={isDisabled || isDownloading}
-                                                aria-label={`Download ${pkg.title}`}
-                                                aria-busy={isDownloading}
-                                                className={`
-                                                    flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-black uppercase tracking-wider
-                                                    transition-all border focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500
-                                                    active:scale-95 disabled:cursor-not-allowed
-                                                    ${isDone
-                                                        ? 'bg-emerald-500/20 border-emerald-500/40 text-emerald-400 focus:ring-emerald-500'
-                                                        : `${pkg.bgColor} ${pkg.borderColor} ${pkg.textColor} hover:brightness-125`
-                                                    }
-                                                `}
-                                            >
-                                                {isDownloading ? (
-                                                    <><Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" /><span>Generating...</span></>
-                                                ) : isDone ? (
-                                                    <><CheckCircle className="w-4 h-4" aria-hidden="true" /><span>Downloaded</span></>
-                                                ) : (
-                                                    <><Download className="w-4 h-4" aria-hidden="true" /><span>Download</span></>
-                                                )}
-                                            </button>
-                                        </AdvancedTooltip>
-                                    </div>
-                                </div>
+                                    id={pkg.id}
+                                    title={pkg.title}
+                                    subtitle={pkg.subtitle}
+                                    description={pkg.description}
+                                    icon={pkg.icon}
+                                    format={pkg.format}
+                                    badge={pkg.badge}
+                                    accentColor={pkg.accentColor}
+                                    bgColor={pkg.bgColor}
+                                    borderColor={pkg.borderColor}
+                                    textColor={pkg.textColor}
+                                    includes={pkg.includes}
+                                    actionType="download"
+                                    onAction={() => handleExport(pkg)}
+                                    isDownloading={isDownloading}
+                                    isDone={isDone}
+                                    isDisabled={isDisabled}
+                                />
                             );
                         })}
                     </div>
-                </div>
 
                 {/* ── Session-by-Session Log ───────────────────────────────── */}
                 <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-3xl p-6">
@@ -651,28 +590,7 @@ const SessionExportCenter: React.FC = () => {
                     </div>
                 </div>
 
-                {/* ── Compliance Footer ─────────────────────────────────────── */}
-                <div className="flex flex-col sm:flex-row items-center justify-between gap-4 px-2 pb-6">
-                    <div className="flex items-center gap-4 text-xs text-slate-600">
-                        <div className="flex items-center gap-1.5">
-                            <Shield className="w-3.5 h-3.5" />
-                            <span>HIPAA Compliant</span>
-                        </div>
-                        <div className="h-3 w-px bg-slate-800" />
-                        <div className="flex items-center gap-1.5">
-                            <Lock className="w-3.5 h-3.5" />
-                            <span>FDA 21 CFR Part 11</span>
-                        </div>
-                        <div className="h-3 w-px bg-slate-800" />
-                        <div className="flex items-center gap-1.5">
-                            <Clock className="w-3.5 h-3.5" />
-                            <span>All exports logged with timestamp</span>
-                        </div>
-                    </div>
-                    <p className="text-xs text-slate-600">
-                        Re-identification of de-identified records is strictly prohibited.
-                    </p>
-                </div>
+                <ComplianceFooter showTimestamp={true} />
 
             </div>
         </div>

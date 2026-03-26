@@ -25,6 +25,8 @@ affects: []                  # List key files changed — INSPECTOR uses this fo
 admin_visibility: no         # yes = BUILDER must wire into Admin Dashboard before QA
 admin_section: ""            # Reports / Analytics / Session Management / Settings / N/A
 growth_order_ref: ""         # Required for all public-facing WOs: GO-XXX
+pillar_supported: ""         # REQUIRED. One or more of: Safety | Comparative Intelligence | QA/Governance | Benchmarking | Research | none
+task_type: ""                # REQUIRED. One of: schema | sql-view | ui-analytics | ui-feature | bug-fix | workflow | documentation | qa-testing
 ---
 
 ## Context

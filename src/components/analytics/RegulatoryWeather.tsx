@@ -1,77 +1,75 @@
-import { AlertTriangle, CheckCircle, Info, Shield } from 'lucide-react';
+import React from 'react';
+import { Shield, Info, ExternalLink } from 'lucide-react';
 
-interface ComplianceItem {
-    id: string;
-    title: string;
-    status: 'warning' | 'good' | 'info';
-    detail: string;
-}
-
-const mockData: ComplianceItem[] = [
-    {
-        id: '1',
-        title: 'OHA License',
-        status: 'warning',
-        detail: 'Expires in 12 days'
-    },
-    {
-        id: '2',
-        title: 'DORA Compliance',
-        status: 'good',
-        detail: 'Reporting Active v2.1'
-    },
-    {
-        id: '3',
-        title: 'FDA Update',
-        status: 'info',
-        detail: 'Public Hearing Scheduled'
-    }
-];
-
-const statusConfig = {
-    warning: {
-        icon: AlertTriangle,
-        color: 'text-amber-400',
-        dotColor: 'bg-amber-400'
-    },
-    good: {
-        icon: CheckCircle,
-        color: 'text-emerald-400',
-        dotColor: 'bg-emerald-400'
-    },
-    info: {
-        icon: Info,
-        color: 'text-blue-400',
-        dotColor: 'bg-blue-400'
-    }
-};
+/**
+ * WO-683: RegulatoryWeather — Governed Update
+ *
+ * Previous implementation rendered hardcoded mockData (OHA License, DORA Compliance, FDA Update)
+ * with fake expiry dates and status values — presenting fabricated compliance state as live data.
+ *
+ * Per WO-683: No synthetic compliance data may be shown. This panel now provides:
+ * 1. Honest placeholder explaining compliance monitoring is coming
+ * 2. Direct link to official regulatory sources
+ * 3. Actionable guidance for practitioners
+ *
+ * When a compliance_events table is added (future WO), this panel will render real alerts.
+ */
 
 export default function RegulatoryWeather() {
     return (
         <div className="bg-[#0f1218] border border-slate-800 rounded-lg p-6">
             <div className="flex items-center gap-2 mb-4">
-                <Shield className="w-5 h-5 text-slate-300" />
-                <h3 className="text-lg font-semibold text-slate-300">Regulatory Weather</h3>
+                <Shield className="w-5 h-5 text-indigo-400" />
+                <h3 className="ppn-card-title text-slate-300">Regulatory Weather</h3>
             </div>
 
-            <div className="space-y-4">
-                {mockData.map((item) => {
-                    const config = statusConfig[item.status];
-                    const Icon = config.icon;
+            {/* Honest zero-state — no synthetic data */}
+            <div className="flex flex-col items-center gap-4 py-6">
+                <div className="w-10 h-10 rounded-2xl bg-slate-800/60 border border-slate-700/50 flex items-center justify-center">
+                    <Info className="w-5 h-5 text-slate-500" />
+                </div>
+                <div className="text-center max-w-xs">
+                    <h4 className="ppn-body font-black text-slate-300 mb-1">Compliance monitoring coming soon</h4>
+                    <p className="ppn-caption text-slate-500 leading-snug">
+                        Live compliance alerts (license renewals, regulatory updates) will appear here once connected to your jurisdiction. No fabricated data is shown.
+                    </p>
+                </div>
 
-                    return (
-                        <div key={item.id} className="flex items-start gap-3">
-                            <div className={`mt-1 w-2 h-2 rounded-full ${config.dotColor} flex-shrink-0`} />
-                            <div className="flex-1 min-w-0">
-                                <div className="flex items-center gap-2">
-                                    <Icon className={`w-4 h-4 ${config.color} flex-shrink-0`} />
-                                    <h4 className="text-sm font-medium text-slate-300">{item.title}</h4>
-                                </div>
-                                <p className="text-sm text-slate-300 mt-1">{item.detail}</p>
-                            </div>
-                        </div>
-                    );
-                })}
+                {/* Actionable links */}
+                <div className="w-full space-y-2 mt-2">
+                    <a
+                        href="https://www.oregon.gov/oha/ph/preventionwellness/bhp/pages/psilocybin.aspx"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center justify-between p-3 bg-slate-900/50 border border-slate-800 rounded-lg hover:border-slate-700 transition-colors group"
+                    >
+                        <span className="ppn-meta text-slate-400 group-hover:text-slate-300">OHA Psilocybin Program (Oregon)</span>
+                        <ExternalLink className="w-3 h-3 text-slate-600 group-hover:text-slate-400 shrink-0" />
+                    </a>
+                    <a
+                        href="https://www.ncsl.org/health/psychedelic-medications"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center justify-between p-3 bg-slate-900/50 border border-slate-800 rounded-lg hover:border-slate-700 transition-colors group"
+                    >
+                        <span className="ppn-meta text-slate-400 group-hover:text-slate-300">NCSL Psychedelic Legislation Tracker</span>
+                        <ExternalLink className="w-3 h-3 text-slate-600 group-hover:text-slate-400 shrink-0" />
+                    </a>
+                    <a
+                        href="https://www.dea.gov/controlled-substances-act"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center justify-between p-3 bg-slate-900/50 border border-slate-800 rounded-lg hover:border-slate-700 transition-colors group"
+                    >
+                        <span className="ppn-meta text-slate-400 group-hover:text-slate-300">DEA Controlled Substances Act</span>
+                        <ExternalLink className="w-3 h-3 text-slate-600 group-hover:text-slate-400 shrink-0" />
+                    </a>
+                </div>
+
+                {/* Legal disclaimer */}
+                <p className="ppn-caption text-slate-600 italic text-center mt-1">
+                    Always consult licensed legal counsel before offering or advertising any psychedelic therapy services.
+                </p>
             </div>
         </div>
     );

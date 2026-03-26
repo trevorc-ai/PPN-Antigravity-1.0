@@ -107,6 +107,49 @@ Signed: INSPECTOR | Date: YYYY-MM-DD
 
 ---
 
+### Analytics Data Source Gate (Phase 0 — Mandatory)
+
+**Trigger:** Run this check if the WO's `files:` list contains any path matching:
+- `src/components/analytics/*`
+- `src/pages/*` that renders charts, statistics, or outcome summaries
+- Any file that imports from `src/constants/analyticsData.ts`
+
+**Check:** For each flagged file, does the component read from a `v_` or `mv_` SQL view, or does it import from `src/constants/analyticsData.ts` / any `MOCK_*` constant?
+
+| Result | Action |
+|--------|--------|
+| Component reads from `v_`/`mv_` SQL view | ✅ PASS |
+| Component uses mock data BUT no `mv_` view exists yet | ⚠️ PASS with note — BUILDER must add a `// TODO: migrate to mv_[name] when view is live` comment |
+| Component uses mock data AND the corresponding `mv_` view already exists | 🔴 FAIL — return to `02_TRIAGE`: `hold_reason: Analytics Data Source Gate — [component] imports MOCK_* data but [mv_view] exists. Component must be migrated before this WO can ship.` |
+
+**Current mock-data migration queue** (reference for gate decisions):
+
+| Component | Mock Constant | Target `mv_` | Gate Status |
+|-----------|--------------|-------------|------------|
+| `SafetyRiskMatrix.tsx` | `MOCK_RISK_DATA` | `mv_open_risk_queue` | 🔴 FAIL when `mv_open_risk_queue` exists |
+| `PatientJourneySnapshot.tsx` | `MOCK_JOURNEY_DATA` | `mv_patient_latest_status` | 🔴 FAIL when `mv_patient_latest_status` exists |
+| `PatientFlowSankey.tsx` | `MOCK_FLOW_DATA` | `mv_site_monthly_quality` | 🔴 FAIL when `mv_site_monthly_quality` exists |
+| `ConfidenceCone.tsx` | `MOCK_TRAJECTORY_DATA` | `mv_benchmark_by_subgroup` | 🔴 FAIL when `mv_benchmark_by_subgroup` exists |
+
+### Pillar Classification Gate (Phase 0)
+
+- [ ] WO frontmatter contains `pillar_supported:` field with at least one value (or `none` escalated to USER)
+- [ ] WO frontmatter contains `task_type:` field with a valid type
+- [ ] `/request-triage` verdict block is present in the WO body and verdict = `PROCEED` *(required for all non-trivial WOs; waived only for pure bug fixes with no architectural surface area)*
+
+**If pillar fields are missing → return to `02_TRIAGE`** with `hold_reason: Missing pillar_supported or task_type in frontmatter. Required per GLOBAL_CONSTITUTION §6.`
+**If `/request-triage` block is missing on a non-trivial WO → return to `02_TRIAGE`** with `hold_reason: /request-triage verdict required per GLOBAL_CONSTITUTION §6.`
+
+Update clearance block to include:
+```
+- [ ] Analytics Data Source Gate: PASS | PASS with note | N/A (no analytics files)
+- [ ] Pillar Classification Gate: PASS | [pillar(s) stated]
+- [ ] /request-triage verdict: PROCEED | N/A (bug fix — waived)
+- [ ] /analysis-first gate: Pre-conditions = YES | N/A (not a sql-view or schema task_type)
+```
+
+---
+
 You must evaluate BUILDER's output against this exact checklist. Paste this checklist into the chat with PASS/FAIL for each item.
 
 ## PHASE 1: SCOPE & DATABASE AUDIT

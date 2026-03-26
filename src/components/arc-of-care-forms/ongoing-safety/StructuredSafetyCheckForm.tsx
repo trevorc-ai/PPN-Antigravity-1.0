@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import { CheckCircle, AlertTriangle, ChevronRight, ArrowUp, Minus, Zap, Clock } from 'lucide-react';
 import { FormField } from '../shared/FormField';
 import { FormFooter } from '../shared/FormFooter';
 import { useFormCompletion } from '../../../hooks/useFormCompletion';
-import { InteractionChecker } from '../../clinical/InteractionChecker';
+import { supabase } from '../../../supabaseClient';
 
 
 /**
@@ -39,28 +39,34 @@ interface StructuredSafetyCheckFormProps {
     onExit?: () => void;
 }
 
-// Ordered moderate → high → critical (ascending severity)
-const SAFETY_CONCERNS = [
-    { id: 4, name: 'Medication non-compliance', severity: 'moderate' },
-    { id: 5, name: 'Social isolation increase', severity: 'moderate' },
-    { id: 6, name: 'Sleep disturbance worsening', severity: 'moderate' },
-    { id: 7, name: 'Panic attacks', severity: 'moderate' },
-    { id: 3, name: 'Substance use relapse', severity: 'high' },
-    { id: 1, name: 'Suicidal ideation increase', severity: 'critical' },
-    { id: 2, name: 'Self-harm behavior', severity: 'critical' },
-    { id: 8, name: 'Psychotic symptoms', severity: 'critical' },
+// WO-661: ref_clinical_observations row shape.
+// Columns: id (PK), name/observation_text, category, sort_order, severity, urgency
+// Adapt at runtime: check both 'id' and 'observation_id' column names (ObservationSelector
+// uses observation_id; the WO spec says 'id'). Strategy: prefer 'id', fall back to 'observation_id'.
+interface ClinOrRow { id: number; name: string; category: string; sort_order: number; severity?: string; urgency?: string; }
+
+// WO-661: Fallback constants — used when the live DB fetch returns empty rows or errors.
+// These match migration 045 seeding so the form is never left blank mid-session.
+// IDs here are the assumed PKs and serve ONLY as a graceful degradation path.
+const FALLBACK_CONCERNS: ClinOrRow[] = [
+    { id: 4, name: 'Medication non-compliance', category: 'clinical_flag', sort_order: 1, severity: 'moderate' },
+    { id: 5, name: 'Social isolation increase', category: 'clinical_flag', sort_order: 2, severity: 'moderate' },
+    { id: 6, name: 'Sleep disturbance worsening', category: 'clinical_flag', sort_order: 3, severity: 'moderate' },
+    { id: 7, name: 'Panic attacks', category: 'clinical_flag', sort_order: 4, severity: 'moderate' },
+    { id: 3, name: 'Substance use relapse', category: 'clinical_flag', sort_order: 5, severity: 'high' },
+    { id: 1, name: 'Suicidal ideation increase', category: 'clinical_flag', sort_order: 6, severity: 'critical' },
+    { id: 2, name: 'Self-harm behavior', category: 'clinical_flag', sort_order: 7, severity: 'critical' },
+    { id: 8, name: 'Psychotic symptoms', category: 'clinical_flag', sort_order: 8, severity: 'critical' },
 ];
 
-// Ordered by urgency to match ref_clinical_observations sort_order (migration 045):
-// Immediate (sort 30-31) → Urgent (sort 32-34)
-const SAFETY_ACTIONS = [
-    { id: 6, name: 'Hospitalization recommended', urgency: 'immediate' }, // SAFE_HOSPITALIZATION_DISC    sort 30
-    { id: 2, name: 'Emergency contact notified', urgency: 'immediate' }, // SAFE_EMERGENCY_CONTACT_NOTIF sort 31
-    { id: 5, name: 'Crisis hotline information provided', urgency: 'immediate' }, // (immediate)
-    { id: 7, name: 'Referred to psychiatrist', urgency: 'urgent' }, // SAFE_PSYCHIATRY_REFERRAL     sort 32
-    { id: 1, name: 'Increased check-in frequency', urgency: 'urgent' }, // SAFE_CHECK_IN_FREQ_INCREASED sort 34
-    { id: 3, name: 'Medication adjustment recommended', urgency: 'urgent' },
-    { id: 4, name: 'Additional therapy session scheduled', urgency: 'urgent' },
+const FALLBACK_ACTIONS: ClinOrRow[] = [
+    { id: 6, name: 'Hospitalization recommended', category: 'clinical_action', sort_order: 30, urgency: 'immediate' },
+    { id: 2, name: 'Emergency contact notified', category: 'clinical_action', sort_order: 31, urgency: 'immediate' },
+    { id: 5, name: 'Crisis hotline information provided', category: 'clinical_action', sort_order: 32, urgency: 'immediate' },
+    { id: 7, name: 'Referred to psychiatrist', category: 'clinical_action', sort_order: 33, urgency: 'urgent' },
+    { id: 1, name: 'Increased check-in frequency', category: 'clinical_action', sort_order: 34, urgency: 'urgent' },
+    { id: 3, name: 'Medication adjustment recommended', category: 'clinical_action', sort_order: 35, urgency: 'urgent' },
+    { id: 4, name: 'Additional therapy session scheduled', category: 'clinical_action', sort_order: 36, urgency: 'urgent' },
 ];
 
 
@@ -81,7 +87,67 @@ const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
         follow_up_timeframe: initialData.follow_up_timeframe,
     });
 
-    React.useEffect(() => {
+    // WO-661: Live ref_clinical_observations fetch
+    const [safetyConcerns, setSafetyConcerns] = useState<ClinOrRow[]>([]);
+    const [safetyActions, setSafetyActions] = useState<ClinOrRow[]>([]);
+    const [observationsLoading, setObservationsLoading] = useState(true);
+    const [observationsFallback, setObservationsFallback] = useState(false);
+
+    useEffect(() => {
+        let cancelled = false;
+        (async () => {
+            try {
+                setObservationsLoading(true);
+                // Fetch both categories in one query, sorted by sort_order
+                const { data: rows, error } = await supabase
+                    .from('ref_clinical_observations')
+                    .select('*')
+                    .in('category', ['clinical_flag', 'clinical_action'])
+                    .order('sort_order', { ascending: true });
+
+                if (cancelled) return;
+
+                if (error || !rows || rows.length === 0) {
+                    // Graceful fallback: use hardcoded arrays, show amber warning
+                    console.warn('[WO-661] ref_clinical_observations fetch returned empty/error. Using fallback.', error?.message);
+                    setSafetyConcerns(FALLBACK_CONCERNS);
+                    setSafetyActions(FALLBACK_ACTIONS);
+                    setObservationsFallback(true);
+                } else {
+                    // Normalize: support both 'id' and 'observation_id' column names,
+                    // and both 'name' and 'observation_text' column names.
+                    const normalize = (row: Record<string, unknown>): ClinOrRow => ({
+                        id: (row.id ?? row.observation_id) as number,
+                        name: (row.name ?? row.observation_text ?? '') as string,
+                        category: row.category as string,
+                        sort_order: (row.sort_order ?? 0) as number,
+                        severity: (row.severity ?? undefined) as string | undefined,
+                        urgency: (row.urgency ?? undefined) as string | undefined,
+                    });
+                    const normalized = rows.map(normalize);
+                    const concerns = normalized.filter(r => r.category === 'clinical_flag');
+                    const actions  = normalized.filter(r => r.category === 'clinical_action');
+                    // If either category is empty from DB, use fallback for that category only
+                    setSafetyConcerns(concerns.length > 0 ? concerns : FALLBACK_CONCERNS);
+                    setSafetyActions(actions.length > 0 ? actions : FALLBACK_ACTIONS);
+                    if (concerns.length === 0 || actions.length === 0) setObservationsFallback(true);
+                }
+            } catch (err) {
+                if (!cancelled) {
+                    console.warn('[WO-661] ref_clinical_observations fetch threw error. Using fallback.', err);
+                    setSafetyConcerns(FALLBACK_CONCERNS);
+                    setSafetyActions(FALLBACK_ACTIONS);
+                    setObservationsFallback(true);
+                }
+            } finally {
+                if (!cancelled) setObservationsLoading(false);
+            }
+        })();
+        return () => { cancelled = true; };
+    }, []);
+
+    // Re-sync form state when initialData prop changes (e.g. Amend flow)
+    useEffect(() => {
         if (initialData && Object.keys(initialData).length > 0) {
             setData(prev => ({
                 ...prev,
@@ -92,7 +158,9 @@ const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
                 action_taken_ids: initialData.action_taken_ids ?? prev.action_taken_ids,
             }));
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [initialData]);
+
 
     const [isSaving, setIsSaving] = useState(false);
 
@@ -255,44 +323,60 @@ const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
                 </FormField>
             </div>
 
-            {/* Safety Concerns, ordered critical → high → moderate (ref sort_order) */}
+            {/* Safety Concerns, ordered by ref sort_order (clinical_flag category) */}
             <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6 space-y-4">
                 <FormField label="Safety Concerns" tooltip="Pulls from the 'ref_clinical_observations' table (category: 'clinical_flag'). These align with standard DSM-5 risk parameters for psychiatric decompensation. Orders by clinical priority.">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                        {SAFETY_CONCERNS.map((concern) => {
-                            const selected = data.safety_concern_ids.includes(concern.id);
-                            return (
-                                <button
-                                    key={concern.id}
-                                    type="button"
-                                    onClick={() => toggleArrayItem('safety_concern_ids', concern.id)}
-                                    aria-pressed={selected}
-                                    className={[
-                                        'px-4 py-3 rounded-lg text-left font-medium transition-all border-l-4',
-                                        selected
-                                            ? concern.severity === 'critical'
-                                                ? 'bg-red-900/70 border border-red-500/70 border-l-red-400 text-red-300'
-                                                : concern.severity === 'high'
-                                                    ? 'bg-orange-900/70 border border-orange-500/60 border-l-orange-400 text-orange-300'
-                                                    : 'bg-sky-900/60 border border-sky-500/50 border-l-sky-400 text-sky-300'
-                                            : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700/50 border-l-slate-600',
-                                    ].join(' ')}
-                                >
-                                    <div className="flex items-center gap-2.5">
-                                        <CheckCircle className={`w-4 h-4 flex-shrink-0 transition-opacity ${selected ? 'opacity-100' : 'opacity-30'}`} aria-hidden="true" />
-                                        <div className="flex-1 min-w-0 flex items-center justify-between gap-2">
-                                            <div className="text-sm font-semibold leading-none">{concern.name}</div>
-                                            <div className="flex items-center gap-1 text-xs font-bold opacity-70 flex-shrink-0">
-                                                {concern.severity === 'critical' && <><AlertTriangle className="w-3 h-3" aria-hidden="true" /> Critical</>}
-                                                {concern.severity === 'high' && <><ArrowUp className="w-3 h-3" aria-hidden="true" /> High</>}
-                                                {concern.severity === 'moderate' && <><Minus className="w-3 h-3" aria-hidden="true" /> Moderate</>}
+                    {/* WO-661: amber notice when DB returned no rows and fallback data is in use */}
+                    {observationsFallback && (
+                        <div className="mb-2 flex items-center gap-2 text-amber-400/80 text-xs px-1">
+                            <AlertTriangle className="w-3.5 h-3.5 flex-shrink-0" aria-hidden="true" />
+                            <span>Safety categories unavailable — using standard defaults.</span>
+                        </div>
+                    )}
+                    {observationsLoading ? (
+                        // Loading skeleton while ref_clinical_observations fetch is pending
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-2" aria-busy="true" aria-label="Loading safety concerns">
+                            {Array.from({ length: 4 }).map((_, i) => (
+                                <div key={i} className="h-12 animate-pulse bg-slate-800/30 border border-slate-700/30 rounded-lg" />
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                            {safetyConcerns.map((concern) => {
+                                const selected = data.safety_concern_ids.includes(concern.id);
+                                return (
+                                    <button
+                                        key={concern.id}
+                                        type="button"
+                                        onClick={() => toggleArrayItem('safety_concern_ids', concern.id)}
+                                        aria-pressed={selected}
+                                        className={[
+                                            'px-4 py-3 rounded-lg text-left font-medium transition-all border-l-4',
+                                            selected
+                                                ? concern.severity === 'critical'
+                                                    ? 'bg-red-900/70 border border-red-500/70 border-l-red-400 text-red-300'
+                                                    : concern.severity === 'high'
+                                                        ? 'bg-orange-900/70 border border-orange-500/60 border-l-orange-400 text-orange-300'
+                                                        : 'bg-sky-900/60 border border-sky-500/50 border-l-sky-400 text-sky-300'
+                                                : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700/50 border-l-slate-600',
+                                        ].join(' ')}
+                                    >
+                                        <div className="flex items-center gap-2.5">
+                                            <CheckCircle className={`w-4 h-4 flex-shrink-0 transition-opacity ${selected ? 'opacity-100' : 'opacity-30'}`} aria-hidden="true" />
+                                            <div className="flex-1 min-w-0 flex items-center justify-between gap-2">
+                                                <div className="text-sm font-semibold leading-none">{concern.name}</div>
+                                                <div className="flex items-center gap-1 text-xs font-bold opacity-70 flex-shrink-0">
+                                                    {concern.severity === 'critical' && <><AlertTriangle className="w-3 h-3" aria-hidden="true" /> Critical</>}
+                                                    {concern.severity === 'high' && <><ArrowUp className="w-3 h-3" aria-hidden="true" /> High</>}
+                                                    {concern.severity === 'moderate' && <><Minus className="w-3 h-3" aria-hidden="true" /> Moderate</>}
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </button>
-                            );
-                        })}
-                    </div>
+                                    </button>
+                                );
+                            })}
+                        </div>
+                    )}
                 </FormField>
             </div>
 
@@ -301,38 +385,46 @@ const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
 
             <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6 space-y-4">
                 <FormField label="Actions Taken" tooltip="Pulls from 'ref_clinical_observations' table. Aligned with standard psychiatric risk mitigation and APA guidelines. Orders by urgency.">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                        {SAFETY_ACTIONS.map((action) => {
-                            const selected = data.action_taken_ids.includes(action.id);
-                            return (
-                                <button
-                                    key={action.id}
-                                    type="button"
-                                    onClick={() => toggleArrayItem('action_taken_ids', action.id)}
-                                    aria-pressed={selected}
-                                    className={[
-                                        'px-4 py-3 rounded-lg text-left font-medium transition-all border-l-4',
-                                        selected
-                                            ? action.urgency === 'immediate'
-                                                ? 'bg-rose-900/70 border border-rose-500/70 border-l-rose-400 text-rose-300'
-                                                : 'bg-amber-900/70 border border-amber-500/60 border-l-amber-400 text-amber-300'
-                                            : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700/50 border-l-slate-600',
-                                    ].join(' ')}
-                                >
-                                    <div className="flex items-center gap-2.5">
-                                        <CheckCircle className={`w-4 h-4 flex-shrink-0 transition-opacity ${selected ? 'opacity-100' : 'opacity-30'}`} aria-hidden="true" />
-                                        <div className="flex-1 min-w-0 flex items-center justify-between gap-2">
-                                            <div className="text-sm font-semibold leading-none">{action.name}</div>
-                                            <div className="flex items-center gap-1 text-xs font-bold opacity-70 flex-shrink-0">
-                                                {action.urgency === 'immediate' && <><Zap className="w-3 h-3" aria-hidden="true" /> Immediate</>}
-                                                {action.urgency === 'urgent' && <><Clock className="w-3 h-3" aria-hidden="true" /> Urgent</>}
+                    {observationsLoading ? (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-2" aria-busy="true" aria-label="Loading safety actions">
+                            {Array.from({ length: 4 }).map((_, i) => (
+                                <div key={i} className="h-12 animate-pulse bg-slate-800/30 border border-slate-700/30 rounded-lg" />
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                            {safetyActions.map((action) => {
+                                const selected = data.action_taken_ids.includes(action.id);
+                                return (
+                                    <button
+                                        key={action.id}
+                                        type="button"
+                                        onClick={() => toggleArrayItem('action_taken_ids', action.id)}
+                                        aria-pressed={selected}
+                                        className={[
+                                            'px-4 py-3 rounded-lg text-left font-medium transition-all border-l-4',
+                                            selected
+                                                ? action.urgency === 'immediate'
+                                                    ? 'bg-rose-900/70 border border-rose-500/70 border-l-rose-400 text-rose-300'
+                                                    : 'bg-amber-900/70 border border-amber-500/60 border-l-amber-400 text-amber-300'
+                                                : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700/50 border-l-slate-600',
+                                        ].join(' ')}
+                                    >
+                                        <div className="flex items-center gap-2.5">
+                                            <CheckCircle className={`w-4 h-4 flex-shrink-0 transition-opacity ${selected ? 'opacity-100' : 'opacity-30'}`} aria-hidden="true" />
+                                            <div className="flex-1 min-w-0 flex items-center justify-between gap-2">
+                                                <div className="text-sm font-semibold leading-none">{action.name}</div>
+                                                <div className="flex items-center gap-1 text-xs font-bold opacity-70 flex-shrink-0">
+                                                    {action.urgency === 'immediate' && <><Zap className="w-3 h-3" aria-hidden="true" /> Immediate</>}
+                                                    {action.urgency === 'urgent' && <><Clock className="w-3 h-3" aria-hidden="true" /> Urgent</>}
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </button>
-                            );
-                        })}
-                    </div>
+                                    </button>
+                                );
+                            })}
+                        </div>
+                    )}
                 </FormField>
             </div>
 

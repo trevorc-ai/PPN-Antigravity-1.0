@@ -359,6 +359,7 @@ const SITE_MAP = [
             { path: '/privacy' }, { path: '/terms' }, { path: '/data-policy' }, { path: '/data-policy/print' },
         ],
         externalLinks: [
+            { label: 'HIPAA Counsel Packet — Print / PDF', href: '/internal/admin_uploads/legal/HIPAA_Counsel_Packet_Print.html', icon: '📋' },
             { label: 'HIPAA Legal Packet (GO-651)', href: '/internal/founding-docs/HIPAA-Packet/index.html', icon: '⚖️' },
             { label: 'Clinician Founding Partner Packet (GO-651)', href: '/internal/founding-docs/Clinician-Packet/index.html', icon: '🩺' },
             { label: 'Researcher Founding Partner Packet (GO-651)', href: '/internal/founding-docs/Researcher-Packet/index.html', icon: '🔬' },
