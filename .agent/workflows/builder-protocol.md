@@ -223,6 +223,9 @@ Do NOT run `/finalize_feature`. Do NOT `git commit`. INSPECTOR owns the commit g
 
 **After handing off one WO:** immediately `ls 04_BUILD/`, pick the next ticket (parallel or sequential per Step 1), and start building. Only stop when `04_BUILD` is empty, then report: "04_BUILD is empty. All tickets complete. Awaiting INSPECTOR QA."
 
+**⛔ BUILDER does NOT present a walkthrough to the user.** Write a `## BUILDER Walkthrough` block directly in the WO ticket file summarising what was built. It surfaces to the user at `06_USER_REVIEW` alongside INSPECTOR's screenshots. Do not call `notify_user` with a walkthrough. Do not create a standalone `walkthrough.md` artifact and wait for the user to read it. Keep moving.
+
+
 ## Changelog
 
 | Version | Date | Author | Change |
