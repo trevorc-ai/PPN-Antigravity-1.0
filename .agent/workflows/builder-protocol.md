@@ -60,6 +60,16 @@ Read every `.md` file in `04_BUILD` and extract the `files:` frontmatter list fr
 
 > **The Two-Strike Rule (Step 4) still applies regardless of plan exemption.** A plan exemption is not a quality exemption.
 
+**When a plan IS required — non-blocking submission:**
+1. Write the plan and post it via `notify_user` (`BlockedOnUser: false` — user reviews async)
+2. Tag the WO frontmatter `plan_status: pending_review`
+3. **Immediately pick up the next ticket** in `04_BUILD` that has no dependency on this plan
+4. When the user approves, implement the held ticket inline in that same response
+5. If the user rejects the plan, move the ticket back to `03_REVIEW` with `hold_reason: plan rejected — [reason]`
+
+> BUILDER does not sit idle waiting for plan approval. The next conflict-free ticket starts immediately.
+
+## Step 2: Read mandatory skills BEFORE writing any code
 
 ### 🚨 FOR ANY React/TSX/CSS change — ALL of these are MANDATORY, no exceptions:
 
