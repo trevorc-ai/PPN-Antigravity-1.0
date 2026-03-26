@@ -42,7 +42,24 @@ Read every `.md` file in `04_BUILD` and extract the `files:` frontmatter list fr
 
 > **Never leave a stuck WO in `04_BUILD`.** A WO stays in `04_BUILD` only while actively being built.
 
-## Step 2: Read mandatory skills BEFORE writing any code
+## Step 1.5: Plan Gate — WO-as-Plan Rule
+
+**The WO ticket satisfies Rule 8 (HARD PLAN GATE) when ALL of the following are true:**
+
+1. The WO has a signed `## INSPECTOR 03_REVIEW CLEARANCE` block
+2. The WO has a defined `files:` list in frontmatter (not empty, no wildcards)
+3. `database_changes:` is `no` or absent
+
+**When all 3 are true:** BUILDER skips writing `implementation_plan.md` entirely and starts coding immediately. The INSPECTOR-cleared WO IS the approved plan. No separate plan doc, no `notify_user` with `BlockedOnUser: true`, no waiting.
+
+**When ANY of the following apply — a written plan is still REQUIRED before coding:**
+- `database_changes: yes` — migration SQL must be written, reviewed, and explicitly approved
+- WO touches a file within 1 level of FREEZE.md entries (e.g., same directory as a frozen file)
+- WO has no `files:` list or uses wildcards (`src/components/*`)
+- BUILDER discovers mid-build that the true scope exceeds what's in `files:` — STOP, write a scope amendment, wait for LEAD approval
+
+> **The Two-Strike Rule (Step 4) still applies regardless of plan exemption.** A plan exemption is not a quality exemption.
+
 
 ### 🚨 FOR ANY React/TSX/CSS change — ALL of these are MANDATORY, no exceptions:
 
@@ -206,4 +223,5 @@ Do NOT run `/finalize_feature`. Do NOT `git commit`. INSPECTOR owns the commit g
 | 2.0 | 2026-03-23 | LEAD | **Pipeline Architecture Redesign.** Renamed all stage folders. Added USER-only gate law. Added parallel build rule in Step 1. Added WIP limit check. Auto-handoff to INSPECTOR in same response after build. |
 | 2.2 | 2026-03-23 | LEAD | **SYSTEMIC FIX: ppn-ui-standards is now MANDATORY for ALL React/TSX components**, not just outreach files. Added Rule 8c mobile-first pre-commit grep block (5 checks) as a required gate before every handoff to 05_QA. Root cause of recurring standards violations after WO-658. |
 | 2.3 | 2026-03-23 | LEAD | **Omni-Channel Matrix cross-reference added to Step 2.** BUILDER must check Rule 0 (Mobile/Tablet/Desktop/Print) before writing any layout class. Proactive fix prevents FLO from being the first agent to catch tablet layout and print: modifier violations. |
+| 2.5 | 2026-03-25 | LEAD | **WO-as-Plan rule added (Step 1.5).** INSPECTOR-cleared WOs with defined files: list satisfy Rule 8 automatically — BUILDER skips implementation_plan.md and starts coding immediately. Exceptions: DB migrations, wildcards, frozen-adjacent files. |
 | 2.4 | 2026-03-24 | ANTIGRAVITY | **PPN UI Standards Automated Enforcement gate added.** 5-check grep block (bare text-xs, low contrast, native details/summary, em dash, banned fonts) is now a mandatory pre-handoff step with required PASS/FAIL output. Root cause fix: standards were read but not verified, allowing violations to reach QA and production. |
