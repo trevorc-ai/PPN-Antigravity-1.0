@@ -37,6 +37,22 @@ This document supersedes all other instructions. All agents MUST abide by these 
     for USER review — labeled clearly with expected result and pre-flight queries.
     The USER runs it, pastes the result, and the agent verifies.
 
+*   **Read Model Policy — DB-First, Always (MANDATORY — ALL AGENTS):**
+    If a `v_*` or `mv_*` view exists that already computes analytical data,
+    the UI MUST read from it. Client-side recomputation of data the database
+    already provides is a violation equivalent to introducing a free-text field.
+    Banned client-side patterns (use the corresponding DB object instead):
+      - Outcome delta calculation → `mv_outcome_deltas_by_timepoint`
+      - Trajectory labeling → `mv_patient_trajectory_summary`
+      - Clinician queue priority scoring → `mv_clinician_work_queue`
+      - Follow-up window compliance → `mv_followup_window_compliance`
+      - Documentation completeness scoring → `mv_documentation_completeness`
+      - Site benchmark comparison → `v_site_outcome_benchmark_compare`
+    BUILDER must add a `// Source: mv_*` comment to every analytical hook
+    documenting which DB object it reads from. INSPECTOR will reject hooks
+    that join 2+ raw `log_*` tables when an equivalent `v_*`/`mv_*` exists.
+    Added: 2026-03-26 per Intelligence Layer Integration Plan. USER-authorized.
+
 *   **RLS is Mandatory:** Row Level Security must be ON for every public table.
     All application writes are site-scoped via log_user_sites.
 

@@ -234,23 +234,44 @@ const unique = [...new Set(data.map(r => r.substance_name))].sort();
 
 ### Exception (Temporary Scaffold — NOT a Permanent Feature)
 
-`src/constants/analyticsData.ts` mock constants are a **temporary build scaffold only**. They exist because the required `v_`/`mv_` SQL views have not yet been built.
+`src/constants/analyticsData.ts` mock constants are a **temporary build scaffold only**.
 
 **Rules:**
 1. Mock data (`MOCK_*` constants) must **not** be introduced into any new component.
-2. Any component currently using mock data **must** be migrated to read from its target `v_` or `mv_` SQL view as soon as that view exists.
-3. A WO that creates a new `mv_` view is **incomplete** until the consuming component is updated to read from it. INSPECTOR will reject at QA if this is not done.
+2. Any component using mock data **must** migrate to its target `v_`/`mv_` view as soon as that view exists.
+3. A WO creating a new `mv_` view is **incomplete** until the consuming component reads from it.
 
-**Current mock-data migration queue** *(do not close until migrated)*:
+**Current mock-data migration queue** *(updated 2026-03-26)*:
 
-| Component | Mock Constant | Target `mv_` View | Pillar |
-|-----------|--------------|------------------|--------|
-| `SafetyRiskMatrix.tsx` | `MOCK_RISK_DATA` | `mv_open_risk_queue` | 1 — Safety |
-| `PatientJourneySnapshot.tsx` | `MOCK_JOURNEY_DATA` | `mv_patient_latest_status` | 1 — Safety |
-| `PatientFlowSankey.tsx` | `MOCK_FLOW_DATA` | `mv_site_monthly_quality` | 3 — QA |
-| `ConfidenceCone.tsx` | `MOCK_TRAJECTORY_DATA` | `mv_benchmark_by_subgroup` | 2 — Comparative |
+| Component | Mock Source | Target MV | Status |
+|-----------|-------------|-----------|--------|
+| `SafetyRiskMatrix.tsx` | `MOCK_RISK_DATA` | `mv_open_risk_queue` | ❌ MV not yet created |
+| `PatientFlowSankey.tsx` | `MOCK_FLOW_DATA` | `mv_site_monthly_quality` | ❌ MV not yet created |
+| `ConfidenceCone.tsx` | `MOCK_TRAJECTORY_DATA` | `mv_benchmark_by_subgroup` | ❌ MV not yet created |
+| `PatientJourneySnapshot.tsx` | `MOCK_JOURNEY_DATA` | `mv_patient_latest_status` | ✅ MV exists — WO-680 clear |
+| Dashboard KPI cards | Hardcoded values | `mv_site_dashboard_summary` | ✅ MV exists — WO-NEW-A clear |
+| `PatientOutcomePanel.tsx` benchmark | Synthetic scaffold | `mv_outcome_deltas_by_timepoint` | ✅ MV exists — WO-NEW-B clear |
 
-*Updated 2026-03-25 per INSPECTOR SQL-Layers alignment audit.*
+---
+
+## §6.3 — MV-First Analytical Hook Decision Tree (MANDATORY)
+
+Before writing any data-fetching logic in a hook or component, answer in order:
+
+1. **Does a `mv_*` or `v_*` object already compute this?** → **Use it. No exceptions.**
+2. **Does it require joining 2+ raw `log_*` tables?** → **Stop. Request a new MV from PRODDY.**
+3. **Is the computation a delta, trajectory label, queue rank, or compliance flag?** → **Stop. This belongs in SQL, not React.**
+
+**Every analytical hook must include a source comment:**
+```ts
+// Source: mv_site_dashboard_summary (capability #10 — site dashboard rollups)
+// Zero-state: returns null when site has no data — component must handle gracefully
+```
+
+Violations are a QA failure. INSPECTOR will reject any PR where a hook stitches raw `log_*` tables
+when an equivalent `v_*`/`mv_*` view already exists.
+
+*Added 2026-03-26 per Intelligence Layer Integration Plan.*
 
 ---
 

@@ -12,7 +12,7 @@ task_type: feature
 database_changes: no
 depends_on: "WO-636 (Waitlist Form Error Fix — must be confirmed shipped before video wiring)"
 skip_approved_by: ""
-hold_reason: "INSPECTOR return — missing pillar_supported, task_type, and database_changes fields in frontmatter. Required per GLOBAL_CONSTITUTION §6 and INSPECTOR Pillar Classification Gate."
+hold_reason: ""
 held_at: ""
 failure_count: 0
 completed_at: ""

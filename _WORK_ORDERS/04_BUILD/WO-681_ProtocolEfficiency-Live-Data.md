@@ -2,7 +2,7 @@
 id: WO-681
 title: "Connect ProtocolEfficiency to live session timing data"
 owner: BUILDER
-status: 00_INBOX
+status: 04_BUILD
 priority: P1
 created: 2026-03-24
 origin: "Intelligence Gap Audit — Tier 2"
@@ -29,3 +29,9 @@ files:
 ## INSPECTOR 03_REVIEW CLEARANCE: FAST-PASS
 No DB impact detected. Cleared for build.
 Signed: INSPECTOR | Date: 2026-03-24
+
+## MV LAYER AMENDMENT — 2026-03-26
+Prefer `v_session_summary` over direct `log_clinical_records` queries.
+`v_session_summary` provides a pre-shaped session object (session_date, status, site_id,
+substance_name, dosage) without requiring raw joins. Use as primary source.
+Comment: `// Source: v_session_summary (capability #12 — reusable session summary read model)`

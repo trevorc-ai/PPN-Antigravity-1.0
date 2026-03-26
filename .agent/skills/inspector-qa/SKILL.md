@@ -146,9 +146,53 @@ Update clearance block to include:
 - [ ] Pillar Classification Gate: PASS | [pillar(s) stated]
 - [ ] /request-triage verdict: PROCEED | N/A (bug fix — waived)
 - [ ] /analysis-first gate: Pre-conditions = YES | N/A (not a sql-view or schema task_type)
+- [ ] Data Completeness Gate: PASS | N/A (no analytical output)
+- [ ] Network Benchmark Gate: PASS | N/A (no site-vs-network surface)
 ```
 
 ---
+
+### Data Completeness Gate (Phase 0 — Mandatory for analytical components)
+
+**Trigger:** Run this check if the WO produces any component that reads from a `v_*` or `mv_*`
+view and renders its output to a practitioner, admin, or patient-facing surface.
+
+**Check:** For each flagged component, answer:
+
+1. **Zero-row handling:** If the component's source MV returns 0 rows, does the component render
+   a graceful empty state (e.g. `"No data yet"`, `"Awaiting first session"`) rather than a blank
+   panel, error state, or misleading zero values?
+
+2. **Suppression threshold:** If the component applies minimum-n suppression, is the threshold
+   documented in a code comment AND is the suppression label visible to the user?
+   - **Beta threshold:** n \< 5 with label `"Early data — results will strengthen"`
+   - **Production threshold:** n \< 20 with label `"Minimum data threshold not yet met"`
+
+3. **Clinical disclaimer:** If the component renders any classification that implies clinical
+   conclusions (response, remission, trajectory label, risk score), it MUST display:
+   `"Algorithm-derived — verify with clinical judgment"` in `ppn-meta` styling, always visible.
+
+| Result | Action |
+|--------|--------|
+| Zero-state handled + threshold documented | ✅ PASS |
+| Zero-state crashes or shows empty panel | 🔴 FAIL — return to `02_TRIAGE`: `hold_reason: Data Completeness Gate — zero-row case unhandled` |
+| Clinical classification without disclaimer | 🔴 FAIL — return to `02_TRIAGE`: `hold_reason: Data Completeness Gate — clinical disclaimer missing` |
+
+---
+
+### Network Benchmark Gate (Phase 0 — Mandatory for any site-vs-network surface)
+
+**Trigger:** Run this check if the WO renders any `v_site_outcome_benchmark_compare`,
+`mv_network_outcome_benchmarks`, or any surface that compares a site's metrics against a
+"network average" or "peer benchmark."
+
+**Check:** Is the network comparison feature-flagged off until `COUNT(DISTINCT site_id) >= 10`
+in `mv_network_outcome_benchmarks` (or equivalent cross-site view)?
+
+| Result | Action |
+|--------|--------|
+| Feature-flagged with n ≥ 10 guard | ✅ PASS |
+| Renders network comparison without density guard | 🔴 FAIL — `hold_reason: Network Benchmark Gate — site-vs-network surface must be feature-flagged until n≥10 contributing sites` |
 
 You must evaluate BUILDER's output against this exact checklist. Paste this checklist into the chat with PASS/FAIL for each item.
 
@@ -362,3 +406,4 @@ User replies `hold [reason]` → INSPECTOR logs the issue, moves WO back to `04_
 | 1.6 | 2026-03-23 | LEAD | **Added mobile-first enforcement gates.** Phase 0 pre-build checklist: added mobile-first layout check (8th item). Phase 2 UI audit: added Mobile-First Check with grep commands for bare grid-cols and hardcoded px widths. Phase 4 outreach audit: added mandatory 375px mobile-viewport screenshot requirement. Root cause fix for recurring desktop-first rework. |
 | 1.7 | 2026-03-23 | LEAD | **Added 768px tablet viewport screenshot gate.** Phase 2 and Phase 4 now require both a 375px mobile screenshot AND a 768px tablet screenshot before INSPECTOR approval. Tablet check verifies: 2-column grid active, top/side nav restored, no bottom-sheet nav, 44px touch targets. Root cause fix for clinical tablet (point-of-care) rework loop. |
 | 1.8 | 2026-03-24 | ANTIGRAVITY | **Phase 5.5 CAUTION gate added.** Skipping Phase 5.5 is now explicitly named as the #1 cause of backlog pileup and a protocol violation equal in severity to pushing without user approval. Root cause fix for completed work never surfacing for user review. |
+| 1.9 | 2026-03-26 | INSPECTOR | **Added Data Completeness Gate and Network Benchmark Gate to Phase 0.** Data Completeness Gate requires zero-row handling, documented suppression thresholds (beta: n<5 / production: n<20 with labels), and clinical disclaimers on any response/remission/trajectory classification. Network Benchmark Gate requires feature-flag suppression of site-vs-network surfaces until ≥10 contributing sites. Clearance block updated to include both gates. |

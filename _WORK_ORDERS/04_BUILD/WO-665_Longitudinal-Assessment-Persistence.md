@@ -2,7 +2,7 @@
 id: WO-665
 title: "Longitudinal Assessment scores do not persist after Save — scores reset to blank on re-open"
 owner: LEAD
-status: 00_INBOX
+status: 04_BUILD
 authored_by: INSPECTOR (regression catch from WO-664)
 priority: P1
 created: 2026-03-23

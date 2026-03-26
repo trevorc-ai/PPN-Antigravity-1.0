@@ -2,7 +2,7 @@
 id: WO-691
 title: "Medications entered in Phase 1 are not displayed anywhere in Phase 2 dosing session"
 owner: LEAD
-status: 00_INBOX
+status: 98_HOLD
 authored_by: LEAD (fast-track)
 priority: P1
 created: 2026-03-24

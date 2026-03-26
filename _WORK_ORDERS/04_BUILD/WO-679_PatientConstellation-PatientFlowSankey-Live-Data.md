@@ -2,7 +2,7 @@
 id: WO-679
 title: "Connect PatientConstellation, PatientFlowSankey to live log_clinical_records data"
 owner: BUILDER
-status: 00_INBOX
+status: 04_BUILD
 priority: P1
 created: 2026-03-24
 origin: "Intelligence Gap Audit — Tier 2"

@@ -2,7 +2,7 @@
 id: WO-680
 title: "Connect PatientJourneySnapshot to live session timeline data"
 owner: BUILDER
-status: 00_INBOX
+status: 04_BUILD
 priority: P1
 created: 2026-03-24
 origin: "Intelligence Gap Audit — Tier 2"

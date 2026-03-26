@@ -29,6 +29,12 @@ A brand new partner beta tester needs to log in and immediately see 2-3 realisti
 - A standalone SQL script or Node/TS utility script (run by LEAD/USER) that injects mock patient rows into `log_patients`.
 - Associated insertion of mock sessions (Phase 1, 2, and 3) into `log_sessions`, `log_dosing_events`, and `log_integration_progress`.
 - Ensuring all mock entities are correctly mapped via foreign keys and inherit the target `site_id` for RLS compliance.
+- **UPDATED 2026-03-26:** Seed records MUST be complete to activate the intelligence layer:
+  - `protocol_id` must be populated on all seed sessions
+  - At least one `log_safety_events` row per seed session
+  - Follow-up assessments at day 7 and day 30 in `log_longitudinal_assessments`
+  - Without these fields, the seed data will not activate `mv_clinician_work_queue`, trajectory badges, or the follow-up compliance layer
+- **Deletion mechanism:** A `site_id`-scoped delete script (`WHERE site_id = $seed_site_id`) that cleanly removes all seed data without touching real records. This script is MANDATORY — the tool is incomplete without it.
 
 #### ❌ Out of Scope
 - A user-facing UI button for practitioners to "generate fake data" themselves. This is an admin/developer tool only.

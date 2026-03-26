@@ -1,6 +1,6 @@
 ---
 owner: LEAD
-status: 05_QA
+status: 06_USER_REVIEW
 authored_by: PRODDY
 active_sprint: false
 priority: P1
@@ -132,4 +132,14 @@ An Ibogaine practitioner needs to log each dose in a multi-dose session (test do
 - Conditional rendering on `session_type = ibogaine` — existing pattern, low risk
 
 **Pre-clearance condition:** Move to 04_BUILD immediately when a WIP slot opens. No further INSPECTOR review needed at that point — this clearance is valid for the current sprint.
+
+---
+
+## LEAD Architecture Amendment — cumulative_mg_kg stored column
+
+**Reviewed by:** LEAD (via INSPECTOR audit)
+**Date:** 2026-03-26
+**Decision:** ACCEPTED — `cumulative_mg_kg` retained as a permanent stored column in `log_dose_events`.
+
+**Rationale:** A practitioner's real-time dosing calculation is a clinical event. Storing the snapshot at time-of-dose provides a permanent, auditable record of the safety calculation as it existed during the session — superior to recalculating retroactively from dose_mg / weight. The LEAD architecture note that said "do NOT store" is hereby superseded by this decision. Migration 085 is cleared for execution as written.
 

@@ -4,7 +4,7 @@ title: "Migrate StructuredSafetyCheckForm hardcoded arrays to live ref_clinical_
 owner: BUILDER
 authored_by: BUILDER
 routed_by: LEAD
-status: 00_INBOX
+status: 05_QA
 priority: P1
 created: 2026-03-23
 routed_at: ""
@@ -15,8 +15,8 @@ stage_waived_by: ""
 hold_reason: ""
 held_at: ""
 failure_count: 0
-completed_at: ""
-builder_notes: ""
+completed_at: "2026-03-26"
+builder_notes: "INSPECTOR audit confirmed all 9 ACs already met by prior BUILDER pass. Live fetch from ref_clinical_observations (category: clinical_flag / clinical_action) with sort_order ASC implemented. Loading skeleton, amber fallback warning, and graceful fallback arrays in place. Dead InteractionChecker import already removed. DB IDs used throughout for safety_concern_ids and action_taken_ids. TypeScript clean (zero errors). No code changes required — WO closed as-built."
 skills:
   - ".agent/skills/frontend-best-practices/SKILL.md"
   - ".agent/skills/frontend-surgical-standards/SKILL.md"

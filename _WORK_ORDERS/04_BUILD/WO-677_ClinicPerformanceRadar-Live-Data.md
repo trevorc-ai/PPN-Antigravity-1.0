@@ -2,7 +2,7 @@
 id: WO-677
 title: "Connect ClinicPerformanceRadar to live DB data with minimum-n suppression"
 owner: BUILDER
-status: 00_INBOX
+status: 04_BUILD
 priority: P1
 created: 2026-03-24
 origin: "Intelligence Gap Audit — Tier 2"
@@ -35,3 +35,11 @@ files:
 ## INSPECTOR 03_REVIEW CLEARANCE: FAST-PASS
 No DB impact detected. Cleared for build.
 Signed: INSPECTOR | Date: 2026-03-24
+
+## MV LAYER AMENDMENT — 2026-03-26
+The intelligence layer is now live. Preferred data sources updated:
+- Safety spoke: prefer `mv_site_safety_benchmarks` over raw `log_safety_events` (handles min-N)
+- Completion / Data Quality spokes: prefer `mv_documentation_completeness` over raw field checks
+- Efficacy / Adherence: still suppressed until WO-NEW-D (depends on WO-677 completing first)
+- Site outcome benchmarks: prefer `mv_site_outcome_benchmarks` for peer comparison context
+All hooks must include `// Source: mv_*` comment per GLOBAL_CONSTITUTION Read Model Policy.

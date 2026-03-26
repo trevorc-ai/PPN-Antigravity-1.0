@@ -2,7 +2,7 @@
 id: WO-682
 title: "Connect MetabolicRiskGauge to live vitals data or remove if no data source exists"
 owner: BUILDER
-status: 00_INBOX
+status: 04_BUILD
 priority: P2
 created: 2026-03-24
 origin: "Intelligence Gap Audit — Tier 2"
