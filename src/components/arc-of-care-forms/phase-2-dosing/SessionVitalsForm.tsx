@@ -570,7 +570,7 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                     <select
                                         value={reading.diaphoresis_score ?? ''}
                                         onChange={(e) => updateReading(index, 'diaphoresis_score', e.target.value !== '' ? parseInt(e.target.value) as 0 | 1 | 2 | 3 : undefined)}
-                                        className={`w-full px-4 py-3 bg-slate-950/80 border rounded-lg text-white font-mono text-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all appearance-none placeholder:text-slate-600 ${reading.diaphoresis_score !== undefined ? getStatusColor(getDiaphoresisStatus(reading.diaphoresis_score)) : 'border-slate-600'
+                                        className={`w-full px-4 py-3 bg-slate-950/80 border rounded-lg text-white text-base focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all appearance-none placeholder:text-slate-600 ${reading.diaphoresis_score !== undefined ? getStatusColor(getDiaphoresisStatus(reading.diaphoresis_score)) : 'border-slate-600'
                                             }`}
                                     >
                                         <option value="">Select...</option>
@@ -598,7 +598,7 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                     <select
                                         value={reading.level_of_consciousness ?? ''}
                                         onChange={(e) => updateReading(index, 'level_of_consciousness', e.target.value || undefined)}
-                                        className={`w-full px-4 py-3 bg-slate-950/80 border rounded-lg text-white font-mono text-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all appearance-none placeholder:text-slate-600 ${reading.level_of_consciousness ? getStatusColor(getLOCStatus(reading.level_of_consciousness)) : 'border-slate-600'
+                                        className={`w-full px-4 py-3 bg-slate-950/80 border rounded-lg text-white text-base focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all appearance-none placeholder:text-slate-600 ${reading.level_of_consciousness ? getStatusColor(getLOCStatus(reading.level_of_consciousness)) : 'border-slate-600'
                                             }`}
                                     >
                                         <option value="">Select...</option>

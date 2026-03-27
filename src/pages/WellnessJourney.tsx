@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useActivePatient } from '../contexts/ActivePatientContext'; // WO-B1
 import { useToast } from '../contexts/ToastContext';
-import { Target, Shield, TrendingUp, ArrowRight, Lock, CheckCircle, Brain, Info, Heart, AlertTriangle, ChevronDown, ChevronUp } from 'lucide-react';
+import { Target, Shield, TrendingUp, ArrowRight, Lock, CheckCircle, Brain, Info, Heart, AlertTriangle, ChevronDown, ChevronUp, Plus } from 'lucide-react';
 import { AdvancedTooltip } from '../components/ui/AdvancedTooltip';
 import { PhaseIndicator } from '../components/wellness-journey/PhaseIndicator';
 import { PreparationPhase } from '../components/wellness-journey/PreparationPhase';
@@ -161,6 +161,9 @@ const WellnessJourneyInternal: React.FC = () => {
 
     // Phase navigation state
     const [activePhase, setActivePhase] = useState<1 | 2 | 3>(1);
+    // WO-717: tracks whether the current session has been formally closed (is_submitted=true).
+    // Suppresses the "CLOSE SESSION" CTA and shows the "Session Complete" panel instead.
+    const [sessionIsSubmitted, setSessionIsSubmitted] = useState(false);
 
     // Completed phases, persisted to localStorage
     const [completedPhases, setCompletedPhases] = useState<number[]>(() => {
@@ -271,6 +274,8 @@ const WellnessJourneyInternal: React.FC = () => {
                 // Ended sessions → Phase 3, active dosing → Phase 2, else Phase 1.
                 const sessionTypeId = latestSession?.session_type_id ?? 1;
                 const hasEnded = !!(latestSession?.session_ended_at) || !!(latestSession?.is_submitted);
+                // WO-717: surface is_submitted so the Phase 3 CTA can adapt appropriately.
+                if (latestSession?.is_submitted) setSessionIsSubmitted(true);
                 const derivedPhase: 1 | 2 | 3 = hasEnded
                     ? 3
                     : (sessionTypeId === 2 ? 2 : 1);
@@ -387,6 +392,8 @@ const WellnessJourneyInternal: React.FC = () => {
                 // - Otherwise: ended sessions → Phase 3, active dosing → Phase 2, else Phase 1.
                 const sessionTypeId = sessionRow.session_type_id ?? 1;
                 const hasEnded = !!sessionRow.session_ended_at || !!sessionRow.is_submitted;
+                // WO-717: surface is_submitted so the Phase 3 CTA can adapt appropriately.
+                if (sessionRow.is_submitted) setSessionIsSubmitted(true);
                 const derivedPhase: 1 | 2 | 3 = explicitPhase ?? (hasEnded
                     ? 3
                     : (sessionTypeId === 2 ? 2 : 1));
@@ -1602,11 +1609,68 @@ const WellnessJourneyInternal: React.FC = () => {
 
                                                 {/* Phase 3 primary CTA — matches Phase 1 (green) and Phase 2 (blue) wide button style */}
                                                 <div className="flex flex-col items-center pt-6 mt-4 border-t border-teal-900/40">
+                                                    {sessionIsSubmitted ? (
+                                                        /* WO-717: Session already closed — replace CTA with completion panel */
+                                                        <div className="w-full md:w-2/3 flex flex-col items-center gap-4 py-6 px-6 rounded-2xl bg-emerald-950/40 border border-emerald-600/30">
+                                                            <div className="flex items-center gap-3">
+                                                                <CheckCircle className="w-7 h-7 text-emerald-400 flex-shrink-0" />
+                                                                <div>
+                                                                    <p className="font-bold text-emerald-300 text-lg">Session Complete</p>
+                                                                    <p className="text-sm text-slate-400">This session is closed and on record.</p>
+                                                                </div>
+                                                            </div>
+                                                            <button
+                                                                onClick={() => {
+                                                                    // WO-717 fix: Phase 1 Preparation is required before every new
+                                                                    // dosing session. Clear the completed session state, reset phase
+                                                                    // tracking, and route to Phase 1 — not Phase 2.
+                                                                    try {
+                                                                        localStorage.removeItem(ACTIVE_SESSION_KEY);
+                                                                        localStorage.removeItem(PHASE_STORAGE_KEY);
+                                                                        const keysToRemove: string[] = [];
+                                                                        for (let i = 0; i < localStorage.length; i++) {
+                                                                            const k = localStorage.key(i);
+                                                                            if (k && (
+                                                                                k.startsWith('ppn_session_mode_') ||
+                                                                                k.startsWith('ppn_session_start_') ||
+                                                                                k.startsWith('ppn_phase2_assessment_')
+                                                                            )) keysToRemove.push(k);
+                                                                        }
+                                                                        keysToRemove.forEach(k => localStorage.removeItem(k));
+                                                                    } catch { /* ignore */ }
+                                                                    setJourney(prev => ({ ...prev, sessionId: undefined }));
+                                                                    setCompletedPhases([]);
+                                                                    setSessionIsSubmitted(false);
+                                                                    setActivePhase(1);
+                                                                }}
+                                                                className="w-full py-3 rounded-xl font-bold text-base tracking-wide bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white shadow-indigo-900/40 shadow-lg cursor-pointer hover:scale-[1.01] active:scale-[0.99] transition-all flex items-center justify-center gap-3"
+                                                                aria-label="Begin new preparation phase for this patient"
+                                                            >
+                                                                <Plus className="w-5 h-5" />
+                                                                Begin New Preparation
+                                                            </button>
+                                                        </div>
+                                                    ) : (
+                                                    <>
                                                     <button
-                                                        onClick={() => {
+                                                        onClick={async () => {
+                                                            // WO-717: Optimistically hide this button immediately so the UX
+                                                            // doesn't appear stuck while the async DB write completes.
+                                                            setSessionIsSubmitted(true);
+                                                            // WO-717: Write is_submitted=true to log_clinical_records FIRST.
+                                                            // The button previously only cleared localStorage and navigated —
+                                                            // session stayed OPEN in DB, causing the Phase 3 auto-redirect loop
+                                                            // every time the practitioner re-opened the patient.
+                                                            const sid = journey.sessionId;
+                                                            if (sid) {
+                                                                const result = await closeOutSession(sid);
+                                                                if (!result.success) {
+                                                                    console.error('[WO-717] closeOutSession DB write failed:', result.error);
+                                                                    // Non-blocking: still clear local state and navigate
+                                                                    // so the practitioner isn't stuck. Error logged to console.
+                                                                }
+                                                            }
                                                             // Clear stale session storage for this patient so future sessions start clean.
-                                                            // Do NOT reset UI state or re-open the modal — navigate directly to the
-                                                            // Protocol Detail page so the practitioner can verify the record was saved.
                                                             try {
                                                                 localStorage.removeItem(ACTIVE_SESSION_KEY);
                                                                 localStorage.removeItem(PHASE_STORAGE_KEY);
@@ -1622,7 +1686,6 @@ const WellnessJourneyInternal: React.FC = () => {
                                                                 keysToRemove.forEach(k => localStorage.removeItem(k));
                                                             } catch { /* ignore */ }
                                                             // Navigate to Protocol Detail to confirm the session was recorded correctly.
-                                                            const sid = journey.sessionId;
                                                             if (sid) {
                                                                 navigate(`/protocol/${sid}`);
                                                             } else {
@@ -1636,6 +1699,8 @@ const WellnessJourneyInternal: React.FC = () => {
                                                         CLOSE SESSION — VIEW PROTOCOL RECORD
                                                     </button>
                                                     <p className="text-sm text-slate-500 mt-3 font-medium">Verify the session was correctly recorded in the patient's protocol</p>
+                                                    </>
+                                                    )}
                                                 </div>
                                             </>
                                         </Phase2ErrorBoundary>

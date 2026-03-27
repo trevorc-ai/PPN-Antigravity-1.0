@@ -370,7 +370,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                 ? undefined  // placeholder — set after dosingDesc is computed below
                 : eventLabel;
             window.dispatchEvent(new CustomEvent('ppn:dose-registered', {
-                detail: { type: eventType, label: dispatchLabel ?? eventLabel, elapsedSec: elSec }
+                detail: { sessionId: journey.sessionId ?? journey.session?.sessionId, type: eventType, label: dispatchLabel ?? eventLabel, elapsedSec: elSec }
             }));
 
             // 3. Persist to log_session_timeline_events if we have a real session UUID
@@ -401,7 +401,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                     // WO-694 BUG-04: re-dispatch with the rich dosingDesc label now that we have it.
                     // The earlier dispatch above used a placeholder — update the timeline entry.
                     window.dispatchEvent(new CustomEvent('ppn:dose-registered', {
-                        detail: { type: eventType, label: dosingDesc, elapsedSec: elSec }
+                        detail: { sessionId: sid, type: eventType, label: dosingDesc, elapsedSec: elSec }
                     }));
 
                     createTimelineEvent({
@@ -812,6 +812,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
             if (sys) labelParts.push(`BP ${sys}/${dia || '?'}`);
             window.dispatchEvent(new CustomEvent('ppn:dose-registered', {
                 detail: {
+                    sessionId: journey.session?.sessionId ?? journey.sessionId,
                     type: 'vital_check',
                     label: `Baseline Vitals · ${labelParts.join(' · ')}`,
                 },
@@ -935,6 +936,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
         // without waiting for the 60-sec DB poll (fixes Session Update real-time gap).
         window.dispatchEvent(new CustomEvent('ppn:session-event', {
             detail: {
+                sessionId: resolvedSessionId,
                 type: 'session_update',
                 label: sessionUpdateDesc,
                 timestamp: new Date().toISOString(),
@@ -1135,7 +1137,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
         // Fire ppn:dose-registered → LiveSessionTimeline adds an optimistic entry
         // immediately (before the 60-sec DB poll) so the ledger is never blank at start
         window.dispatchEvent(new CustomEvent('ppn:dose-registered', {
-            detail: { type: 'dose_admin', label: dosingDesc, elapsedSec: 0 }
+            detail: { sessionId: resolvedSessionId, type: 'dose_admin', label: dosingDesc, elapsedSec: 0 }
         }));
 
         if (hasRealUUID) {

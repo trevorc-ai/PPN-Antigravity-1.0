@@ -100,21 +100,27 @@ export const SessionCloseoutView: React.FC<SessionCloseoutViewProps> = ({
             </button>
             {showPostSessionTimeline && (
                 <div id="post-session-timeline-panel" className="px-5 pb-5 pt-2 space-y-5 border-t border-slate-700/40 animate-in slide-in-from-top-2 duration-200">
-                    {config.enabledFeatures.includes('session-vitals') && (
-                        <SessionVitalsTrendChart
-                            sessionId={journey.sessionId || journey.session?.sessionNumber?.toString() || '1'}
-                            substance={journey.session?.substance}
-                            onThresholdViolation={() => { }}
-                            data={vitalsChartData}
-                            events={eventLog}
-                            sessionDurationSec={sessionDurationSec}
-                            onVisibilityChange={() => { }}
-                        />
-                    )}
+                    {/* WO-707 Fix 1: Removed session-vitals feature flag guard.
+                     *  The flag gates the live vitals form, not the read-only post-session chart.
+                     *  Chart renders whenever a real sessionId is present and the accordion is open.
+                     */}
+                    <SessionVitalsTrendChart
+                        sessionId={journey.sessionId || journey.session?.sessionNumber?.toString() || '1'}
+                        substance={journey.session?.substance}
+                        onThresholdViolation={() => { }}
+                        data={vitalsChartData}
+                        events={eventLog}
+                        sessionDurationSec={sessionDurationSec}
+                        onVisibilityChange={() => { }}
+                    />
+                    {/* WO-708 Fix 2: visible always all-true in post-session.
+                     *  The live chartVisible filter state should not hide event categories
+                     *  in the read-only post-session record. Show everything.
+                     */}
                     <LiveSessionTimeline
                         sessionId={journey.sessionId || journey.session?.sessionNumber?.toString() || '1'}
                         active={false}
-                        visible={chartVisible}
+                        visible={{ hr: true, bp: true, temp: true, events: true }}
                         sessionStartMs={sessionStartMs}
                     />
                 </div>

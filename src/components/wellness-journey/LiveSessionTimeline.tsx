@@ -112,6 +112,32 @@ function formatTimeAMPM(date: Date): string {
     return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
 }
 
+// WO-708: Normalise DB event_type_code to EVENT_CONFIG keys.
+// Older sessions stored legacy uppercase codes (NOTE, DOSE, OBSERVATION) before
+// the vocabulary was normalised. Without this, post-session timeline events fall
+// back to the slate-grey general_note style instead of their correct colours.
+const CODE_ALIAS_MAP: Record<string, string> = {
+    'NOTE':           'general_note',
+    'OBSERVATION':    'patient_observation',
+    'DOSE':           'dose_admin',
+    'SESSION_UPDATE': 'session_update',
+    'SAFETY':         'safety_event',
+    'INTERVENTION':   'clinical_decision',
+    'PEAK':           'patient_observation',
+    'CLOSE':          'session_completed',
+};
+
+function normaliseEventCode(raw: string): string {
+    if (!raw) return 'general_note';
+    // 1. Direct match against current lowercase EVENT_CONFIG keys
+    if (EVENT_CONFIG[raw]) return raw;
+    // 2. Legacy uppercase alias lookup
+    const alias = CODE_ALIAS_MAP[raw.toUpperCase()];
+    if (alias && EVENT_CONFIG[alias]) return alias;
+    // 3. Final fallback
+    return 'general_note';
+}
+
 export const LiveSessionTimeline: FC<LiveSessionTimelineProps> = ({
     sessionId, active, hideHeader = false, hideActions = false, visible, sessionStartMs, scrollToBottom = false
 }) => {
@@ -210,7 +236,7 @@ export const LiveSessionTimeline: FC<LiveSessionTimelineProps> = ({
                 id: row.id ?? row.timeline_event_id,
                 // WO-584 fix: event_type TEXT column was dropped in migration 079.
                 // getTimelineEvents now JOINs ref_flow_event_types — read from there.
-                type: row.ref_flow_event_types?.event_type_code || 'general_note',
+                type: normaliseEventCode(row.ref_flow_event_types?.event_type_code || ''),
                 timestamp: new Date(row.event_timestamp),
                 description: row.metadata?.event_description || 'No description provided',
                 notes: row.metadata?.notes,
@@ -265,7 +291,10 @@ export const LiveSessionTimeline: FC<LiveSessionTimelineProps> = ({
     // as an optimistic entry, without waiting for the 30-sec DB poll.
     useEffect(() => {
         const handleDoseRegistered = (e: Event) => {
-            const { type, label } = (e as CustomEvent).detail ?? {};
+            const { sessionId: evSessionId, type, label } = (e as CustomEvent).detail ?? {};
+            // WO-714: reject events destined for a different session. If payload carries no
+            // sessionId (legacy callers), accept it for backwards compatibility.
+            if (evSessionId && evSessionId !== sessionId) return;
             if (!type) return;
             const optimistic: TimelineEvent = {
                 id: `dose-reg-${Date.now()}`,
@@ -278,16 +307,19 @@ export const LiveSessionTimeline: FC<LiveSessionTimelineProps> = ({
         };
         window.addEventListener('ppn:dose-registered', handleDoseRegistered);
         return () => window.removeEventListener('ppn:dose-registered', handleDoseRegistered);
-    }, []);
+    }, [sessionId]);
 
     // WO-694 BUG-05/06: listen for ppn:session-event so Session Updates (handleSaveUpdate)
     // and Adverse Events (WellnessFormRouter) appear in the timeline immediately as
     // optimistic entries — without waiting for a DB refetch.
     // Root cause: DosingSessionPhase dispatches ppn:session-event but LiveSessionTimeline
     // previously had no listener for it (only ppn:dose-registered).
+    // WO-714 FIX: added sessionId guard to prevent stale cross-session event pollution.
     useEffect(() => {
         const handleSessionEvent = (e: Event) => {
-            const { type, label, timestamp } = (e as CustomEvent).detail ?? {};
+            const { sessionId: evSessionId, type, label, timestamp } = (e as CustomEvent).detail ?? {};
+            // WO-714: reject events destined for a different session.
+            if (evSessionId && evSessionId !== sessionId) return;
             if (!type) return;
             const optimistic: TimelineEvent = {
                 id: `session-ev-${Date.now()}`,
@@ -300,7 +332,7 @@ export const LiveSessionTimeline: FC<LiveSessionTimelineProps> = ({
         };
         window.addEventListener('ppn:session-event', handleSessionEvent);
         return () => window.removeEventListener('ppn:session-event', handleSessionEvent);
-    }, []);
+    }, [sessionId]);
 
 
 
