@@ -5,20 +5,22 @@ import { ShieldAlert, Info, BarChart2 } from 'lucide-react';
 import { ChartSkeleton } from './ChartSkeleton';
 
 /**
- * WO-678 — SafetyRiskMatrix (Live Data)
+ * WO-716 -- SafetyRiskMatrix (MV-First Redirect)
  *
- * Matrix: AE Type (Y axis) × CTCAE Grade (X axis).
- * Cell value = count of log_safety_events for this site matching that type + grade.
- * Bubble size scales with count. Minimum-n guard: < 10 AEs → suppressed state.
+ * Matrix: AE Type (Y axis) x CTCAE Grade (X axis).
+ * Cell value = count of unresolved safety flags for this site matching that type + grade.
+ * Bubble size scales with count. Minimum-n guard: < 10 AEs -> suppressed state.
  *
- * Data source: log_safety_events joined with ref_safety_events for event type names.
+ * Source: mv_unresolved_safety_flags (WO-716)
+ * RLS enforced server-side -- no client-side site_id filter required.
+ * Replaces: log_safety_events direct join + client-side aggregation (WO-678).
  */
 
 const MINIMUM_AE_THRESHOLD = 10;
 
 interface AERow {
-    ae_grade: number;       // ctcae_grade (1–5) — may be null, bucketed as 0 = Unknown
-    event_type: string;     // safety_event_name from ref_safety_events (or "Unknown")
+    ae_grade: number;       // ctcae_grade (1-5) -- may be null, bucketed as 0 = Unknown
+    event_type: string;     // safety_event_name from mv_unresolved_safety_flags
     count: number;
 }
 
@@ -34,58 +36,34 @@ function useRiskMatrixData(): MatrixData & { loading: boolean; error: string | n
         'safety-risk-matrix',
         async () => {
             try {
-                // Resolve user → site_id
-                const { data: { user } } = await supabase.auth.getUser();
-                if (!user) return { data: null, error: 'Not authenticated' };
+                // Source: mv_unresolved_safety_flags
+                // RLS restricts rows to the authenticated user's site automatically.
+                // No client-side site_id filter required -- MV handles scoping server-side.
+                // Replaces: log_safety_events direct join + client-side aggregation (WO-716).
+                const { data: mvRows, error: mvError } = await supabase
+                    .from('mv_unresolved_safety_flags')
+                    .select('ae_grade, event_type, count');
 
-                const { data: userSite, error: siteError } = await supabase
-                    .from('log_user_sites')
-                    .select('site_id')
-                    .eq('user_id', user.id)
-                    .maybeSingle();
+                if (mvError) throw mvError;
 
-                if (siteError) throw siteError;
-                if (!userSite) return { data: { suppressed: true, totalAEs: 0, rows: [], aeTypes: [] }, error: null };
+                const rows = (mvRows ?? []) as Array<{ ae_grade: number | null; event_type: string | null; count: number }>;
 
-                // Fetch safety events for this site with event type name via FK join
-                const { data: events, error: eventsError } = await supabase
-                    .from('log_safety_events')
-                    .select('ctcae_grade, safety_event_type_id, ref_safety_events(safety_event_name)')
-                    .eq('site_id', userSite.site_id);
-
-                if (eventsError) throw eventsError;
-
-                const rows = events || [];
-                const totalAEs = rows.length;
+                // totalAEs = sum of count across all MV rows
+                const totalAEs = rows.reduce((sum, r) => sum + (r.count ?? 0), 0);
 
                 if (totalAEs < MINIMUM_AE_THRESHOLD) {
                     return { data: { suppressed: true, totalAEs, rows: [], aeTypes: [] }, error: null };
                 }
 
-                // Aggregate: AE type × CTCAE grade → count
-                const countMap = new Map<string, number>();
+                // Map MV rows to AERow -- grade null -> 0 (Unknown bucket)
+                const aggregated: AERow[] = rows.map(r => ({
+                    ae_grade: (r.ae_grade != null && r.ae_grade >= 1 && r.ae_grade <= 5) ? r.ae_grade : 0,
+                    event_type: r.event_type ?? 'Unknown',
+                    count: r.count ?? 0,
+                }));
 
-                for (const row of rows) {
-                    const grade: number = (row.ctcae_grade != null && row.ctcae_grade >= 1 && row.ctcae_grade <= 5)
-                        ? row.ctcae_grade
-                        : 0; // 0 = Grade unknown
-                    const eventTypeRaw = (row as { ref_safety_events?: { safety_event_name?: string } }).ref_safety_events;
-                    const eventType: string = eventTypeRaw?.safety_event_name ?? 'Unknown';
-                    const key = `${eventType}||${grade}`;
-                    countMap.set(key, (countMap.get(key) ?? 0) + 1);
-                }
-
-                const aggregated: AERow[] = [];
-                const aeTypeSet = new Set<string>();
-
-                countMap.forEach((count, key) => {
-                    const [eventType, gradeStr] = key.split('||');
-                    aeTypeSet.add(eventType);
-                    aggregated.push({ ae_grade: Number(gradeStr), event_type: eventType, count });
-                });
-
-                // Sort AE types alphabetically for consistent axis ordering
-                const aeTypes = Array.from(aeTypeSet).sort();
+                // Unique AE types for Y axis, sorted alphabetically for consistent ordering
+                const aeTypes = Array.from(new Set(aggregated.map(r => r.event_type))).sort();
 
                 return {
                     data: { suppressed: false, totalAEs, rows: aggregated, aeTypes },
@@ -93,7 +71,7 @@ function useRiskMatrixData(): MatrixData & { loading: boolean; error: string | n
                 };
             } catch (err: unknown) {
                 const message = err instanceof Error ? err.message : 'Failed to load risk matrix';
-                console.error('[SafetyRiskMatrix] query failed:', message); // allow-console
+                console.error('[SafetyRiskMatrix] mv_unresolved_safety_flags query failed:', message); // allow-console
                 return { data: { suppressed: true, totalAEs: 0, rows: [], aeTypes: [] }, error: message };
             }
         },
@@ -110,14 +88,14 @@ function useRiskMatrixData(): MatrixData & { loading: boolean; error: string | n
     };
 }
 
-// ── Grade label map ────────────────────────────────────────────────────────────
+// Grade label map
 const GRADE_LABELS: Record<number, { label: string; shortLabel: string; color: string }> = {
     0: { label: 'Unknown', shortLabel: '?',  color: 'bg-slate-700/60 border-slate-600 text-slate-500' },
-    1: { label: 'Grade 1 — Mild',       shortLabel: 'G1', color: 'bg-indigo-500/10 border-indigo-500/30 text-indigo-300' },
-    2: { label: 'Grade 2 — Moderate',   shortLabel: 'G2', color: 'bg-amber-500/10 border-amber-500/30 text-amber-300' },
-    3: { label: 'Grade 3 — Severe',     shortLabel: 'G3', color: 'bg-orange-500/15 border-orange-500/40 text-orange-300' },
-    4: { label: 'Grade 4 — Life-Threatening', shortLabel: 'G4', color: 'bg-red-500/15 border-red-500/40 text-red-400' },
-    5: { label: 'Grade 5 — Fatal',      shortLabel: 'G5', color: 'bg-red-700/20 border-red-600/60 text-red-300 shadow-[0_0_12px_rgba(239,68,68,0.15)]' },
+    1: { label: 'Grade 1 - Mild',            shortLabel: 'G1', color: 'bg-indigo-500/10 border-indigo-500/30 text-indigo-300' },
+    2: { label: 'Grade 2 - Moderate',        shortLabel: 'G2', color: 'bg-amber-500/10 border-amber-500/30 text-amber-300' },
+    3: { label: 'Grade 3 - Severe',          shortLabel: 'G3', color: 'bg-orange-500/15 border-orange-500/40 text-orange-300' },
+    4: { label: 'Grade 4 - Life-Threatening',shortLabel: 'G4', color: 'bg-red-500/15 border-red-500/40 text-red-400' },
+    5: { label: 'Grade 5 - Fatal',           shortLabel: 'G5', color: 'bg-red-700/20 border-red-600/60 text-red-300 shadow-[0_0_12px_rgba(239,68,68,0.15)]' },
 };
 
 const GRADE_COLUMNS = [1, 2, 3, 4, 5, 0]; // display order
@@ -145,15 +123,15 @@ const SafetyRiskMatrix: React.FC = () => {
                         <h3 className="ppn-card-title text-slate-300">Adverse Event Matrix</h3>
                     </div>
                     <p className="ppn-meta font-bold text-slate-500 uppercase tracking-widest ml-1">
-                        Event Type × CTCAE Grade · Live Data
+                        Event Type x CTCAE Grade · Live Data
                     </p>
                 </div>
 
                 <div className="group/info relative">
                     <Info size={16} className="text-slate-600 hover:text-slate-300 transition-colors cursor-help" />
                     <div className="absolute right-0 top-6 w-60 p-3 bg-slate-900 border border-slate-700 rounded-xl ppn-meta text-slate-300 opacity-0 group-hover/info:opacity-100 transition-opacity pointer-events-none z-50 shadow-xl">
-                        Matrix shows counts of logged adverse events by type and CTCAE severity grade
-                        for your site. Requires ≥{MINIMUM_AE_THRESHOLD} AEs to display.
+                        Matrix shows counts of unresolved adverse events by type and CTCAE severity grade
+                        for your site. Requires &ge;{MINIMUM_AE_THRESHOLD} AEs to display.
                     </div>
                 </div>
             </div>
@@ -232,7 +210,7 @@ const SafetyRiskMatrix: React.FC = () => {
                                                     }`}
                                                 >
                                                     <span className="ppn-meta font-black">
-                                                        {count > 0 ? count : '–'}
+                                                        {count > 0 ? count : '\u2013'}
                                                     </span>
                                                 </div>
                                                 {count > 0 && (
@@ -262,14 +240,14 @@ const SafetyRiskMatrix: React.FC = () => {
                             <div key={g} className="flex items-center gap-2">
                                 <div className={`size-2 rounded-full border ${GRADE_LABELS[g].color.split(' ').filter(c => c.startsWith('bg-') || c.startsWith('border-'))[0] ?? ''}`} />
                                 <span className="ppn-meta font-black text-slate-500 uppercase tracking-widest">
-                                    {GRADE_LABELS[g].shortLabel} — {GRADE_LABELS[g].label.split(' — ')[1]}
+                                    {GRADE_LABELS[g].shortLabel} - {GRADE_LABELS[g].label.split(' - ')[1]}
                                 </span>
                             </div>
                         ))}
                     </div>
 
                     <p className="ppn-meta text-slate-700 text-center mt-2">
-                        Based on {totalAEs} adverse event{totalAEs !== 1 ? 's' : ''} · Live data
+                        Based on {totalAEs} unresolved adverse event{totalAEs !== 1 ? 's' : ''} · Live data
                     </p>
                 </>
             )}
