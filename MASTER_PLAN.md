@@ -42,17 +42,21 @@ Build the Practice Operating System for Psychedelic Therapy - unifying safety, o
 
 ---
 
-## 🏛 Pillar State *(updated 2026-03-25)*
+## 🏛 Pillar State *(updated 2026-03-27 — verified against live DB)*
 
 Pillars are concurrent. All five are valid build targets. This section declares where **active infrastructure gaps exist** so agents can prioritize within pillars and flag zero-pillar work.
 
-| Pillar | Status | Active Gap |
-|--------|--------|-----------|
-| 1 — Safety Surveillance | 🔴 **Gap** | `mv_open_risk_queue`, `mv_patient_latest_status` do not yet exist. `SafetyRiskMatrix` + `PatientJourneySnapshot` are on mock data. |
-| 2 — Comparative Intelligence | 🟡 Partial | `ConfidenceCone` on mock data. `mv_benchmark_by_subgroup` not yet built. |
-| 3 — QA / Governance | 🟡 Partial | `PatientFlowSankey` on mock data. `mv_site_monthly_quality` not yet built. Core clinical forms (Phase 1-3) are functional. |
-| 4 — Network Benchmarking | 🟡 Defined | `data-seeding-pipeline` designed but blocked on two technical corrections (ref_ naming, FK fields). |
+> **15 materialized views confirmed live in Supabase as of 2026-03-27.** All previous "DB gap" entries were outdated. The database layer is substantially complete. Current gaps are **UI wiring gaps only** — the MVs exist, the components are not yet reading from them.
+
+**Live MVs confirmed:** `mv_clinician_work_queue`, `mv_documentation_completeness`, `mv_followup_window_compliance`, `mv_network_outcome_benchmarks`, `mv_network_safety_benchmarks`, `mv_outcome_deltas_by_timepoint`, `mv_patient_latest_status`, `mv_patient_trajectory_summary`, `mv_protocol_outcome_rollup`, `mv_site_dashboard_summary`, `mv_site_documentation_summary`, `mv_site_followup_compliance`, `mv_site_outcome_benchmarks`, `mv_site_safety_benchmarks`, `mv_unresolved_safety_flags`
+
+| Pillar | Status | Real Gap (verified 2026-03-27) |
+|--------|--------|-------------------------------|
+| 1 — Safety Surveillance | 🟡 **UI Gap** | MVs exist. `SafetyRiskMatrix` queries raw `log_safety_events` instead of `mv_unresolved_safety_flags`. `PatientJourneySnapshot` still uses `MOCK_JOURNEY_DATA` instead of `mv_patient_latest_status`. WO-716, WO-717 filed. |
+| 2 — Comparative Intelligence | 🟡 **UI Gap** | `mv_site_outcome_benchmarks` + `mv_network_outcome_benchmarks` exist. `ConfidenceCone` + `PatientConstellation` still on mock. WO-718, WO-720 filed. |
+| 3 — QA / Governance | 🟡 **UI Gap** | `mv_protocol_outcome_rollup` exists. `ProtocolEfficiency` still on mock data. `PatientFlowSankey` still needs `mv_site_monthly_quality` (not yet built — only remaining true DB gap). WO-719 filed. |
+| 4 — Network Benchmarking | 🟡 **Nearly Ready** | `mv_network_outcome_benchmarks` + `mv_network_safety_benchmarks` exist. Data seeding pipeline still blocked on ref_ naming + FK corrections. `GlobalBenchmarkIntelligence` claims live — verify. |
 | 5 — Research Infrastructure | ⚪ Not started | No analytical export views exist yet. |
 
-**Near-term must-wins:** Build `mv_open_risk_queue` and `mv_patient_latest_status` → migrate `SafetyRiskMatrix` and `PatientJourneySnapshot` off mock data. Clinical trust cannot be grounded on fake risk intelligence.
+**Near-term must-wins:** Wire 5 analytics components off mock data (WO-716–720). All MVs exist — this is a UI wiring sprint, not a DB sprint. Then ship Analytics Hub (WO-721).
 
