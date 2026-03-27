@@ -47,997 +47,923 @@
 
 ## LOG TABLES
 
-### `log_baseline_assessments`
-| column | type | nullable | default |
-|---|---|---|---|
-| baseline_assessment_id | integer | NO | nextval(seq) |
-| site_id | uuid | YES | null |
-| assessment_date | timestamptz | NO | now() |
-| phq9_score | integer | YES | null |
-| gad7_score | integer | YES | null |
-| ace_score | integer | YES | null |
-| pcl5_score | integer | YES | null |
-| expectancy_scale | integer | YES | null |
-| resting_hrv | numeric | YES | null |
-| resting_bp_systolic | integer | YES | null |
-| resting_bp_diastolic | integer | YES | null |
-| completed_by_user_id | uuid | YES | null |
-| created_at | timestamptz | YES | now() |
-| updated_at | timestamptz | YES | now() |
-| patient_uuid | uuid | YES | null |
-| psychospiritual_history_id | bigint | YES | null |
-| created_by | uuid | YES | null |
-
-### `log_baseline_observations`
-| column | type | nullable | default |
-|---|---|---|---|
-| id | integer | NO | nextval(seq) |
-| baseline_assessment_id | integer | YES | null |
-| observation_id | integer | YES | null |
-| created_at | timestamptz | YES | now() |
-
-### `log_behavioral_changes`
-| column | type | nullable | default |
-|---|---|---|---|
-| behavioral_change_id | integer | NO | nextval(seq) |
-| session_id | uuid | YES | null |
-| change_date | date | NO | null |
-| is_positive | boolean | NO | null |
-| logged_at | timestamptz | YES | now() |
-| change_category | varchar | YES | null |
-| change_type_ids | ARRAY | YES | null |
-| impact_on_wellbeing | varchar | YES | null |
-| confidence_sustaining | integer | YES | null |
-| related_to_dosing | varchar | YES | null |
-| patient_uuid | uuid | YES | null |
-| created_at | timestamptz | YES | now() |
-| created_by | uuid | YES | null |
-
-### `log_clinical_records`
-> **Key table.** Active session = `is_submitted = false AND session_ended_at IS NULL AND dose_administered_at IS NOT NULL`. Timer start = `dose_administered_at`.
-> **WO-592 applied 2026-03-10:** `session_status` column live in production — filters `.neq('session_status', 'draft')` are active in all analytics hooks.
-
-| column | type | nullable | default |
-|---|---|---|---|
-| id | uuid | NO | gen_random_uuid() |
-| created_at | timestamptz | NO | timezone('utc', now()) |
-| practitioner_id | uuid | NO | null |
-| substance_id | integer | YES | null |
-| protocol_id | integer | YES | null |
-| dosage_amount | numeric | YES | null |
-| outcome_score | integer | YES | null |
-| severity_rating | integer | YES | 0 |
-| site_id | uuid | YES | null |
-| indication_id | bigint | YES | null |
-| session_number | integer | YES | null |
-| session_date | date | YES | null |
-| protocol_template_id | uuid | YES | null |
-| support_modality_ids | ARRAY | YES | null |
-| patient_smoking_status_id | bigint | YES | null |
-| baseline_phq9_score | integer | YES | null |
-| psychological_difficulty_score | integer | YES | null |
-| route_id | bigint | YES | null |
-| safety_event_id | bigint | YES | null |
-| severity_grade_id | bigint | YES | null |
-| resolution_status_id | bigint | YES | null |
-| is_submitted | boolean | YES | false |
-| submitted_at | timestamptz | YES | null | 🟠 DEPRECATED |
-| dosage_mg | numeric | YES | null |
-| dose_administered_at | timestamptz | YES | null | 🟠 DEPRECATED |
-| onset_reported_at | timestamptz | YES | null | 🟠 DEPRECATED |
-| peak_intensity_at | timestamptz | YES | null | 🟠 DEPRECATED |
-| session_ended_at | timestamptz | YES | null | 🟠 DEPRECATED |
-| meq30_score | integer | YES | null |
-| meq30_completed_at | timestamptz | YES | null | 🟠 DEPRECATED |
-| edi_score | integer | YES | null |
-| edi_completed_at | timestamptz | YES | null | 🟠 DEPRECATED |
-| ceq_score | integer | YES | null |
-| ceq_completed_at | timestamptz | YES | null | 🟠 DEPRECATED |
-| guide_user_id | uuid | YES | null |
-| contraindication_assessed_at | timestamptz | YES | null | 🟠 DEPRECATED |
-| session_type_id | integer | YES | null |
-| justification_code_id | bigint | YES | null |
-| assessment_scale_id | integer | YES | null |
-| clinical_phenotype_id | bigint | YES | null |
-| contraindication_verdict_id | bigint | YES | null |
-| patient_sex_id | bigint | YES | null |
-| weight_range_id | bigint | YES | null |
-| concomitant_med_ids | ARRAY | YES | null |
-| patient_age_years | integer | YES | null | 🟠 **DEPRECATED** — use age_range_id |
-| created_by | uuid | YES | null |
-| patient_link_code_hash | text | YES | null |
-| session_status | text | NO | 'draft' | ✅ WO-592 — valid: 'draft', 'active', 'completed'. Analytics queries must filter `!= 'draft'`. |
-| age_range_id | bigint | YES | null | ✅ Added 2026-03-23. FK → `ref_age_ranges(id)`. Replaces `patient_age_years`. |
-| session_started_at | timestamptz | YES | null | 🟠 **DEPRECATED** — discovered 2026-03-23 (was missing from prior snapshot). Stop writing. |
-
-### `log_consent`
-| column | type | nullable | default |
-|---|---|---|---|
-| id | bigint | NO | null |
-| created_at | timestamptz | NO | timezone('utc', now()) |
-| record_id | bigint | YES | null |
-| verified | boolean | YES | null |
-| site_id | uuid | YES | null |
-| verified_at | timestamptz | YES | null |
-| consent_type_id | integer | YES | null |
-| created_by | uuid | YES | null |
-
-### `log_corrections`
-| column | type | nullable | default |
-|---|---|---|---|
-| correction_id | uuid | NO | gen_random_uuid() |
-| source_table | text | NO | null |
-| source_row_id | uuid | NO | null |
-| field_name | text | NO | null |
-| old_value_json | jsonb | YES | null |
-| new_value_json | jsonb | NO | null |
-| correction_type | text | NO | null |
-| correction_reason | text | NO | null |
-| corrected_by | uuid | YES | null |
-| site_id | uuid | YES | null |
-| corrected_at | timestamptz | YES | now() |
-| approved_by | uuid | YES | null |
-| approved_at | timestamptz | YES | null |
-| created_at | timestamptz | YES | now() |
-| created_by | uuid | YES | null |
-
-### `log_dose_events`
-| column | type | nullable | default |
-|---|---|---|---|
-| id | bigint | NO | nextval(seq) |
-| session_id | uuid | NO | null |
-| patient_id | varchar | NO | null |
-| substance_id | bigint | NO | null |
-| dose_mg | numeric | NO | null |
-| weight_kg | numeric | NO | null |
-| dose_mg_per_kg | numeric | YES | null |
-| cumulative_mg | numeric | YES | null |
-| cumulative_mg_per_kg | numeric | YES | null |
-| event_type | varchar | NO | 'booster' |
-| administered_at | timestamptz | NO | now() |
-| created_at | timestamptz | NO | now() |
-| substance_type | varchar | NO | 'HCl' |
-| created_by | uuid | YES | null |
-
-### `log_feature_flags`
-| column | type | nullable | default |
-|---|---|---|---|
-| id | bigint | NO | nextval(seq) |
-| flag_name | text | NO | null |
-| description | text | YES | null |
-| enabled_for_all | boolean | YES | false |
-| enabled_site_ids | ARRAY | YES | '{}' |
-| enabled_user_ids | ARRAY | YES | '{}' |
-| enabled_tiers | ARRAY | YES | '{}' |
-| created_at | timestamptz | NO | now() |
-| updated_at | timestamptz | NO | now() |
-| created_by | uuid | YES | null |
-
-### `log_feature_requests`
-| column | type | nullable | default |
-|---|---|---|---|
-| request_id | integer | NO | nextval(seq) |
-| user_id | uuid | YES | null |
-| site_id | uuid | YES | null |
-| request_type | varchar | NO | 'vocabulary_request' |
-| requested_text | text | NO | '' |
-| category | varchar | YES | null |
-| status | varchar | YES | 'pending' |
-| reviewed_by | uuid | YES | null |
-| reviewed_at | timestamptz | YES | null |
-| created_at | timestamptz | YES | now() |
-| rejection_reason_id | bigint | YES | null |
-| created_by | uuid | YES | null |
-
-### `log_integration_sessions`
-| column | type | nullable | default |
-|---|---|---|---|
-| integration_session_id | integer | NO | nextval(seq) |
-| dosing_session_id | uuid | YES | null |
-| integration_session_number | integer | NO | null |
-| session_date | date | NO | null |
-| session_duration_minutes | integer | YES | null |
-| therapist_user_id | uuid | YES | null |
-| attended | boolean | YES | true |
-| created_at | timestamptz | YES | now() |
-| cancellation_reason_id | integer | YES | null |
-| insight_integration_rating | integer | YES | null |
-| emotional_processing_rating | integer | YES | null |
-| behavioral_application_rating | integer | YES | null |
-| engagement_level_rating | integer | YES | null |
-| session_focus_ids | ARRAY | YES | null |
-| homework_assigned_ids | ARRAY | YES | null |
-| therapist_observation_ids | ARRAY | YES | null |
-| patient_uuid | uuid | YES | null |
-| created_by | uuid | YES | null |
-
-### `log_interventions`
-| column | type | nullable | default |
-|---|---|---|---|
-| id | bigint | NO | null |
-| created_at | timestamptz | NO | timezone('utc', now()) |
-| site_id | uuid | YES | null |
-| status | text | YES | null |
-| demographics | jsonb | YES | null |
-| protocol | jsonb | YES | null |
-| context | jsonb | YES | null |
-| safety_events | jsonb | YES | null |
-| substance_id | bigint | YES | null |
-| support_modality_ids | ARRAY | YES | '{}' |
-| session_id | uuid | YES | null |
-| intervention_type_id | integer | YES | null |
-| created_by | uuid | YES | null |
-
-### `log_longitudinal_assessments`
-| column | type | nullable | default |
-|---|---|---|---|
-| longitudinal_assessment_id | integer | NO | nextval(seq) |
-| session_id | uuid | YES | null |
-| assessment_date | date | NO | null |
-| days_post_session | integer | YES | null |
-| phq9_score | integer | YES | null |
-| gad7_score | integer | YES | null |
-| whoqol_score | integer | YES | null |
-| psqi_score | integer | YES | null |
-| cssrs_score | integer | YES | null |
-| completed_at | timestamptz | YES | now() |
-| patient_uuid | uuid | YES | null |
-| created_at | timestamptz | YES | now() |
-| created_by | uuid | YES | null |
-
-### `log_outcomes`
-| column | type | nullable | default |
-|---|---|---|---|
-| id | bigint | NO | null |
-| created_at | timestamptz | NO | timezone('utc', now()) |
-| record_id | bigint | YES | null |
-| score | integer | YES | null |
-| site_id | uuid | YES | null |
-| observed_at | timestamptz | YES | null |
-| assessment_scale_id | integer | YES | null |
-| created_by | uuid | YES | null |
-| outcome_date | date | YES | null |
-
-### `log_patient_flow_events`
-| column | type | nullable | default |
-|---|---|---|---|
-| id | uuid | NO | uuid_generate_v4() |
-| site_id | uuid | NO | null |
-| practitioner_id | uuid | YES | null |
-| patient_link_code_hash | text | NO | null |
-| event_type_id | bigint | NO | null |
-| event_at | timestamptz | NO | null |
-| protocol_id | uuid | YES | null |
-| substance_id | bigint | YES | null |
-| route_id | bigint | YES | null |
-| support_modality_ids | ARRAY | YES | null |
-| source_id | uuid | YES | null |
-| created_at | timestamptz | YES | now() |
-| created_by | uuid | YES | null |
-| updated_at | timestamptz | YES | now() |
-| justification_id | bigint | YES | null |
-
-### `log_patient_site_links`
-| column | type | nullable | default |
-|---|---|---|---|
-| id | bigint | NO | nextval(seq) |
-| patient_link_code | text | NO | null |
-| site_id | uuid | NO | null |
-| transferred_from_site_id | uuid | YES | null |
-| transfer_date | timestamptz | YES | null |
-| is_active | boolean | YES | true |
-| created_at | timestamptz | NO | now() |
-| updated_at | timestamptz | NO | now() |
-
-### `log_protocols`
-| column | type | nullable | default |
-|---|---|---|---|
-| id | uuid | NO | gen_random_uuid() |
-| user_id | uuid | YES | null |
-| created_at | timestamptz | YES | now() |
-| updated_at | timestamptz | YES | now() |
-| name | text | NO | null |
-| status | text | YES | 'draft' |
-| dosing_schedule | jsonb | YES | null |
-| safety_criteria | jsonb | YES | null |
-| outcome_measures | jsonb | YES | null |
-| protocol_rationale_id | bigint | YES | null |
-| substance_id | bigint | YES | null |
-| indication_id | bigint | YES | null |
-| created_by | uuid | YES | null |
-
-### `log_pulse_checks`
-| column | type | nullable | default |
-|---|---|---|---|
-| pulse_check_id | integer | NO | nextval(seq) |
-| session_id | uuid | YES | null |
-| check_date | date | NO | CURRENT_DATE |
-| connection_level | integer | YES | null |
-| sleep_quality | integer | YES | null |
-| mood_level | integer | YES | null |
-| anxiety_level | integer | YES | null |
-| completed_at | timestamptz | YES | now() |
-| patient_uuid | uuid | YES | null |
-| created_at | timestamptz | YES | now() |
-| created_by | uuid | YES | null |
-
-### `log_red_alerts`
-| column | type | nullable | default |
-|---|---|---|---|
-| red_alert_id | integer | NO | nextval(seq) |
-| alert_triggered_at | timestamptz | NO | now() |
-| trigger_value | jsonb | YES | null |
-| is_acknowledged | boolean | YES | false |
-| acknowledged_by_user_id | uuid | YES | null |
-| acknowledged_at | timestamptz | YES | null |
-| is_resolved | boolean | YES | false |
-| resolved_at | timestamptz | YES | null |
-| created_at | timestamptz | YES | now() |
-| crisis_event_type_id | integer | YES | null |
-| severity_grade_fk | bigint | YES | null |
-| patient_uuid | uuid | YES | null |
-| severity_grade_id | bigint | YES | null |
-| alert_type_id | bigint | YES | null |
-| created_by | uuid | YES | null |
-
-### `log_safety_event_observations`
-| column | type | nullable | default |
-|---|---|---|---|
-| id | integer | NO | nextval(seq) |
-| safety_event_id | text | YES | null |
-| observation_id | integer | YES | null |
-| created_at | timestamptz | YES | now() |
-
-### `log_safety_events`
-| column | type | nullable | default |
-|---|---|---|---|
-| ae_id | text | NO | null |
-| exposure_id | text | YES | null |
-| event_id | text | YES | null |
-| causality_code | text | YES | null |
-| site_id | uuid | YES | null |
-| session_id | uuid | YES | null |
-| meddra_code_id | integer | YES | null |
-| intervention_type_id | integer | YES | null |
-| is_resolved | boolean | YES | false |
-| resolved_at | timestamptz | YES | null |
-| logged_by_user_id | uuid | YES | null |
-| report_pdf_url | text | YES | null |
-| report_generated_at | timestamptz | YES | null |
-| ctcae_grade | smallint | YES | null |
-| severity_grade_id_fk | bigint | YES | null |
-| resolution_status_id_fk | bigint | YES | null |
-| safety_event_type_id | bigint | YES | null |
-| created_at | timestamptz | YES | now() |
-| created_by | uuid | YES | null |
-
-### `log_session_observations`
-| column | type | nullable | default |
-|---|---|---|---|
-| id | integer | NO | nextval(seq) |
-| session_id | uuid | YES | null |
-| observation_id | integer | YES | null |
-| created_at | timestamptz | YES | now() |
-
-### `log_session_timeline_events`
-> **RLS:** INSERT policy currently `{public}` — fix pending WO-526 (after WO-527 enrolls ≥1 row).
-
-| column | type | nullable | default |
-|---|---|---|---|
-| timeline_event_id | uuid | NO | gen_random_uuid() |
-| session_id | uuid | YES | null |
-| event_timestamp | timestamptz | NO | null |
-| event_type_id | integer | YES | null |
-| performed_by | uuid | YES | null |
-| metadata | jsonb | YES | null |
-| created_at | timestamptz | YES | now() |
-| created_by | uuid | YES | null |
-
-### `log_session_vitals`
-| column | type | nullable | default |
-|---|---|---|---|
-| session_vital_id | integer | NO | nextval(seq) |
-| session_id | uuid | YES | null |
-| recorded_at | timestamptz | NO | null |
-| heart_rate | integer | YES | null |
-| hrv | numeric | YES | null |
-| bp_systolic | integer | YES | null |
-| bp_diastolic | integer | YES | null |
-| oxygen_saturation | integer | YES | null |
-| device_id | varchar | YES | null |
-| created_at | timestamptz | YES | now() |
-| respiratory_rate | integer | YES | null |
-| temperature | numeric | YES | null |
-| diaphoresis_score | integer | YES | null |
-| level_of_consciousness | varchar | YES | null |
-| data_source_id | bigint | YES | null |
-| created_by | uuid | YES | null |
-
-### `log_sites`
-| column | type | nullable | default |
-|---|---|---|---|
-| site_id | uuid | NO | gen_random_uuid() |
-| site_name | text | NO | null |
-| region | text | YES | null |
-| created_at | timestamptz | NO | now() |
-| is_active | boolean | YES | true |
-| site_type | text | YES | null |
-
-### `log_subscriptions`
-| column | type | nullable | default |
-|---|---|---|---|
-| id | uuid | NO | gen_random_uuid() |
-| site_id | uuid | NO | null |
-| stripe_customer_id | text | YES | null |
-| stripe_subscription_id | text | YES | null |
-| stripe_price_id | text | YES | null |
-| tier | text | NO | null |
-| status | text | NO | null |
-| current_period_start | timestamptz | YES | null |
-| current_period_end | timestamptz | YES | null |
-| trial_end | timestamptz | YES | null |
-| canceled_at | timestamptz | YES | null |
-| max_users | integer | YES | null |
-| max_sites | integer | YES | null |
-| max_records_per_month | integer | YES | null |
-| created_at | timestamptz | NO | now() |
-| updated_at | timestamptz | NO | now() |
-
-### `log_system_events`
-| column | type | nullable | default |
-|---|---|---|---|
-| event_id | bigint | NO | nextval(seq) |
-| actor_id | uuid | YES | null |
-| event_type | text | NO | null |
-| event_details | jsonb | YES | null |
-| event_status | text | YES | null |
-| created_at | timestamptz | NO | now() |
-| ledger_hash | text | YES | null |
-| site_id | uuid | YES | null |
-| action_type_id | integer | YES | null |
-
-### `log_usage_metrics`
-| column | type | nullable | default |
-|---|---|---|---|
-| id | bigint | NO | nextval(seq) |
-| site_id | uuid | NO | null |
-| metric_type | text | NO | null |
-| count | integer | NO | 0 |
-| period_start | date | NO | null |
-| period_end | date | NO | null |
-| created_at | timestamptz | NO | now() |
-
-### `log_user_profiles`
-> 🟡 `user_first_name` and `user_last_name` are practitioner identity fields (not patient PHI). Monitor for scope creep.
-
-| column | type | nullable | default |
-|---|---|---|---|
-| id | uuid | NO | gen_random_uuid() |
-| user_id | uuid | NO | null |
-| created_at | timestamptz | YES | now() |
-| role_id | integer | YES | 3 |
-| user_first_name | text | YES | null |
-| user_last_name | text | YES | null |
-
-### `log_user_saved_views`
-| column | type | nullable | default |
-|---|---|---|---|
-| id | uuid | NO | uuid_generate_v4() |
-| user_id | uuid | NO | null |
-| view_name | text | NO | null |
-| deep_dive_page | text | NO | null |
-| filter_state | jsonb | NO | null |
-| is_default | boolean | YES | false |
-| created_at | timestamptz | YES | now() |
-| updated_at | timestamptz | YES | now() |
-
-### `log_user_sites`
-> **Constraint:** `user_sites_role_check` — valid roles: `network_admin`, `site_admin`, `clinician`, `analyst`, `auditor`
-> **Current enrolled rows:** 0 (as of 2026-03-03). WO-527 must ship before WO-526.
-
-| column | type | nullable | default |
-|---|---|---|---|
-| user_id | uuid | NO | null |
-| site_id | uuid | NO | null |
-| role | text | NO | null |
-| is_active | boolean | YES | true |
-| created_at | timestamptz | YES | now() |
-
-### `log_user_subscriptions`
-| column | type | nullable | default |
-|---|---|---|---|
-| id | uuid | NO | uuid_generate_v4() |
-| user_id | uuid | NO | null |
-| stripe_customer_id | text | NO | null |
-| stripe_subscription_id | text | NO | null |
-| tier | text | NO | null |
-| status | text | NO | null |
-| trial_end | timestamptz | YES | null |
-| current_period_end | timestamptz | NO | null |
-| cancel_at_period_end | boolean | YES | false |
-| created_at | timestamptz | YES | null |
-| updated_at | timestamptz | YES | null |
-
-### `log_vocabulary_requests`
-| column | type | nullable | default |
-|---|---|---|---|
-| request_id | uuid | NO | gen_random_uuid() |
-| site_id | uuid | YES | null |
-| requesting_user | uuid | YES | null |
-| target_ref_table | text | NO | null |
-| proposed_label | text | NO | null |
-| clinical_rationale | text | YES | null |
-| status | text | NO | 'pending' |
-| request_count | integer | YES | 1 |
-| requesting_sites | ARRAY | YES | null |
-| advisory_notes | text | YES | null |
-| created_at | timestamptz | YES | now() |
-| reviewed_at | timestamptz | YES | null |
-| converted_to_ref_id | bigint | YES | null |
-| created_by | uuid | YES | null |
-
-### `log_waitlist`
-| column | type | nullable | default |
-|---|---|---|---|
-| id | uuid | NO | gen_random_uuid() |
-| created_at | timestamptz | YES | now() |
-| email | text | NO | null |
-
----
-
-## REFERENCE TABLES
-
-### `ref_alert_types`
-| column | type |
-|---|---|
-| alert_type_id | bigint PK |
-| alert_code | text |
-| alert_label | text |
-| alert_category | text |
-| is_active | boolean |
-| created_at | timestamptz |
-
-### `ref_assessment_interval`
-| column | type |
-|---|---|
-| assessment_interval_id | bigint PK |
-| assessment_interval | text |
-
-### `ref_assessment_scales`
-> 🔴 `created_at` is `timestamp without time zone` — WO-530B pending
-
-| column | type |
-|---|---|
-| assessment_scale_id | integer PK |
-| scale_code | varchar |
-| scale_name | varchar |
-| scale_description | text |
-| min_score | integer |
-| max_score | integer |
-| loinc_code | varchar |
-| snomed_code | varchar |
-| scoring_interpretation | jsonb |
-| is_active | boolean |
-| created_at | **timestamp (no tz)** |
-
-### `ref_assessments`
-| column | type |
-|---|---|
-| assessment_id | bigint PK |
-| test_short_name | text |
-| loinc_code | text |
-| definition | text |
-
-### `ref_behavioral_change_types`
-| column | type |
-|---|---|
-| change_type_id | integer PK |
-| change_type_code | varchar |
-| change_type_label | varchar |
-| category | varchar |
-| is_active | boolean |
-
-### `ref_benchmark_cohorts` / `ref_benchmark_trials`
-*Research reference data — read-only, no RLS required.*
-
-### `ref_cancellation_reasons`
-> 🔴 `created_at` is `timestamp without time zone` — WO-530B pending
-
-| column | type |
-|---|---|
-| cancellation_reason_id | integer PK |
-| reason_code | varchar |
-| reason_text | text |
-| is_active | boolean |
-| created_at | **timestamp (no tz)** |
-
-### `ref_clinical_interactions`
-| column | type |
-|---|---|
-| interaction_id | bigint PK |
-| substance_name | text |
-| interactor_name | text |
-| interactor_category | text |
-| risk_level | integer |
-| severity_grade | text |
-| clinical_description | text |
-| mechanism | text |
-| evidence_source | text |
-| source_url | text |
-| is_verified | boolean |
-| created_at | timestamptz |
-
-### `ref_clinical_observations`
-> 🔴 `created_at` is `timestamp without time zone` — WO-530B pending
-
-| column | type |
-|---|---|
-| observation_id | integer PK |
-| observation_code | varchar |
-| observation_text | text |
-| category | varchar |
-| is_active | boolean |
-| created_at | **timestamp (no tz)** |
-| sort_order | integer |
-
-### `ref_clinical_phenotypes`
-| column | type |
-|---|---|
-| clinical_phenotype_id | bigint PK |
-| phenotype_code | text |
-| phenotype_name | text |
-| icd10_category | text |
-| is_active | boolean |
-| created_at | timestamptz |
-
-### `ref_consent_types`
-| column | type |
-|---|---|
-| id | integer PK |
-| consent_code | varchar |
-| label | varchar |
-| is_active | boolean |
-
-### `ref_contraindication_verdicts`
-| column | type |
-|---|---|
-| verdict_id | bigint PK |
-| verdict_code | text |
-| verdict_label | text |
-| ui_color_hex | text |
-| is_active | boolean |
-| created_at | timestamptz |
-
-### `ref_crisis_event_types`
-| column | type |
-|---|---|
-| id | integer PK |
-| event_code | varchar |
-| label | varchar |
-| severity_tier | smallint |
-| is_active | boolean |
-| created_at | timestamptz |
-
-### `ref_data_sources`
-| column | type |
-|---|---|
-| data_source_id | bigint PK |
-| source_code | text |
-| source_label | text |
-| is_active | boolean |
-| created_at | timestamptz |
-
-### `ref_ekg_rhythms`
-| column | type |
-|---|---|
-| id | integer PK |
-| code | varchar |
-| label | varchar |
-| severity_tier | varchar |
-| is_active | boolean |
-| valid_from | date |
-| valid_to | date |
-
-### `ref_flow_event_types`
-| column | type |
-|---|---|
-| id | bigint PK |
-| event_type_code | text |
-| event_type_label | text |
-| event_category | text |
-| stage_order | integer |
-| is_active | boolean |
-| description | text |
-| created_at | timestamptz |
-
-### `ref_homework_types`, `ref_session_focus_areas`, `ref_therapist_observations`
-*Standard lookup tables — code + label + is_active pattern.*
-
-### `ref_indications`
-| column | type |
-|---|---|
-| indication_id | bigint PK |
-| indication_name | text |
-| snomed_code | text |
-| icd10_code | text |
-| indication_category | text |
-| is_active | boolean |
-| created_at | timestamptz |
-
-### `ref_intervention_types`
-> 🔴 `created_at` is `timestamp without time zone` — WO-530B pending
-
-| column | type |
-|---|---|
-| intervention_type_id | integer PK |
-| intervention_code | varchar |
-| intervention_name | varchar |
-| intervention_category | varchar |
-| description | text |
-| requires_documentation | boolean |
-| is_active | boolean |
-| created_at | **timestamp (no tz)** |
-
-### `ref_justification_codes`
-| column | type |
-|---|---|
-| justification_id | bigint PK |
-| reason_text | text |
-
-### `ref_knowledge_graph`
-| column | type |
-|---|---|
-| rule_id | text PK |
-| substance_a_id | text |
-| substance_b_id | text |
-| condition_code | text |
-| risk_level | text |
-| alert_message | text |
-
-### `ref_meddra_codes`
-> 🔴 `created_at` is `timestamp without time zone` — WO-530B pending
-
-| column | type |
-|---|---|
-| meddra_code_id | integer PK |
-| meddra_code | varchar |
-| preferred_term | varchar |
-| system_organ_class | varchar |
-| severity_level | varchar |
-| description | text |
-| is_active | boolean |
-| created_at | **timestamp (no tz)** |
-
-### `ref_medications`
-| column | type |
-|---|---|
-| medication_id | bigint PK |
-| medication_name | text |
-| medication_category | varchar |
-| is_active | boolean |
-| rxnorm_cui | varchar |
-| created_at | timestamptz |
-
-### `ref_population_baselines`
-*Research reference data — read-only. See benchmark intelligence layer.*
-
-### `ref_practitioner_types`
-> ✅ `sort_order` column added 2026-03-23. RLS policy updated to `TO authenticated` (was missing). ND row added.
-
-| column | type |
-|---|---|
-| practitioner_type_id | bigint PK |
-| type_code | text UNIQUE |
-| type_label | text |
-| requires_license | boolean |
-| sort_order | integer (default 999) |
-| is_active | boolean |
-| created_at | timestamptz |
-
-**Seeded rows (12 total, ordered by sort_order):**
-
-| id | type_code | type_label | requires_license | sort_order |
-|---|---|---|---|---|
-| 1 | MD | Medical Doctor (MD) | true | 1 |
-| 2 | DO | Doctor of Osteopathic Medicine (DO) | true | 2 |
-| 3 | NP | Nurse Practitioner (NP) | true | 3 |
-| 4 | PA | Physician Assistant (PA) | true | 4 |
-| 12 | ND | Naturopathic Doctor (ND) | true | 5 |
-| 5 | PHD_PSYCH | Licensed Psychologist (PhD) | true | 6 |
-| 6 | LCSW | Licensed Clinical Social Worker (LCSW) | true | 7 |
-| 7 | LPC | Licensed Professional Counselor (LPC) | true | 8 |
-| 8 | LMFT | Licensed Marriage & Family Therapist (LMFT) | true | 9 |
-| 9 | FACILITATOR | Certified Psychedelic Facilitator | true | 10 |
-| 10 | RESEARCHER | Clinical Researcher | false | 11 |
-| 11 | OTHER | Other / Not Listed | false | 99 |
-
-### `ref_practitioners`
-*Practitioner directory reference data.*
-
-### `ref_routes`
-| column | type |
-|---|---|
-| route_id | bigint PK |
-| route_name | text |
-| route_code | text |
-| route_label | text |
-| is_active | boolean |
-| created_at | timestamptz |
-
-### `ref_safety_events`
-| column | type |
-|---|---|
-| safety_event_id | bigint PK |
-| event_name | text |
-| event_code | text |
-| event_category | text |
-| is_active | boolean |
-| created_at | timestamptz |
-
-### `ref_session_types`
-| column | type |
-|---|---|
-| id | integer PK |
-| session_code | varchar |
-| session_label | varchar |
-| is_active | boolean |
-| created_at | timestamptz |
-
-### `ref_severity_grade`
-| column | type |
-|---|---|
-| severity_grade_id | bigint PK |
-| grade_value | integer |
-| grade_label | text |
-| description | text |
-| is_active | boolean |
-| created_at | timestamptz |
-
-### `ref_sex`
-| column | type |
-|---|---|
-| sex_id | bigint PK |
-| sex_code | text |
-| sex_label | text |
-| sort_order | integer |
-| is_active | boolean |
-| created_at | timestamptz |
-
-### `ref_smoking_status`
-| column | type |
-|---|---|
-| smoking_status_id | bigint PK |
-| status_name | text |
-| status_code | text |
-| is_active | boolean |
-| created_at | timestamptz |
-
-### `ref_substances`
-| column | type |
-|---|---|
-| substance_id | bigint PK |
-| substance_name | text |
-| rxnorm_cui | bigint |
-| substance_class | text |
-| is_active | boolean |
-| created_at | timestamptz |
-| receptor_5ht2a_ki | numeric |
-| receptor_5ht1a_ki | numeric |
-| receptor_5ht2c_ki | numeric |
-| receptor_d2_ki | numeric |
-| receptor_sert_ki | numeric |
-| receptor_nmda_ki | numeric |
-| primary_mechanism | text |
-
-### `ref_support_modality`
-| column | type |
-|---|---|
-| modality_id | bigint PK |
-| modality_name | text |
-| modality_code | text |
-| description | text |
-| is_active | boolean |
-| created_at | timestamptz |
-
-### `ref_system_action_types`
-| column | type |
-|---|---|
-| id | integer PK |
-| action_code | varchar |
-| label | varchar |
-| is_active | boolean |
-
-### `ref_user_roles`
-> Platform subscription/access roles. NOT clinical site roles. Do not use for `log_user_sites.role`.
-
-| id | role_name |
-|---|---|
-| 1 | admin |
-| 2 | partner |
-| 3 | user |
-| 4 | owner |
-| 5 | partner_free |
-| 6 | partner_paid |
-| 7 | beta_observer |
-| 8 | user_free |
-| 9 | user_pro |
-| 10 | user_premium |
-| 11 | user_enterprise |
-
-### `ref_age_ranges`
-> ✅ **Added 2026-03-23 (WO: age_range migration).** HIPAA Safe Harbor-compliant age brackets. Ages ≥ 90 grouped per HHS requirement.
-
-| column | type |
-|---|---|
-| id | bigserial PK |
-| range_code | varchar UNIQUE |
-| range_label | text |
-| age_low | integer |
-| age_high | integer |
-| sort_order | integer |
-| is_active | boolean |
-| created_at | timestamptz |
-
-Seeded with 10 ranges: `UNDER_18`, `AGE_18_24`, `AGE_25_34`, `AGE_35_44`, `AGE_45_54`, `AGE_55_64`, `AGE_65_74`, `AGE_75_84`, `AGE_85_89`, `AGE_90_PLUS`.
-
-### `ref_weight_ranges`
-| column | type |
-|---|---|
-| id | bigint PK |
-| range_label | text |
-| kg_low | numeric |
-| kg_high | numeric |
-| sort_order | integer |
-| is_active | boolean |
-| created_at | timestamptz |
-| updated_at | timestamptz |
-
----
-
-## NOTE: log_patient_profiles (not in original snapshot)
-> Table discovered via live query 2026-03-23. Full column list confirmed via Block 11 pre-flight.
-
-| column | type | nullable | default |
-|---|---|---|---|
-| id | bigint | NO | null |
-| patient_uuid | uuid | NO | null |
-| site_id | uuid | NO | null |
-| sex_id | bigint | YES | null |
-| age_at_intake | integer | YES | null | 🟠 **DEPRECATED** — use age_range_id |
-| weight_range_id | bigint | YES | null |
-| smoking_status_id | bigint | YES | null |
-| protocol_archetype_id | integer | YES | null |
-| created_at | timestamptz | NO | now() |
-| created_by | uuid | YES | null |
-| age_range_id | bigint | YES | null | ✅ Added 2026-03-23. FK → `ref_age_ranges(id)`. Replaces `age_at_intake`. |
-
----
-
-## WO-530B PENDING MIGRATION (ref_ tables)
-
-5 `ref_` tables were missed in the WO-530 log_ migration. Apply to staging then production:
-
-```sql
--- WO-530B: Fix remaining timestamp without time zone in ref_ tables
-ALTER TABLE public.ref_assessment_scales
-  ALTER COLUMN created_at TYPE TIMESTAMPTZ USING created_at AT TIME ZONE 'UTC';
-
-ALTER TABLE public.ref_cancellation_reasons
-  ALTER COLUMN created_at TYPE TIMESTAMPTZ USING created_at AT TIME ZONE 'UTC';
-
-ALTER TABLE public.ref_clinical_observations
-  ALTER COLUMN created_at TYPE TIMESTAMPTZ USING created_at AT TIME ZONE 'UTC';
-
-ALTER TABLE public.ref_intervention_types
-  ALTER COLUMN created_at TYPE TIMESTAMPTZ USING created_at AT TIME ZONE 'UTC';
-
-ALTER TABLE public.ref_meddra_codes
-  ALTER COLUMN created_at TYPE TIMESTAMPTZ USING created_at AT TIME ZONE 'UTC';
-
--- Verification (expected: 0 rows)
-SELECT table_name, column_name, data_type
-FROM information_schema.columns
-WHERE table_schema = 'public'
-  AND data_type = 'timestamp without time zone'
-ORDER BY table_name, column_name;
-```
+Full Schema as of 2-27-26
+
+| table_name                          | column_name                     | data_type                | is_nullable | column_default                                                                   |
+| ----------------------------------- | ------------------------------- | ------------------------ | ----------- | -------------------------------------------------------------------------------- |
+| _schema_lock                        | locked_at                       | timestamp with time zone | NO          | now()                                                                            |
+| _schema_lock                        | locked_by                       | text                     | YES         | null                                                                             |
+| _schema_lock                        | reason                          | text                     | YES         | null                                                                             |
+| log_baseline_assessments            | baseline_assessment_id          | integer                  | NO          | nextval('log_baseline_assessments_baseline_assessment_id_seq'::regclass)         |
+| log_baseline_assessments            | site_id                         | uuid                     | YES         | null                                                                             |
+| log_baseline_assessments            | assessment_date                 | timestamp with time zone | NO          | now()                                                                            |
+| log_baseline_assessments            | phq9_score                      | integer                  | YES         | null                                                                             |
+| log_baseline_assessments            | gad7_score                      | integer                  | YES         | null                                                                             |
+| log_baseline_assessments            | ace_score                       | integer                  | YES         | null                                                                             |
+| log_baseline_assessments            | pcl5_score                      | integer                  | YES         | null                                                                             |
+| log_baseline_assessments            | expectancy_scale                | integer                  | YES         | null                                                                             |
+| log_baseline_assessments            | resting_hrv                     | numeric                  | YES         | null                                                                             |
+| log_baseline_assessments            | resting_bp_systolic             | integer                  | YES         | null                                                                             |
+| log_baseline_assessments            | resting_bp_diastolic            | integer                  | YES         | null                                                                             |
+| log_baseline_assessments            | completed_by_user_id            | uuid                     | YES         | null                                                                             |
+| log_baseline_assessments            | created_at                      | timestamp with time zone | YES         | now()                                                                            |
+| log_baseline_assessments            | updated_at                      | timestamp with time zone | YES         | now()                                                                            |
+| log_baseline_assessments            | patient_uuid                    | uuid                     | YES         | null                                                                             |
+| log_baseline_assessments            | created_by                      | uuid                     | YES         | null                                                                             |
+| log_behavioral_changes              | behavioral_change_id            | integer                  | NO          | nextval('log_behavioral_changes_behavioral_change_id_seq'::regclass)             |
+| log_behavioral_changes              | session_id                      | uuid                     | YES         | null                                                                             |
+| log_behavioral_changes              | change_date                     | date                     | NO          | null                                                                             |
+| log_behavioral_changes              | is_positive                     | boolean                  | NO          | null                                                                             |
+| log_behavioral_changes              | logged_at                       | timestamp with time zone | YES         | now()                                                                            |
+| log_behavioral_changes              | change_type_ids                 | ARRAY                    | YES         | null                                                                             |
+| log_behavioral_changes              | confidence_sustaining           | integer                  | YES         | null                                                                             |
+| log_behavioral_changes              | patient_uuid                    | uuid                     | YES         | null                                                                             |
+| log_behavioral_changes              | created_at                      | timestamp with time zone | YES         | now()                                                                            |
+| log_behavioral_changes              | created_by                      | uuid                     | YES         | null                                                                             |
+| log_behavioral_changes              | wellbeing_impact_id             | integer                  | YES         | null                                                                             |
+| log_behavioral_changes              | dosing_relatedness_id           | integer                  | YES         | null                                                                             |
+| log_clinical_observations           | observation_id                  | uuid                     | NO          | gen_random_uuid()                                                                |
+| log_clinical_observations           | site_id                         | uuid                     | NO          | null                                                                             |
+| log_clinical_observations           | patient_uuid                    | uuid                     | NO          | null                                                                             |
+| log_clinical_observations           | session_id                      | uuid                     | YES         | null                                                                             |
+| log_clinical_observations           | practitioner_id                 | uuid                     | YES         | null                                                                             |
+| log_clinical_observations           | observation_concept_id          | integer                  | NO          | null                                                                             |
+| log_clinical_observations           | time_point_id                   | integer                  | NO          | null                                                                             |
+| log_clinical_observations           | value_as_number                 | numeric                  | YES         | null                                                                             |
+| log_clinical_observations           | value_as_concept_id             | integer                  | YES         | null                                                                             |
+| log_clinical_observations           | unit_id                         | integer                  | YES         | null                                                                             |
+| log_clinical_observations           | observation_timestamp           | timestamp with time zone | NO          | now()                                                                            |
+| log_clinical_observations           | relative_minutes                | integer                  | YES         | null                                                                             |
+| log_clinical_observations           | created_at                      | timestamp with time zone | NO          | now()                                                                            |
+| log_clinical_observations           | created_by                      | uuid                     | YES         | null                                                                             |
+| log_clinical_observations           | source_table                    | text                     | YES         | null                                                                             |
+| log_clinical_observations           | source_row_pk                   | text                     | YES         | null                                                                             |
+| log_clinical_records                | id                              | uuid                     | NO          | gen_random_uuid()                                                                |
+| log_clinical_records                | created_at                      | timestamp with time zone | NO          | timezone('utc'::text, now())                                                     |
+| log_clinical_records                | practitioner_id                 | uuid                     | NO          | null                                                                             |
+| log_clinical_records                | substance_id                    | integer                  | YES         | null                                                                             |
+| log_clinical_records                | protocol_id                     | integer                  | YES         | null                                                                             |
+| log_clinical_records                | dosage_amount                   | numeric                  | YES         | null                                                                             |
+| log_clinical_records                | outcome_score                   | integer                  | YES         | null                                                                             |
+| log_clinical_records                | severity_rating                 | integer                  | YES         | 0                                                                                |
+| log_clinical_records                | site_id                         | uuid                     | YES         | null                                                                             |
+| log_clinical_records                | session_number                  | integer                  | YES         | null                                                                             |
+| log_clinical_records                | session_date                    | date                     | YES         | null                                                                             |
+| log_clinical_records                | protocol_template_id            | uuid                     | YES         | null                                                                             |
+| log_clinical_records                | support_modality_ids            | ARRAY                    | YES         | null                                                                             |
+| log_clinical_records                | patient_smoking_status_id       | bigint                   | YES         | null                                                                             |
+| log_clinical_records                | baseline_phq9_score             | integer                  | YES         | null                                                                             |
+| log_clinical_records                | psychological_difficulty_score  | integer                  | YES         | null                                                                             |
+| log_clinical_records                | route_id                        | bigint                   | YES         | null                                                                             |
+| log_clinical_records                | safety_event_id                 | bigint                   | YES         | null                                                                             |
+| log_clinical_records                | severity_grade_id               | bigint                   | YES         | null                                                                             |
+| log_clinical_records                | resolution_status_id            | bigint                   | YES         | null                                                                             |
+| log_clinical_records                | is_submitted                    | boolean                  | YES         | false                                                                            |
+| log_clinical_records                | submitted_at                    | timestamp with time zone | YES         | null                                                                             |
+| log_clinical_records                | dosage_mg                       | numeric                  | YES         | null                                                                             |
+| log_clinical_records                | dose_administered_at            | timestamp with time zone | YES         | null                                                                             |
+| log_clinical_records                | onset_reported_at               | timestamp with time zone | YES         | null                                                                             |
+| log_clinical_records                | peak_intensity_at               | timestamp with time zone | YES         | null                                                                             |
+| log_clinical_records                | session_ended_at                | timestamp with time zone | YES         | null                                                                             |
+| log_clinical_records                | meq30_score                     | integer                  | YES         | null                                                                             |
+| log_clinical_records                | meq30_completed_at              | timestamp with time zone | YES         | null                                                                             |
+| log_clinical_records                | edi_score                       | integer                  | YES         | null                                                                             |
+| log_clinical_records                | edi_completed_at                | timestamp with time zone | YES         | null                                                                             |
+| log_clinical_records                | ceq_score                       | integer                  | YES         | null                                                                             |
+| log_clinical_records                | ceq_completed_at                | timestamp with time zone | YES         | null                                                                             |
+| log_clinical_records                | guide_user_id                   | uuid                     | YES         | null                                                                             |
+| log_clinical_records                | contraindication_assessed_at    | timestamp with time zone | YES         | null                                                                             |
+| log_clinical_records                | session_type_id                 | integer                  | YES         | null                                                                             |
+| log_clinical_records                | justification_code_id           | bigint                   | YES         | null                                                                             |
+| log_clinical_records                | assessment_scale_id             | integer                  | YES         | null                                                                             |
+| log_clinical_records                | clinical_phenotype_id           | bigint                   | YES         | null                                                                             |
+| log_clinical_records                | contraindication_verdict_id     | bigint                   | YES         | null                                                                             |
+| log_clinical_records                | patient_sex_id                  | bigint                   | YES         | null                                                                             |
+| log_clinical_records                | weight_range_id                 | bigint                   | YES         | null                                                                             |
+| log_clinical_records                | concomitant_med_ids             | ARRAY                    | YES         | null                                                                             |
+| log_clinical_records                | patient_age_years               | integer                  | YES         | null                                                                             |
+| log_clinical_records                | created_by                      | uuid                     | YES         | null                                                                             |
+| log_clinical_records                | patient_link_code_hash          | text                     | YES         | null                                                                             |
+| log_clinical_records                | session_started_at              | timestamp with time zone | YES         | null                                                                             |
+| log_clinical_records                | patient_uuid                    | uuid                     | YES         | null                                                                             |
+| log_clinical_records                | session_setting_id              | integer                  | YES         | null                                                                             |
+| log_clinical_records                | mindset_type_id                 | integer                  | YES         | null                                                                             |
+| log_clinical_records                | intention_theme_ids             | ARRAY                    | YES         | null                                                                             |
+| log_clinical_records                | session_status                  | text                     | NO          | 'draft'::text                                                                    |
+| log_clinical_records                | age_range_id                    | bigint                   | YES         | null                                                                             |
+| log_corrections                     | correction_id                   | uuid                     | NO          | gen_random_uuid()                                                                |
+| log_corrections                     | source_table                    | text                     | NO          | null                                                                             |
+| log_corrections                     | source_row_id                   | uuid                     | NO          | null                                                                             |
+| log_corrections                     | field_name                      | text                     | NO          | null                                                                             |
+| log_corrections                     | old_value_json                  | jsonb                    | YES         | null                                                                             |
+| log_corrections                     | new_value_json                  | jsonb                    | NO          | null                                                                             |
+| log_corrections                     | correction_type                 | text                     | NO          | null                                                                             |
+| log_corrections                     | correction_reason               | text                     | NO          | null                                                                             |
+| log_corrections                     | corrected_by                    | uuid                     | YES         | null                                                                             |
+| log_corrections                     | site_id                         | uuid                     | YES         | null                                                                             |
+| log_corrections                     | corrected_at                    | timestamp with time zone | YES         | now()                                                                            |
+| log_corrections                     | approved_by                     | uuid                     | YES         | null                                                                             |
+| log_corrections                     | approved_at                     | timestamp with time zone | YES         | null                                                                             |
+| log_corrections                     | created_at                      | timestamp with time zone | YES         | now()                                                                            |
+| log_corrections                     | created_by                      | uuid                     | YES         | null                                                                             |
+| log_dose_events                     | id                              | bigint                   | NO          | nextval('log_dose_events_id_seq'::regclass)                                      |
+| log_dose_events                     | session_id                      | uuid                     | NO          | null                                                                             |
+| log_dose_events                     | substance_id                    | bigint                   | NO          | null                                                                             |
+| log_dose_events                     | dose_mg                         | numeric                  | NO          | null                                                                             |
+| log_dose_events                     | weight_kg                       | numeric                  | NO          | null                                                                             |
+| log_dose_events                     | dose_mg_per_kg                  | numeric                  | YES         | null                                                                             |
+| log_dose_events                     | cumulative_mg                   | numeric                  | YES         | null                                                                             |
+| log_dose_events                     | cumulative_mg_per_kg            | numeric                  | YES         | null                                                                             |
+| log_dose_events                     | administered_at                 | timestamp with time zone | NO          | now()                                                                            |
+| log_dose_events                     | created_at                      | timestamp with time zone | NO          | now()                                                                            |
+| log_dose_events                     | created_by                      | uuid                     | YES         | null                                                                             |
+| log_dose_events                     | patient_uuid                    | uuid                     | NO          | null                                                                             |
+| log_dose_events                     | event_type_id                   | integer                  | NO          | null                                                                             |
+| log_dose_events                     | substance_form_id               | integer                  | NO          | null                                                                             |
+| log_environmental_telemetry         | env_log_id                      | uuid                     | NO          | gen_random_uuid()                                                                |
+| log_environmental_telemetry         | site_id                         | uuid                     | NO          | null                                                                             |
+| log_environmental_telemetry         | patient_uuid                    | uuid                     | NO          | null                                                                             |
+| log_environmental_telemetry         | session_id                      | uuid                     | NO          | null                                                                             |
+| log_environmental_telemetry         | event_timestamp                 | timestamp with time zone | NO          | null                                                                             |
+| log_environmental_telemetry         | relative_minutes                | integer                  | YES         | null                                                                             |
+| log_environmental_telemetry         | audio_track_id                  | integer                  | YES         | null                                                                             |
+| log_environmental_telemetry         | acoustic_valence                | numeric                  | YES         | null                                                                             |
+| log_environmental_telemetry         | acoustic_arousal                | numeric                  | YES         | null                                                                             |
+| log_environmental_telemetry         | room_lux_level                  | integer                  | YES         | null                                                                             |
+| log_environmental_telemetry         | created_at                      | timestamp with time zone | NO          | now()                                                                            |
+| log_environmental_telemetry         | created_by                      | uuid                     | YES         | null                                                                             |
+| log_environmental_telemetry         | source_table                    | text                     | YES         | null                                                                             |
+| log_environmental_telemetry         | source_row_pk                   | text                     | YES         | null                                                                             |
+| log_feature_flags                   | id                              | bigint                   | NO          | nextval('feature_flags_id_seq'::regclass)                                        |
+| log_feature_flags                   | flag_name                       | text                     | NO          | null                                                                             |
+| log_feature_flags                   | description                     | text                     | YES         | null                                                                             |
+| log_feature_flags                   | enabled_for_all                 | boolean                  | YES         | false                                                                            |
+| log_feature_flags                   | enabled_site_ids                | ARRAY                    | YES         | '{}'::uuid[]                                                                     |
+| log_feature_flags                   | enabled_user_ids                | ARRAY                    | YES         | '{}'::uuid[]                                                                     |
+| log_feature_flags                   | enabled_tiers                   | ARRAY                    | YES         | '{}'::text[]                                                                     |
+| log_feature_flags                   | created_at                      | timestamp with time zone | NO          | now()                                                                            |
+| log_feature_flags                   | updated_at                      | timestamp with time zone | NO          | now()                                                                            |
+| log_feature_flags                   | created_by                      | uuid                     | YES         | null                                                                             |
+| log_feature_requests                | request_id                      | integer                  | NO          | nextval('log_feature_requests_request_id_seq'::regclass)                         |
+| log_feature_requests                | user_id                         | uuid                     | YES         | null                                                                             |
+| log_feature_requests                | site_id                         | uuid                     | YES         | null                                                                             |
+| log_feature_requests                | request_type                    | character varying        | NO          | 'vocabulary_request'::character varying                                          |
+| log_feature_requests                | requested_text                  | text                     | NO          | ''::text                                                                         |
+| log_feature_requests                | category                        | character varying        | YES         | null                                                                             |
+| log_feature_requests                | status                          | character varying        | YES         | 'pending'::character varying                                                     |
+| log_feature_requests                | reviewed_by                     | uuid                     | YES         | null                                                                             |
+| log_feature_requests                | reviewed_at                     | timestamp with time zone | YES         | null                                                                             |
+| log_feature_requests                | created_at                      | timestamp with time zone | YES         | now()                                                                            |
+| log_feature_requests                | rejection_reason_id             | bigint                   | YES         | null                                                                             |
+| log_feature_requests                | created_by                      | uuid                     | YES         | null                                                                             |
+| log_integration_sessions            | integration_session_id          | integer                  | NO          | nextval('log_integration_sessions_integration_session_id_seq'::regclass)         |
+| log_integration_sessions            | dosing_session_id               | uuid                     | YES         | null                                                                             |
+| log_integration_sessions            | integration_session_number      | integer                  | NO          | null                                                                             |
+| log_integration_sessions            | session_date                    | date                     | NO          | null                                                                             |
+| log_integration_sessions            | session_duration_minutes        | integer                  | YES         | null                                                                             |
+| log_integration_sessions            | therapist_user_id               | uuid                     | YES         | null                                                                             |
+| log_integration_sessions            | created_at                      | timestamp with time zone | YES         | now()                                                                            |
+| log_integration_sessions            | cancellation_reason_id          | integer                  | YES         | null                                                                             |
+| log_integration_sessions            | insight_integration_rating      | integer                  | YES         | null                                                                             |
+| log_integration_sessions            | emotional_processing_rating     | integer                  | YES         | null                                                                             |
+| log_integration_sessions            | behavioral_application_rating   | integer                  | YES         | null                                                                             |
+| log_integration_sessions            | engagement_level_rating         | integer                  | YES         | null                                                                             |
+| log_integration_sessions            | session_focus_ids               | ARRAY                    | YES         | null                                                                             |
+| log_integration_sessions            | homework_assigned_ids           | ARRAY                    | YES         | null                                                                             |
+| log_integration_sessions            | therapist_observation_ids       | ARRAY                    | YES         | null                                                                             |
+| log_integration_sessions            | patient_uuid                    | uuid                     | YES         | null                                                                             |
+| log_integration_sessions            | created_by                      | uuid                     | YES         | null                                                                             |
+| log_integration_sessions            | attendance_status_id            | integer                  | YES         | null                                                                             |
+| log_longitudinal_assessments        | longitudinal_assessment_id      | integer                  | NO          | nextval('log_longitudinal_assessments_longitudinal_assessment_id_seq'::regclass) |
+| log_longitudinal_assessments        | session_id                      | uuid                     | YES         | null                                                                             |
+| log_longitudinal_assessments        | assessment_date                 | date                     | NO          | null                                                                             |
+| log_longitudinal_assessments        | days_post_session               | integer                  | YES         | null                                                                             |
+| log_longitudinal_assessments        | phq9_score                      | integer                  | YES         | null                                                                             |
+| log_longitudinal_assessments        | gad7_score                      | integer                  | YES         | null                                                                             |
+| log_longitudinal_assessments        | cssrs_score                     | integer                  | YES         | null                                                                             |
+| log_longitudinal_assessments        | completed_at                    | timestamp with time zone | YES         | now()                                                                            |
+| log_longitudinal_assessments        | patient_uuid                    | uuid                     | YES         | null                                                                             |
+| log_longitudinal_assessments        | created_at                      | timestamp with time zone | YES         | now()                                                                            |
+| log_longitudinal_assessments        | created_by                      | uuid                     | YES         | null                                                                             |
+| log_nlp_semantic_biomarkers         | biomarker_id                    | uuid                     | NO          | gen_random_uuid()                                                                |
+| log_nlp_semantic_biomarkers         | site_id                         | uuid                     | NO          | null                                                                             |
+| log_nlp_semantic_biomarkers         | patient_uuid                    | uuid                     | NO          | null                                                                             |
+| log_nlp_semantic_biomarkers         | session_id                      | uuid                     | NO          | null                                                                             |
+| log_nlp_semantic_biomarkers         | source_medium_id                | integer                  | NO          | null                                                                             |
+| log_nlp_semantic_biomarkers         | analysis_timestamp              | timestamp with time zone | NO          | null                                                                             |
+| log_nlp_semantic_biomarkers         | relative_minutes                | integer                  | YES         | null                                                                             |
+| log_nlp_semantic_biomarkers         | sentiment_polarity              | numeric                  | YES         | null                                                                             |
+| log_nlp_semantic_biomarkers         | lexical_shift_index             | numeric                  | YES         | null                                                                             |
+| log_nlp_semantic_biomarkers         | prosody_variance                | numeric                  | YES         | null                                                                             |
+| log_nlp_semantic_biomarkers         | created_at                      | timestamp with time zone | NO          | now()                                                                            |
+| log_nlp_semantic_biomarkers         | created_by                      | uuid                     | YES         | null                                                                             |
+| log_nlp_semantic_biomarkers         | source_table                    | text                     | YES         | null                                                                             |
+| log_nlp_semantic_biomarkers         | source_row_pk                   | text                     | YES         | null                                                                             |
+| log_patient_flow_events             | id                              | uuid                     | NO          | uuid_generate_v4()                                                               |
+| log_patient_flow_events             | site_id                         | uuid                     | NO          | null                                                                             |
+| log_patient_flow_events             | practitioner_id                 | uuid                     | YES         | null                                                                             |
+| log_patient_flow_events             | patient_link_code_hash          | text                     | NO          | null                                                                             |
+| log_patient_flow_events             | event_type_id                   | bigint                   | NO          | null                                                                             |
+| log_patient_flow_events             | event_at                        | timestamp with time zone | NO          | null                                                                             |
+| log_patient_flow_events             | protocol_id                     | uuid                     | YES         | null                                                                             |
+| log_patient_flow_events             | substance_id                    | bigint                   | YES         | null                                                                             |
+| log_patient_flow_events             | route_id                        | bigint                   | YES         | null                                                                             |
+| log_patient_flow_events             | support_modality_ids            | ARRAY                    | YES         | null                                                                             |
+| log_patient_flow_events             | source_id                       | uuid                     | YES         | null                                                                             |
+| log_patient_flow_events             | created_at                      | timestamp with time zone | YES         | now()                                                                            |
+| log_patient_flow_events             | created_by                      | uuid                     | YES         | null                                                                             |
+| log_patient_flow_events             | updated_at                      | timestamp with time zone | YES         | now()                                                                            |
+| log_patient_flow_events             | justification_id                | bigint                   | YES         | null                                                                             |
+| log_patient_flow_events             | patient_uuid                    | uuid                     | YES         | null                                                                             |
+| log_patient_indications             | id                              | bigint                   | NO          | null                                                                             |
+| log_patient_indications             | patient_uuid                    | uuid                     | NO          | null                                                                             |
+| log_patient_indications             | indication_id                   | bigint                   | NO          | null                                                                             |
+| log_patient_indications             | is_primary                      | boolean                  | NO          | false                                                                            |
+| log_patient_indications             | created_at                      | timestamp with time zone | NO          | now()                                                                            |
+| log_patient_indications             | created_by                      | uuid                     | YES         | null                                                                             |
+| log_patient_profiles                | id                              | bigint                   | NO          | null                                                                             |
+| log_patient_profiles                | patient_uuid                    | uuid                     | NO          | null                                                                             |
+| log_patient_profiles                | site_id                         | uuid                     | NO          | null                                                                             |
+| log_patient_profiles                | sex_id                          | bigint                   | YES         | null                                                                             |
+| log_patient_profiles                | age_at_intake                   | integer                  | YES         | null                                                                             |
+| log_patient_profiles                | weight_range_id                 | bigint                   | YES         | null                                                                             |
+| log_patient_profiles                | smoking_status_id               | bigint                   | YES         | null                                                                             |
+| log_patient_profiles                | protocol_archetype_id           | integer                  | YES         | null                                                                             |
+| log_patient_profiles                | created_at                      | timestamp with time zone | NO          | now()                                                                            |
+| log_patient_profiles                | created_by                      | uuid                     | YES         | null                                                                             |
+| log_patient_profiles                | age_range_id                    | bigint                   | YES         | null                                                                             |
+| log_patient_psychospiritual_history | id                              | bigint                   | NO          | null                                                                             |
+| log_patient_psychospiritual_history | patient_uuid                    | uuid                     | NO          | null                                                                             |
+| log_patient_psychospiritual_history | psychospiritual_history_type_id | bigint                   | NO          | null                                                                             |
+| log_patient_psychospiritual_history | created_at                      | timestamp with time zone | NO          | now()                                                                            |
+| log_patient_site_links              | id                              | bigint                   | NO          | nextval('patient_site_links_id_seq'::regclass)                                   |
+| log_patient_site_links              | patient_link_code               | text                     | NO          | null                                                                             |
+| log_patient_site_links              | site_id                         | uuid                     | NO          | null                                                                             |
+| log_patient_site_links              | transferred_from_site_id        | uuid                     | YES         | null                                                                             |
+| log_patient_site_links              | transfer_date                   | timestamp with time zone | YES         | null                                                                             |
+| log_patient_site_links              | is_active                       | boolean                  | YES         | true                                                                             |
+| log_patient_site_links              | created_at                      | timestamp with time zone | NO          | now()                                                                            |
+| log_patient_site_links              | updated_at                      | timestamp with time zone | NO          | now()                                                                            |
+| log_patient_site_links              | patient_uuid                    | uuid                     | NO          | null                                                                             |
+| log_phase1_consent                  | id                              | bigint                   | NO          | null                                                                             |
+| log_phase1_consent                  | patient_uuid                    | uuid                     | NO          | null                                                                             |
+| log_phase1_consent                  | session_id                      | uuid                     | YES         | null                                                                             |
+| log_phase1_consent                  | site_id                         | uuid                     | NO          | null                                                                             |
+| log_phase1_consent                  | consent_type_ids                | ARRAY                    | NO          | '{}'::integer[]                                                                  |
+| log_phase1_consent                  | consented_at                    | timestamp with time zone | NO          | now()                                                                            |
+| log_phase1_consent                  | consented_by                    | uuid                     | YES         | null                                                                             |
+| log_phase1_safety_screen            | id                              | bigint                   | NO          | null                                                                             |
+| log_phase1_safety_screen            | patient_uuid                    | uuid                     | NO          | null                                                                             |
+| log_phase1_safety_screen            | session_id                      | uuid                     | YES         | null                                                                             |
+| log_phase1_safety_screen            | site_id                         | uuid                     | NO          | null                                                                             |
+| log_phase1_safety_screen            | contraindication_verdict_id     | bigint                   | YES         | null                                                                             |
+| log_phase1_safety_screen            | ekg_rhythm_id                   | integer                  | YES         | null                                                                             |
+| log_phase1_safety_screen            | concomitant_med_ids             | ARRAY                    | NO          | '{}'::integer[]                                                                  |
+| log_phase1_safety_screen            | screened_at                     | timestamp with time zone | NO          | now()                                                                            |
+| log_phase1_safety_screen            | screened_by                     | uuid                     | YES         | null                                                                             |
+| log_phase1_set_and_setting          | id                              | bigint                   | NO          | null                                                                             |
+| log_phase1_set_and_setting          | patient_uuid                    | uuid                     | NO          | null                                                                             |
+| log_phase1_set_and_setting          | session_id                      | uuid                     | YES         | null                                                                             |
+| log_phase1_set_and_setting          | site_id                         | uuid                     | NO          | null                                                                             |
+| log_phase1_set_and_setting          | intention_theme_ids             | ARRAY                    | NO          | '{}'::integer[]                                                                  |
+| log_phase1_set_and_setting          | mindset_type_id                 | integer                  | YES         | null                                                                             |
+| log_phase1_set_and_setting          | session_setting_id              | integer                  | YES         | null                                                                             |
+| log_phase1_set_and_setting          | treatment_expectancy            | integer                  | YES         | null                                                                             |
+| log_phase1_set_and_setting          | recorded_at                     | timestamp with time zone | NO          | now()                                                                            |
+| log_phase3_meq30                    | id                              | bigint                   | NO          | null                                                                             |
+| log_phase3_meq30                    | patient_uuid                    | uuid                     | NO          | null                                                                             |
+| log_phase3_meq30                    | session_id                      | uuid                     | NO          | null                                                                             |
+| log_phase3_meq30                    | meq30_score                     | integer                  | NO          | null                                                                             |
+| log_phase3_meq30                    | recorded_at                     | timestamp with time zone | NO          | now()                                                                            |
+| log_protocols                       | id                              | uuid                     | NO          | gen_random_uuid()                                                                |
+| log_protocols                       | user_id                         | uuid                     | YES         | null                                                                             |
+| log_protocols                       | created_at                      | timestamp with time zone | YES         | now()                                                                            |
+| log_protocols                       | updated_at                      | timestamp with time zone | YES         | now()                                                                            |
+| log_protocols                       | name                            | text                     | NO          | null                                                                             |
+| log_protocols                       | status                          | text                     | YES         | 'draft'::text                                                                    |
+| log_protocols                       | dosing_schedule                 | jsonb                    | YES         | null                                                                             |
+| log_protocols                       | safety_criteria                 | jsonb                    | YES         | null                                                                             |
+| log_protocols                       | outcome_measures                | jsonb                    | YES         | null                                                                             |
+| log_protocols                       | protocol_rationale_id           | bigint                   | YES         | null                                                                             |
+| log_protocols                       | substance_id                    | bigint                   | YES         | null                                                                             |
+| log_protocols                       | indication_id                   | bigint                   | YES         | null                                                                             |
+| log_protocols                       | created_by                      | uuid                     | YES         | null                                                                             |
+| log_pulse_checks                    | pulse_check_id                  | integer                  | NO          | nextval('log_pulse_checks_pulse_check_id_seq'::regclass)                         |
+| log_pulse_checks                    | session_id                      | uuid                     | YES         | null                                                                             |
+| log_pulse_checks                    | check_date                      | date                     | NO          | CURRENT_DATE                                                                     |
+| log_pulse_checks                    | connection_level                | integer                  | YES         | null                                                                             |
+| log_pulse_checks                    | sleep_quality                   | integer                  | YES         | null                                                                             |
+| log_pulse_checks                    | mood_level                      | integer                  | YES         | null                                                                             |
+| log_pulse_checks                    | anxiety_level                   | integer                  | YES         | null                                                                             |
+| log_pulse_checks                    | completed_at                    | timestamp with time zone | YES         | now()                                                                            |
+| log_pulse_checks                    | patient_uuid                    | uuid                     | YES         | null                                                                             |
+| log_pulse_checks                    | created_at                      | timestamp with time zone | YES         | now()                                                                            |
+| log_pulse_checks                    | created_by                      | uuid                     | YES         | null                                                                             |
+| log_red_alerts                      | red_alert_id                    | integer                  | NO          | nextval('log_red_alerts_red_alert_id_seq'::regclass)                             |
+| log_red_alerts                      | alert_triggered_at              | timestamp with time zone | NO          | now()                                                                            |
+| log_red_alerts                      | trigger_value                   | jsonb                    | YES         | null                                                                             |
+| log_red_alerts                      | is_acknowledged                 | boolean                  | YES         | false                                                                            |
+| log_red_alerts                      | acknowledged_by_user_id         | uuid                     | YES         | null                                                                             |
+| log_red_alerts                      | acknowledged_at                 | timestamp with time zone | YES         | null                                                                             |
+| log_red_alerts                      | is_resolved                     | boolean                  | YES         | false                                                                            |
+| log_red_alerts                      | resolved_at                     | timestamp with time zone | YES         | null                                                                             |
+| log_red_alerts                      | created_at                      | timestamp with time zone | YES         | now()                                                                            |
+| log_red_alerts                      | crisis_event_type_id            | integer                  | YES         | null                                                                             |
+| log_red_alerts                      | severity_grade_fk               | bigint                   | YES         | null                                                                             |
+| log_red_alerts                      | patient_uuid                    | uuid                     | YES         | null                                                                             |
+| log_red_alerts                      | severity_grade_id               | bigint                   | YES         | null                                                                             |
+| log_red_alerts                      | alert_type_id                   | bigint                   | YES         | null                                                                             |
+| log_red_alerts                      | created_by                      | uuid                     | YES         | null                                                                             |
+| log_safety_events                   | ae_id                           | text                     | NO          | null                                                                             |
+| log_safety_events                   | exposure_id                     | text                     | YES         | null                                                                             |
+| log_safety_events                   | event_id                        | text                     | YES         | null                                                                             |
+| log_safety_events                   | site_id                         | uuid                     | YES         | null                                                                             |
+| log_safety_events                   | session_id                      | uuid                     | YES         | null                                                                             |
+| log_safety_events                   | meddra_code_id                  | integer                  | YES         | null                                                                             |
+| log_safety_events                   | intervention_type_id            | integer                  | YES         | null                                                                             |
+| log_safety_events                   | is_resolved                     | boolean                  | YES         | false                                                                            |
+| log_safety_events                   | resolved_at                     | timestamp with time zone | YES         | null                                                                             |
+| log_safety_events                   | logged_by_user_id               | uuid                     | YES         | null                                                                             |
+| log_safety_events                   | report_pdf_url                  | text                     | YES         | null                                                                             |
+| log_safety_events                   | report_generated_at             | timestamp with time zone | YES         | null                                                                             |
+| log_safety_events                   | ctcae_grade                     | smallint                 | YES         | null                                                                             |
+| log_safety_events                   | severity_grade_id_fk            | bigint                   | YES         | null                                                                             |
+| log_safety_events                   | resolution_status_id_fk         | bigint                   | YES         | null                                                                             |
+| log_safety_events                   | safety_event_type_id            | bigint                   | YES         | null                                                                             |
+| log_safety_events                   | created_at                      | timestamp with time zone | YES         | now()                                                                            |
+| log_safety_events                   | created_by                      | uuid                     | YES         | null                                                                             |
+| log_safety_events                   | causality_id                    | integer                  | NO          | null                                                                             |
+| log_session_timeline_events         | timeline_event_id               | uuid                     | NO          | gen_random_uuid()                                                                |
+| log_session_timeline_events         | session_id                      | uuid                     | YES         | null                                                                             |
+| log_session_timeline_events         | event_timestamp                 | timestamp with time zone | NO          | null                                                                             |
+| log_session_timeline_events         | event_type_id                   | integer                  | YES         | null                                                                             |
+| log_session_timeline_events         | performed_by                    | uuid                     | YES         | null                                                                             |
+| log_session_timeline_events         | metadata                        | jsonb                    | YES         | null                                                                             |
+| log_session_timeline_events         | created_at                      | timestamp with time zone | YES         | now()                                                                            |
+| log_session_timeline_events         | created_by                      | uuid                     | YES         | null                                                                             |
+| log_session_vitals                  | session_vital_id                | integer                  | NO          | nextval('log_session_vitals_session_vital_id_seq'::regclass)                     |
+| log_session_vitals                  | session_id                      | uuid                     | YES         | null                                                                             |
+| log_session_vitals                  | recorded_at                     | timestamp with time zone | NO          | null                                                                             |
+| log_session_vitals                  | heart_rate                      | integer                  | YES         | null                                                                             |
+| log_session_vitals                  | hrv                             | numeric                  | YES         | null                                                                             |
+| log_session_vitals                  | bp_systolic                     | integer                  | YES         | null                                                                             |
+| log_session_vitals                  | bp_diastolic                    | integer                  | YES         | null                                                                             |
+| log_session_vitals                  | oxygen_saturation               | integer                  | YES         | null                                                                             |
+| log_session_vitals                  | device_id                       | character varying        | YES         | null                                                                             |
+| log_session_vitals                  | created_at                      | timestamp with time zone | YES         | now()                                                                            |
+| log_session_vitals                  | respiratory_rate                | integer                  | YES         | null                                                                             |
+| log_session_vitals                  | temperature                     | numeric                  | YES         | null                                                                             |
+| log_session_vitals                  | diaphoresis_score               | integer                  | YES         | null                                                                             |
+| log_session_vitals                  | data_source_id                  | bigint                   | YES         | null                                                                             |
+| log_session_vitals                  | created_by                      | uuid                     | YES         | null                                                                             |
+| log_session_vitals                  | consciousness_level_id          | integer                  | YES         | null                                                                             |
+| log_sites                           | site_id                         | uuid                     | NO          | gen_random_uuid()                                                                |
+| log_sites                           | site_name                       | text                     | NO          | null                                                                             |
+| log_sites                           | region                          | text                     | YES         | null                                                                             |
+| log_sites                           | created_at                      | timestamp with time zone | NO          | now()                                                                            |
+| log_sites                           | is_active                       | boolean                  | YES         | true                                                                             |
+| log_sites                           | site_type                       | text                     | YES         | null                                                                             |
+| log_subscriptions                   | id                              | uuid                     | NO          | gen_random_uuid()                                                                |
+| log_subscriptions                   | site_id                         | uuid                     | NO          | null                                                                             |
+| log_subscriptions                   | stripe_customer_id              | text                     | YES         | null                                                                             |
+| log_subscriptions                   | stripe_subscription_id          | text                     | YES         | null                                                                             |
+| log_subscriptions                   | stripe_price_id                 | text                     | YES         | null                                                                             |
+| log_subscriptions                   | tier                            | text                     | NO          | null                                                                             |
+| log_subscriptions                   | status                          | text                     | NO          | null                                                                             |
+| log_subscriptions                   | current_period_start            | timestamp with time zone | YES         | null                                                                             |
+| log_subscriptions                   | current_period_end              | timestamp with time zone | YES         | null                                                                             |
+| log_subscriptions                   | trial_end                       | timestamp with time zone | YES         | null                                                                             |
+| log_subscriptions                   | canceled_at                     | timestamp with time zone | YES         | null                                                                             |
+| log_subscriptions                   | max_users                       | integer                  | YES         | null                                                                             |
+| log_subscriptions                   | max_sites                       | integer                  | YES         | null                                                                             |
+| log_subscriptions                   | max_records_per_month           | integer                  | YES         | null                                                                             |
+| log_subscriptions                   | created_at                      | timestamp with time zone | NO          | now()                                                                            |
+| log_subscriptions                   | updated_at                      | timestamp with time zone | NO          | now()                                                                            |
+| log_subscriptions                   | cancel_at_period_end            | boolean                  | YES         | false                                                                            |
+| log_system_events                   | event_id                        | bigint                   | NO          | nextval('system_events_event_id_seq'::regclass)                                  |
+| log_system_events                   | actor_id                        | uuid                     | YES         | null                                                                             |
+| log_system_events                   | event_type                      | text                     | NO          | null                                                                             |
+| log_system_events                   | event_details                   | jsonb                    | YES         | null                                                                             |
+| log_system_events                   | event_status                    | text                     | YES         | null                                                                             |
+| log_system_events                   | created_at                      | timestamp with time zone | NO          | now()                                                                            |
+| log_system_events                   | ledger_hash                     | text                     | YES         | null                                                                             |
+| log_system_events                   | site_id                         | uuid                     | YES         | null                                                                             |
+| log_system_events                   | action_type_id                  | integer                  | YES         | null                                                                             |
+| log_therapeutic_alliance            | alliance_id                     | uuid                     | NO          | gen_random_uuid()                                                                |
+| log_therapeutic_alliance            | site_id                         | uuid                     | NO          | null                                                                             |
+| log_therapeutic_alliance            | patient_uuid                    | uuid                     | NO          | null                                                                             |
+| log_therapeutic_alliance            | session_id                      | uuid                     | NO          | null                                                                             |
+| log_therapeutic_alliance            | practitioner_id                 | uuid                     | NO          | null                                                                             |
+| log_therapeutic_alliance            | alliance_time_point_id          | integer                  | NO          | null                                                                             |
+| log_therapeutic_alliance            | patient_wai_score               | integer                  | NO          | null                                                                             |
+| log_therapeutic_alliance            | practitioner_wai_score          | integer                  | NO          | null                                                                             |
+| log_therapeutic_alliance            | alliance_delta                  | integer                  | YES         | null                                                                             |
+| log_therapeutic_alliance            | assessment_timestamp            | timestamp with time zone | NO          | now()                                                                            |
+| log_therapeutic_alliance            | created_at                      | timestamp with time zone | NO          | now()                                                                            |
+| log_therapeutic_alliance            | created_by                      | uuid                     | YES         | null                                                                             |
+| log_therapeutic_alliance            | source_table                    | text                     | YES         | null                                                                             |
+| log_therapeutic_alliance            | source_row_pk                   | text                     | YES         | null                                                                             |
+| log_usage_metrics                   | id                              | bigint                   | NO          | nextval('usage_metrics_id_seq'::regclass)                                        |
+| log_usage_metrics                   | site_id                         | uuid                     | NO          | null                                                                             |
+| log_usage_metrics                   | metric_type                     | text                     | NO          | null                                                                             |
+| log_usage_metrics                   | count                           | integer                  | NO          | 0                                                                                |
+| log_usage_metrics                   | period_start                    | date                     | NO          | null                                                                             |
+| log_usage_metrics                   | period_end                      | date                     | NO          | null                                                                             |
+| log_usage_metrics                   | created_at                      | timestamp with time zone | NO          | now()                                                                            |
+| log_user_profiles                   | id                              | uuid                     | NO          | gen_random_uuid()                                                                |
+| log_user_profiles                   | user_id                         | uuid                     | NO          | null                                                                             |
+| log_user_profiles                   | created_at                      | timestamp with time zone | YES         | now()                                                                            |
+| log_user_profiles                   | role_id                         | integer                  | YES         | 3                                                                                |
+| log_user_profiles                   | user_first_name                 | text                     | YES         | null                                                                             |
+| log_user_profiles                   | user_last_name                  | text                     | YES         | null                                                                             |
+| log_user_sites                      | user_id                         | uuid                     | NO          | null                                                                             |
+| log_user_sites                      | site_id                         | uuid                     | NO          | null                                                                             |
+| log_user_sites                      | role                            | text                     | NO          | null                                                                             |
+| log_user_sites                      | is_active                       | boolean                  | YES         | true                                                                             |
+| log_user_sites                      | created_at                      | timestamp with time zone | YES         | now()                                                                            |
+| log_user_subscriptions              | id                              | uuid                     | NO          | uuid_generate_v4()                                                               |
+| log_user_subscriptions              | user_id                         | uuid                     | NO          | null                                                                             |
+| log_user_subscriptions              | stripe_customer_id              | text                     | NO          | null                                                                             |
+| log_user_subscriptions              | stripe_subscription_id          | text                     | NO          | null                                                                             |
+| log_user_subscriptions              | tier                            | text                     | NO          | null                                                                             |
+| log_user_subscriptions              | status                          | text                     | NO          | null                                                                             |
+| log_user_subscriptions              | trial_end                       | timestamp with time zone | YES         | null                                                                             |
+| log_user_subscriptions              | current_period_end              | timestamp with time zone | NO          | null                                                                             |
+| log_user_subscriptions              | cancel_at_period_end            | boolean                  | YES         | false                                                                            |
+| log_user_subscriptions              | created_at                      | timestamp with time zone | YES         | now()                                                                            |
+| log_user_subscriptions              | updated_at                      | timestamp with time zone | YES         | now()                                                                            |
+| log_vocabulary_requests             | request_id                      | uuid                     | NO          | gen_random_uuid()                                                                |
+| log_vocabulary_requests             | site_id                         | uuid                     | YES         | null                                                                             |
+| log_vocabulary_requests             | requesting_user                 | uuid                     | YES         | null                                                                             |
+| log_vocabulary_requests             | target_ref_table                | text                     | NO          | null                                                                             |
+| log_vocabulary_requests             | proposed_label                  | text                     | NO          | null                                                                             |
+| log_vocabulary_requests             | clinical_rationale              | text                     | YES         | null                                                                             |
+| log_vocabulary_requests             | status                          | text                     | NO          | 'pending'::text                                                                  |
+| log_vocabulary_requests             | request_count                   | integer                  | YES         | 1                                                                                |
+| log_vocabulary_requests             | requesting_sites                | ARRAY                    | YES         | null                                                                             |
+| log_vocabulary_requests             | advisory_notes                  | text                     | YES         | null                                                                             |
+| log_vocabulary_requests             | created_at                      | timestamp with time zone | YES         | now()                                                                            |
+| log_vocabulary_requests             | reviewed_at                     | timestamp with time zone | YES         | null                                                                             |
+| log_vocabulary_requests             | converted_to_ref_id             | bigint                   | YES         | null                                                                             |
+| log_vocabulary_requests             | created_by                      | uuid                     | YES         | null                                                                             |
+| log_waitlist                        | id                              | uuid                     | NO          | gen_random_uuid()                                                                |
+| log_waitlist                        | created_at                      | timestamp with time zone | YES         | now()                                                                            |
+| log_waitlist                        | email                           | text                     | NO          | null                                                                             |
+| log_wearable_telemetry              | telemetry_id                    | uuid                     | NO          | gen_random_uuid()                                                                |
+| log_wearable_telemetry              | site_id                         | uuid                     | NO          | null                                                                             |
+| log_wearable_telemetry              | patient_uuid                    | uuid                     | NO          | null                                                                             |
+| log_wearable_telemetry              | session_id                      | uuid                     | YES         | null                                                                             |
+| log_wearable_telemetry              | device_model_id                 | integer                  | NO          | null                                                                             |
+| log_wearable_telemetry              | observation_concept_id          | integer                  | NO          | null                                                                             |
+| log_wearable_telemetry              | unit_id                         | integer                  | YES         | null                                                                             |
+| log_wearable_telemetry              | measurement_timestamp           | timestamp with time zone | NO          | null                                                                             |
+| log_wearable_telemetry              | relative_minutes                | integer                  | YES         | null                                                                             |
+| log_wearable_telemetry              | numeric_value                   | numeric                  | NO          | null                                                                             |
+| log_wearable_telemetry              | created_at                      | timestamp with time zone | NO          | now()                                                                            |
+| log_wearable_telemetry              | created_by                      | uuid                     | YES         | null                                                                             |
+| log_wearable_telemetry              | source_table                    | text                     | YES         | null                                                                             |
+| log_wearable_telemetry              | source_row_pk                   | text                     | YES         | null                                                                             |
+| ref_age_ranges                      | id                              | bigint                   | NO          | nextval('ref_age_ranges_id_seq'::regclass)                                       |
+| ref_age_ranges                      | range_code                      | character varying        | NO          | null                                                                             |
+| ref_age_ranges                      | range_label                     | text                     | NO          | null                                                                             |
+| ref_age_ranges                      | age_low                         | integer                  | NO          | null                                                                             |
+| ref_age_ranges                      | age_high                        | integer                  | NO          | null                                                                             |
+| ref_age_ranges                      | sort_order                      | integer                  | NO          | null                                                                             |
+| ref_age_ranges                      | is_active                       | boolean                  | NO          | true                                                                             |
+| ref_age_ranges                      | created_at                      | timestamp with time zone | NO          | now()                                                                            |
+| ref_alert_types                     | alert_type_id                   | bigint                   | NO          | null                                                                             |
+| ref_alert_types                     | alert_code                      | text                     | NO          | null                                                                             |
+| ref_alert_types                     | alert_label                     | text                     | NO          | null                                                                             |
+| ref_alert_types                     | alert_category                  | text                     | NO          | null                                                                             |
+| ref_alert_types                     | is_active                       | boolean                  | NO          | true                                                                             |
+| ref_alert_types                     | created_at                      | timestamp with time zone | NO          | now()                                                                            |
+| ref_alliance_time_points            | alliance_time_point_id          | integer                  | NO          | null                                                                             |
+| ref_alliance_time_points            | time_point_code                 | text                     | NO          | null                                                                             |
+| ref_alliance_time_points            | time_point_label                | text                     | NO          | null                                                                             |
+| ref_alliance_time_points            | description                     | text                     | YES         | null                                                                             |
+| ref_alliance_time_points            | sort_order                      | integer                  | NO          | null                                                                             |
+| ref_alliance_time_points            | is_active                       | boolean                  | NO          | true                                                                             |
+| ref_alliance_time_points            | created_at                      | timestamp with time zone | NO          | now()                                                                            |
+| ref_assessment_interval             | assessment_interval_id          | bigint                   | NO          | null                                                                             |
+| ref_assessment_interval             | assessment_interval             | text                     | YES         | null                                                                             |
+| ref_assessment_scales               | assessment_scale_id             | integer                  | NO          | nextval('ref_assessment_scales_assessment_scale_id_seq'::regclass)               |
+| ref_assessment_scales               | scale_code                      | character varying        | NO          | null                                                                             |
+| ref_assessment_scales               | scale_name                      | character varying        | NO          | null                                                                             |
+| ref_assessment_scales               | scale_description               | text                     | YES         | null                                                                             |
+| ref_assessment_scales               | min_score                       | integer                  | NO          | null                                                                             |
+| ref_assessment_scales               | max_score                       | integer                  | NO          | null                                                                             |
+| ref_assessment_scales               | loinc_code                      | character varying        | YES         | null                                                                             |
+| ref_assessment_scales               | snomed_code                     | character varying        | YES         | null                                                                             |
+| ref_assessment_scales               | scoring_interpretation          | jsonb                    | YES         | null                                                                             |
+| ref_assessment_scales               | is_active                       | boolean                  | YES         | true                                                                             |
+| ref_assessment_scales               | created_at                      | timestamp with time zone | YES         | now()                                                                            |
+| ref_assessment_scales               | concept_source                  | text                     | YES         | null                                                                             |
+| ref_assessment_scales               | ppn_internal_code               | text                     | YES         | null                                                                             |
+| ref_assessment_scales               | observation_concept_id          | integer                  | YES         | null                                                                             |
+| ref_assessments                     | assessment_id                   | bigint                   | NO          | null                                                                             |
+| ref_assessments                     | test_short_name                 | text                     | YES         | null                                                                             |
+| ref_assessments                     | loinc_code                      | text                     | YES         | null                                                                             |
+| ref_assessments                     | definition                      | text                     | YES         | null                                                                             |
+| ref_attendance_statuses             | id                              | integer                  | NO          | null                                                                             |
+| ref_attendance_statuses             | code                            | text                     | NO          | null                                                                             |
+| ref_attendance_statuses             | name                            | text                     | NO          | null                                                                             |
+| ref_audio_tracks                    | audio_track_id                  | integer                  | NO          | null                                                                             |
+| ref_audio_tracks                    | provider_code                   | text                     | NO          | null                                                                             |
+| ref_audio_tracks                    | provider_track_id               | text                     | NO          | null                                                                             |
+| ref_audio_tracks                    | track_uri                       | text                     | YES         | null                                                                             |
+| ref_audio_tracks                    | track_title                     | text                     | YES         | null                                                                             |
+| ref_audio_tracks                    | artist_name                     | text                     | YES         | null                                                                             |
+| ref_audio_tracks                    | is_active                       | boolean                  | NO          | true                                                                             |
+| ref_audio_tracks                    | created_at                      | timestamp with time zone | NO          | now()                                                                            |
+| ref_behavioral_change_types         | change_type_id                  | integer                  | NO          | nextval('ref_behavioral_change_types_change_type_id_seq'::regclass)              |
+| ref_behavioral_change_types         | change_type_code                | character varying        | NO          | null                                                                             |
+| ref_behavioral_change_types         | change_type_label               | character varying        | NO          | null                                                                             |
+| ref_behavioral_change_types         | category                        | character varying        | NO          | null                                                                             |
+| ref_behavioral_change_types         | is_active                       | boolean                  | YES         | true                                                                             |
+| ref_benchmark_cohorts               | id                              | uuid                     | NO          | gen_random_uuid()                                                                |
+| ref_benchmark_cohorts               | cohort_name                     | text                     | NO          | null                                                                             |
+| ref_benchmark_cohorts               | source_citation                 | text                     | NO          | null                                                                             |
+| ref_benchmark_cohorts               | modality                        | text                     | NO          | null                                                                             |
+| ref_benchmark_cohorts               | condition                       | text                     | NO          | null                                                                             |
+| ref_benchmark_cohorts               | setting                         | text                     | YES         | null                                                                             |
+| ref_benchmark_cohorts               | n_participants                  | integer                  | NO          | null                                                                             |
+| ref_benchmark_cohorts               | country                         | text                     | YES         | null                                                                             |
+| ref_benchmark_cohorts               | instrument                      | text                     | NO          | null                                                                             |
+| ref_benchmark_cohorts               | baseline_mean                   | numeric                  | YES         | null                                                                             |
+| ref_benchmark_cohorts               | baseline_sd                     | numeric                  | YES         | null                                                                             |
+| ref_benchmark_cohorts               | endpoint_mean                   | numeric                  | YES         | null                                                                             |
+| ref_benchmark_cohorts               | endpoint_sd                     | numeric                  | YES         | null                                                                             |
+| ref_benchmark_cohorts               | followup_weeks                  | integer                  | YES         | null                                                                             |
+| ref_benchmark_cohorts               | response_rate_pct               | numeric                  | YES         | null                                                                             |
+| ref_benchmark_cohorts               | remission_rate_pct              | numeric                  | YES         | null                                                                             |
+| ref_benchmark_cohorts               | effect_size_hedges_g            | numeric                  | YES         | null                                                                             |
+| ref_benchmark_cohorts               | adverse_event_rate_pct          | numeric                  | YES         | null                                                                             |
+| ref_benchmark_cohorts               | data_freely_usable              | boolean                  | NO          | true                                                                             |
+| ref_benchmark_cohorts               | license                         | text                     | YES         | null                                                                             |
+| ref_benchmark_cohorts               | notes                           | text                     | YES         | null                                                                             |
+| ref_benchmark_cohorts               | created_at                      | timestamp with time zone | NO          | now()                                                                            |
+| ref_benchmark_trials                | id                              | uuid                     | NO          | gen_random_uuid()                                                                |
+| ref_benchmark_trials                | nct_id                          | text                     | NO          | null                                                                             |
+| ref_benchmark_trials                | title                           | text                     | NO          | null                                                                             |
+| ref_benchmark_trials                | phase                           | text                     | YES         | null                                                                             |
+| ref_benchmark_trials                | status                          | text                     | YES         | null                                                                             |
+| ref_benchmark_trials                | modality                        | text                     | NO          | null                                                                             |
+| ref_benchmark_trials                | conditions                      | ARRAY                    | YES         | null                                                                             |
+| ref_benchmark_trials                | country                         | text                     | YES         | null                                                                             |
+| ref_benchmark_trials                | enrollment_actual               | integer                  | YES         | null                                                                             |
+| ref_benchmark_trials                | start_date                      | date                     | YES         | null                                                                             |
+| ref_benchmark_trials                | completion_date                 | date                     | YES         | null                                                                             |
+| ref_benchmark_trials                | primary_outcome_measure         | text                     | YES         | null                                                                             |
+| ref_benchmark_trials                | source                          | text                     | NO          | 'clinicaltrials.gov'::text                                                       |
+| ref_benchmark_trials                | created_at                      | timestamp with time zone | NO          | now()                                                                            |
+| ref_cancellation_reasons            | cancellation_reason_id          | integer                  | NO          | nextval('ref_cancellation_reasons_cancellation_reason_id_seq'::regclass)         |
+| ref_cancellation_reasons            | reason_code                     | character varying        | NO          | null                                                                             |
+| ref_cancellation_reasons            | reason_text                     | text                     | NO          | null                                                                             |
+| ref_cancellation_reasons            | is_active                       | boolean                  | YES         | true                                                                             |
+| ref_cancellation_reasons            | created_at                      | timestamp with time zone | YES         | now()                                                                            |
+| ref_categorical_values              | value_id                        | integer                  | NO          | null                                                                             |
+| ref_categorical_values              | value_code                      | text                     | NO          | null                                                                             |
+| ref_categorical_values              | value_name                      | text                     | NO          | null                                                                             |
+| ref_categorical_values              | vocabulary_id                   | text                     | NO          | 'PPN_CUSTOM'::text                                                               |
+| ref_categorical_values              | domain_id                       | text                     | NO          | 'Observation'::text                                                              |
+| ref_categorical_values              | sort_order                      | integer                  | YES         | null                                                                             |
+| ref_categorical_values              | is_active                       | boolean                  | NO          | true                                                                             |
+| ref_categorical_values              | created_at                      | timestamp with time zone | NO          | now()                                                                            |
+| ref_causality_codes                 | causality_id                    | integer                  | NO          | null                                                                             |
+| ref_causality_codes                 | causality_code                  | text                     | NO          | null                                                                             |
+| ref_causality_codes                 | causality_label                 | text                     | NO          | null                                                                             |
+| ref_causality_codes                 | is_active                       | boolean                  | NO          | true                                                                             |
+| ref_causality_codes                 | created_at                      | timestamp with time zone | NO          | now()                                                                            |
+| ref_clinical_interactions           | interaction_id                  | bigint                   | NO          | nextval('ref_clinical_interactions_interaction_id_seq'::regclass)                |
+| ref_clinical_interactions           | substance_name                  | text                     | NO          | null                                                                             |
+| ref_clinical_interactions           | interactor_name                 | text                     | NO          | null                                                                             |
+| ref_clinical_interactions           | interactor_category             | text                     | YES         | null                                                                             |
+| ref_clinical_interactions           | risk_level                      | integer                  | NO          | null                                                                             |
+| ref_clinical_interactions           | severity_grade                  | text                     | NO          | null                                                                             |
+| ref_clinical_interactions           | clinical_description            | text                     | NO          | null                                                                             |
+| ref_clinical_interactions           | mechanism                       | text                     | YES         | null                                                                             |
+| ref_clinical_interactions           | evidence_source                 | text                     | YES         | null                                                                             |
+| ref_clinical_interactions           | source_url                      | text                     | YES         | null                                                                             |
+| ref_clinical_interactions           | is_verified                     | boolean                  | YES         | false                                                                            |
+| ref_clinical_interactions           | created_at                      | timestamp with time zone | NO          | now()                                                                            |
+| ref_clinical_interactions           | risk_bucket                     | text                     | YES         | null                                                                             |
+| ref_clinical_interactions           | interaction_type                | text                     | YES         | null                                                                             |
+| ref_clinical_interactions           | effect_direction                | text                     | YES         | null                                                                             |
+| ref_clinical_interactions           | confidence                      | text                     | YES         | null                                                                             |
+| ref_clinical_interactions           | evidence_level                  | text                     | YES         | null                                                                             |
+| ref_clinical_interactions           | washout_days                    | integer                  | YES         | null                                                                             |
+| ref_clinical_interactions           | washout_note                    | text                     | YES         | null                                                                             |
+| ref_clinical_interactions           | screening_note                  | text                     | YES         | null                                                                             |
+| ref_clinical_interactions           | is_bidirectional                | boolean                  | YES         | true                                                                             |
+| ref_clinical_interactions           | rule_key                        | text                     | YES         | null                                                                             |
+| ref_clinical_observations           | observation_id                  | integer                  | NO          | nextval('ref_clinical_observations_observation_id_seq'::regclass)                |
+| ref_clinical_observations           | observation_code                | character varying        | NO          | null                                                                             |
+| ref_clinical_observations           | observation_text                | text                     | NO          | null                                                                             |
+| ref_clinical_observations           | category                        | character varying        | NO          | null                                                                             |
+| ref_clinical_observations           | is_active                       | boolean                  | YES         | true                                                                             |
+| ref_clinical_observations           | created_at                      | timestamp with time zone | YES         | now()                                                                            |
+| ref_clinical_observations           | sort_order                      | integer                  | NO          | 0                                                                                |
+| ref_clinical_phenotypes             | clinical_phenotype_id           | bigint                   | NO          | null                                                                             |
+| ref_clinical_phenotypes             | phenotype_code                  | text                     | NO          | null                                                                             |
+| ref_clinical_phenotypes             | phenotype_name                  | text                     | NO          | null                                                                             |
+| ref_clinical_phenotypes             | icd10_category                  | text                     | YES         | null                                                                             |
+| ref_clinical_phenotypes             | is_active                       | boolean                  | NO          | true                                                                             |
+| ref_clinical_phenotypes             | created_at                      | timestamp with time zone | NO          | now()                                                                            |
+| ref_consciousness_levels            | id                              | integer                  | NO          | null                                                                             |
+| ref_consciousness_levels            | code                            | text                     | NO          | null                                                                             |
+| ref_consciousness_levels            | name                            | text                     | NO          | null                                                                             |
+| ref_consent_types                   | id                              | integer                  | NO          | nextval('ref_consent_types_id_seq'::regclass)                                    |
+| ref_consent_types                   | consent_code                    | character varying        | NO          | null                                                                             |
+| ref_consent_types                   | label                           | character varying        | NO          | null                                                                             |
+| ref_consent_types                   | is_active                       | boolean                  | NO          | true                                                                             |
+| ref_contraindication_verdicts       | verdict_id                      | bigint                   | NO          | null                                                                             |
+| ref_contraindication_verdicts       | verdict_code                    | text                     | NO          | null                                                                             |
+| ref_contraindication_verdicts       | verdict_label                   | text                     | NO          | null                                                                             |
+| ref_contraindication_verdicts       | ui_color_hex                    | text                     | YES         | '#6b7280'::text                                                                  |
+| ref_contraindication_verdicts       | is_active                       | boolean                  | NO          | true                                                                             |
+| ref_contraindication_verdicts       | created_at                      | timestamp with time zone | NO          | now()                                                                            |
+| ref_crisis_event_types              | id                              | integer                  | NO          | nextval('ref_crisis_event_types_id_seq'::regclass)                               |
+| ref_crisis_event_types              | event_code                      | character varying        | NO          | null                                                                             |
+| ref_crisis_event_types              | label                           | character varying        | NO          | null                                                                             |
+| ref_crisis_event_types              | severity_tier                   | smallint                 | NO          | 1                                                                                |
+| ref_crisis_event_types              | is_active                       | boolean                  | NO          | true                                                                             |
+| ref_crisis_event_types              | created_at                      | timestamp with time zone | YES         | now()                                                                            |
+| ref_data_sources                    | data_source_id                  | bigint                   | NO          | null                                                                             |
+| ref_data_sources                    | source_code                     | text                     | NO          | null                                                                             |
+| ref_data_sources                    | source_label                    | text                     | NO          | null                                                                             |
+| ref_data_sources                    | is_active                       | boolean                  | NO          | true                                                                             |
+| ref_data_sources                    | created_at                      | timestamp with time zone | NO          | now()                                                                            |
+| ref_device_models                   | device_model_id                 | integer                  | NO          | null                                                                             |
+| ref_device_models                   | manufacturer_code               | text                     | NO          | null                                                                             |
+| ref_device_models                   | manufacturer_name               | text                     | NO          | null                                                                             |
+| ref_device_models                   | model_code                      | text                     | NO          | null                                                                             |
+| ref_device_models                   | model_name                      | text                     | NO          | null                                                                             |
+| ref_device_models                   | device_family                   | text                     | YES         | null                                                                             |
+| ref_device_models                   | is_active                       | boolean                  | NO          | true                                                                             |
+| ref_device_models                   | created_at                      | timestamp with time zone | NO          | now()                                                                            |
+| ref_dose_event_types                | id                              | integer                  | NO          | null                                                                             |
+| ref_dose_event_types                | code                            | text                     | NO          | null                                                                             |
+| ref_dose_event_types                | name                            | text                     | NO          | null                                                                             |
+| ref_dose_event_types                | is_active                       | boolean                  | NO          | true                                                                             |
+| ref_dose_event_types                | created_at                      | timestamp with time zone | NO          | now()                                                                            |
+| ref_dosing_relatedness              | id                              | integer                  | NO          | null                                                                             |
+| ref_dosing_relatedness              | code                            | text                     | NO          | null                                                                             |
+| ref_dosing_relatedness              | name                            | text                     | NO          | null                                                                             |
+| ref_ekg_rhythms                     | id                              | integer                  | NO          | nextval('ref_ekg_rhythms_id_seq'::regclass)                                      |
+| ref_ekg_rhythms                     | code                            | character varying        | NO          | null                                                                             |
+| ref_ekg_rhythms                     | label                           | character varying        | NO          | null                                                                             |
+| ref_ekg_rhythms                     | severity_tier                   | character varying        | NO          | 'monitor'::character varying                                                     |
+| ref_ekg_rhythms                     | is_active                       | boolean                  | NO          | true                                                                             |
+| ref_ekg_rhythms                     | valid_from                      | date                     | NO          | CURRENT_DATE                                                                     |
+| ref_ekg_rhythms                     | valid_to                        | date                     | YES         | null                                                                             |
+| ref_flow_event_types                | id                              | bigint                   | NO          | nextval('ref_flow_event_types_id_seq'::regclass)                                 |
+| ref_flow_event_types                | event_type_code                 | text                     | NO          | null                                                                             |
+| ref_flow_event_types                | event_type_label                | text                     | NO          | null                                                                             |
+| ref_flow_event_types                | event_category                  | text                     | NO          | null                                                                             |
+| ref_flow_event_types                | stage_order                     | integer                  | YES         | null                                                                             |
+| ref_flow_event_types                | is_active                       | boolean                  | YES         | true                                                                             |
+| ref_flow_event_types                | description                     | text                     | YES         | null                                                                             |
+| ref_flow_event_types                | created_at                      | timestamp with time zone | YES         | now()                                                                            |
+| ref_homework_types                  | homework_type_id                | integer                  | NO          | nextval('ref_homework_types_homework_type_id_seq'::regclass)                     |
+| ref_homework_types                  | homework_code                   | character varying        | NO          | null                                                                             |
+| ref_homework_types                  | homework_label                  | character varying        | NO          | null                                                                             |
+| ref_homework_types                  | is_active                       | boolean                  | YES         | true                                                                             |
+| ref_indications                     | indication_id                   | bigint                   | NO          | nextval('ref_indications_indication_id_seq'::regclass)                           |
+| ref_indications                     | indication_name                 | text                     | NO          | null                                                                             |
+| ref_indications                     | snomed_code                     | text                     | YES         | null                                                                             |
+| ref_indications                     | icd10_code                      | text                     | YES         | null                                                                             |
+| ref_indications                     | indication_category             | text                     | YES         | null                                                                             |
+| ref_indications                     | is_active                       | boolean                  | YES         | true                                                                             |
+| ref_indications                     | created_at                      | timestamp with time zone | YES         | now()                                                                            |
+| ref_indications                     | concept_source                  | text                     | YES         | null                                                                             |
+| ref_indications                     | ppn_internal_code               | text                     | YES         | null                                                                             |
+| ref_intention_themes                | id                              | integer                  | NO          | null                                                                             |
+| ref_intention_themes                | code                            | text                     | NO          | null                                                                             |
+| ref_intention_themes                | name                            | text                     | NO          | null                                                                             |
+| ref_intervention_types              | intervention_type_id            | integer                  | NO          | nextval('ref_intervention_types_intervention_type_id_seq'::regclass)             |
+| ref_intervention_types              | intervention_code               | character varying        | NO          | null                                                                             |
+| ref_intervention_types              | intervention_name               | character varying        | NO          | null                                                                             |
+| ref_intervention_types              | intervention_category           | character varying        | YES         | null                                                                             |
+| ref_intervention_types              | description                     | text                     | YES         | null                                                                             |
+| ref_intervention_types              | requires_documentation          | boolean                  | YES         | true                                                                             |
+| ref_intervention_types              | is_active                       | boolean                  | YES         | true                                                                             |
+| ref_intervention_types              | created_at                      | timestamp with time zone | YES         | now()                                                                            |
+| ref_justification_codes             | justification_id                | bigint                   | NO          | null                                                                             |
+| ref_justification_codes             | reason_text                     | text                     | YES         | null                                                                             |
+| ref_knowledge_graph                 | rule_id                         | text                     | NO          | null                                                                             |
+| ref_knowledge_graph                 | substance_a_id                  | text                     | YES         | null                                                                             |
+| ref_knowledge_graph                 | substance_b_id                  | text                     | YES         | null                                                                             |
+| ref_knowledge_graph                 | condition_code                  | text                     | YES         | null                                                                             |
+| ref_knowledge_graph                 | risk_level                      | text                     | YES         | null                                                                             |
+| ref_knowledge_graph                 | alert_message                   | text                     | YES         | null                                                                             |
+| ref_meddra_codes                    | meddra_code_id                  | integer                  | NO          | nextval('ref_meddra_codes_meddra_code_id_seq'::regclass)                         |
+| ref_meddra_codes                    | meddra_code                     | character varying        | NO          | null                                                                             |
+| ref_meddra_codes                    | preferred_term                  | character varying        | NO          | null                                                                             |
+| ref_meddra_codes                    | system_organ_class              | character varying        | YES         | null                                                                             |
+| ref_meddra_codes                    | severity_level                  | character varying        | YES         | null                                                                             |
+| ref_meddra_codes                    | description                     | text                     | YES         | null                                                                             |
+| ref_meddra_codes                    | is_active                       | boolean                  | YES         | true                                                                             |
+| ref_meddra_codes                    | created_at                      | timestamp with time zone | YES         | now()                                                                            |
+| ref_medications                     | medication_id                   | bigint                   | NO          | nextval('ref_medications_medication_id_seq'::regclass)                           |
+| ref_medications                     | medication_name                 | text                     | NO          | null                                                                             |
+| ref_medications                     | medication_category             | character varying        | YES         | null                                                                             |
+| ref_medications                     | is_active                       | boolean                  | YES         | true                                                                             |
+| ref_medications                     | rxnorm_cui                      | character varying        | YES         | null                                                                             |
+| ref_medications                     | created_at                      | timestamp with time zone | NO          | now()                                                                            |
+| ref_medications                     | concept_source                  | text                     | YES         | null                                                                             |
+| ref_medications                     | ppn_internal_code               | text                     | YES         | null                                                                             |
+| ref_mindset_types                   | id                              | integer                  | NO          | null                                                                             |
+| ref_mindset_types                   | code                            | text                     | NO          | null                                                                             |
+| ref_mindset_types                   | name                            | text                     | NO          | null                                                                             |
+| ref_nlp_source_media                | source_medium_id                | integer                  | NO          | null                                                                             |
+| ref_nlp_source_media                | source_code                     | text                     | NO          | null                                                                             |
+| ref_nlp_source_media                | source_label                    | text                     | NO          | null                                                                             |
+| ref_nlp_source_media                | description                     | text                     | YES         | null                                                                             |
+| ref_nlp_source_media                | sort_order                      | integer                  | NO          | null                                                                             |
+| ref_nlp_source_media                | is_active                       | boolean                  | NO          | true                                                                             |
+| ref_nlp_source_media                | created_at                      | timestamp with time zone | NO          | now()                                                                            |
+| ref_observation_concepts            | concept_id                      | integer                  | NO          | null                                                                             |
+| ref_observation_concepts            | concept_code                    | text                     | NO          | null                                                                             |
+| ref_observation_concepts            | concept_name                    | text                     | NO          | null                                                                             |
+| ref_observation_concepts            | vocabulary_id                   | text                     | NO          | null                                                                             |
+| ref_observation_concepts            | domain_id                       | text                     | NO          | null                                                                             |
+| ref_observation_concepts            | concept_class_id                | text                     | YES         | null                                                                             |
+| ref_observation_concepts            | description                     | text                     | YES         | null                                                                             |
+| ref_observation_concepts            | expected_value_type             | text                     | NO          | 'number'::text                                                                   |
+| ref_observation_concepts            | default_unit_id                 | integer                  | YES         | null                                                                             |
+| ref_observation_concepts            | min_value                       | numeric                  | YES         | null                                                                             |
+| ref_observation_concepts            | max_value                       | numeric                  | YES         | null                                                                             |
+| ref_observation_concepts            | is_active                       | boolean                  | NO          | true                                                                             |
+| ref_observation_concepts            | created_at                      | timestamp with time zone | NO          | now()                                                                            |
+| ref_population_baselines            | id                              | uuid                     | NO          | gen_random_uuid()                                                                |
+| ref_population_baselines            | source                          | text                     | NO          | null                                                                             |
+| ref_population_baselines            | year                            | integer                  | NO          | null                                                                             |
+| ref_population_baselines            | region                          | text                     | NO          | null                                                                             |
+| ref_population_baselines            | condition                       | text                     | YES         | null                                                                             |
+| ref_population_baselines            | substance                       | text                     | YES         | null                                                                             |
+| ref_population_baselines            | demographic_group               | text                     | YES         | null                                                                             |
+| ref_population_baselines            | n_episodes                      | integer                  | YES         | null                                                                             |
+| ref_population_baselines            | avg_age                         | numeric                  | YES         | null                                                                             |
+| ref_population_baselines            | pct_female                      | numeric                  | YES         | null                                                                             |
+| ref_population_baselines            | avg_prior_treatments            | numeric                  | YES         | null                                                                             |
+| ref_population_baselines            | avg_los_days                    | numeric                  | YES         | null                                                                             |
+| ref_population_baselines            | pct_completed_treatment         | numeric                  | YES         | null                                                                             |
+| ref_population_baselines            | created_at                      | timestamp with time zone | NO          | now()                                                                            |
+| ref_practitioner_types              | practitioner_type_id            | bigint                   | NO          | null                                                                             |
+| ref_practitioner_types              | type_code                       | text                     | NO          | null                                                                             |
+| ref_practitioner_types              | type_label                      | text                     | NO          | null                                                                             |
+| ref_practitioner_types              | requires_license                | boolean                  | NO          | true                                                                             |
+| ref_practitioner_types              | is_active                       | boolean                  | NO          | true                                                                             |
+| ref_practitioner_types              | created_at                      | timestamp with time zone | NO          | now()                                                                            |
+| ref_practitioner_types              | sort_order                      | integer                  | NO          | 999                                                                              |
+| ref_practitioners                   | practitioner_id                 | bigint                   | NO          | null                                                                             |
+| ref_practitioners                   | display_name                    | text                     | NO          | null                                                                             |
+| ref_practitioners                   | role                            | text                     | NO          | null                                                                             |
+| ref_practitioners                   | location_city                   | text                     | NO          | null                                                                             |
+| ref_practitioners                   | location_country                | text                     | NO          | 'United States'::text                                                            |
+| ref_practitioners                   | license_type                    | text                     | YES         | null                                                                             |
+| ref_practitioners                   | modalities                      | ARRAY                    | YES         | null                                                                             |
+| ref_practitioners                   | accepting_clients               | boolean                  | NO          | true                                                                             |
+| ref_practitioners                   | verified                        | boolean                  | NO          | false                                                                            |
+| ref_practitioners                   | verification_level              | text                     | NO          | 'L1'::text                                                                       |
+| ref_practitioners                   | profile_url                     | text                     | YES         | null                                                                             |
+| ref_practitioners                   | image_url                       | text                     | YES         | null                                                                             |
+| ref_practitioners                   | is_active                       | boolean                  | NO          | true                                                                             |
+| ref_practitioners                   | sort_order                      | integer                  | NO          | 0                                                                                |
+| ref_practitioners                   | created_at                      | timestamp with time zone | NO          | now()                                                                            |
+| ref_primary_adverse                 | primary_adverse_id              | bigint                   | NO          | null                                                                             |
+| ref_primary_adverse                 | primary_adverse                 | text                     | YES         | null                                                                             |
+| ref_protocol_archetypes             | id                              | integer                  | NO          | null                                                                             |
+| ref_protocol_archetypes             | code                            | text                     | NO          | null                                                                             |
+| ref_protocol_archetypes             | name                            | text                     | NO          | null                                                                             |
+| ref_psychospiritual_history_types   | psychospiritual_history_id      | bigint                   | NO          | null                                                                             |
+| ref_psychospiritual_history_types   | history_code                    | text                     | NO          | null                                                                             |
+| ref_psychospiritual_history_types   | history_label                   | text                     | NO          | null                                                                             |
+| ref_psychospiritual_history_types   | sort_order                      | integer                  | YES         | 999                                                                              |
+| ref_psychospiritual_history_types   | is_active                       | boolean                  | NO          | true                                                                             |
+| ref_psychospiritual_history_types   | created_at                      | timestamp with time zone | NO          | now()                                                                            |
+| ref_rejection_reasons               | rejection_reason_id             | bigint                   | NO          | null                                                                             |
+| ref_rejection_reasons               | reason_code                     | text                     | NO          | null                                                                             |
+| ref_rejection_reasons               | reason_label                    | text                     | NO          | null                                                                             |
+| ref_rejection_reasons               | is_active                       | boolean                  | NO          | true                                                                             |
+| ref_rejection_reasons               | created_at                      | timestamp with time zone | NO          | now()                                                                            |
+| ref_resolution_status               | resolution_status_id            | bigint                   | NO          | nextval('ref_resolution_status_resolution_status_id_seq'::regclass)              |
+| ref_resolution_status               | status_name                     | text                     | NO          | null                                                                             |
+| ref_resolution_status               | description                     | text                     | YES         | null                                                                             |
+| ref_resolution_status               | is_active                       | boolean                  | YES         | true                                                                             |
+| ref_resolution_status               | created_at                      | timestamp with time zone | YES         | now()                                                                            |
+| ref_routes                          | route_id                        | bigint                   | NO          | nextval('ref_routes_route_id_seq'::regclass)                                     |
+| ref_routes                          | route_name                      | text                     | NO          | null                                                                             |
+| ref_routes                          | route_code                      | text                     | YES         | null                                                                             |
+| ref_routes                          | route_label                     | text                     | YES         | null                                                                             |
+| ref_routes                          | is_active                       | boolean                  | YES         | true                                                                             |
+| ref_routes                          | created_at                      | timestamp with time zone | YES         | now()                                                                            |
+| ref_routes                          | concept_source                  | text                     | YES         | null                                                                             |
+| ref_routes                          | ppn_internal_code               | text                     | YES         | null                                                                             |
+| ref_safety_events                   | safety_event_id                 | bigint                   | NO          | nextval('ref_safety_events_safety_event_id_seq'::regclass)                       |
+| ref_safety_events                   | event_name                      | text                     | NO          | null                                                                             |
+| ref_safety_events                   | event_code                      | text                     | YES         | null                                                                             |
+| ref_safety_events                   | event_category                  | text                     | YES         | null                                                                             |
+| ref_safety_events                   | is_active                       | boolean                  | YES         | true                                                                             |
+| ref_safety_events                   | created_at                      | timestamp with time zone | YES         | now()                                                                            |
+| ref_session_focus_areas             | focus_area_id                   | integer                  | NO          | nextval('ref_session_focus_areas_focus_area_id_seq'::regclass)                   |
+| ref_session_focus_areas             | focus_code                      | character varying        | NO          | null                                                                             |
+| ref_session_focus_areas             | focus_label                     | character varying        | NO          | null                                                                             |
+| ref_session_focus_areas             | is_active                       | boolean                  | YES         | true                                                                             |
+| ref_session_settings                | id                              | integer                  | NO          | null                                                                             |
+| ref_session_settings                | code                            | text                     | NO          | null                                                                             |
+| ref_session_settings                | name                            | text                     | NO          | null                                                                             |
+| ref_session_types                   | id                              | integer                  | NO          | nextval('ref_session_types_id_seq'::regclass)                                    |
+| ref_session_types                   | session_code                    | character varying        | NO          | null                                                                             |
+| ref_session_types                   | session_label                   | character varying        | NO          | null                                                                             |
+| ref_session_types                   | is_active                       | boolean                  | NO          | true                                                                             |
+| ref_session_types                   | created_at                      | timestamp with time zone | YES         | now()                                                                            |
+| ref_severity_grade                  | severity_grade_id               | bigint                   | NO          | nextval('ref_severity_grade_severity_grade_id_seq'::regclass)                    |
+| ref_severity_grade                  | grade_value                     | integer                  | NO          | null                                                                             |
+| ref_severity_grade                  | grade_label                     | text                     | NO          | null                                                                             |
+| ref_severity_grade                  | description                     | text                     | YES         | null                                                                             |
+| ref_severity_grade                  | is_active                       | boolean                  | YES         | true                                                                             |
+| ref_severity_grade                  | created_at                      | timestamp with time zone | YES         | now()                                                                            |
+| ref_sex                             | sex_id                          | bigint                   | NO          | null                                                                             |
+| ref_sex                             | sex_code                        | text                     | NO          | null                                                                             |
+| ref_sex                             | sex_label                       | text                     | NO          | null                                                                             |
+| ref_sex                             | sort_order                      | integer                  | NO          | 999                                                                              |
+| ref_sex                             | is_active                       | boolean                  | NO          | true                                                                             |
+| ref_sex                             | created_at                      | timestamp with time zone | NO          | now()                                                                            |
+| ref_smoking_status                  | smoking_status_id               | bigint                   | NO          | nextval('ref_smoking_status_smoking_status_id_seq'::regclass)                    |
+| ref_smoking_status                  | status_name                     | text                     | NO          | null                                                                             |
+| ref_smoking_status                  | status_code                     | text                     | YES         | null                                                                             |
+| ref_smoking_status                  | is_active                       | boolean                  | YES         | true                                                                             |
+| ref_smoking_status                  | created_at                      | timestamp with time zone | YES         | now()                                                                            |
+| ref_substance_forms                 | id                              | integer                  | NO          | null                                                                             |
+| ref_substance_forms                 | code                            | text                     | NO          | null                                                                             |
+| ref_substance_forms                 | name                            | text                     | NO          | null                                                                             |
+| ref_substance_forms                 | is_active                       | boolean                  | NO          | true                                                                             |
+| ref_substance_forms                 | created_at                      | timestamp with time zone | NO          | now()                                                                            |
+| ref_substances                      | substance_id                    | bigint                   | NO          | nextval('ref_substances_substance_id_seq'::regclass)                             |
+| ref_substances                      | substance_name                  | text                     | NO          | null                                                                             |
+| ref_substances                      | rxnorm_cui                      | bigint                   | YES         | null                                                                             |
+| ref_substances                      | substance_class                 | text                     | YES         | null                                                                             |
+| ref_substances                      | is_active                       | boolean                  | YES         | true                                                                             |
+| ref_substances                      | created_at                      | timestamp with time zone | YES         | now()                                                                            |
+| ref_substances                      | receptor_5ht2a_ki               | numeric                  | YES         | null                                                                             |
+| ref_substances                      | receptor_5ht1a_ki               | numeric                  | YES         | null                                                                             |
+| ref_substances                      | receptor_5ht2c_ki               | numeric                  | YES         | null                                                                             |
+| ref_substances                      | receptor_d2_ki                  | numeric                  | YES         | null                                                                             |
+| ref_substances                      | receptor_sert_ki                | numeric                  | YES         | null                                                                             |
+| ref_substances                      | receptor_nmda_ki                | numeric                  | YES         | null                                                                             |
+| ref_substances                      | primary_mechanism               | text                     | YES         | null                                                                             |
+| ref_substances                      | concept_source                  | text                     | YES         | null                                                                             |
+| ref_substances                      | ppn_internal_code               | text                     | YES         | null                                                                             |
+| ref_support_modality                | modality_id                     | bigint                   | NO          | nextval('ref_support_modality_modality_id_seq'::regclass)                        |
+| ref_support_modality                | modality_name                   | text                     | NO          | null                                                                             |
+| ref_support_modality                | modality_code                   | text                     | YES         | null                                                                             |
+| ref_support_modality                | description                     | text                     | YES         | null                                                                             |
+| ref_support_modality                | is_active                       | boolean                  | YES         | true                                                                             |
+| ref_support_modality                | created_at                      | timestamp with time zone | YES         | now()                                                                            |
+| ref_system_action_types             | id                              | integer                  | NO          | nextval('ref_system_action_types_id_seq'::regclass)                              |
+| ref_system_action_types             | action_code                     | character varying        | NO          | null                                                                             |
+| ref_system_action_types             | label                           | character varying        | NO          | null                                                                             |
+| ref_system_action_types             | is_active                       | boolean                  | NO          | true                                                                             |
+| ref_therapist_observations          | observation_type_id             | integer                  | NO          | nextval('ref_therapist_observations_observation_type_id_seq'::regclass)          |
+| ref_therapist_observations          | observation_code                | character varying        | NO          | null                                                                             |
+| ref_therapist_observations          | observation_label               | character varying        | NO          | null                                                                             |
+| ref_therapist_observations          | is_active                       | boolean                  | YES         | true                                                                             |
+| ref_time_points                     | time_point_id                   | integer                  | NO          | null                                                                             |
+| ref_time_points                     | time_point_code                 | text                     | NO          | null                                                                             |
+| ref_time_points                     | time_point_label                | text                     | NO          | null                                                                             |
+| ref_time_points                     | description                     | text                     | YES         | null                                                                             |
+| ref_time_points                     | relative_minutes                | integer                  | YES         | null                                                                             |
+| ref_time_points                     | sort_order                      | integer                  | NO          | null                                                                             |
+| ref_time_points                     | is_active                       | boolean                  | NO          | true                                                                             |
+| ref_time_points                     | created_at                      | timestamp with time zone | NO          | now()                                                                            |
+| ref_units                           | unit_id                         | integer                  | NO          | null                                                                             |
+| ref_units                           | unit_code                       | text                     | NO          | null                                                                             |
+| ref_units                           | unit_name                       | text                     | NO          | null                                                                             |
+| ref_units                           | vocabulary_id                   | text                     | NO          | 'UCUM'::text                                                                     |
+| ref_units                           | concept_source                  | text                     | NO          | 'UCUM'::text                                                                     |
+| ref_units                           | is_active                       | boolean                  | NO          | true                                                                             |
+| ref_units                           | created_at                      | timestamp with time zone | NO          | now()                                                                            |
+| ref_user_roles                      | id                              | integer                  | NO          | nextval('ref_user_roles_id_seq'::regclass)                                       |
+| ref_user_roles                      | role_name                       | text                     | NO          | null                                                                             |
+| ref_user_roles                      | created_at                      | timestamp with time zone | YES         | now()                                                                            |
+| ref_user_roles                      | role_code                       | text                     | YES         | null                                                                             |
+| ref_user_roles                      | role_scope                      | text                     | YES         | null                                                                             |
+| ref_user_roles                      | role_description                | text                     | YES         | null                                                                             |
+| ref_user_roles                      | is_active                       | boolean                  | NO          | true                                                                             |
+| ref_user_roles                      | is_system_role                  | boolean                  | NO          | false                                                                            |
+| ref_user_roles                      | sort_order                      | integer                  | YES         | null                                                                             |
+| ref_weight_ranges                   | id                              | bigint                   | NO          | nextval('ref_weight_ranges_id_seq'::regclass)                                    |
+| ref_weight_ranges                   | range_label                     | text                     | NO          | null                                                                             |
+| ref_weight_ranges                   | kg_low                          | numeric                  | NO          | null                                                                             |
+| ref_weight_ranges                   | kg_high                         | numeric                  | NO          | null                                                                             |
+| ref_weight_ranges                   | sort_order                      | integer                  | NO          | null                                                                             |
+| ref_weight_ranges                   | is_active                       | boolean                  | NO          | true                                                                             |
+| ref_weight_ranges                   | created_at                      | timestamp with time zone | NO          | now()                                                                            |
+| ref_weight_ranges                   | updated_at                      | timestamp with time zone | NO          | now()                                                                            |
+| ref_wellbeing_impacts               | id                              | integer                  | NO          | null                                                                             |
+| ref_wellbeing_impacts               | code                            | text                     | NO          | null                                                                             |
+| ref_wellbeing_impacts               | name                            | text                     | NO          | null                                                                             |
+| ref_wellbeing_impacts               | sort_order                      | integer                  | NO          | null                                                                             |
+| ref_wellbeing_impacts               | is_active                       | boolean                  | NO          | true                                                                             |
+| ref_wellbeing_impacts               | created_at                      | timestamp with time zone | NO          | now()                                                                            |

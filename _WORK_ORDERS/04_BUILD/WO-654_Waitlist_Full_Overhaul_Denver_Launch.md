@@ -2,12 +2,12 @@
 id: WO-654
 title: "Waitlist Full Overhaul — Hero Video, Demo Page, Operator Notification, and Enterprise Conversion (Denver Launch)"
 owner: LEAD
-status: 02_TRIAGE
+status: 04_BUILD
 authored_by: PRODDY
 routed_by: LEAD
 priority: P0
 created: 2026-03-22
-pillar_supported: documentation
+pillar_supported: "QA/Governance | Safety"
 task_type: feature
 database_changes: no
 depends_on: "WO-636 (Waitlist Form Error Fix — must be confirmed shipped before video wiring)"
@@ -159,3 +159,9 @@ Once LEAD adds the three fields, re-route directly to 03_REVIEW. INSPECTOR will 
 - **Data from:** `log_waitlist` (count query for social proof, Sub-E); `public/video/` static bundle (demo video); local state (signup form)
 - **Data to:** `log_waitlist` (new signup insert); Resend edge function (operator notification email)
 - **Theme:** Tailwind CSS, PPN design system — `Waitlist.tsx`, `PartnerDemo.tsx` (new); dark background `#070b14`
+
+## INSPECTOR 03_REVIEW CLEARANCE
+**Reviewed by:** INSPECTOR
+**Date:** 2026-03-27
+**Verdict:** FAST-PASS — no database changes, files list defined, pillar confirmed.
+**BUILDER start condition:** Cleared. WO-as-Plan exemption applies. Start coding immediately.

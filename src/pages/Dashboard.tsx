@@ -252,7 +252,7 @@ const ClinicPerformanceCard: React.FC<ClinicPerformanceCardProps> = ({
   return (
     <div
       onClick={() => link && navigate(link)}
-      className={`relative overflow-hidden bg-slate-900/40 backdrop-blur-xl border border-slate-800 rounded-3xl p-4 md:p-5 transition-all group ${link ? 'cursor-pointer hover:border-slate-600 hover:shadow-2xl hover:-translate-y-1' : ''}`}
+      className={`relative overflow-hidden bg-slate-900/40 backdrop-blur-xl border border-slate-800 rounded-3xl p-4 md:p-5 min-h-[130px] transition-all group ${link ? 'cursor-pointer hover:border-slate-600 hover:shadow-2xl hover:-translate-y-1' : ''}`}
     >
       <div className={`absolute -top-10 -right-10 w-32 h-32 blur-[60px] opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none ${styles.bg}`} />
 
@@ -619,7 +619,7 @@ export default function Dashboard() {
               value={
                 siteKpi?.followup_completion_rate != null
                   ? `${Math.round(siteKpi.followup_completion_rate * 100)}%`
-                  : hasProtocols ? '—' : '--'
+               : hasProtocols ? '--' : '--'
               }
               change={siteKpi?.followup_completion_rate != null ? 'Live' : 'No data'}
               comparison={siteKpi != null ? 'Live · mv_site_dashboard_summary' : 'Log first session'}
@@ -633,7 +633,7 @@ export default function Dashboard() {
               value={
                 siteKpi?.unresolved_safety_count != null
                   ? String(siteKpi.unresolved_safety_count)
-                  : hasProtocols ? '—' : '--'
+               : hasProtocols ? '--' : '--'
               }
               change={siteKpi?.unresolved_safety_count != null ? 'Monitoring' : 'No data'}
               comparison={
@@ -650,7 +650,7 @@ export default function Dashboard() {
               value={
                 siteKpi?.documentation_completeness_pct != null
                   ? `${Math.round(siteKpi.documentation_completeness_pct * 100)}%`
-                  : hasProtocols ? '—' : '--'
+              : hasProtocols ? '--' : '--'
               }
               change={siteKpi?.documentation_completeness_pct != null ? 'Live' : 'No data'}
               comparison={

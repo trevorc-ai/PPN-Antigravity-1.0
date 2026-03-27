@@ -95,6 +95,34 @@ function TypeBadge({ type }: { type: FeedbackRow['type'] }) {
     );
 }
 
+// ─── Collapsible Browser Details (CHECK 3: details/summary banned) ─────────────
+function BrowserDetails({ metadata }: { metadata: Record<string, string> }) {
+    const [open, setOpen] = useState(false);
+    return (
+        <div className="text-sm">
+            <button
+                type="button"
+                onClick={() => setOpen(o => !o)}
+                aria-expanded={open}
+                className="flex items-center gap-1.5 text-slate-500 hover:text-slate-300 ppn-meta font-bold min-h-[44px] transition-colors"
+            >
+                <ChevronRight className={`w-3.5 h-3.5 transition-transform duration-150 ${open ? 'rotate-90' : ''}`} />
+                Browser Details
+            </button>
+            {open && (
+                <div className="mt-2 space-y-1 pl-3 border-l border-slate-700">
+                    {Object.entries(metadata).map(([k, v]) => (
+                        <div key={k} className="flex gap-2">
+                            <span className="font-mono text-xs md:text-sm text-slate-500 w-24 shrink-0">{k}</span>
+                            <span className="font-mono text-xs md:text-sm text-slate-400 break-all">{v}</span>
+                        </div>
+                    ))}
+                </div>
+            )}
+        </div>
+    );
+}
+
 // ─── Tab 1: Feedback Inbox ────────────────────────────────────────────────────
 const FeedbackInbox: React.FC = () => {
     const [rows, setRows] = useState<FeedbackRow[]>([]);
@@ -176,19 +204,7 @@ const FeedbackInbox: React.FC = () => {
                             <p className="text-sm ppn-body text-slate-300 whitespace-pre-wrap">{row.message}</p>
                             {/* Row 4: BUG metadata */}
                             {row.type === 'bug' && row.metadata && (
-                                <details className="text-sm">
-                                    <summary className="cursor-pointer text-slate-500 hover:text-slate-300 ppn-meta font-bold">
-                                        Browser Details
-                                    </summary>
-                                    <div className="mt-2 space-y-1 pl-3 border-l border-slate-700">
-                                        {Object.entries(row.metadata).map(([k, v]) => (
-                                            <div key={k} className="flex gap-2">
-                                                <span className="font-mono text-xs md:text-sm text-slate-500 w-24 shrink-0">{k}</span>
-                                                <span className="font-mono text-xs md:text-sm text-slate-400 break-all">{v}</span>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </details>
+                                <BrowserDetails metadata={row.metadata} />
                             )}
                             {/* Row 5: status + cycle */}
                             <div className="flex items-center gap-3">
@@ -300,8 +316,8 @@ const UserManagement: React.FC = () => {
                             {filtered.map(u => (
                                 <tr key={u.user_id} className="hover:bg-slate-800/20 transition-colors">
                                     <td className="px-4 py-3">
-                                        <div className="font-bold text-slate-300">{u.display_name ?? '—'}</div>
-                                        <div className="ppn-meta text-slate-500">{u.email ?? '—'}</div>
+                                        <div className="font-bold text-slate-300">{u.display_name ?? '--'}</div>
+                                        <div className="ppn-meta text-slate-500">{u.email ?? '--'}</div>
                                     </td>
                                     <td className="px-4 py-3">
                                         <select
@@ -359,7 +375,7 @@ const SITE_MAP = [
             { path: '/privacy' }, { path: '/terms' }, { path: '/data-policy' }, { path: '/data-policy/print' },
         ],
         externalLinks: [
-            { label: 'HIPAA Counsel Packet — Print / PDF', href: '/internal/admin_uploads/legal/HIPAA_Counsel_Packet_Print.html', icon: '📋' },
+            { label: 'HIPAA Counsel Packet - Print / PDF', href: '/internal/admin_uploads/legal/HIPAA_Counsel_Packet_Print.html', icon: '📋' },
             { label: 'HIPAA Legal Packet (GO-651)', href: '/internal/founding-docs/HIPAA-Packet/index.html', icon: '⚖️' },
             { label: 'Clinician Founding Partner Packet (GO-651)', href: '/internal/founding-docs/Clinician-Packet/index.html', icon: '🩺' },
             { label: 'Researcher Founding Partner Packet (GO-651)', href: '/internal/founding-docs/Researcher-Packet/index.html', icon: '🔬' },
@@ -757,9 +773,9 @@ const PacketBuilder: React.FC = () => {
                             <p className="text-xs md:text-sm text-slate-500 leading-relaxed pl-7">{doc.description}</p>
                             <div className="flex flex-wrap gap-1.5 pl-7">
                                 {doc.audience.includes('All') ? (
-                                    <span className={`text-xs px-2 py-0.5 rounded-full border font-bold ${AUDIENCE_COLORS['All']}`}>All Audiences</span>
+                                    <span className={`text-xs md:text-sm px-2 py-0.5 rounded-full border font-bold ${AUDIENCE_COLORS['All']}`}>All Audiences</span>
                                 ) : doc.audience.map(a => (
-                                    <span key={a} className={`text-xs px-2 py-0.5 rounded-full border font-bold ${AUDIENCE_COLORS[a]}`}>{a}</span>
+                                    <span key={a} className={`text-xs md:text-sm px-2 py-0.5 rounded-full border font-bold ${AUDIENCE_COLORS[a]}`}>{a}</span>
                                 ))}
                             </div>
                         </button>

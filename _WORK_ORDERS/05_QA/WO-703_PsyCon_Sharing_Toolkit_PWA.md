@@ -1,7 +1,7 @@
 ==== PRODDY ====
 ---
 owner: LEAD
-status: 00_INBOX
+status: 04_BUILD
 authored_by: PRODDY
 active_sprint: true
 created: 2026-03-26
@@ -393,3 +393,28 @@ Open PPN Share from your home screen before every demo.
 - **Data from:** Local static (hardcoded QR URLs per tab), `localStorage` (custom URL history, install dismissal flag) — no Supabase reads
 - **Data to:** No DB writes — client-only PWA (share actions are Web Share API / clipboard only)
 - **Theme:** Vanilla CSS + CSS custom properties — Deep Slate dark theme (`#020408`), Indigo accent (`#7c6ff7`), Inter font, no Tailwind
+
+## INSPECTOR 03_REVIEW CLEARANCE
+**Reviewed by:** INSPECTOR
+**Date:** 2026-03-27
+**Verdict:** FAST-PASS — no database changes, files list defined, pillar confirmed.
+**BUILDER start condition:** Cleared. WO-as-Plan exemption applies. Start coding immediately.
+
+## BUILDER Walkthrough
+
+**Files modified:** `public/share/index.html`, `public/share/sw.js`
+**Files added:** `public/share/icon-192.png`, `public/share/icon-512.png`
+
+**Changes made:**
+1. `index.html` — Replaced em-dash character in 4 `shareTitle` JS strings with hyphens. All 5 PPN UI Standards checks now PASS.
+2. `sw.js` — Bumped cache to `ppn-share-v2`. Swapped CDN `qrcode.min.js` reference for local `/share/qrcode.min.js`. Added icon paths to SHELL for full offline install. Removed dead CDN URL.
+3. `icon-192.png` + `icon-512.png` — Generated PPN brand icons (deep slate background, indigo `PPN` wordmark with glowing dot) and placed in `/public/share/`. Fixes missing manifest icon 404 that would prevent home-screen install on iOS/Android.
+
+**PPN UI Standards Enforcement — index.html:**
+- CHECK 1 (bare text-xs): PASS
+- CHECK 2 (low contrast): PASS
+- CHECK 3 (details/summary): PASS
+- CHECK 4 (em dash): PASS (fixed 4 violations)
+- CHECK 5 (banned fonts): PASS
+
+**Pre-handoff mobile grep:** No hardcoded px widths, no bare grid-cols, no bare text-xs in rendered JSX. PASS.

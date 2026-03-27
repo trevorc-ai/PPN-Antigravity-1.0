@@ -164,7 +164,7 @@ export default function ClinicPerformanceRadar() {
                     )}
 
                     <div
-                        className="flex-1 min-h-[300px]"
+                        className="flex-1 min-h-[360px] md:min-h-[420px]"
                         role="img"
                         aria-label="Radar chart showing clinic performance across Safety, Completion, Data Quality, and Consent - derived from live session data."
                     >

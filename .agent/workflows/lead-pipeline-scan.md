@@ -1,48 +1,67 @@
 ---
-description: LEAD mandatory pipeline scan — audit all queues for misrouted tickets and unblock stalled agents
+description: LEAD mandatory pipeline scan — route every ticket, activate agents, and notify the user when blocked. Keep the pipeline moving.
 ---
 
-## ⚡ RULE 0 — FULL CHAIN EXECUTION (HIGHEST PRIORITY)
+## ⚡ LEAD's Two Distinct Jobs
 
-**LEAD must complete the entire agent chain for every actionable ticket in a single response.**
+LEAD operates in two modes during every scan. Both are mandatory:
 
-This means all of the following happen inline, without stopping:
+### 1. TRIAGE (routing decisions)
+When a ticket is in `00_INBOX` or `02_TRIAGE`, LEAD's job is to **decide which folder it moves to next** and move it there immediately.
+
+- Classify the ticket type and priority
+- Pick the correct next stage: `01_DESIGN`, `03_REVIEW`, `04_BUILD`, `98_HOLD`, or `_GROWTH_ORDERS/`
+- `mv` it. Update frontmatter. Continue to the next ticket.
+- `02_TRIAGE` must be empty after every scan. No ticket stays in triage because LEAD is unsure.
+
+### 2. LEAD (pipeline momentum)
+When a ticket is past triage — already in `03_REVIEW`, `04_BUILD`, `05_QA`, etc. — LEAD's job is to **keep it moving**:
+
+- `03_REVIEW` with no INSPECTOR clearance → INSPECTOR runs the fast-pass NOW, in this response
+- `04_BUILD` ready → Notify BUILDER to start on the lowest-numbered WO
+- `05_QA` stuck → INSPECTOR runs QA NOW, in this response
+- `98_HOLD` with a resolvable blocker → Resolve it or notify the USER directly with the exact question
+- `06_USER_REVIEW` waiting → Surface to USER — this is the only permitted stop point for user-facing work
+
+**LEAD never waits silently.** If something is stuck, LEAD either fixes it or immediately tells the user what decision is needed.
+
+---
+
+## ⚡ RULE 0 — FULL CHAIN EXECUTION
+
+LEAD must complete the entire agent chain for every actionable ticket in a single response. All of the following happen inline, without stopping:
 
 **_WORK_ORDERS chain:**
 - LEAD triages → INSPECTOR fast-passes or rejects → ticket reaches `04_BUILD` or `98_HOLD`
-- INSPECTOR QA (Phases 1–5.5) → ticket screenshots embedded → ticket reaches `06_USER_REVIEW`
-- DESIGNER produces spec → INSPECTOR reviews → BUILDER notified with ticket in `04_BUILD`
+- BUILDER notified → INSPECTOR QAs → ticket reaches `06_USER_REVIEW`
 
 **_GROWTH_ORDERS chain:**
 - GO lands in `00_BACKLOG` → MARKETER produces CONTENT_MATRIX immediately → GO moves to `02_USER_REVIEW` *(USER gate — stop here)*
 - After USER approves copy → DESIGNER produces mockup → GO moves to `04_VISUAL_REVIEW` *(USER gate — stop here)*
 - After USER approves design → BUILDER implements → INSPECTOR QAs → GO moves to `99_PUBLISHED`
 
-**LEAD does not stop between agent steps. Ever.**
+**The only 3 permitted stop points:**
+1. **`06_USER_REVIEW`** — USER visual sign-off before commit
+2. **`_GROWTH_ORDERS/02_USER_REVIEW`** and **`_GROWTH_ORDERS/04_VISUAL_REVIEW`** — USER copy/design gates
+3. **BUILDER writing actual code** — signals BUILDER to start; does not wait inline
 
-The only 3 permitted stop points are:
-1. **BUILDER writing actual code** — requires a separate session (can't be inlined)
-2. **`06_USER_REVIEW`** — USER visual sign-off before commit
-3. **`_GROWTH_ORDERS/02_USER_REVIEW`** and **`_GROWTH_ORDERS/04_VISUAL_REVIEW`** — USER copy/design gates
-
-Everything else — FREEZE check, conformance check, INSPECTOR fast-pass, DESIGNER spec, routing moves — is automated and must happen in the same response that triggered LEAD.
-
-If LEAD finds itself about to stop and ask the user before completing an agent step that doesn't hit one of the 3 gates above, that is a violation of Rule 0. Do the step and continue.
+Everything else is automated and must happen in the same response.
 
 ---
 
 ## 🔑 Core Law: USER Is the Only Bottleneck
 
-**Agents do not wait for each other.** Every agent-to-agent handoff is automatic and immediate in the same response. The pipeline halts only at designated USER stages. No agent may stop and wait for another agent — only for the USER.
+**Agents do not wait for each other.** Every agent-to-agent handoff is automatic and immediate. The pipeline halts only at designated USER stages.
 
-**USER gate stages (the only permitted stop points):**
+**USER gate stages (only permitted stop points):**
 - `_WORK_ORDERS/06_USER_REVIEW/` — final visual sign-off before commit
 - `_GROWTH_ORDERS/02_USER_REVIEW/` — copy approval
 - `_GROWTH_ORDERS/04_VISUAL_REVIEW/` — design approval
 
-At all other transitions, the outgoing agent immediately performs the next handoff action in the same response.
+At all other transitions, LEAD performs the next handoff action immediately in the same response.
 
 ---
+
 
 ## Step 0: Audit `_GROWTH_ORDERS` pipeline
 // turbo
@@ -140,23 +159,35 @@ Execute all `mv` commands immediately. No pre-move check. No user acknowledgment
 
 ---
 
-## Step 3: Audit 00_INBOX — route everything waiting
+## Step 3: Audit 00_INBOX and 02_TRIAGE — read every ticket and advance it
 // turbo
 ```bash
 ls /Users/trevorcalton/Desktop/PPN-Antigravity-1.0/_WORK_ORDERS/00_INBOX/
+ls /Users/trevorcalton/Desktop/PPN-Antigravity-1.0/_WORK_ORDERS/02_TRIAGE/
 ```
 
-Every ticket in `00_INBOX` must be routed immediately. Read it, append `## LEAD Architecture`, then move per routing table. This is agent-to-agent — no user prompt needed.
+**For every ticket found, LEAD must:**
 
-**Routing table:**
-- Strategy / Market Research / Product Roadmap → `owner: PRODDY` | `02_TRIAGE/`
-- UI/UX / Layouts / CSS / Design → `owner: DESIGNER` | `01_DESIGN/`. DESIGNER starts immediately.
-- React / Python / Core App Logic → `owner: BUILDER` | `03_REVIEW/`. INSPECTOR clears immediately in same response.
-- Database / SQL / Schema → `owner: INSPECTOR` | `03_REVIEW/`. INSPECTOR reviews schema + writes migration SQL.
-- SEO / Copywriting / Outreach / Marketing → Route to `_GROWTH_ORDERS/00_BACKLOG/` as GO ticket. MARKETER starts CONTENT_MATRIX immediately in same response. **Do NOT create a WO.**
-- Tracking / Metrics → `owner: ANALYST` | `04_BUILD/`
+1. **Read the ticket.** Not skim — read it. Understand the problem, the scope, the open questions.
+2. **Determine what this specific ticket needs to move forward.** Ask: "What is the next action that unblocks this ticket?" The answer is always one of:
+   - It needs a **UX/product spec** → `01_DESIGN/`, DESIGNER starts now
+   - It needs **INSPECTOR pre-review** (DB changes, risk, scope questions) → `03_REVIEW/`, INSPECTOR clears it now
+   - It needs **LEAD architecture** appended (no LEAD block yet) → write it inline, then route to `03_REVIEW/`
+   - It is **ready to build** (INSPECTOR-clearable, files defined, no DB changes) → INSPECTOR fast-passes it, route to `04_BUILD/`
+   - It needs a **USER decision** on an open question before any agent can act → `98_HOLD/` with exact question, notify USER at end of scan
+   - It is **marketing/outreach** → move to `_GROWTH_ORDERS/00_BACKLOG/` as a GO, MARKETER starts now
+3. **Take the action immediately.** `mv` the ticket. Update frontmatter. Do not stop or ask for permission.
+4. **Continue to the next ticket.** One blocked ticket never halts the queue.
+
+**After processing all tickets:** Report any that went to `98_HOLD` with the exact question needed from the USER. Surface these as a list at the end — never interrupt mid-scan.
+
+**Exception logging rule:** For every ticket that does NOT route to `04_BUILD`, LEAD must write one line explaining why in the scan summary: `WO-XXX → [destination] — [one sentence reason]`. No explanation needed for tickets that reach `04_BUILD`.
+
+**`02_TRIAGE` and `00_INBOX` must be empty after every scan.**
 
 ---
+
+
 
 ## Step 4: Check 05_QA for stuck rejections
 // turbo

@@ -58,14 +58,14 @@ const Analytics = () => {
             label: 'Active Protocols',
             value: analytics.loading ? '...' : analytics.activeProtocols.toString(),
             // Only show trend when there are actual protocols to trend on
-            trend: (!analytics.loading && analytics.activeProtocols > 0) ? '+12%' : '—',
+            trend: (!analytics.loading && analytics.activeProtocols > 0) ? '+12%' : '--',
             icon: Activity,
             color: 'text-blue-400 print:text-blue-700'
         },
         {
             label: 'Patient Alerts',
             value: analytics.loading ? '...' : analytics.patientAlerts.toString(),
-            trend: analytics.patientAlerts > 0 ? `${analytics.patientAlerts} active` : '—',
+            trend: analytics.patientAlerts > 0 ? `${analytics.patientAlerts} active` : '--',
             icon: AlertTriangle,
             color: 'text-amber-400 print:text-amber-700'
         },
@@ -73,7 +73,7 @@ const Analytics = () => {
             label: 'Network Efficiency',
             value: analytics.loading ? '...' : `${analytics.networkEfficiency}%`,
             // Only show trend when efficiency has real data
-            trend: (!analytics.loading && analytics.networkEfficiency > 0) ? '+0.8%' : '—',
+            trend: (!analytics.loading && analytics.networkEfficiency > 0) ? '+0.8%' : '--',
             icon: TrendingUp,
             color: 'text-emerald-400 print:text-emerald-700'
         },
@@ -204,7 +204,7 @@ const Analytics = () => {
 
                     <div className="flex-1 flex flex-col md:flex-row gap-2">
                         <select
-                            className="bg-black/40 border border-slate-700/50 text-xs font-bold rounded-lg px-3 py-2 outline-none focus:border-indigo-500/50 uppercase tracking-wider"
+                            className="bg-black/40 border border-slate-700/50 text-xs md:text-sm font-bold rounded-lg px-3 py-2 outline-none focus:border-indigo-500/50 uppercase tracking-wider min-h-[44px]"
                             style={{ color: '#8B9DC3' }}
                             value={selectedSubstance}
                             onChange={(e) => setSelectedSubstance(e.target.value)}
@@ -215,7 +215,7 @@ const Analytics = () => {
                             <option value="ketamine">Ketamine</option>
                         </select>
                         <select
-                            className="bg-black/40 border border-slate-700/50 text-xs font-bold rounded-lg px-3 py-2 outline-none focus:border-indigo-500/50 uppercase tracking-wider"
+                            className="bg-black/40 border border-slate-700/50 text-xs md:text-sm font-bold rounded-lg px-3 py-2 outline-none focus:border-indigo-500/50 uppercase tracking-wider min-h-[44px]"
                             style={{ color: '#8B9DC3' }}
                             value={selectedDateRange}
                             onChange={(e) => setSelectedDateRange(e.target.value)}

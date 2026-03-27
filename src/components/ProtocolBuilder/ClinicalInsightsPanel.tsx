@@ -77,7 +77,7 @@ export const ClinicalInsightsPanel: React.FC<ClinicalInsightsPanelProps> = ({
             // 2. Fetch Drug Interactions
             if (medicationIds.length > 0) {
                 const { data: interactionsData } = await supabase
-                    .from('ref_drug_interactions')
+                    .from('ref_clinical_interactions')
                     .select('*, medication:ref_medications(medication_name)')
                     .eq('substance_id', substanceId)
                     .in('medication_id', medicationIds)

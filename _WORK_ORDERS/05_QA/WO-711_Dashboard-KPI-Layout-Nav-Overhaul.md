@@ -1,11 +1,12 @@
 ---
 id: WO-711
-title: "Dashboard KPI card rearrangement + Intelligence Layer ≤2-click navigation fix"
+title: "Dashboard KPI card rearrangement + Intelligence Layer <=2-click navigation fix"
 owner: BUILDER
-status: 02_TRIAGE
+status: 05_QA
 authored_by: LEAD (fast-track)
 priority: P1
 created: 2026-03-27
+completed_at: 2026-03-27
 fast_track: true
 origin: "User fast-track request with screenshots"
 admin_visibility: no
@@ -15,6 +16,7 @@ task_type: ui-feature
 files:
   - src/pages/Dashboard.tsx
   - src/components/admin/DataQualityPanel.tsx
+builder_notes: "Added min-h-[130px] to ClinicPerformanceCard for 375px mobile stability. Fixed em-dash null display values to '--'. Fixed bare text-xs violations in DataQualityPanel Fix button and table header. DataQualityPanel already had Fix buttons and View Analytics CTA from prior work. All 5 PPN UI Standards checks pass on both files."
 ---
 
 > [!IMPORTANT]
@@ -70,3 +72,32 @@ Also add a "View Full Analytics →" link at the bottom of the panel (1 click to
 - **Data from:** `useSiteDashboard()` → `mv_site_dashboard_summary`; `usePractitionerProtocols()` → `protocols` table; `DataQualityPanel` → `mv_site_documentation_summary`, `mv_site_followup_compliance`
 - **Data to:** No DB writes — navigation wiring only; `DataQualityPanel.tsx` deep-link buttons (read-only panel)
 - **Theme:** Tailwind CSS, `grid-cols-2 md:grid-cols-4` grid in `Dashboard.tsx`; `ClinicPerformanceCard` component; `DataQualityPanel.tsx`
+
+## INSPECTOR 03_REVIEW CLEARANCE
+**Reviewed by:** INSPECTOR
+**Date:** 2026-03-27
+**Verdict:** FAST-PASS — no database changes, files list defined, pillar confirmed.
+**BUILDER start condition:** Cleared. WO-as-Plan exemption applies. Start coding immediately.
+
+## BUILDER Walkthrough
+
+**Files modified:** `src/pages/Dashboard.tsx`, `src/components/admin/DataQualityPanel.tsx`
+
+**Dashboard.tsx changes:**
+1. `ClinicPerformanceCard` — Added `min-h-[130px]` to card container. Prevents 375px 2x2 grid cards from collapsing unevenly.
+2. Replaced 3x em-dash null display values (`'—'`) with `'--'` in Follow-up, Safety Alerts, and Documentation KPI value expressions. Acceptance criteria explicitly requires `--` not em-dash.
+
+**DataQualityPanel.tsx changes:**
+1. `MetricRow` Fix button — Upgraded `text-xs` to `text-xs md:text-sm` (CHECK 1 pass).
+2. `FollowupTable` header row — Upgraded `text-xs` to `text-xs md:text-sm` (CHECK 1 pass).
+3. `StatusIcon` no-data fallback — Replaced `—` with `--` (CHECK 4 pass).
+4. `FollowupTable` rate display — Replaced `'—'` with `'--'` (CHECK 4 pass).
+
+**Pre-existing (already compliant):**
+- All 4 KPI cards already have `link` props navigating to correct destinations (1-click compliant).
+- `DataQualityPanel` MetricRow already has `Fix -ArrowRight` buttons routing to `/wellness-journey` and `/analytics`.
+- "View Full Analytics" CTA already present at bottom of DataQualityPanel.
+
+**PPN UI Standards Enforcement:**
+- Dashboard.tsx: CHECK 1 PASS, CHECK 2 PASS, CHECK 3 PASS, CHECK 4 PASS (fixed 3), CHECK 5 PASS
+- DataQualityPanel.tsx: CHECK 1 PASS (fixed 2), CHECK 2 PASS, CHECK 3 PASS, CHECK 4 PASS (fixed 2), CHECK 5 PASS

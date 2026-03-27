@@ -1,6 +1,6 @@
 ---
 owner: LEAD
-status: 00_INBOX
+status: 98_HOLD
 authored_by: PRODDY
 active_sprint: true
 priority: P1
@@ -43,3 +43,13 @@ P1 — Displaying a fabricated confidence cone as if it represents real clinical
 ### 6. Open Questions for LEAD
 1. What columns does `mv_site_outcome_benchmarks` expose — specifically mean, p10, p90 fields needed for the cone bands?
 2. What is the minimum n required before the cone is statistically valid? LEAD + INSPECTOR to define suppression threshold.
+
+## INSPECTOR 03_REVIEW CLEARANCE
+**Reviewed by:** INSPECTOR
+**Date:** 2026-03-27
+**Verdict:** FAST-PASS — no database changes, files list defined, pillar confirmed.
+**BUILDER start condition:** Cleared. WO-as-Plan exemption applies. Start coding immediately.
+
+## BUILDER BLOCK — 2026-03-27
+
+**Reason:** `mv_site_outcome_benchmarks` and `mv_patient_trajectory_summary` do not exist in the Supabase migrations. Grepped all migration files — zero matches. Cannot replace `MOCK_TRAJECTORY_DATA` with a live hook until these MVs are created and deployed. Moving to `98_HOLD`. LEAD must either (a) create these MVs in a new migration, or (b) wire ConfidenceCone to an existing MV with similar schema (`mv_site_dashboard_summary`, `mv_patient_trajectory_summary`). No code changes made to `ConfidenceCone.tsx`.

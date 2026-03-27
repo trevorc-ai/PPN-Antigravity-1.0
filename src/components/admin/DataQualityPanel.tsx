@@ -38,7 +38,7 @@ function StatusIcon({ status }: { status: ReturnType<typeof getStatus> }) {
   if (status === 'green') return <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" aria-label="Good" />;
   if (status === 'amber') return <AlertTriangle className="w-4 h-4 text-amber-400 flex-shrink-0" aria-label="Needs improvement" />;
   if (status === 'red') return <XCircle className="w-4 h-4 text-red-400 flex-shrink-0" aria-label="Critical" />;
-  return <span className="w-4 h-4 flex-shrink-0 text-slate-600" aria-label="No data">—</span>;
+  return <span className="w-4 h-4 flex-shrink-0 text-slate-600" aria-label="No data">--</span>;
 }
 
 function StatusBar({ ratio }: { ratio: number | null }) {
@@ -90,7 +90,7 @@ function MetricRow({
             <button
               onClick={() => navigate(link)}
               aria-label={`Fix ${label}`}
-              className="flex items-center gap-1 px-2 py-0.5 rounded-lg text-xs font-black text-indigo-400 hover:text-indigo-300 hover:bg-indigo-500/10 border border-indigo-500/20 transition-all"
+              className="flex items-center gap-1 px-2 py-0.5 rounded-lg text-xs md:text-sm font-black text-indigo-400 hover:text-indigo-300 hover:bg-indigo-500/10 border border-indigo-500/20 transition-all"
             >
               Fix <ArrowRight className="w-3 h-3" aria-hidden="true" />
             </button>
@@ -113,7 +113,7 @@ function FollowupTable({ rows }: { rows: FollowupWindowCompliance[] }) {
     <div className="overflow-x-auto">
       <table className="w-full text-sm">
         <thead>
-          <tr className="text-left text-xs text-slate-500 uppercase tracking-wider border-b border-slate-800">
+          <tr className="text-left text-xs md:text-sm text-slate-500 uppercase tracking-wider border-b border-slate-800">
             <th className="pb-2 pr-4 font-bold">Day</th>
             <th className="pb-2 pr-4 font-bold">Expected</th>
             <th className="pb-2 pr-4 font-bold">Completed</th>
@@ -133,7 +133,7 @@ function FollowupTable({ rows }: { rows: FollowupWindowCompliance[] }) {
                   status === 'green' ? 'text-emerald-400'
                   : status === 'amber' ? 'text-amber-400'
                   : 'text-red-400'
-                }`}>{rate !== null ? `${rate}%` : '—'}</td>
+                }`}>{rate !== null ? `${rate}%` : '--'}</td>
               </tr>
             );
           })}

@@ -1,13 +1,16 @@
 // PPN Share — Service Worker
 // Cache-first strategy for full offline capability
+// v2: local qrcode.min.js cached (replaces CDN reference), icon assets added
 
-const CACHE = 'ppn-share-v1';
+const CACHE = 'ppn-share-v2';
 const SHELL = [
   '/share/',
   '/share/index.html',
   '/share/manifest.json',
-  'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Roboto+Mono:wght@400;500&display=swap',
-  'https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js'
+  '/share/qrcode.min.js',
+  '/share/icon-192.png',
+  '/share/icon-512.png',
+  'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Roboto+Mono:wght@400;500&display=swap'
 ];
 
 self.addEventListener('install', (e) => {

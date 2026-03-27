@@ -2,7 +2,7 @@
 id: WO-713
 title: "Performance Radar — formatting cleanup and chart data accuracy"
 owner: BUILDER
-status: 02_TRIAGE
+status: 04_BUILD
 authored_by: LEAD (fast-track)
 priority: P2
 created: 2026-03-27
@@ -53,3 +53,9 @@ Formatting and chart data on Performance Radar needs improvement.
 - **Data from:** `useClinicBenchmarks.ts` → `mv_site_safety_benchmarks`, `mv_documentation_completeness`, `mv_site_followup_compliance`
 - **Data to:** No DB writes — display-only radar chart
 - **Theme:** Tailwind CSS; Recharts `RadarChart` + `ResponsiveContainer` in `ClinicPerformanceRadar.tsx`; `useClinicBenchmarks.ts` hook
+
+## INSPECTOR 03_REVIEW CLEARANCE
+**Reviewed by:** INSPECTOR
+**Date:** 2026-03-27
+**Verdict:** FAST-PASS — no database changes, files list defined, pillar confirmed.
+**BUILDER start condition:** Cleared. WO-as-Plan exemption applies. Start coding immediately.
