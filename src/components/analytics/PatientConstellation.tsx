@@ -138,7 +138,7 @@ export default function PatientConstellation({ hideHeader: _hideHeader }: { data
                     <div
                         className="flex-1 w-full min-h-0 relative z-0"
                         role="img"
-                        aria-label="Scatter plot of de-identified patient UUIDs grouped by substance and session count — live data"
+                        aria-label="Scatter plot of de-identified patient UUIDs grouped by substance and session count - live data"
                     >
                         <ResponsiveContainer width="100%" height="100%">
                             <ScatterChart margin={{ top: 20, right: 20, bottom: 30, left: 10 }}>

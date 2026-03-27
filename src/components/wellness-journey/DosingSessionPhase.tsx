@@ -28,6 +28,7 @@ import { SessionCloseoutView } from './SessionCloseoutView';
 import { SessionHUD } from './SessionHUD';
 import { SessionPrepView } from './SessionPrepView';
 import { SessionCockpitView } from './SessionCockpitView';
+import { CrisisLogger } from '../session/CrisisLogger'; // WO-696
 
 // ── Error Boundary: catches render crashes in Phase 2 sub-trees ────────────────
 // Prevents the entire WellnessJourney page from going blank on a sub-component error.
@@ -241,7 +242,7 @@ const CompanionVideo: React.FC = () => (
     >
         <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/40 z-10" />
         <div className="absolute top-5 left-0 right-0 text-center z-20">
-            <p className="text-white/20 text-xs tracking-[0.2em]">
+            <p className="text-white/20 text-xs md:text-sm tracking-[0.2em]">
                 Tap to quietly log your state
             </p>
         </div>
@@ -749,7 +750,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                     const ts = row.recorded_at ? new Date(row.recorded_at) : new Date();
                     return {
                         timestamp: ts.toLocaleTimeString(),
-                        elapsed: '—',
+                        elapsed: 'N/A',
                         elapsedSec: i * 60, // fallback spacing; real elapsed unknown on refresh
                         affect: '',
                         responsiveness: '',
@@ -1254,6 +1255,29 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                         onSaveUpdate={handleSaveUpdate}
                         onEndSession={handleEndSession}
                         openAndScrollToUpdatePanel={openAndScrollToUpdatePanel}
+                    />
+                )}
+
+                {/* 2b. Crisis Logger — real-time adverse event logging (live mode only).
+                     WO-696: CrisisLogger was only in ComponentShowcase.
+                     Mounted here with real session context so log_red_alerts is populated
+                     during live sessions. Guard: real UUID required — never renders for demo sessions. */}
+                {isLive && hasRealUUID && (
+                    <CrisisLogger
+                        sessionId={resolvedSessionId!}
+                        onEventLogged={(eventType) => {
+                            // Stamp a chart event pin so the vitals chart shows the event
+                            setEventLog(prev => [
+                                ...prev,
+                                {
+                                    id: `crisis-${Date.now()}`,
+                                    elapsedSec: getElapsedSec(),
+                                    type: 'safety_event',
+                                    label: eventType.replace(/_/g, ' ').toLowerCase()
+                                        .replace(/\b\w/g, c => c.toUpperCase()),
+                                } satisfies SessionEventPin,
+                            ]);
+                        }}
                     />
                 )}
 

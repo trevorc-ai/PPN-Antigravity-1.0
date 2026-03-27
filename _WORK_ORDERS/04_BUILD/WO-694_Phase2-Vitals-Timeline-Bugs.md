@@ -2,7 +2,7 @@
 id: WO-694
 title: "Phase 2 Dosing Cockpit — Comprehensive bug fix: Vitals chart tooltip, Live Session Timeline, post-session rendering"
 owner: BUILDER
-status: 03_REVIEW
+status: 04_BUILD
 authored_by: LEAD (fast-track)
 priority: P1
 created: 2026-03-24

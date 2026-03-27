@@ -8,7 +8,7 @@ created_at: 2026-03-23
 created_by: LEAD
 source_brief: "Downloads/PPN Landing Page and Launch 03-22-26.md"
 type: public_facing
-route: ppnportal.net (Landing.tsx and all front-door pages — see scope below)
+route: ppnportal.net (Landing.tsx and all front-door pages — see scope below) + ppnportal.net/psycon-denver-2026 (dedicated QR landing page)
 pipeline: _GROWTH_ORDERS (mandatory — public-facing deliverable)
 ---
 
@@ -30,9 +30,13 @@ pipeline: _GROWTH_ORDERS (mandatory — public-facing deliverable)
 >
 > BUILDER must NOT push any page from this set to production independently. The deploy is a coordinated all-or-nothing release.
 
+> ✅ **EXCEPTION — PsyCon Dedicated Route**
+>
+> `PsyConDenverPage.tsx` (route: `/psycon-denver-2026`) is a **standalone event page** and is **exempt from the Front Door coordination lock**. It may be built and deployed independently, ahead of the full front-door release, provided it passes INSPECTOR QA. It does not share the coordinated release gate.
+
 ## Strategic Context
 
-PsyCon Denver is **April 9, 2026 — 17 days out.** Practitioners will QR-scan `ppnportal.net` from a phone on the convention floor. The current landing page does not communicate enterprise-grade clinical intelligence to that buyer. This GO delivers the homepage rebuild required to support the booth closing flow.
+PsyCon Denver is **April 9, 2026 — 14 days out.** Practitioners will QR-scan a booth code that resolves to `ppnportal.net/psycon-denver-2026` on a phone on the convention floor. This GO delivers two coordinated assets: (1) the dedicated PsyCon attendee landing page at `/psycon-denver-2026`, and (2) the full homepage rebuild at `ppnportal.net`. The dedicated route is the primary QR destination and is exempt from the front-door coordination lock.
 
 **Source brief:** Dual strategic assessment from ChatGPT + Gemini (03-22-26), reviewed and approved by User.  
 **Key constraint from advisor:** Do not over-engineer. Focus entirely on frontend excellence. No new backend integrations before the show.
@@ -43,7 +47,7 @@ PsyCon Denver is **April 9, 2026 — 17 days out.** Practitioners will QR-scan `
 
 - **Primary:** Owner / Medical Director / COO of a 2–10+ provider PAT or ketamine clinic network
 - **Secondary:** Compliance Officer or Principal Investigator evaluating the platform
-- **Entry point:** QR code scan at PsyCon → mobile phone → 60 seconds max before they put it away
+- **Entry point:** QR code scan at PsyCon → `ppnportal.net/psycon-denver-2026` → mobile phone → 60 seconds max before they put it away
 - **What they need to see immediately:** Risk reduction + product credibility + one clear CTA
 
 ---
@@ -95,6 +99,43 @@ PsyCon Denver is **April 9, 2026 — 17 days out.** Practitioners will QR-scan `
 - **Mobile:** Single-column form, `w-full` inputs, `h-12` submit button
 
 ---
+
+## Dedicated PsyCon Route — `/psycon-denver-2026`
+
+**New file:** `src/pages/PsyConDenverPage.tsx`  
+**Route:** `/psycon-denver-2026`  
+**Live URL:** `https://ppnportal.net/psycon-denver-2026`  
+**QR destination:** Yes — this is the QR code printed on all Denver booth materials  
+**Deployment gate:** Independent — does NOT require the full front-door release to go live
+
+### Page Objective
+A single-purpose, mobile-first conversion page for attendees who scan the booth QR code. The page must close in 60 seconds on a phone. No navigation clutter. One CTA.
+
+### Required Sections
+
+1. **Hook header** — `"You met us at PsyCon Denver 2026."` (personal, warm, human)
+2. **One-line value prop** — `"The clinical documentation platform built for psychedelic therapy. Zero PHI. Zero liability."` 
+3. **3 trust pillars** (icon + label only — no paragraph copy):
+   - Subpoena-Resistant by Architecture
+   - $0 Breach Liability
+   - Cross-Network Benchmarking
+4. **Single CTA** — `"Request Access"` → links to `/join` (existing `WaitlistPage.tsx`)
+5. **Footer** — `ppnportal.net` logotype only. No nav links.
+
+### Design Constraints
+- Mobile-first (375px primary viewport)
+- Dark mode, consistent with PPN design system
+- No Recharts, no live data components, no authenticated imports
+- CTA must be visible above the fold on iPhone SE
+- `w-full` CTA button, `h-12` minimum tap target
+- No em-dashes in copy
+- No `text-xs`
+
+### Routing
+Add to `src/App.tsx` (or equivalent router config):
+```tsx
+<Route path="/psycon-denver-2026" element={<PsyConDenverPage />} />
+```
 
 ## Out of Scope for This Sprint
 

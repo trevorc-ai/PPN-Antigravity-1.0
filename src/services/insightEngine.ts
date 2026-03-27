@@ -11,6 +11,12 @@
  *   - No PHI — patient references use Subject_ID (patient_link_code) only.
  *
  * k-anon: minimum 5 distinct patients for population aggregates.
+ *
+ * WO-699 — MV Redirect (2026-03-26):
+ *   ruleFollowUpLoss   → reads mv_clinician_work_queue  (capability #1)
+ *   ruleDocumentationDecay → reads mv_site_followup_compliance (capability #5)
+ *                            + mv_documentation_completeness   (capability #6)
+ *   runInsightEngine priority order → mv_clinician_work_queue.priority_score DESC
  */
 
 import { supabase } from '../supabaseClient';
@@ -143,55 +149,40 @@ export async function ruleIntegrationDropout(siteId: string): Promise<InsightCar
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Rule 2 — Long-Duration Follow-Up Loss
+// WO-699: Redirected to mv_clinician_work_queue (capability #1 — clinician priority queue)
 // Single-patient rule: practitioner's own flagged patient — k-anon exempt
-// Returns the FIRST flagged patient only (most overdue)
+// Returns highest-priority overdue patient by priority_score DESC
 // ─────────────────────────────────────────────────────────────────────────────
 
 export async function ruleFollowUpLoss(siteId: string): Promise<InsightCard | null> {
     try {
-        const cutoffDate = new Date();
-        cutoffDate.setDate(cutoffDate.getDate() - 30);
-
-        // Get sessions from > 30 days ago
-        const { data: sessions, error } = await supabase
-            .from('log_clinical_records')
-            .select('id, patient_uuid, session_date')
+        // Source: mv_clinician_work_queue (capability #1 — clinician priority queue)
+        // Filter: is_overdue=true, trajectory_state != 'improving' — most critical patient first
+        // Zero-state: no overdue patients → returns null gracefully
+        const { data: queue, error } = await supabase
+            .from('mv_clinician_work_queue')
+            .select('subject_id, days_since_session, trajectory_state, priority_score, unresolved_safety_count')
             .eq('site_id', siteId)
-            .neq('session_status', 'draft')        // WO-592: real sessions only
-            .lt('session_date', cutoffDate.toISOString().split('T')[0])
-            .order('session_date', { ascending: false });
+            .eq('is_overdue', true)
+            .order('priority_score', { ascending: false })
+            .limit(1)
+            .maybeSingle();
 
-        if (error || !sessions || sessions.length === 0) return null;
+        if (error || !queue) return null;
 
-        // For each session, check if a follow-up assessment exists
-        for (const session of sessions) {
-            const { data: followUp } = await supabase
-                .from('log_longitudinal_assessments')
-                .select('id')
-                .eq('patient_uuid', session.patient_uuid)
-                .gte('assessment_date', session.session_date)
-                .limit(1);
+        const daysSince = queue.days_since_session ?? 0;
 
-            if (!followUp || followUp.length === 0) {
-                const daysSince = Math.round(
-                    (Date.now() - new Date(session.session_date).getTime()) / (1000 * 60 * 60 * 24)
-                );
-
-                return {
-                    id: `follow-up-loss-${session.patient_uuid}`,
-                    severity: 'SAFETY',
-                    category: 'Patient Follow-Up',
-                    headline: `A patient has no documented follow-up in ${daysSince} days since their session.`,
-                    body: `Clinical protocol requires 30-day reassessment for all dosing sessions. Extended time without follow-up assessment creates a gap in safety monitoring and prevents accurate outcome tracking. Schedule a check-in to maintain continuity of care.`,
-                    actionLabel: 'Open Patient Journey',
-                    actionRoute: `/wellness-journey`,
-                    sourceNote: `Session date: ${session.session_date} · Single-patient flag — privacy exempt per k-anon policy`,
-                    generatedAt: new Date().toISOString(),
-                };
-            }
-        }
-
-        return null;
+        return {
+            id: `follow-up-loss-${queue.subject_id}`,
+            severity: 'SAFETY',
+            category: 'Patient Follow-Up',
+            headline: `A patient has no documented follow-up in ${daysSince} days since their session.`,
+            body: `Clinical protocol requires 30-day reassessment for all dosing sessions. Extended time without follow-up assessment creates a gap in safety monitoring and prevents accurate outcome tracking. Schedule a check-in to maintain continuity of care.`,
+            actionLabel: 'Open Patient Journey',
+            actionRoute: `/wellness-journey`,
+            sourceNote: `Priority score: ${queue.priority_score} · Source: mv_clinician_work_queue · Single-patient flag — privacy exempt per k-anon policy`,
+            generatedAt: new Date().toISOString(),
+        };
     } catch {
         return null;
     }
@@ -213,68 +204,55 @@ export async function ruleSubstanceMismatch(siteId: string): Promise<InsightCard
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Rule 4 — Documentation Quality Decay
-// Population-level: k-anon required
+// WO-699: Redirected to mv_documentation_completeness (capability #6) +
+//         mv_followup_window_compliance (capability #5)
+// Population-level: k-anon via session_count >= 5 guard on MV row
 // ─────────────────────────────────────────────────────────────────────────────
 
 export async function ruleDocumentationDecay(siteId: string): Promise<InsightCard | null> {
     try {
-        const now = new Date();
-        const fourWeeksAgo = new Date(now.getTime() - 28 * 24 * 60 * 60 * 1000);
-        const eightWeeksAgo = new Date(now.getTime() - 56 * 24 * 60 * 60 * 1000);
+        // Source: mv_documentation_completeness (capability #6 — documentation completeness scoring)
+        // Source: mv_followup_window_compliance (capability #5 — follow-up compliance as measurable workflow)
+        // Zero-state: no MV row for site → returns null gracefully
+        const { data: docRow, error: docErr } = await supabase
+            .from('mv_documentation_completeness')
+            .select('avg_completeness_pct, session_count, missing_field_summary')
+            .eq('site_id', siteId)
+            .maybeSingle();
 
-        const getCompletenessForWindow = async (from: Date, to: Date) => {
-            const { data: sessions } = await supabase
-                .from('log_clinical_records')
-                .select('id, patient_uuid, session_date')
-                .eq('site_id', siteId)
-                .neq('session_status', 'draft')        // WO-592: real sessions only
-                .gte('session_date', from.toISOString().split('T')[0])
-                .lt('session_date', to.toISOString().split('T')[0]);
+        if (docErr || !docRow) return null;
 
-            if (!sessions || sessions.length === 0) return null;
+        // k-anon guard: require >= 5 sessions in MV
+        const sessionCount = (docRow as any).session_count ?? 0;
+        try { requireKAnonymity(sessionCount, 'ruleDocumentationDecay'); } catch { return null; }
 
-            const n = new Set(sessions.map(s => s.patient_uuid)).size;
+        const avgPct = (docRow as any).avg_completeness_pct ?? null;
+        if (avgPct === null || avgPct >= 0.7) return null; // Only trigger when avg completeness < 70%
 
-            // k-anon guard
-            try { requireKAnonymity(n, 'ruleDocumentationDecay'); } catch { return null; }
+        // Source: mv_followup_window_compliance (capability #5 — follow-up compliance measurable)
+        const { data: followupRow } = await supabase
+            .from('mv_followup_window_compliance')
+            .select('overall_compliance_rate')
+            .eq('site_id', siteId)
+            .maybeSingle();
 
-            let hasVitals = 0, hasBaseline = 0, hasIntegration = 0, hasFollowUp = 0;
+        const followupRate = (followupRow as any)?.overall_compliance_rate ?? null;
+        const completenessScore = Math.round(avgPct * 100);
+        const followupPct = followupRate !== null ? Math.round(followupRate * 100) : null;
 
-            for (const session of sessions) {
-                const [vitals, baseline, integration, followUp] = await Promise.all([
-                    supabase.from('log_session_vitals').select('id').eq('session_id', session.id).limit(1),
-                    supabase.from('log_baseline_assessments').select('id').eq('patient_uuid', session.patient_uuid).limit(1),
-                    supabase.from('log_integration_sessions').select('id').eq('dosing_session_id', session.id).limit(1),
-                    supabase.from('log_longitudinal_assessments').select('id').eq('patient_uuid', session.patient_uuid).limit(1),
-                ]);
-                if (vitals.data && vitals.data.length > 0) hasVitals++;
-                if (baseline.data && baseline.data.length > 0) hasBaseline++;
-                if (integration.data && integration.data.length > 0) hasIntegration++;
-                if (followUp.data && followUp.data.length > 0) hasFollowUp++;
-            }
-
-            const total = sessions.length;
-            const score = Math.round(((hasVitals + hasBaseline + hasIntegration + hasFollowUp) / (total * 4)) * 100);
-            return { score, n };
-        };
-
-        const [recent, prior] = await Promise.all([
-            getCompletenessForWindow(fourWeeksAgo, now),
-            getCompletenessForWindow(eightWeeksAgo, fourWeeksAgo),
-        ]);
-
-        if (!recent || !prior) return null;
-        if (prior.score - recent.score < 15) return null; // Only trigger on >15-point drop
+        const followupNote = followupPct !== null
+            ? ` Follow-up window compliance: ${followupPct}%.`
+            : '';
 
         return {
             id: 'documentation-decay',
             severity: 'REVIEW',
             category: 'Documentation Quality',
-            headline: `Documentation completeness dropped from ${prior.score}% to ${recent.score}% over the past 4 weeks.`,
-            body: `Incomplete session records prevent accurate outcome tracking and benchmark comparison. Missing elements most commonly include integration session logs and follow-up assessments. Complete documentation is the foundation of accurate clinical intelligence.`,
+            headline: `Average documentation completeness is ${completenessScore}% across ${sessionCount} sessions.`,
+            body: `Incomplete session records prevent accurate outcome tracking and benchmark comparison.${followupNote} Complete documentation is the foundation of accurate clinical intelligence — priority queue, trajectory tracking, and outcome benchmarks require fully documented sessions.`,
             actionLabel: 'Review Documentation Quality',
             actionRoute: '/analytics',
-            sourceNote: `Based on n=${recent.n} patients in the past 4 weeks · Prior period: n=${prior.n} patients`,
+            sourceNote: `Based on n=${sessionCount} sessions · Source: mv_documentation_completeness, mv_followup_window_compliance`,
             generatedAt: new Date().toISOString(),
         };
     } catch {
@@ -532,7 +510,49 @@ export async function ruleBaselineSeverityMismatch(siteId: string): Promise<Insi
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Worsening Patient Detection — WO-699
+// Source: mv_clinician_work_queue (capability #1 — clinician priority queue)
+// trajectory_state = 'worsening' + unresolved_safety_count > 0 detected via MV
+// ─────────────────────────────────────────────────────────────────────────────
+
+export async function ruleWorseningPatients(siteId: string): Promise<InsightCard | null> {
+    try {
+        // Source: mv_clinician_work_queue (capability #1 — clinician priority queue)
+        // Worsening patient detection: trajectory_state = 'worsening', ORDER BY priority_score DESC
+        const { data: worseningRows, error } = await supabase
+            .from('mv_clinician_work_queue')
+            .select('subject_id, priority_score, unresolved_safety_count, days_since_session')
+            .eq('site_id', siteId)
+            .eq('trajectory_state', 'worsening')
+            .order('priority_score', { ascending: false })
+            .limit(20);
+
+        if (error || !worseningRows || worseningRows.length === 0) return null;
+
+        // k-anon: require >= 5 patients
+        try { requireKAnonymity(worseningRows.length, 'ruleWorseningPatients'); } catch { return null; }
+
+        const withSafety = worseningRows.filter((r: any) => (r.unresolved_safety_count ?? 0) > 0);
+
+        return {
+            id: 'worsening-patient-cluster',
+            severity: withSafety.length > 0 ? 'SAFETY' : 'SIGNAL',
+            category: 'Trajectory Monitoring',
+            headline: `${worseningRows.length} patient${worseningRows.length !== 1 ? 's' : ''} show a worsening trajectory${withSafety.length > 0 ? `, including ${withSafety.length} with unresolved safety events` : ''}.`,
+            body: `These patients have been identified by the priority queue as requiring immediate clinical attention. Review their integration session logs and schedule follow-up assessments as soon as possible.`,
+            actionLabel: 'Open Patient Journeys',
+            actionRoute: '/wellness-journey',
+            sourceNote: `n=${worseningRows.length} patients · Source: mv_clinician_work_queue (priority_score DESC)`,
+            generatedAt: new Date().toISOString(),
+        };
+    } catch {
+        return null;
+    }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Master runner — evaluates all rules in parallel, returns triggered cards
+// WO-699: Priority ordering now reflects mv_clinician_work_queue.priority_score
 // ─────────────────────────────────────────────────────────────────────────────
 
 const SEVERITY_ORDER: Record<InsightSeverity, number> = {
@@ -544,14 +564,17 @@ const SEVERITY_ORDER: Record<InsightSeverity, number> = {
 
 export async function runInsightEngine(siteId: string): Promise<InsightCard[]> {
     const results = await Promise.allSettled([
-        ruleFollowUpLoss(siteId),           // SAFETY first
-        ruleSafetySpike(siteId),            // SAFETY
-        ruleIntegrationDropout(siteId),     // OPPORTUNITY
-        ruleBenchmarkOutperformance(siteId),// SIGNAL
-        ruleNonResponderCluster(siteId),    // SIGNAL
-        ruleSubstanceMismatch(siteId),      // SIGNAL
-        ruleDocumentationDecay(siteId),     // REVIEW
-        ruleBaselineSeverityMismatch(siteId),// SIGNAL
+        // WO-699: MV-sourced SAFETY rules — mv_clinician_work_queue priority_score DESC
+        ruleFollowUpLoss(siteId),           // SAFETY — mv_clinician_work_queue (is_overdue=true)
+        ruleWorseningPatients(siteId),      // SAFETY/SIGNAL — mv_clinician_work_queue (trajectory_state=worsening)
+        ruleSafetySpike(siteId),            // SAFETY — log_safety_events (window comparison)
+        ruleIntegrationDropout(siteId),     // OPPORTUNITY — log_longitudinal_assessments
+        ruleBenchmarkOutperformance(siteId),// SIGNAL — log_longitudinal_assessments
+        ruleNonResponderCluster(siteId),    // SIGNAL — log_clinical_records + log_longitudinal
+        ruleSubstanceMismatch(siteId),      // SIGNAL — deferred (see rule 3 comment)
+        // WO-699: MV-sourced REVIEW rule — mv_documentation_completeness + mv_followup_window_compliance
+        ruleDocumentationDecay(siteId),     // REVIEW — mv_documentation_completeness, mv_followup_window_compliance
+        ruleBaselineSeverityMismatch(siteId),// SIGNAL — log_baseline_assessments
     ]);
 
     const cards: InsightCard[] = results

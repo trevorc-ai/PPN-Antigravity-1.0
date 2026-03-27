@@ -2,7 +2,7 @@
 id: WO-707
 title: "Session Vitals Trend graph is blank in post-session closeout view (after End Dosing Session)"
 owner: PRODDY
-status: 02_TRIAGE
+status: 04_BUILD
 authored_by: LEAD (fast-track)
 priority: P1
 created: 2026-03-27
@@ -119,3 +119,15 @@ BUILDER must not change the live-mode chart behavior, only the post-session path
 - **Data from:** `log_session_vitals` (DB re-fetch on post-session mount) — via `usePostSessionVitals` hook or inline `useEffect`
 - **Data to:** Read-only display — no DB writes; renders existing `log_session_vitals` rows in `SessionVitalsTrendChart`
 - **Theme:** Tailwind CSS, Recharts — `SessionCloseoutView.tsx`, `DosingSessionPhase.tsx`, `SessionVitalsTrendChart.tsx`
+
+## INSPECTOR 02_TRIAGE CLEARANCE: FAST-PASS
+No DB impact detected. All changes are display-only React state reads.
+- `database_changes: no` — read-only DB fetch for display; no schema changes.
+- No frozen files in `files:` list.
+- UI Standards Pre-Build Gate: N/A — no new layout classes introduced; surgical fix only.
+- **⚠️ MANDATORY REGRESSION GATE (Phase 3.5):**
+  - Trigger files: `DosingSessionPhase.tsx`, `SessionVitalsTrendChart.tsx`, `SessionCloseoutView.tsx`
+  - Required workflow: `/phase2-session-regression` (4 browser scenarios)
+  - BUILDER runs pre-build baseline BEFORE any code changes. INSPECTOR runs post-build before approving.
+Cleared for build.
+Signed: INSPECTOR | Date: 2026-03-27

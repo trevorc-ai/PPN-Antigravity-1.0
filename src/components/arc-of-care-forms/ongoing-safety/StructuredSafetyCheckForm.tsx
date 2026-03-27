@@ -277,12 +277,12 @@ const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
                                 <AlertTriangle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" aria-hidden="true" />
                                 <div className="space-y-2">
                                     <p className="text-red-400 font-bold text-sm uppercase tracking-wide">
-                                        ⛔ DO NOT PROCEED — Automatic Crisis Alert
+                                        ⛔ DO NOT PROCEED: Automatic Crisis Alert
                                     </p>
                                     {data.cssrs_score === 3 ? (
                                         // WO-599: Score 3 — actionable, prescriptive clinical copy
                                         <div className="text-red-300 text-sm space-y-1">
-                                            <p className="font-bold">C-SSRS Score 3 — Active Suicidal Ideation with Some Intent.</p>
+                                            <p className="font-bold">C-SSRS Score 3: Active Suicidal Ideation with Some Intent.</p>
                                             <p>The dosing session must NOT proceed until risk is clinically resolved. Required actions:</p>
                                             <ol className="list-decimal list-inside space-y-0.5 text-red-300/90 pl-1">
                                                 <li>Administer a full C-SSRS structured interview now.</li>
@@ -294,10 +294,10 @@ const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
                                     ) : data.cssrs_score === 4 ? (
                                         // WO-599: Score 4 — escalated copy with supervisor contact requirement
                                         <div className="text-red-300 text-sm space-y-1">
-                                            <p className="font-bold">C-SSRS Score 4 — Active Suicidal Ideation with Intent and Plan.</p>
+                                            <p className="font-bold">C-SSRS Score 4: Active Suicidal Ideation with Intent and Plan.</p>
                                             <p>The dosing session must NOT proceed. Immediate escalation is required. Required actions:</p>
                                             <ol className="list-decimal list-inside space-y-0.5 text-red-300/90 pl-1">
-                                                <li>Contact your clinical supervisor immediately — do not proceed alone.</li>
+                                                <li>Contact your clinical supervisor immediately. Do not proceed alone.</li>
                                                 <li>Initiate your site's crisis protocol and safety plan.</li>
                                                 <li>Do not leave patient unattended.</li>
                                                 <li>Document all findings, actions, and supervisor contacts in this record.</li>
@@ -306,7 +306,7 @@ const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
                                     ) : (
                                         // WO-599: Score 5 — emergency copy with 911 instruction
                                         <div className="text-red-300 text-sm space-y-1">
-                                            <p className="font-bold">C-SSRS Score 5 — Imminent Risk. Recent Attempt or Preparatory Act.</p>
+                                            <p className="font-bold">C-SSRS Score 5: Imminent Risk. Recent Attempt or Preparatory Act.</p>
                                             <p>This is a clinical emergency. The dosing session must NOT proceed. Required actions:</p>
                                             <ol className="list-decimal list-inside space-y-0.5 text-red-300/90 pl-1">
                                                 <li><span className="font-bold text-red-200">Call 911 (or local emergency services) immediately.</span></li>
@@ -328,9 +328,9 @@ const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
                 <FormField label="Safety Concerns" tooltip="Pulls from the 'ref_clinical_observations' table (category: 'clinical_flag'). These align with standard DSM-5 risk parameters for psychiatric decompensation. Orders by clinical priority.">
                     {/* WO-661: amber notice when DB returned no rows and fallback data is in use */}
                     {observationsFallback && (
-                        <div className="mb-2 flex items-center gap-2 text-amber-400/80 text-xs px-1">
+                        <div className="mb-2 flex items-center gap-2 text-amber-400/80 text-xs md:text-sm px-1">
                             <AlertTriangle className="w-3.5 h-3.5 flex-shrink-0" aria-hidden="true" />
-                            <span>Safety categories unavailable — using standard defaults.</span>
+                            <span>Safety categories unavailable: using standard defaults.</span>
                         </div>
                     )}
                     {observationsLoading ? (
@@ -365,7 +365,7 @@ const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
                                             <CheckCircle className={`w-4 h-4 flex-shrink-0 transition-opacity ${selected ? 'opacity-100' : 'opacity-30'}`} aria-hidden="true" />
                                             <div className="flex-1 min-w-0 flex items-center justify-between gap-2">
                                                 <div className="text-sm font-semibold leading-none">{concern.name}</div>
-                                                <div className="flex items-center gap-1 text-xs font-bold opacity-70 flex-shrink-0">
+                                                <div className="flex items-center gap-1 text-xs md:text-sm font-bold opacity-70 flex-shrink-0">
                                                     {concern.severity === 'critical' && <><AlertTriangle className="w-3 h-3" aria-hidden="true" /> Critical</>}
                                                     {concern.severity === 'high' && <><ArrowUp className="w-3 h-3" aria-hidden="true" /> High</>}
                                                     {concern.severity === 'moderate' && <><Minus className="w-3 h-3" aria-hidden="true" /> Moderate</>}
@@ -414,7 +414,7 @@ const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
                                             <CheckCircle className={`w-4 h-4 flex-shrink-0 transition-opacity ${selected ? 'opacity-100' : 'opacity-30'}`} aria-hidden="true" />
                                             <div className="flex-1 min-w-0 flex items-center justify-between gap-2">
                                                 <div className="text-sm font-semibold leading-none">{action.name}</div>
-                                                <div className="flex items-center gap-1 text-xs font-bold opacity-70 flex-shrink-0">
+                                                <div className="flex items-center gap-1 text-xs md:text-sm font-bold opacity-70 flex-shrink-0">
                                                     {action.urgency === 'immediate' && <><Zap className="w-3 h-3" aria-hidden="true" /> Immediate</>}
                                                     {action.urgency === 'urgent' && <><Clock className="w-3 h-3" aria-hidden="true" /> Urgent</>}
                                                 </div>

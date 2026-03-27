@@ -172,14 +172,14 @@ export function useClinicBenchmarks(): ClinicBenchmarks & { refetch: () => void 
                     {
                         subject: 'Efficacy',
                         value: 0,
-                        definition: 'Efficacy: suppressed — awaiting assessment score data pipeline (WO-680)',
+                        definition: 'Efficacy: suppressed - awaiting assessment score data pipeline (WO-680)',
                         derivation: 'Not yet computable',
                         suppressed: true,
                     },
                     {
                         subject: 'Adherence',
                         value: 0,
-                        definition: 'Adherence: suppressed — awaiting assessment score data pipeline (WO-680)',
+                        definition: 'Adherence: suppressed - awaiting assessment score data pipeline (WO-680)',
                         derivation: 'Not yet computable',
                         suppressed: true,
                     },

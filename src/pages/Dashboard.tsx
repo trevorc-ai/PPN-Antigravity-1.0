@@ -612,6 +612,7 @@ export default function Dashboard() {
               icon={BarChart3}
               color="indigo"
               isEmpty={!hasProtocols}
+              link="/wellness-journey"
             />
             <ClinicPerformanceCard
               title="Follow-up Completion"
@@ -625,6 +626,7 @@ export default function Dashboard() {
               icon={Target}
               color="emerald"
               isEmpty={!hasProtocols && siteKpi == null}
+              link="/analytics"
             />
             <ClinicPerformanceCard
               title="Safety Alerts"
@@ -641,6 +643,7 @@ export default function Dashboard() {
               }
               icon={AlertTriangle}
               color="amber"
+              link="/analytics"
             />
             <ClinicPerformanceCard
               title="Documentation"
@@ -658,6 +661,7 @@ export default function Dashboard() {
               icon={Clock}
               color="blue"
               isEmpty={!hasProtocols && siteKpi == null}
+              link="/analytics"
             />
           </div>
         </Section>

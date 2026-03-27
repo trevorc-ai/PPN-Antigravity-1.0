@@ -46,6 +46,33 @@ const LongitudinalAssessmentForm: React.FC<LongitudinalAssessmentFormProps> = ({
     const [isSaving, setIsSaving] = useState(false);
     const [showAlert, setShowAlert] = useState(false);
 
+    // WO-665: Sync late-arriving DB data into local state.
+    // The form's useState initializer only runs once at mount. When WellnessFormRouter
+    // fetches the latest assessment asynchronously and passes it as initialData, the
+    // local data state would remain blank because the form was already mounted empty.
+    // This effect re-syncs whenever initialData transitions from empty ({}) to a real record.
+    useEffect(() => {
+        const hasScores =
+            initialData.phq9_score != null ||
+            initialData.gad7_score != null ||
+            initialData.cssrs_score != null ||
+            initialData.whoqol_score != null ||
+            initialData.psqi_score != null;
+        if (!hasScores) return; // still loading or no prior record — keep current state
+        setData(prev => ({
+            ...initialData,
+            // Preserve any edits the practitioner has already made after mount
+            assessment_date: prev.assessment_date || initialData.assessment_date || today,
+        }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [
+        initialData.phq9_score,
+        initialData.gad7_score,
+        initialData.cssrs_score,
+        initialData.whoqol_score,
+        initialData.psqi_score,
+    ]);
+
     const handleSaveAndExit = () => {
         if (onSave) {
             setIsSaving(true);
@@ -140,12 +167,12 @@ const LongitudinalAssessmentForm: React.FC<LongitudinalAssessmentFormProps> = ({
                                 onChange={(e) => updateField('phq9_score', e.target.value !== '' ? parseInt(e.target.value) : undefined)}
                                 className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all appearance-none"
                             >
-                                <option value="">— Select —</option>
-                                {[0,1,2,3,4].map(n => <option key={n} value={n}>{n} — None-minimal</option>)}
-                                {[5,6,7,8,9].map(n => <option key={n} value={n}>{n} — Mild</option>)}
-                                {[10,11,12,13,14].map(n => <option key={n} value={n}>{n} — Moderate</option>)}
-                                {[15,16,17,18,19].map(n => <option key={n} value={n}>{n} — Moderately Severe</option>)}
-                                {[20,21,22,23,24,25,26,27].map(n => <option key={n} value={n}>{n} — Severe</option>)}
+                                <option value="">Select...</option>
+                                {[0,1,2,3,4].map(n => <option key={n} value={n}>{n} - None-minimal</option>)}
+                                {[5,6,7,8,9].map(n => <option key={n} value={n}>{n} - Mild</option>)}
+                                {[10,11,12,13,14].map(n => <option key={n} value={n}>{n} - Moderate</option>)}
+                                {[15,16,17,18,19].map(n => <option key={n} value={n}>{n} - Moderately Severe</option>)}
+                                {[20,21,22,23,24,25,26,27].map(n => <option key={n} value={n}>{n} - Severe</option>)}
                             </select>
                             {phq9Change && (
                                 <div className={`flex items-center gap-2 text-sm ${phq9Change.color}`}>
@@ -163,11 +190,11 @@ const LongitudinalAssessmentForm: React.FC<LongitudinalAssessmentFormProps> = ({
                                 onChange={(e) => updateField('gad7_score', e.target.value !== '' ? parseInt(e.target.value) : undefined)}
                                 className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all appearance-none"
                             >
-                                <option value="">— Select —</option>
-                                {[0,1,2,3,4].map(n => <option key={n} value={n}>{n} — Minimal</option>)}
-                                {[5,6,7,8,9].map(n => <option key={n} value={n}>{n} — Mild</option>)}
-                                {[10,11,12,13,14].map(n => <option key={n} value={n}>{n} — Moderate</option>)}
-                                {[15,16,17,18,19,20,21].map(n => <option key={n} value={n}>{n} — Severe</option>)}
+                                <option value="">Select...</option>
+                                {[0,1,2,3,4].map(n => <option key={n} value={n}>{n} - Minimal</option>)}
+                                {[5,6,7,8,9].map(n => <option key={n} value={n}>{n} - Mild</option>)}
+                                {[10,11,12,13,14].map(n => <option key={n} value={n}>{n} - Moderate</option>)}
+                                {[15,16,17,18,19,20,21].map(n => <option key={n} value={n}>{n} - Severe</option>)}
                             </select>
                             {gad7Change && (
                                 <div className={`flex items-center gap-2 text-sm ${gad7Change.color}`}>
@@ -184,7 +211,7 @@ const LongitudinalAssessmentForm: React.FC<LongitudinalAssessmentFormProps> = ({
                             onChange={(e) => updateField('whoqol_score', e.target.value !== '' ? parseInt(e.target.value) : undefined)}
                             className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all appearance-none"
                         >
-                            <option value="">— Select —</option>
+                            <option value="">Select...</option>
                             {Array.from({ length: 21 }, (_, i) => i * 5).map(n => (
                                 <option key={n} value={n}>{n}</option>
                             ))}
@@ -197,9 +224,9 @@ const LongitudinalAssessmentForm: React.FC<LongitudinalAssessmentFormProps> = ({
                             onChange={(e) => updateField('psqi_score', e.target.value !== '' ? parseInt(e.target.value) : undefined)}
                             className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all appearance-none"
                         >
-                            <option value="">— Select —</option>
-                            {[0,1,2,3,4].map(n => <option key={n} value={n}>{n} — Good Sleep</option>)}
-                            {Array.from({ length: 17 }, (_, i) => i + 5).map(n => <option key={n} value={n}>{n} — Poor Sleep</option>)}
+                            <option value="">Select...</option>
+                            {[0,1,2,3,4].map(n => <option key={n} value={n}>{n} - Good Sleep</option>)}
+                            {Array.from({ length: 17 }, (_, i) => i + 5).map(n => <option key={n} value={n}>{n} - Poor Sleep</option>)}
                         </select>
                     </FormField>
 
@@ -211,13 +238,13 @@ const LongitudinalAssessmentForm: React.FC<LongitudinalAssessmentFormProps> = ({
                                 data.cssrs_score !== undefined && data.cssrs_score >= 3 ? 'border-red-500' : 'border-slate-700/50'
                             }`}
                         >
-                            <option value="">— Select —</option>
-                            <option value="0">0 — No ideation</option>
-                            <option value="1">1 — Passive ideation</option>
-                            <option value="2">2 — Passive ideation</option>
-                            <option value="3">3 — ⚠️ Active ideation</option>
-                            <option value="4">4 — ⚠️ Active ideation</option>
-                            <option value="5">5 — ⚠️ Active ideation</option>
+                            <option value="">Select...</option>
+                            <option value="0">0 - No ideation</option>
+                            <option value="1">1 - Passive ideation</option>
+                            <option value="2">2 - Passive ideation</option>
+                            <option value="3">3 - ⚠️ Active ideation</option>
+                            <option value="4">4 - ⚠️ Active ideation</option>
+                            <option value="5">5 - ⚠️ Active ideation</option>
                         </select>
                     </FormField>
                 </div>

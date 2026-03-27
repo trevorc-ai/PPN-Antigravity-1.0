@@ -238,6 +238,9 @@ export interface DosingProtocolUpdateData {
     dosage_amount?: number;
     dosage_unit?: string;
     route_of_administration?: string;
+    /** WO-695: protocol_id FK to ref_protocols. Written at dosing-save time.
+     *  When no protocol is selected, write null — never block the save. */
+    protocol_id?: string;
 }
 
 /**
@@ -257,6 +260,8 @@ export async function updateDosingProtocol(
         dosage_amount?: number;
         dosage_unit?: string;
         route_of_administration?: string;
+        /** WO-695: protocol_id FK to ref_protocols. Nullable — never blocks save. */
+        protocol_id?: string;
     },
 ): Promise<{ success: boolean; error?: unknown }> {
     try {
@@ -290,6 +295,7 @@ export async function updateDosingProtocol(
                 dosage_mg: data.dosage_amount ?? null,   // rebuilt schema: dosage_mg (was dosage_amount in old schema)
                 route_id: routeId,
                 session_status: 'active',                // WO-592: gate — stub becomes a real session
+                protocol_id: data.protocol_id ?? null,   // WO-695: write protocol FK (null if none selected — never blocks)
             })
             .eq('id', sessionId);
 

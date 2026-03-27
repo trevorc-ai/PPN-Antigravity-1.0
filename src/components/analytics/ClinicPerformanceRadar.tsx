@@ -35,9 +35,9 @@ const RadarTooltipContent = ({
                     <div className="flex justify-between items-center mb-2">
                         <div className="flex items-center gap-1.5">
                             <div className="w-1.5 h-1.5 rounded-full bg-indigo-500" />
-                            <span className="text-xs font-bold text-slate-300">My Clinic</span>
+                            <span className="text-xs md:text-sm font-bold text-slate-300">My Clinic</span>
                         </div>
-                        <span className="text-xs font-black text-indigo-400">{spoke.A}%</span>
+                        <span className="text-xs md:text-sm font-black text-indigo-400">{spoke.A}%</span>
                     </div>
                     <p className="ppn-meta text-slate-400 leading-snug border-t border-slate-800 pt-2 mb-1">
                         {spoke.definition}
@@ -65,7 +65,7 @@ const InsufficientDataState = ({
     totalSessions: number;
     error: string | null;
 }) => (
-    <div className="flex-1 flex flex-col items-center justify-center gap-4 py-12">
+    <div className="flex-1 flex flex-col items-center justify-center gap-4 py-8">
         <div className="w-12 h-12 rounded-2xl bg-slate-800/60 border border-slate-700/50 flex items-center justify-center">
             <BarChart2 className="w-6 h-6 text-slate-500" />
         </div>
@@ -77,18 +77,24 @@ const InsufficientDataState = ({
         ) : (
             <>
                 <h3 className="ppn-card-title text-slate-300 text-center">
-                    Minimum data threshold not yet met
+                    {totalSessions === 0
+                      ? 'No session data yet'
+                      : `${MINIMUM_SESSION_THRESHOLD - totalSessions} more session${MINIMUM_SESSION_THRESHOLD - totalSessions !== 1 ? 's' : ''} needed`
+                    }
                 </h3>
                 <p className="ppn-body text-slate-500 text-center max-w-xs">
-                    Need {MINIMUM_SESSION_THRESHOLD} sessions to render this chart.
-                    {totalSessions > 0 && (
-                        <> You currently have <strong className="text-slate-300">{totalSessions}</strong> non-draft session{totalSessions !== 1 ? 's' : ''}.</>
-                    )}
+                    {totalSessions === 0
+                      ? 'Log your first session to begin building your performance radar.'
+                      : `You have ${totalSessions} session${totalSessions !== 1 ? 's' : ''}. Radar unlocks at ${MINIMUM_SESSION_THRESHOLD}.`
+                    }
                 </p>
                 <div className="flex items-center gap-2 bg-indigo-950/40 border border-indigo-800/40 rounded-xl px-4 py-3">
                     <Info className="w-4 h-4 text-indigo-400 shrink-0" />
                     <p className="ppn-meta text-indigo-300">
-                        {MINIMUM_SESSION_THRESHOLD - totalSessions} more session{MINIMUM_SESSION_THRESHOLD - totalSessions !== 1 ? 's' : ''} needed
+                        {totalSessions > 0
+                          ? `${MINIMUM_SESSION_THRESHOLD - totalSessions} more to go`
+                          : `Minimum ${MINIMUM_SESSION_THRESHOLD} sessions required`
+                        }
                     </p>
                 </div>
             </>
@@ -117,8 +123,8 @@ export default function ClinicPerformanceRadar() {
 
     return (
         <div className="w-full h-full flex flex-col p-6 print:p-0 print:bg-white">
-            {/* Header */}
-            <div className="flex items-center justify-between mb-4 mt-12 md:mt-0">
+            {/* Header: hidden on mobile (MobileAccordion provides title), visible on desktop */}
+            <div className="hidden md:flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                     <BarChart2 className="w-4 h-4 text-indigo-400" />
                     <h3 className="ppn-card-title text-slate-200">Clinic Performance</h3>
@@ -152,7 +158,7 @@ export default function ClinicPerformanceRadar() {
                         <div className="flex items-start gap-2 bg-slate-800/40 border border-slate-700/40 rounded-xl px-4 py-3 print:hidden">
                             <AlertCircle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
                             <p className="ppn-meta text-slate-400">
-                                Efficacy &amp; Adherence spokes are suppressed — awaiting assessment score pipeline.
+                                Efficacy &amp; Adherence spokes are suppressed - awaiting assessment score pipeline.
                             </p>
                         </div>
                     )}
@@ -160,7 +166,7 @@ export default function ClinicPerformanceRadar() {
                     <div
                         className="flex-1 min-h-[300px]"
                         role="img"
-                        aria-label="Radar chart showing clinic performance across Safety, Completion, Data Quality, and Consent — derived from live session data."
+                        aria-label="Radar chart showing clinic performance across Safety, Completion, Data Quality, and Consent - derived from live session data."
                     >
                         <ResponsiveContainer width="100%" height="100%">
                             <RadarChart cx="50%" cy="50%" outerRadius="65%" data={radarData}>
@@ -194,7 +200,7 @@ export default function ClinicPerformanceRadar() {
                     </div>
 
                     {/* Data provenance footer */}
-                    <p className="ppn-meta text-slate-600 text-center print:text-gray-400">
+                    <p className="ppn-meta text-slate-500 text-center print:text-gray-400">
                         Based on {totalSessions} session{totalSessions !== 1 ? 's' : ''} · Live data
                     </p>
                 </div>

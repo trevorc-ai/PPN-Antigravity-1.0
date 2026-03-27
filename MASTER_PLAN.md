@@ -31,7 +31,7 @@ Build the Practice Operating System for Psychedelic Therapy - unifying safety, o
 
 
 ## 🚨 Critical Protocols
-1. **The Silent Conveyor Belt:** Work smoothly moves through 00_INBOX -> 01_TRIAGE -> 02_DESIGN -> 03_BUILD -> 04_QA -> 05_USER_REVIEW via bash `mv` commands entirely through YAML frontmatter states.
+1. **The Silent Conveyor Belt:** Work smoothly moves through `00_INBOX → 01_DESIGN → 02_TRIAGE → 03_REVIEW → 04_BUILD → 05_QA → 06_USER_REVIEW → 99_COMPLETED` via bash `mv` commands entirely through YAML frontmatter states.
 2. **Identity & Accessibility First:** Always start/end with `==== [AGENT NAME] ====`. 
 3. **Artifact-First:** No code is written before a plan exists.
 

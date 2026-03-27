@@ -97,15 +97,15 @@ export default function MetabolicRiskGauge() {
                                 </div>
                                 <div className="p-3 rounded-xl border bg-slate-900/60 border-slate-800">
                                     <p className="ppn-meta font-black text-slate-500 uppercase tracking-widest mb-0.5">SBP</p>
-                                    <p className="ppn-body font-black text-slate-300">{vitalsRisk.mostRecentVitals.bpSystolic ?? '—'}</p>
+                                    <p className="ppn-body font-black text-slate-300">{vitalsRisk.mostRecentVitals.bpSystolic ?? 'N/A'}</p>
                                 </div>
                                 <div className="p-3 rounded-xl border bg-slate-900/60 border-slate-800">
                                     <p className="ppn-meta font-black text-slate-500 uppercase tracking-widest mb-0.5">HR</p>
-                                    <p className="ppn-body font-black text-slate-300">{vitalsRisk.mostRecentVitals.heartRate ?? '—'}</p>
+                                    <p className="ppn-body font-black text-slate-300">{vitalsRisk.mostRecentVitals.heartRate ?? 'N/A'}</p>
                                 </div>
                                 <div className="p-3 rounded-xl border bg-slate-900/60 border-slate-800">
                                     <p className="ppn-meta font-black text-slate-500 uppercase tracking-widest mb-0.5">SpO2</p>
-                                    <p className="ppn-body font-black text-slate-300">{vitalsRisk.mostRecentVitals.oxygenSaturation != null ? `${vitalsRisk.mostRecentVitals.oxygenSaturation}%` : '—'}</p>
+                                    <p className="ppn-body font-black text-slate-300">{vitalsRisk.mostRecentVitals.oxygenSaturation != null ? `${vitalsRisk.mostRecentVitals.oxygenSaturation}%` : 'N/A'}</p>
                                 </div>
                             </div>
                         )}
@@ -139,12 +139,12 @@ export default function MetabolicRiskGauge() {
             {/* CONTROLS */}
             <div className="grid grid-cols-2 gap-4 relative z-10">
                 <div className="space-y-1">
-                    <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Protocol Substance</label>
+                    <label className="text-xs md:text-sm font-bold text-slate-500 uppercase tracking-widest">Protocol Substance</label>
                     <div className="relative">
                         <select
                             value={selectedSubstance}
                             onChange={(e) => setSelectedSubstance(e.target.value)}
-                            className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-xs font-bold text-slate-300 appearance-none focus:ring-1 focus:ring-indigo-500 outline-none"
+                            className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-xs md:text-sm font-bold text-slate-300 appearance-none focus:ring-1 focus:ring-indigo-500 outline-none"
                         >
                             <option value="MDMA">MDMA (Midomafetamine)</option>
                             <option value="Psilocybin">Psilocybin (COMP360)</option>
@@ -155,12 +155,12 @@ export default function MetabolicRiskGauge() {
                 </div>
 
                 <div className="space-y-1">
-                    <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Genomic Status</label>
+                    <label className="text-xs md:text-sm font-bold text-slate-500 uppercase tracking-widest">Genomic Status</label>
                     <div className="relative">
                         <select
                             value={selectedStatus}
                             onChange={(e) => setSelectedStatus(e.target.value)}
-                            className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-xs font-bold text-slate-300 appearance-none focus:ring-1 focus:ring-indigo-500 outline-none"
+                            className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-xs md:text-sm font-bold text-slate-300 appearance-none focus:ring-1 focus:ring-indigo-500 outline-none"
                             title="Select patient's metabolizer status (from genetic test)"
                         >
                             <option value="Poor">Poor Metabolizer (PM)</option>
@@ -202,7 +202,7 @@ export default function MetabolicRiskGauge() {
                     <div className={`text-4xl font-black tracking-tighter transition-colors duration-500`} style={{ color: activeRule.color }}>
                         {activeRule.riskLevel}
                     </div>
-                    <div className="text-xs font-bold text-slate-500 uppercase tracking-widest">
+                    <div className="text-xs md:text-sm font-bold text-slate-500 uppercase tracking-widest">
                         Toxicity Risk
                     </div>
                 </div>
@@ -219,7 +219,7 @@ export default function MetabolicRiskGauge() {
                             <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0" />}
 
                     <div>
-                        <h4 className={`text-xs font-black uppercase tracking-widest mb-1 ${activeRule.riskLevel === 'High' ? 'text-rose-400' :
+                        <h4 className={`text-xs md:text-sm font-black uppercase tracking-widest mb-1 ${activeRule.riskLevel === 'High' ? 'text-rose-400' :
                             activeRule.riskLevel === 'Moderate' ? 'text-amber-400' :
                                 'text-emerald-400'
                             }`}>

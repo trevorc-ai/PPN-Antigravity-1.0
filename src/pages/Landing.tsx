@@ -62,6 +62,7 @@ const Landing: React.FC = () => {
   const cardParallaxY = useTransform(frankProgress, [0, 1], disableParallax ? [0, 0] : [60, -60]);
   const glowParallaxY = useTransform(frankProgress, [0, 1], disableParallax ? [0, 0] : [30, -30]);
   const [isWaitlistModalOpen, setIsWaitlistModalOpen] = useState(false);
+  const [activeScreenshot, setActiveScreenshot] = useState(0);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -161,18 +162,13 @@ const Landing: React.FC = () => {
                 Augmented Intelligence for Psychedelic Therapy
               </div>
               <h1 className="text-4xl leading-tight sm:text-6xl lg:text-7xl font-black tracking-tighter text-slate-300 relative z-10 mt-4 mb-2 drop-shadow-md break-words">
-                Elevate your practice.
-                <div className="h-4 sm:h-12" />
-                <span className="text-slate-300 text-2xl sm:text-5xl lg:text-6xl block mt-2 leading-snug">
-                  The clinical intelligence <span className="text-gradient-primary inline-block pb-[0.1em]">alliance</span> <br className="hidden sm:block" />
-                  for psychedelic professionals.
-                </span>
+                Clinical Intelligence Built for Psychedelic Therapy.
               </h1>
               <p className="text-xl sm:text-2xl text-slate-300 max-w-2xl leading-relaxed font-bold drop-shadow-sm mt-4 text-left">
-                Log your sessions. Unlock global benchmarks. Elevate the entire field.
+                Zero PHI. Zero liability. Full outcomes intelligence.
               </p>
-              <p className="text-xl sm:text-2xl text-slate-300 max-w-2xl leading-relaxed font-medium drop-shadow-sm text-left">
-                A unified platform for safety surveillance, outcomes tracking, and protocol management.
+              <p className="text-lg text-slate-400 max-w-2xl leading-relaxed font-medium drop-shadow-sm text-left">
+                Log your sessions. Benchmark against the global network. Reduce legal exposure with architecture, not policy.
               </p>
             </motion.div>
 
@@ -190,17 +186,18 @@ const Landing: React.FC = () => {
                   onClick={() => navigate('/waitlist')}
                   className="w-full px-8 py-4 bg-indigo-600 hover:bg-indigo-500 text-white text-base font-black rounded-xl uppercase tracking-wide transition-all shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 border-t border-white/20"
                 >
-                  Join the Waitlist
+                  Request Founding Access →
                 </button>
               </div>
 
-              {/* Trust Indicators + Sign In link */}
+              {/* Trust Bar */}
               <div className="flex flex-col gap-3">
-                <div className="flex items-center justify-center lg:justify-start gap-6 text-sm text-slate-500">
-                  <div className="flex items-center gap-2">
-                    <CheckCircle className="w-4 h-4 text-emerald-400" />
-                    <span>HIPAA-compliant infrastructure</span>
-                  </div>
+                <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-xs font-black uppercase tracking-[0.15em] text-slate-500">
+                  <span className="flex items-center gap-1.5"><CheckCircle className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />Zero PHI Architecture</span>
+                  <span className="hidden sm:block w-px h-4 bg-slate-700" />
+                  <span className="flex items-center gap-1.5"><ShieldCheck className="w-3.5 h-3.5 text-indigo-400 flex-shrink-0" />Immutable Audit Trail</span>
+                  <span className="hidden sm:block w-px h-4 bg-slate-700" />
+                  <span className="flex items-center gap-1.5"><Lock className="w-3.5 h-3.5 text-primary flex-shrink-0" />Clinical-Grade Infrastructure</span>
                 </div>
                 <p className="text-sm text-slate-500 text-center lg:text-left">
                   Already have an account?{' '}
@@ -1046,6 +1043,163 @@ const Landing: React.FC = () => {
           </div>
         </div>
       </section>
+
+      {/* SECTION: WO-660 — Agitation Stats */}
+      <section className="py-24 px-6 relative z-10 bg-[#06090f] border-y border-slate-800/60">
+        <div className="max-w-7xl mx-auto">
+          <div className="space-y-4 text-center mb-16">
+            <p className="text-sm font-black text-red-400 uppercase tracking-[0.4em]">The Risk You're Carrying</p>
+            <h2 className="text-3xl sm:text-5xl font-black tracking-tight text-slate-300 leading-tight">
+              Operating without de-identified infrastructure<br className="hidden sm:block" /> carries real risk.
+            </h2>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
+            {[
+              { stat: '$10.8M', label: 'Average healthcare data breach cost', sub: 'One incident can end a practice. Source: IBM Cost of a Data Breach Report, 2023.', color: 'text-red-400', border: 'border-red-500/20', bg: 'bg-red-500/5' },
+              { stat: '$500K+', label: 'Annual HIPAA compliance overhead', sub: 'Legal, audit, and administrative burden carried by a multi-site psychedelic clinic.', color: 'text-amber-400', border: 'border-amber-500/20', bg: 'bg-amber-500/5' },
+              { stat: 'No limit', label: 'Subpoena exposure with patient-linked records', sub: 'If patient identity is in your system, it can be compelled in court. There is no ceiling on this liability.', color: 'text-indigo-400', border: 'border-indigo-500/20', bg: 'bg-indigo-500/5' },
+            ].map((item, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-60px' }}
+                transition={{ duration: 0.6, delay: i * 0.15 }}
+                className={`p-8 rounded-3xl border ${item.border} ${item.bg} flex flex-col gap-4`}
+              >
+                <span className={`text-5xl font-black tracking-tighter ${item.color}`}>{item.stat}</span>
+                <p className="text-base font-black text-slate-300 leading-snug">{item.label}</p>
+                <p className="text-sm text-slate-500 leading-relaxed">{item.sub}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* SECTION: WO-660 — Phantom Shield */}
+      <section className="py-32 px-6 relative z-10">
+        <div className="max-w-7xl mx-auto space-y-16">
+          <div className="space-y-4">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-emerald-500/10 border border-emerald-500/20 rounded-full text-sm font-black text-emerald-400 uppercase tracking-widest">
+              <ShieldCheck className="w-4 h-4" />
+              Phantom Shield Architecture
+            </div>
+            <h2 className="text-3xl sm:text-5xl font-black tracking-tight text-slate-300 leading-tight">
+              Zero-Knowledge by Design.<br className="hidden sm:block" />
+              <span className="bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent inline-block pb-[0.1em]">Not by policy.</span>
+            </h2>
+            <p className="text-lg text-slate-400 max-w-2xl leading-relaxed font-medium">
+              PPN never stores patient identity. Subject IDs are cryptographic hashes. Without the key, there is no patient. This changes your legal posture permanently.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {[
+              { icon: 'gavel', title: 'Subpoena Immunity', body: 'Patient identity cannot be disclosed from a system that never recorded it. There is nothing to compel because there is nothing to find.', color: 'text-emerald-400', border: 'border-emerald-500/20', bg: 'bg-emerald-500/5' },
+              { icon: 'shield', title: '$0 Breach Liability', body: 'If the system were ever compromised, there is nothing of clinical value to take. No names. No DOBs. No treatment history linked to a person.', color: 'text-indigo-400', border: 'border-indigo-500/20', bg: 'bg-indigo-500/5' },
+              { icon: 'balance', title: 'Legal Cross-Site Benchmarking', body: 'PPN is the only platform that can legally benchmark outcomes across an entire clinical network without creating a multi-site patient registry.', color: 'text-blue-400', border: 'border-blue-500/20', bg: 'bg-blue-500/5' },
+            ].map((card, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-60px' }}
+                transition={{ duration: 0.6, delay: i * 0.12 }}
+                whileHover={{ y: -6, transition: { duration: 0.2 } }}
+                className={`p-8 rounded-3xl border ${card.border} ${card.bg} space-y-5 cursor-default`}
+              >
+                <div className={`w-12 h-12 rounded-2xl ${card.bg} border ${card.border} flex items-center justify-center`}>
+                  <span className={`material-symbols-outlined text-2xl ${card.color}`}>{card.icon}</span>
+                </div>
+                <h3 className={`text-xl font-black tracking-tight ${card.color}`}>{card.title}</h3>
+                <p className="text-slate-400 leading-relaxed font-medium text-sm">{card.body}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* SECTION: WO-660 — Product Screenshots */}
+      <section className="py-32 px-6 relative z-10 bg-[#06090f] border-t border-slate-800/60">
+        <div className="max-w-5xl mx-auto space-y-12">
+          <div className="space-y-4">
+            <p className="text-sm font-black text-primary uppercase tracking-[0.4em]">What's Inside</p>
+            <h2 className="text-3xl sm:text-5xl font-black tracking-tight text-slate-300 leading-tight">
+              The platform, live.
+            </h2>
+            <p className="text-lg text-slate-400 max-w-2xl font-medium leading-relaxed">
+              Every screen was built for clinical precision. Here is what your team sees every session.
+            </p>
+          </div>
+          {/* Tab Bar */}
+          <div className="flex flex-wrap gap-2 p-1 bg-slate-900/60 border border-slate-800 rounded-2xl w-fit">
+            {['Safety & Interactions', 'Efficacy Trajectory', 'Clinic Performance'].map((label, i) => (
+              <button
+                key={i}
+                onClick={() => setActiveScreenshot(i)}
+                className={`px-5 py-2.5 rounded-xl text-sm font-black transition-all ${
+                  activeScreenshot === i
+                    ? 'bg-indigo-600 text-white shadow-lg'
+                    : 'text-slate-500 hover:text-slate-300'
+                }`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+          {/* Screenshot Display */}
+          <div className="rounded-3xl border border-slate-700/50 overflow-hidden shadow-2xl shadow-black/60 bg-slate-900">
+            <div className="flex items-center gap-2 px-4 py-3 bg-slate-800/80 border-b border-slate-700/50">
+              <div className="flex gap-1.5">
+                <div className="w-3 h-3 rounded-full bg-slate-600" />
+                <div className="w-3 h-3 rounded-full bg-slate-600" />
+                <div className="w-3 h-3 rounded-full bg-slate-600" />
+              </div>
+              <span className="text-xs font-black text-slate-500 uppercase tracking-widest ml-2">ppnportal.net</span>
+            </div>
+            {[
+              { src: '/screenshots/Marketing-Screenshots/webp/Substance Monograph - 4 Interactions.webp', caption: 'Every medication cross-checks against your chosen substance in real time. Contraindications surface before the patient enters the room.' },
+              { src: '/screenshots/Marketing-Screenshots/webp/Efficacy Trajectory Timline.webp', caption: 'Longitudinal symptom reduction across Preparation, Dosing, and Integration phases. One view. Full arc of care.' },
+              { src: '/screenshots/Marketing-Screenshots/webp/Clinic Performance Radar.webp', caption: 'Your outcomes benchmarked against the anonymized network. Gaps and strengths visible at a glance, every session.' },
+            ].map((item, i) => (
+              <div key={i} className={activeScreenshot === i ? 'block' : 'hidden'}>
+                <img src={item.src} alt={item.caption} className="w-full h-auto object-cover" loading="lazy" />
+                <div className="p-6 border-t border-slate-800">
+                  <p className="text-sm text-slate-400 font-medium leading-relaxed italic">{item.caption}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* SECTION: WO-660 — Founding Partner CTA */}
+      <section className="py-32 px-6 relative z-10 overflow-hidden">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-indigo-600/8 blur-[80px] rounded-full pointer-events-none" />
+        <div className="max-w-4xl mx-auto text-center space-y-10 relative z-10">
+          <div className="space-y-6">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-indigo-500/10 border border-indigo-500/30 rounded-full text-sm font-black text-indigo-300 uppercase tracking-widest">
+              <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse" />
+              Limited Founding Cohort — Spring 2026
+            </div>
+            <h2 className="text-4xl sm:text-6xl font-black tracking-tighter text-slate-300 leading-tight">
+              We are accepting a limited<br className="hidden sm:block" />
+              <span className="bg-gradient-to-r from-indigo-400 to-blue-400 bg-clip-text text-transparent inline-block pb-[0.1em]"> founding cohort.</span>
+            </h2>
+            <p className="text-xl text-slate-400 max-w-2xl mx-auto leading-relaxed font-medium">
+              Founding partners receive rate-locked pricing, direct access to the clinical team, and the ability to shape the roadmap before general availability.
+            </p>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
+              <button
+                onClick={() => navigate('/waitlist')}
+                className="px-10 py-5 bg-indigo-600 hover:bg-indigo-500 text-white text-base font-black rounded-xl uppercase tracking-wide transition-all shadow-xl shadow-indigo-600/20 hover:scale-105 active:scale-95 border border-indigo-400/30"
+              >
+                Request Founding Access →
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <footer className="py-32 px-6 bg-[#05070a] border-t border-slate-900 relative z-10">
         <div className="max-w-7xl mx-auto space-y-20">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">

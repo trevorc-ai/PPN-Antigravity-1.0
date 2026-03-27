@@ -1,11 +1,11 @@
 ---
-description: INSPECTOR PRD audit — review PRODDY deliverables before they reach LEAD. Run whenever a ticket in 01_TRIAGE has owner: LEAD and contains a PRODDY PRD section.
+description: INSPECTOR PRD audit — review PRODDY deliverables before they reach LEAD. Run whenever a ticket in 02_TRIAGE has owner: LEAD and contains a PRODDY PRD section.
 ---
 
 # INSPECTOR PRD Audit Workflow
 
 Run this workflow whenever PRODDY has completed a PRD and routed a ticket to LEAD.
-Trigger: ticket in `_WORK_ORDERS/01_TRIAGE/` with `## PRODDY PRD` section present.
+Trigger: ticket in `_WORK_ORDERS/02_TRIAGE/` with `## PRODDY PRD` section present.
 
 ---
 
@@ -91,7 +91,7 @@ Scan the full PRD for PRODDY overreach:
 
 ```bash
 # Check if PRODDY wrote any code in the ticket
-grep -n "const \|function \|import \|export \|useState\|useEffect\|<div\|CREATE TABLE\|ALTER TABLE\|SELECT \|INSERT \|UPDATE " _WORK_ORDERS/01_TRIAGE/[ticket-name].md
+grep -n "const \|function \|import \|export \|useState\|useEffect\|<div\|CREATE TABLE\|ALTER TABLE\|SELECT \|INSERT \|UPDATE " _WORK_ORDERS/02_TRIAGE/[ticket-name].md
 ```
 
 - [ ] No TypeScript / JSX found
@@ -126,7 +126,7 @@ Append to the ticket:
 **Routing:** LEAD may proceed to architecture. No revision needed.
 ```
 
-Leave ticket in `01_TRIAGE` with `owner: LEAD`. Do not move it — LEAD routes from here.
+Leave ticket in `02_TRIAGE` with `owner: LEAD`. Do not move it — LEAD routes from here.
 
 ---
 
@@ -145,7 +145,7 @@ Append to the ticket:
 1. [Specific actionable fix]
 2. [Specific actionable fix]
 
-**Routing:** Owner → PRODDY. Status → 01_TRIAGE (no move needed, PRODDY revises in place).
+**Routing:** Owner → PRODDY. Status → 02_TRIAGE (no move needed, PRODDY revises in place).
 ```
 
 Update frontmatter: `owner: PRODDY`, `failure_count: [N]`

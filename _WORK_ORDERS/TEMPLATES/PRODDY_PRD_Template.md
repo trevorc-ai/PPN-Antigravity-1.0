@@ -5,7 +5,7 @@
   Copy this entire block into the work order ticket you are completing.
   Fill in every section. Do NOT delete any section header.
   Do NOT exceed the word/item limits listed on each section.
-  When done, update frontmatter: owner: LEAD, status: 01_TRIAGE.
+  When done, update frontmatter: owner: LEAD, status: 02_TRIAGE.
 -->
 
 ## PRODDY PRD
@@ -105,5 +105,5 @@
 - [ ] No code, SQL, or schema written anywhere in this document
 - [ ] **`pillar_supported`** field is populated — at least one pillar checked, or ⚠️ NONE is checked and USER has been notified
 - [ ] **`database_changes`** field set in WO frontmatter: `yes` if this ticket requires any new table, column, index, RLS policy, or migration — `no` if purely frontend/React
-- [ ] Frontmatter updated: `owner: LEAD`, `status: 01_TRIAGE`
+- [ ] Frontmatter updated: `owner: LEAD`, `status: 02_TRIAGE`
 - [ ] Response wrapped in `==== PRODDY ====`

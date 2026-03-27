@@ -2,7 +2,7 @@
 id: WO-708
 title: "Live Session Timeline: event colors differ between live session and post-session closeout view"
 owner: PRODDY
-status: 02_TRIAGE
+status: 04_BUILD
 authored_by: LEAD (fast-track)
 priority: P1
 created: 2026-03-27
@@ -166,3 +166,15 @@ the DB fetch path (`active=false`). Live session optimistic events are not affec
 - **Data from:** `ref_flow_event_types` (DB fetch via `getTimelineEvents()`) — `event_type_code` field
 - **Data to:** Read-only display — no DB writes; normalised codes render in `LiveSessionTimeline` post-session view
 - **Theme:** Tailwind CSS, PPN design system — `LiveSessionTimeline.tsx`, `SessionCloseoutView.tsx` EVENT_CONFIG color map
+
+## INSPECTOR 02_TRIAGE CLEARANCE: FAST-PASS
+No DB impact detected. `normaliseEventCode()` is additive; Fix 2 changes a prop default only.
+- `database_changes: no` — no schema changes; reads existing `ref_flow_event_types` data.
+- No frozen files in `files:` list.
+- UI Standards Pre-Build Gate: N/A — no new layout classes; surgical color-mapping fix only.
+- **⚠️ MANDATORY REGRESSION GATE (Phase 3.5):**
+  - Trigger files: `LiveSessionTimeline.tsx`, `SessionCloseoutView.tsx`
+  - Required workflow: `/phase2-session-regression` (4 browser scenarios)
+  - BUILDER must compare live vs post-session timeline screenshots for same session.
+Cleared for build.
+Signed: INSPECTOR | Date: 2026-03-27

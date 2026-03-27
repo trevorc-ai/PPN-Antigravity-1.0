@@ -3,7 +3,7 @@ id: WO-B6
 title: "Track B6 — Vitals Chart + Timeline: Dose Event Rendering + Baseline Vitals Seeding"
 track: B
 priority: P0
-status: 03_REVIEW
+status: 04_BUILD
 created: 2026-03-21
 author: INSPECTOR (QA observation)
 depends_on: WO-B0c

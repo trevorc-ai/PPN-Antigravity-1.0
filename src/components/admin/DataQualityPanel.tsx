@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { CheckCircle2, AlertTriangle, XCircle, ChevronDown, ChevronUp, Database } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { CheckCircle2, AlertTriangle, XCircle, ChevronDown, ChevronUp, Database, ArrowRight } from 'lucide-react';
 import { useSiteDataQuality, type FollowupWindowCompliance } from '../../hooks/useSiteDataQuality';
 import type { FollowupWindowCompliance as FWC } from '../../hooks/useSiteDataQuality';
 
@@ -62,14 +63,15 @@ function StatusBar({ ratio }: { ratio: number | null }) {
 // METRIC ROW
 // ─────────────────────────────────────────────────────────────────────────────
 function MetricRow({
-  label, numerator, denominator, ratio,
-}: { label: string; numerator: number | null; denominator: number | null; ratio: number | null }) {
+  label, numerator, denominator, ratio, link,
+}: { label: string; numerator: number | null; denominator: number | null; ratio: number | null; link?: string }) {
+  const navigate = useNavigate();
   const status = getStatus(ratio);
   const display = numerator !== null && denominator !== null
     ? `${numerator} / ${denominator}`
     : ratio !== null
       ? `${Math.round(ratio * 100)}%`
-      : '—';
+      : '--';
   return (
     <div className="flex flex-col gap-1.5">
       <div className="flex items-center justify-between gap-3">
@@ -77,12 +79,23 @@ function MetricRow({
           <StatusIcon status={status} />
           <span className="text-sm font-medium text-slate-300 truncate">{label}</span>
         </div>
-        <span className={`text-sm font-black tabular-nums flex-shrink-0 ${
-          status === 'green' ? 'text-emerald-400'
-          : status === 'amber' ? 'text-amber-400'
-          : status === 'red' ? 'text-red-400'
-          : 'text-slate-500'
-        }`}>{display}</span>
+        <div className="flex items-center gap-2 flex-shrink-0">
+          <span className={`text-sm font-black tabular-nums ${
+            status === 'green' ? 'text-emerald-400'
+            : status === 'amber' ? 'text-amber-400'
+            : status === 'red' ? 'text-red-400'
+            : 'text-slate-500'
+          }`}>{display}</span>
+          {link && status !== 'green' && (
+            <button
+              onClick={() => navigate(link)}
+              aria-label={`Fix ${label}`}
+              className="flex items-center gap-1 px-2 py-0.5 rounded-lg text-xs font-black text-indigo-400 hover:text-indigo-300 hover:bg-indigo-500/10 border border-indigo-500/20 transition-all"
+            >
+              Fix <ArrowRight className="w-3 h-3" aria-hidden="true" />
+            </button>
+          )}
+        </div>
       </div>
       <StatusBar ratio={ratio} />
     </div>
@@ -141,6 +154,7 @@ export const DataQualityPanel: React.FC<DataQualityPanelProps> = ({
 
   const { data, loading, error } = useSiteDataQuality(practitionerId);
   const [followupOpen, setFollowupOpen] = useState(false);
+  const navigate = useNavigate();
 
   // ── Loading ────────────────────────────────────────────────────────────────
   if (loading) {
@@ -214,24 +228,28 @@ export const DataQualityPanel: React.FC<DataQualityPanelProps> = ({
           numerator={data.sessions_with_protocol_id}
           denominator={totalSessions}
           ratio={protocolRatio}
+          link="/wellness-journey"
         />
         <MetricRow
           label="Sessions with Safety Events"
           numerator={data.sessions_with_safety_events}
           denominator={totalSessions}
           ratio={safetyRatio}
+          link="/wellness-journey"
         />
         <MetricRow
           label="Follow-up Windows Completed"
           numerator={null}
           denominator={null}
           ratio={data.overall_followup_completion_rate}
+          link="/wellness-journey"
         />
         <MetricRow
           label="Avg Documentation Score"
           numerator={null}
           denominator={null}
           ratio={data.avg_completeness_score}
+          link="/analytics"
         />
       </div>
 
@@ -253,7 +271,7 @@ export const DataQualityPanel: React.FC<DataQualityPanelProps> = ({
         )}
       </div>
 
-      {/* Row 3 — Data quality improvement prompt (visible when any metric is 🔴) */}
+      {/* Row 3 — Data quality improvement prompt (visible when any metric is red) */}
       {hasRedMetric && (
         <div
           role="note"
@@ -261,10 +279,20 @@ export const DataQualityPanel: React.FC<DataQualityPanelProps> = ({
         >
           <AlertTriangle className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" aria-hidden="true" />
           <p className="text-sm text-amber-300 leading-relaxed">
-            Complete session records activate the clinical intelligence layer — priority queue, trajectory tracking, and outcome benchmarks.
+            Complete session records activate the clinical intelligence layer -- priority queue, trajectory tracking, and outcome benchmarks.
           </p>
         </div>
       )}
+
+      {/* CTA — direct link to Analytics (1 click) */}
+      <button
+        onClick={() => navigate('/analytics')}
+        aria-label="View full analytics"
+        className="w-full flex items-center justify-between gap-3 px-4 py-3 rounded-2xl border border-indigo-500/20 bg-indigo-500/5 hover:bg-indigo-500/10 hover:border-indigo-500/40 transition-all group"
+      >
+        <span className="text-sm font-black text-indigo-300">View Full Analytics</span>
+        <ArrowRight className="w-4 h-4 text-indigo-400 group-hover:translate-x-0.5 transition-transform" aria-hidden="true" />
+      </button>
     </section>
   );
 };

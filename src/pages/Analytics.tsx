@@ -151,15 +151,15 @@ const Analytics = () => {
             {/* ── KPI RIBBON + SAFETY PERFORMANCE, Unified section ─────────── */}
             <Section spacing="tight" className="space-y-0">
 
-                {/* KPI CARDS, horizontal carousel on mobile, 4-up on desktop */}
-                <div className="flex overflow-x-auto overflow-y-hidden snap-x touch-pan-x gap-4 pb-4 md:grid md:grid-cols-2 lg:grid-cols-4 w-full scrollbar-hide print:grid-cols-4 print:gap-2 mb-0">
+                {/* KPI CARDS — 2x2 grid on mobile, 4-up on lg+ */}
+                <div className="grid grid-cols-2 gap-3 lg:grid-cols-4 print:grid-cols-4 print:gap-2 mb-0">
                     {kpiStats.map((stat, i) => (
-                        <div key={i} className="shrink-0 w-[85vw] snap-center md:w-auto md:shrink-1 bg-[#0a0c12]/50 border border-slate-800/50 p-4 rounded-2xl flex flex-col justify-between print:bg-white print:border-gray-200 print:shadow-none" style={{ minHeight: '100px' }}>
+                        <div key={i} className="bg-[#0a0c12]/50 border border-slate-800/50 p-4 rounded-2xl flex flex-col justify-between print:bg-white print:border-gray-200 print:shadow-none" style={{ minHeight: '100px' }}>
                             <div className="flex items-center gap-2 mb-2">
                                 <stat.icon className={`w-4 h-4 ${stat.color}`} />
                                 <div className="text-xs font-black text-slate-500 uppercase tracking-widest print:text-slate-500">{stat.label}</div>
                             </div>
-                            <div className="flex items-baseline gap-2">
+                            <div className="flex items-baseline gap-2 flex-wrap">
                                 <div className={`text-3xl font-black ${stat.color} tracking-tight`}>{stat.value}</div>
                                 <div className="text-xs font-bold bg-slate-900/50 px-2 py-0.5 rounded border border-slate-800 print:bg-gray-100 print:text-slate-600 print:border-gray-200" style={{ color: '#8B9DC3' }}>{stat.trend}</div>
                             </div>
@@ -183,9 +183,11 @@ const Analytics = () => {
 
             {/* ── CLINICAL INTELLIGENCE FEED ─────────────────────────────────────── */}
             <Section spacing="tight" className="print:hidden">
-                <div className="bg-[#0a0c12]/50 border border-indigo-500/10 rounded-2xl p-6">
-                    <InsightFeedPanel siteId={analytics.siteId} />
-                </div>
+                <MobileAccordion title="Clinical Intelligence Feed" subtitle="AI-prioritized action items" defaultOpen={false}>
+                    <div className="bg-[#0a0c12]/50 border border-indigo-500/10 rounded-2xl p-6">
+                        <InsightFeedPanel siteId={analytics.siteId} />
+                    </div>
+                </MobileAccordion>
             </Section>
 
             {/* FILTER CONTROLS, positioned above charts, hide on print */}
@@ -233,16 +235,18 @@ const Analytics = () => {
                 {/* ROW 1: Performance Radar, full width, 3-col internal grid */}
                 <MobileAccordion title="Performance Radar" subtitle="Clinic metrics vs Network Average" defaultOpen={true}>
                     <div className="print:break-inside-avoid">
-                        <div className="relative overflow-hidden print:shadow-none print:border-gray-200 print:bg-white flex flex-col" style={{ minHeight: '520px' }}>
+                        <div className="relative overflow-hidden print:shadow-none print:border-gray-200 print:bg-white flex flex-col" style={{ minHeight: '360px' }}>
                             <div className="hidden md:flex flex-col md:flex-row md:items-center justify-between gap-2 px-6 pt-6 pb-0 z-10 shrink-0">
                                 <div>
                                     <h3 className="text-lg font-black print:text-black" style={{ color: '#A8B5D1' }}>Performance Radar</h3>
                                     <p className="text-sm print:text-slate-500" style={{ color: '#8B9DC3' }}>Clinic metrics vs Network Average</p>
                                 </div>
                             </div>
-                            <div className="flex-1 min-h-0 w-full overflow-x-auto overflow-y-hidden touch-pan-x scrollbar-hide pb-6" style={{ minHeight: '460px' }}>
-                                <div style={{ minWidth: '600px', height: '100%' }}>
-                                    {/* WO-677: ClinicPerformanceRadar is now self-contained — no data prop */}
+                            {/* On mobile: allow ResponsiveContainer to fill the parent naturally.
+                                On md+: enforce minWidth: 600px to prevent chart squish. */}
+                            <div className="flex-1 min-h-0 w-full overflow-y-hidden pb-6 md:overflow-x-auto md:overflow-y-hidden md:touch-pan-x md:scrollbar-hide" style={{ minHeight: '300px' }}>
+                                <div className="w-full h-full md:min-w-[600px]">
+                                    {/* WO-677: ClinicPerformanceRadar is now self-contained -- no data prop */}
                                     <ClinicPerformanceRadar />
                                 </div>
                             </div>

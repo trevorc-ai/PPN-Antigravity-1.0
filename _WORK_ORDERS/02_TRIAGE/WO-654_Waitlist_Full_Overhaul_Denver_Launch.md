@@ -2,7 +2,7 @@
 id: WO-654
 title: "Waitlist Full Overhaul — Hero Video, Demo Page, Operator Notification, and Enterprise Conversion (Denver Launch)"
 owner: LEAD
-status: 03_REVIEW
+status: 02_TRIAGE
 authored_by: PRODDY
 routed_by: LEAD
 priority: P0

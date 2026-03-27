@@ -148,7 +148,7 @@ export default function ProtocolEfficiency() {
                         <DollarSign className="w-5 h-5 text-indigo-400" />
                     </div>
                     <div className="flex-1">
-                        <label className="text-xs font-bold text-slate-500 uppercase tracking-widest block mb-1" title="Adjust the estimated hourly operational cost to see impact on margin">
+                        <label className="text-xs md:text-sm font-bold text-slate-500 uppercase tracking-widest block mb-1" title="Adjust the estimated hourly operational cost to see impact on margin">
                             Est. Hourly Overhead: <span className="text-slate-300">${overhead}</span>
                         </label>
                         <input
@@ -228,7 +228,7 @@ export default function ProtocolEfficiency() {
                         )}
                     </div>
                     {/* Legend Overlay */}
-                    <div className="absolute top-6 right-6 flex flex-col gap-2 text-xs font-bold uppercase tracking-widest bg-slate-900/80 p-2 rounded-lg border border-slate-800 z-10">
+                    <div className="absolute top-6 right-6 flex flex-col gap-2 text-xs md:text-sm font-bold uppercase tracking-widest bg-slate-900/80 p-2 rounded-lg border border-slate-800 z-10">
                         <div className="flex items-center gap-2">
                             <span className="w-2 h-2 rounded-full bg-emerald-500"></span> Profitable
                         </div>
@@ -243,7 +243,7 @@ export default function ProtocolEfficiency() {
                     <div className="p-5 bg-indigo-600/10 border border-indigo-500/20 rounded-2xl" title="Projected net profit if all protocols are run once">
                         <div className="flex items-center gap-2 mb-2">
                             <TrendingUp className="w-4 h-4 text-indigo-400" />
-                            <h3 className="text-xs font-black text-indigo-300 uppercase tracking-widest">Efficiency Forecast</h3>
+                            <h3 className="text-xs md:text-sm font-black text-indigo-300 uppercase tracking-widest">Efficiency Forecast</h3>
                         </div>
                         <p className="text-3xl font-black text-slate-300 tracking-tight">
                             ${totalPotentialProfit.toLocaleString()}
@@ -256,13 +256,13 @@ export default function ProtocolEfficiency() {
                         {processedData.map((p, i) => (
                             <div key={p.id} className="p-3 bg-slate-900/50 border border-slate-800 rounded-xl flex justify-between items-center group hover:border-slate-700 transition-colors">
                                 <div className="flex items-center gap-3">
-                                    <div className={`text-xs font-black w-4 text-slate-600`}>#{i + 1}</div>
+                                    <div className={`text-xs md:text-sm font-black w-4 text-slate-600`}>#{i + 1}</div>
                                     <div>
-                                        <div className="text-xs font-bold text-slate-300">{p.name}</div>
-                                        <div className="text-xs text-slate-500">{p.hours} hrs • Margin: {((p.profit / p.revenue) * 100).toFixed(0)}%</div>
+                                        <div className="text-xs md:text-sm font-bold text-slate-300">{p.name}</div>
+                                        <div className="text-xs md:text-sm text-slate-500">{p.hours} hrs • Margin: {((p.profit / p.revenue) * 100).toFixed(0)}%</div>
                                     </div>
                                 </div>
-                                <div className={`text-xs font-mono font-bold ${p.profit > 0 ? 'text-emerald-400' : 'text-rose-500'}`}>
+                                <div className={`text-xs md:text-sm font-mono font-bold ${p.profit > 0 ? 'text-emerald-400' : 'text-rose-500'}`}>
                                     {p.profit > 0 ? '+' : ''}${p.profit.toLocaleString()}
                                 </div>
                             </div>
