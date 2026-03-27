@@ -10,7 +10,7 @@ import {
     ResponsiveContainer,
     ReferenceLine,
 } from 'recharts';
-import { MOCK_JOURNEY_DATA } from '../../constants/analyticsData';
+// WO-717: MOCK_JOURNEY_DATA import removed -- mock PHQ-9 decay data eliminated per DB-First policy.
 import { Pill, Brain, AlertTriangle, FileText, CalendarCheck, Info } from 'lucide-react';
 import { supabase } from '../../supabaseClient';
 import { useDataCache } from '../../hooks/useDataCache';
@@ -194,19 +194,17 @@ const PatientJourneySnapshot: React.FC<PatientJourneySnapshotProps> = ({ session
     const { events: liveEvents, loading: eventsLoading } = useJourneyEvents(hasRealSession ? sessionId : undefined);
 
     const chartData = useMemo(() => {
-        // Base = MOCK_JOURNEY_DATA provides the PHQ-9 decay line (sample trajectory)
-        // Live events from log_safety_events override when session is real
-        const eventEntries = hasRealSession && liveEvents.length > 0
-            ? liveEvents
-            : [];
+        // WO-717: Removed MOCK_JOURNEY_DATA blend. Live events only.
+        // When no real session is connected, chartData is empty and the component
+        // renders the zero-state below. MOCK_JOURNEY_DATA was fabricated PHQ-9 decay
+        // data that could be mistaken for real patient outcomes -- DB-First policy violation.
+        if (!hasRealSession || liveEvents.length === 0) return [];
 
-        const sourceData = [...eventEntries, ...MOCK_JOURNEY_DATA];
-
-        return sourceData.map(item => {
+        return liveEvents.map(item => {
             let score: number | null = null;
             let eventY: number | null = null;
 
-            if (item.type === 'assessment') {
+            if ((item.type as string) === 'assessment') {
                 const match = item.value?.toString().match(/\d+/);
                 score = match ? parseInt(match[0]) : null;
             } else {
@@ -222,7 +220,7 @@ const PatientJourneySnapshot: React.FC<PatientJourneySnapshotProps> = ({ session
         }).sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
     }, [hasRealSession, liveEvents]);
 
-    const isShowingSampleLine = !hasRealSession || liveEvents.length === 0;
+    const isShowingSampleLine = false; // WO-717: mock data removed; always live or zero-state
 
     /**
      * MANDATORY WO-680: Protocol-estimated phase band label.

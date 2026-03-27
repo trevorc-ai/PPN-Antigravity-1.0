@@ -229,21 +229,13 @@ const Analytics = () => {
                 </div>
             </Section>
 
-            {/* ── COMPONENT GRID ──────────────────────────────────────────────── */}
+            {/* ── DEEP-DIVE INTELLIGENCE INDEX (WO-721) ───────────────────── */}
             <Section spacing="default" className="space-y-8 print:space-y-8">
 
-                {/* ROW 1: Performance Radar, full width, 3-col internal grid */}
-                <MobileAccordion title="Performance Radar" subtitle="Clinic metrics vs Network Average" defaultOpen={true}>
+                {/* Performance Radar — collapsed accordion; deep-dive card links to full page */}
+                <MobileAccordion title="Performance Radar" subtitle="Clinic metrics vs Network Average" defaultOpen={false}>
                     <div className="print:break-inside-avoid">
                         <div className="relative overflow-hidden print:shadow-none print:border-gray-200 print:bg-white flex flex-col" style={{ minHeight: '360px' }}>
-                            <div className="hidden md:flex flex-col md:flex-row md:items-center justify-between gap-2 px-6 pt-6 pb-0 z-10 shrink-0">
-                                <div>
-                                    <h3 className="text-lg font-black print:text-black" style={{ color: '#A8B5D1' }}>Performance Radar</h3>
-                                    <p className="text-sm print:text-slate-500" style={{ color: '#8B9DC3' }}>Clinic metrics vs Network Average</p>
-                                </div>
-                            </div>
-                            {/* On mobile: allow ResponsiveContainer to fill the parent naturally.
-                                On md+: enforce minWidth: 600px to prevent chart squish. */}
                             <div className="flex-1 min-h-0 w-full overflow-y-hidden pb-6 md:overflow-x-auto md:overflow-y-hidden md:touch-pan-x md:scrollbar-hide" style={{ minHeight: '300px' }}>
                                 <div className="w-full h-full md:min-w-[600px]">
                                     {/* WO-677: ClinicPerformanceRadar is now self-contained -- no data prop */}
@@ -254,22 +246,55 @@ const Analytics = () => {
                     </div>
                 </MobileAccordion>
 
-                {/* ROW 2: Patient Galaxy, full width, large scatter + filter controls */}
-                <MobileAccordion title="Patient Galaxy" subtitle="Outcomes clustering analysis">
-                    <div className="print:break-inside-avoid mt-8 md:mt-0">
-                        <div className="relative overflow-hidden print:shadow-none print:border-gray-200 print:bg-white flex flex-col" style={{ minHeight: '620px' }}>
-                            <div className="hidden md:block px-6 pt-6 pb-0 z-10 shrink-0" aria-hidden="true">
-                                <p className="text-lg font-black print:text-black" style={{ color: '#A8B5D1' }}>Patient Galaxy</p>
-                                <p className="text-sm print:text-slate-500" style={{ color: '#8B9DC3' }}>Outcomes clustering analysis</p>
-                            </div>
-                            <div className="flex-1 min-h-0 w-full overflow-x-auto overflow-y-hidden touch-pan-x scrollbar-hide p-2" style={{ minHeight: '540px' }}>
-                                <div style={{ minWidth: '800px', height: '100%' }}>
-                                    <PatientConstellation data={filteredData} hideHeader />
-                                </div>
-                            </div>
-                        </div>
+                {/* Deep-Dive Intelligence Grid */}
+                <div>
+                    <div className="flex items-center gap-3 mb-6">
+                        <h2 className="text-base font-black uppercase tracking-widest" style={{ color: '#A8B5D1' }}>
+                            Deep-Dive Intelligence
+                        </h2>
+                        <div className="flex-1 h-px bg-slate-800" />
+                        <span className="ppn-meta font-bold text-slate-600 uppercase tracking-widest">11 modules</span>
                     </div>
-                </MobileAccordion>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {([
+                            { path: '/deep-dives/risk-matrix',             icon: '🛡', title: 'Safety Risk Matrix',        desc: 'AE type × CTCAE grade heatmap',          live: true  },
+                            { path: '/deep-dives/patient-constellation',   icon: '🌌', title: 'Patient Galaxy',            desc: 'Outcomes clustering by substance',        live: true  },
+                            { path: '/deep-dives/patient-flow',            icon: '🔀', title: 'Patient Flow Sankey',       desc: 'Entry-to-exit pathway analysis',         live: true  },
+                            { path: '/deep-dives/clinic-performance',      icon: '📡', title: 'Clinic Performance Radar',  desc: 'Benchmarks vs network average',          live: true  },
+                            { path: '/deep-dives/safety-surveillance',     icon: '🔭', title: 'Safety Surveillance',       desc: 'Longitudinal AE monitoring',             live: true  },
+                            { path: '/deep-dives/protocol-efficiency',     icon: '⏱', title: 'Protocol Efficiency',       desc: 'Session ROI and completion rates',       live: false },
+                            { path: '/deep-dives/patient-journey',         icon: '🗺', title: 'Patient Journey',           desc: 'PHQ-9 decay & event timeline',           live: false },
+                            { path: '/deep-dives/comparative-efficacy',    icon: '⚖', title: 'Comparative Efficacy',      desc: 'Cross-protocol outcome comparison',      live: false },
+                            { path: '/deep-dives/patient-retention',       icon: '🔁', title: 'Patient Retention',         desc: 'Session return rate & drop-off',        live: false },
+                            { path: '/deep-dives/molecular-pharmacology',  icon: '🧬', title: 'Molecular Pharmacology',    desc: 'Receptor binding & metabolic risk',      live: false },
+                            { path: '/deep-dives/workflow-chaos',          icon: '🌀', title: 'Workflow Chaos Index',      desc: 'Documentation delay & session gaps',     live: false },
+                        ] as const).map(({ path, icon, title, desc, live }) => (
+                            <a
+                                key={path}
+                                href={`#${path}`}
+                                id={`deep-dive-${path.split('/').pop()}`}
+                                className="group flex flex-col gap-3 p-4 bg-[#0a0c10] border border-slate-800 rounded-2xl hover:border-slate-600 hover:bg-slate-800/30 transition-all duration-200 no-underline"
+                            >
+                                <div className="flex items-start justify-between gap-2">
+                                    <div className="flex items-center gap-3">
+                                        <span className="text-xl" aria-hidden="true">{icon}</span>
+                                        <span className="ppn-meta font-black text-slate-300 uppercase tracking-widest group-hover:text-white transition-colors">
+                                            {title}
+                                        </span>
+                                    </div>
+                                    <span className={`shrink-0 ppn-meta font-bold uppercase tracking-widest px-2 py-0.5 rounded-md text-[10px] ${
+                                        live
+                                            ? 'bg-emerald-500/10 border border-emerald-500/20 text-emerald-400'
+                                            : 'bg-slate-800 border border-slate-700 text-slate-500'
+                                    }`}>
+                                        {live ? 'Live' : 'Sample'}
+                                    </span>
+                                </div>
+                                <p className="ppn-meta text-slate-500 leading-relaxed">{desc}</p>
+                            </a>
+                        ))}
+                    </div>
+                </div>
 
             </Section>
 

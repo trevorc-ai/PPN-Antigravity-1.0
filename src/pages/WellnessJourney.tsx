@@ -58,7 +58,8 @@ interface PatientJourney {
     demographics?: {
         age?: number;        // e.g. 34
         gender?: string;     // 'M' | 'F' | 'NB' | 'X', set by provider
-        weightKg?: number;   // for dosage calculation
+        weightKg?: number;   // for dosage calculation (Ibogaine safety gate -- keep numeric)
+        weightLabel?: string; // WO-722: display label from ref_weight_ranges.range_label e.g. '60-80 kg'
     };
     /** Condition being treated, drives assessment form pre-selection */
     condition?: string;
@@ -594,7 +595,7 @@ const WellnessJourneyInternal: React.FC = () => {
                         }
                         const { data: profile } = await supabase
                             .from('log_patient_profiles')
-                            .select('age_at_intake, ref_sex ( sex_label ), ref_weight_ranges ( kg_low, kg_high )')
+                            .select('age_at_intake, ref_sex ( sex_label ), ref_weight_ranges ( kg_low, kg_high, range_label )')
                             .eq('patient_uuid', patientUuid)
                             .order('created_at', { ascending: false })
                             .limit(1)
@@ -609,6 +610,8 @@ const WellnessJourneyInternal: React.FC = () => {
                                 age: profile.age_at_intake ?? undefined,
                                 gender: sexData?.sex_label ?? undefined,
                                 weightKg: (kgLow != null && kgHigh != null) ? (kgLow + kgHigh) / 2 : undefined,
+                                // WO-722: display range label from ref_weight_ranges.range_label
+                                weightLabel: weightData?.range_label ?? undefined,
                             };
                             console.log('[WellnessJourney] Demographics loaded from log_patient_profiles:', loadedDemographics);
                         } else {
@@ -1428,8 +1431,9 @@ const WellnessJourneyInternal: React.FC = () => {
                                     label: journey.demographics?.gender ?? '—',
                                     title: 'Gender'
                                 }, {
-                                    label: journey.demographics?.weightKg ? `${journey.demographics.weightKg} kg` : '— kg',
-                                    title: 'Weight'
+                                    // WO-722: display weight range label from ref_weight_ranges; fall back to '—'
+                                    label: journey.demographics?.weightLabel ?? '—',
+                                    title: 'Weight Range'
                                 }].map(({ label, title }) => (
                                     <span
                                         key={title}
