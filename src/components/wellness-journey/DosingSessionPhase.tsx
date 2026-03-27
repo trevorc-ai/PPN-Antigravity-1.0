@@ -28,7 +28,7 @@ import { SessionCloseoutView } from './SessionCloseoutView';
 import { SessionHUD } from './SessionHUD';
 import { SessionPrepView } from './SessionPrepView';
 import { SessionCockpitView } from './SessionCockpitView';
-import { CrisisLogger } from '../session/CrisisLogger'; // WO-696
+
 
 // ── Error Boundary: catches render crashes in Phase 2 sub-trees ────────────────
 // Prevents the entire WellnessJourney page from going blank on a sub-component error.
@@ -1260,28 +1260,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                     />
                 )}
 
-                {/* 2b. Crisis Logger — real-time adverse event logging (live mode only).
-                     WO-696: CrisisLogger was only in ComponentShowcase.
-                     Mounted here with real session context so log_red_alerts is populated
-                     during live sessions. Guard: real UUID required — never renders for demo sessions. */}
-                {isLive && hasRealUUID && (
-                    <CrisisLogger
-                        sessionId={resolvedSessionId!}
-                        onEventLogged={(eventType) => {
-                            // Stamp a chart event pin so the vitals chart shows the event
-                            setEventLog(prev => [
-                                ...prev,
-                                {
-                                    id: `crisis-${Date.now()}`,
-                                    elapsedSec: getElapsedSec(),
-                                    type: 'safety_event',
-                                    label: eventType.replace(/_/g, ' ').toLowerCase()
-                                        .replace(/\b\w/g, c => c.toUpperCase()),
-                                } satisfies SessionEventPin,
-                            ]);
-                        }}
-                    />
-                )}
+
 
                 {/* 3. Prep steps (pre-session only) + medications + action grid + quick keys */}
                 <SessionPrepView

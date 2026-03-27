@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
-import { AlertTriangle, Clock, Shield } from 'lucide-react';
+import { AlertTriangle, Clock } from 'lucide-react';
 import { triggerHaptic } from '../../hooks/useKeyboardShortcuts';
 import { supabase } from '../../supabaseClient';
 
@@ -11,7 +11,6 @@ interface CrisisLoggerProps {
 }
 
 type EventType =
-    | 'DOSE_ADMINISTERED'
     | 'VITAL_SIGNS_NORMAL'
     | 'VITAL_SIGNS_ELEVATED'
     | 'VERBAL_DEESCALATION'
@@ -231,28 +230,7 @@ export const CrisisLogger: React.FC<CrisisLoggerProps> = ({
                 })}
             </div>
 
-            {/* Dose Administered, full width, primary action */}
-            <div className="px-4 pb-4">
-                <button
-                    onMouseDown={() => handleLongPressStart('DOSE_ADMINISTERED')}
-                    onMouseUp={handleLongPressEnd}
-                    onMouseLeave={handleLongPressEnd}
-                    onTouchStart={() => handleLongPressStart('DOSE_ADMINISTERED')}
-                    onTouchEnd={handleLongPressEnd}
-                    aria-label="Log: Dose Administered. Hold to confirm."
-                    className={`crisis-button relative w-full h-16 flex items-center justify-center gap-3 rounded-2xl border-2 bg-primary/10 border-primary/40 text-primary font-black uppercase tracking-widest text-sm overflow-hidden touch-manipulation select-none transition-all ${pressing === 'DOSE_ADMINISTERED' ? 'scale-[0.98]' : 'hover:bg-primary/20'
-                        }`}
-                >
-                    {pressing === 'DOSE_ADMINISTERED' && (
-                        <div
-                            className="absolute bottom-0 left-0 h-1 bg-indigo-600 hover:bg-indigo-500 opacity-60"
-                            style={{ width: `${pressProgress}%` }}
-                        />
-                    )}
-                    <Shield className="w-5 h-5" />
-                    Log Dose Administered
-                </button>
-            </div>
+
 
             {/* Timeline */}
             {events.length > 0 && (
