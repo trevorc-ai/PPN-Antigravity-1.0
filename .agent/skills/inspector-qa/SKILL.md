@@ -22,7 +22,7 @@ Signed: INSPECTOR | Date: YYYY-MM-DD
 ### Full DB + Backend Review (when `database_changes: yes` or SQL files present)
 
 #### Schema Compatibility
-- [ ] All FK targets confirmed to exist in live schema (run `node .agent/scripts/inspect-table.js <table_name>` — **`SCHEMA_SNAPSHOT.md` has been deleted, never use it**)
+- [ ] All FK targets confirmed to exist in live schema (run `node .agent/scripts/inspect-table.js <table_name>`)
 - [ ] All new tables are additive — no DROP, ALTER TYPE, RENAME, or TRUNCATE
 - [ ] All CREATE TABLE/INDEX use `IF NOT EXISTS`; all CREATE POLICY preceded by `DROP POLICY IF EXISTS`
 - [ ] RLS enabled on all new `log_*` tables with SELECT + INSERT policies

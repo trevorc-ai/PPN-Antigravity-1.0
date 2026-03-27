@@ -56,8 +56,6 @@ Produce database migration files safely. The #1 rule: **always verify the live s
 
 ## MANDATORY PRE-FLIGHT (Before Writing Any SQL)
 
-> **`SCHEMA_SNAPSHOT.md` has been deleted.** Never rely on static markdown for schema — it drifts out of sync. Use the live inspector tool instead.
-
 ### 1. Verify Each Table You Plan to Touch
 
 ```bash

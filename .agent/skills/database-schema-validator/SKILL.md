@@ -14,7 +14,7 @@ Catch SQL errors **before** they reach the user's database. This skill must be r
 
 **THIS STEP CANNOT BE SKIPPED. THE AUTHORING AGENT MUST NOT WRITE A SINGLE LINE OF SQL UNTIL THIS IS COMPLETE.**
 
-Do NOT rely on any hardcoded table list, any prior session's notes, `SCHEMA_SNAPSHOT.md`, or any migration file to determine what tables exist. Migrations are intentions — they may never have been executed. Only the live database is truth.
+Do NOT rely on any hardcoded table list, any prior session's notes, or any migration file to determine what tables exist. Migrations are intentions — they may never have been executed. Only the live database is truth.
 
 ### Required Action Before Any SQL Is Written:
 
@@ -35,9 +35,6 @@ node .agent/scripts/inspect-table.js --list-all
 *(If `--list-all` is not yet implemented, run the grep below to derive the table list from src/ queries.)*
 
 **Rule: If the authoring agent cannot confirm a table exists via the inspector tool output, treat it as non-existent. Period.**
-
-### Why SCHEMA_SNAPSHOT.md Was Deprecated:
-A static markdown file cannot stay in sync with the live database. It caused agents to write FK references against tables that were never created, or with column names that had changed. The inspector tool replaces it with a live, read-only, token-efficient query.
 
 ### STOP Check — Paste output to ALL of these before writing SQL:
 

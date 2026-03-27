@@ -12,7 +12,7 @@ description: /analysis-first — Mandatory analysis gate before any analytics or
 
 ## Phase 1 — Live Schema Verification
 
-Before writing any SQL or components, confirm the schema live. **NEVER rely on SCHEMA_SNAPSHOT.md or memory. Always query the live database using the agent tool.**
+Before writing any SQL or components, confirm the schema live. **Always query the live database using the agent tool.**
 
 ### Step 1.1 — Run the Inspect Tool
 
