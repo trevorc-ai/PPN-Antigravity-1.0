@@ -27,6 +27,7 @@ import { downloadReport, type PatientReportData } from '../services/reportGenera
 import { PatientSelectModal } from '../components/wellness-journey/PatientSelectModal';
 import { getCurrentSiteId, getOrCreateCanonicalPatientUuid } from '../services/identity'; // WO-206: canonical import
 import { supabase } from '../supabaseClient'; // WO-430: medication hydration on patient select
+import { PHASE_TO_TAB } from '../utils/clinicalPhase'; // canonical phase → tab mapping
 import { createClinicalSession, createPatientProfile, createPatientIndication, closeOutSession } from '../services/clinicalLog';
 import { ProtocolProvider, useProtocol } from '../contexts/ProtocolContext';
 import { ProtocolConfiguratorModal, type PatientIntakeData } from '../components/wellness-journey/ProtocolConfiguratorModal';
@@ -219,12 +220,7 @@ const WellnessJourneyInternal: React.FC = () => {
     // to handleOpenForm (declared later in the component after patient-select logic).
     const [pendingOpenFormId, setPendingOpenFormId] = useState<WellnessFormId | null>(null);
 
-    const PHASE_TAB_MAP: Record<string, 1 | 2 | 3> = {
-        'Preparation': 1,
-        'Treatment': 2,
-        'Integration': 3,
-        'Complete': 3,
-    };
+    // PHASE_TO_TAB imported from clinicalPhase.ts — canonical mapping shared with all views.
 
     // If a stored session existed on mount, restore state immediately without
     // going through the patient selection modal.
@@ -686,7 +682,7 @@ const WellnessJourneyInternal: React.FC = () => {
         // already has ppn_session_mode_{sessionId}='live' from when the session was started.
         // We trust localStorage over the DB-derived phase string for the tab selection here,
         // because the DB write is async and may not have landed yet.
-        let resolvedTargetPhase: 1 | 2 | 3 = isNew ? 1 : (PHASE_TAB_MAP[phase] ?? 1);
+        let resolvedTargetPhase: 1 | 2 | 3 = isNew ? 1 : (PHASE_TO_TAB[phase as keyof typeof PHASE_TO_TAB] ?? 1);
         if (!isNew && sessionId) {
             try {
                 const sessionModeKey = `ppn_session_mode_${sessionId}`;

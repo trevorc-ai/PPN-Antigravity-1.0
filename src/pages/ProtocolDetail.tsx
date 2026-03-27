@@ -11,6 +11,7 @@ import { Info, ChevronRight, Loader2, AlertCircle, Activity, Calendar, FlaskConi
 import { PageContainer } from '../components/layouts/PageContainer';
 import { AdvancedTooltip } from '../components/ui/AdvancedTooltip';
 import { supabase } from '../supabaseClient';
+import { deriveClinicalPhase } from '../utils/clinicalPhase';
 import PractitionerProtocolBenchmark from '../features/practitioner-analytics/PractitionerProtocolBenchmark';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -21,6 +22,8 @@ interface SessionRecord {
   patient_link_code_hash: string | null;
   session_date: string | null;
   session_type_id: number | null;
+  session_ended_at: string | null;
+  is_submitted: boolean;
   substance_id: number | null;
   site_id: string | null;
   practitioner_id: string | null;
@@ -103,6 +106,7 @@ const PHASE_COLORS: Record<string, string> = {
   Dosing: 'text-amber-400 bg-amber-500/10 border-amber-500/20',
   Treatment: 'text-amber-400 bg-amber-500/10 border-amber-500/20',
   Integration: 'text-purple-400 bg-purple-500/10 border-purple-500/20',
+  Complete: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20',
 };
 
 // AC #2 — Route labels
@@ -209,7 +213,7 @@ const ProtocolDetail: React.FC = () => {
         // 1. Fetch the primary session (migration 079: patient_link_code dropped → patient_link_code_hash)
         const { data: sessionData, error: sessionErr } = await supabase
           .from('log_clinical_records')
-          .select('id, patient_uuid, patient_link_code_hash, session_date, session_type_id, substance_id, site_id, practitioner_id, route_id, dosage_mg')
+          .select('id, patient_uuid, patient_link_code_hash, session_date, session_type_id, session_ended_at, is_submitted, substance_id, site_id, practitioner_id, route_id, dosage_mg')
           .eq('id', id)
           .single();
 
@@ -445,7 +449,17 @@ const ProtocolDetail: React.FC = () => {
   if (error || !session) return <ErrorState message={error ?? 'Session data unavailable'} onBack={() => navigate('/protocols')} />;
 
   // ─── Derived display values ─────────────────────────────────────────────────
-  const sessionLabel = SESSION_TYPE_LABELS[session.session_type_id ?? 0] ?? 'Session';
+  // Use canonical deriveClinicalPhase so status matches MyProtocols and PatientSelectModal.
+  // Previously this only used SESSION_TYPE_LABELS[session_type_id], ignoring is_submitted
+  // and session_ended_at — causing completed patients to display as Preparation/Dosing.
+  const canonicalPhase = deriveClinicalPhase(
+    session.session_type_id,
+    session.session_ended_at,
+    session.is_submitted,
+  );
+  // Display-level alias: keep the existing PHASE_COLORS map working by mapping
+  // 'Treatment' → 'Treatment' and 'Complete' → 'Complete' (colors exist in the local map).
+  const sessionLabel = canonicalPhase;
   const patientRef = session.patient_link_code_hash ?? session.id.substring(0, 12).toUpperCase();
   const displayDate = session.session_date ?? '—';
   const radarData = buildRadarData(substanceName);

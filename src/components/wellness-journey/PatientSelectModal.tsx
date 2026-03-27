@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
-import { UserPlus, Search, ChevronRight, Clock, Activity, ArrowUp, ArrowDown, ArrowLeft, X, Loader2, AlertCircle, Camera, Lock, QrCode, FlaskConical, RotateCcw, CheckCircle } from 'lucide-react';
+import { UserPlus, Search, ChevronRight, Clock, Activity, ArrowUp, ArrowDown, ArrowLeft, X, Loader2, AlertCircle, Camera, Lock, FlaskConical, RotateCcw, CheckCircle } from 'lucide-react';
 import { supabase } from '../../supabaseClient';
+import { deriveClinicalPhase, PHASE_COLORS, PHASE_TO_TAB, type ClinicalPhase } from '../../utils/clinicalPhase';
 import { getCurrentSiteId, generatePatientId } from '../../services/identity';
 
 /**
@@ -14,7 +15,7 @@ import { getCurrentSiteId, generatePatientId } from '../../services/identity';
  */
 
 interface PatientSelectModalProps {
-    onSelect: (patientId: string, isNew: boolean, phase: Phase) => void;
+    onSelect: (patientId: string, isNew: boolean, phase: ClinicalPhase) => void;
     onClose?: () => void;
     /** Navigate back to the screen the user came from before entering the Wellness Journey */
     onNavigateBack?: () => void;
@@ -26,45 +27,29 @@ interface PatientSelectModalProps {
     onResume?: () => void;
 }
 
-type Phase = 'Preparation' | 'Treatment' | 'Integration' | 'Complete';
+// ClinicalPhase type is imported from clinicalPhase.ts
+// PHASE_COLORS is imported from clinicalPhase.ts
 
 interface LivePatient {
     id: string;
     lastSession: string;
-    phase: Phase;
+    phase: ClinicalPhase;
     sessionCount: number;
     sessionType: string;
     substance?: string;
 }
 
-const PHASE_COLORS: Record<Phase, string> = {
-    Preparation: 'text-indigo-400 bg-indigo-500/10 border-indigo-500/20',
-    Treatment: 'text-amber-400 bg-amber-500/10 border-amber-500/20',
-    Integration: 'text-teal-400 bg-teal-500/10 border-teal-500/20',
-    Complete: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20',
-};
-
 /** Icon paired with each phase badge — satisfies Rule 1 + Rule 6 (color-blindness) */
-const PHASE_ICONS: Record<Phase, React.ReactNode> = {
+const PHASE_ICONS: Record<ClinicalPhase, React.ReactNode> = {
     Preparation: <Clock className="w-3 h-3" />,
     Treatment: <FlaskConical className="w-3 h-3" />,
     Integration: <Activity className="w-3 h-3" />,
     Complete: <CheckCircle className="w-3 h-3" />,
 };
 
-const ALL_PHASES: Phase[] = ['Preparation', 'Treatment', 'Integration', 'Complete'];
+const ALL_PHASES: ClinicalPhase[] = ['Preparation', 'Treatment', 'Integration', 'Complete'];
 
-/** Derive a Phase from the latest session record — matches MyProtocols.tsx derivation hierarchy */
-function derivePhase(
-    sessionTypeId: number | null,
-    sessionEndedAt: string | null,
-    isSubmitted: boolean,
-): Phase {
-    if (isSubmitted) return 'Complete';
-    if (sessionEndedAt) return 'Integration';
-    if (sessionTypeId === 2) return 'Treatment';
-    return 'Preparation';
-}
+// Phase derivation: use canonical deriveClinicalPhase() imported from clinicalPhase.ts
 
 // generatePatientId() imported from ../../services/identity (WO-206 service isolation)
 
@@ -94,7 +79,7 @@ export const PatientSelectModal: React.FC<PatientSelectModalProps> = ({ onSelect
     const [view, setView] = useState<'choose' | 'existing'>(initialView);
     const [search, setSearch] = useState('');
     const [sortDir, setSortDir] = useState<'desc' | 'asc'>('desc');
-    const [phaseFilter, setPhaseFilter] = useState<Phase | null>(null);
+    const [phaseFilter, setPhaseFilter] = useState<ClinicalPhase | null>(null);
     const [newId] = useState(generatePatientId);
     const [testId] = useState(generateTestPatientId);
     const [scannerOpen, setScannerOpen] = useState(false);
@@ -177,7 +162,7 @@ export const PatientSelectModal: React.FC<PatientSelectModalProps> = ({ onSelect
                 return {
                     id: pid,
                     lastSession: latest?.session_date ?? 'Unknown',
-                    phase: derivePhase(
+                    phase: deriveClinicalPhase(
                         latest?.session_type_id ?? null,
                         latestAny?.session_ended_at ?? null,
                         !!latestAny?.is_submitted,
@@ -217,7 +202,7 @@ export const PatientSelectModal: React.FC<PatientSelectModalProps> = ({ onSelect
         return list;
     }, [patients, search, phaseFilter, sortDir]);
 
-    const togglePhase = (p: Phase) => setPhaseFilter(prev => (prev === p ? null : p));
+    const togglePhase = (p: ClinicalPhase) => setPhaseFilter(prev => (prev === p ? null : p));
     const toggleSort = () => setSortDir(prev => (prev === 'desc' ? 'asc' : 'desc'));
     const activeFiltersCount = phaseFilter ? 1 : 0;
 

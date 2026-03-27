@@ -1,5 +1,6 @@
 import { useDataCache } from '../hooks/useDataCache';
 import { supabase } from '../supabaseClient';
+import { deriveClinicalPhase } from '../utils/clinicalPhase';
 import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { PlusCircle, Search, ChevronRight, ClipboardList, ChevronUp, ChevronDown } from 'lucide-react';
@@ -206,21 +207,19 @@ export const MyProtocols = () => {
                     const profile = profileMap.get(record.patient_uuid);
                     const linkCode = linkCodeMap.get(record.patient_uuid);
 
-                    // Derive status: prefer submitted > integration > session_type_id > active
-                    let derivedStatus: string;
-                    if (record.is_submitted) {
-                        derivedStatus = 'Completed';
-                    } else if (record.session_ended_at) {
-                        derivedStatus = 'Integration';
-                    } else if (record.session_type_id === 2) {
-                        derivedStatus = 'Dosing';
-                    } else if (record.session_type_id === 1) {
-                        derivedStatus = 'Preparation';
-                    } else if (record.session_type_id === 3) {
-                        derivedStatus = 'Integration';
-                    } else {
-                        derivedStatus = 'Active';
-                    }
+                    // Canonical status derivation — matches PatientSelectModal and ProtocolDetail.
+                    // Display strings 'Dosing' (Treatment) and 'Completed' (Complete) are preserved
+                    // for historical column header compatibility on this page only.
+                    const canonicalPhase = deriveClinicalPhase(
+                        record.session_type_id,
+                        record.session_ended_at,
+                        record.is_submitted,
+                    );
+                    const derivedStatus: string =
+                        canonicalPhase === 'Complete'    ? 'Completed'    :
+                        canonicalPhase === 'Treatment'   ? 'Dosing'       :
+                        canonicalPhase === 'Preparation' ? 'Preparation'  :
+                        'Integration';
 
                     return {
                         id: record.id,
