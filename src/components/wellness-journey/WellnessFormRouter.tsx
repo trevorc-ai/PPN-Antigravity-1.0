@@ -361,16 +361,30 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
                     const obsLabels = entry.observations.join(', ');
                     const descParts = [`Safety observation: ${obsLabels}`];
                     if (entry.note) descParts.push(`Note: ${entry.note}`);
+                    const obsDesc = descParts.join(' · ');
                     createTimelineEvent({
                         session_id: sessionId,
                         event_timestamp: entry.timestamp,
                         event_type_code: 'patient_observation',
                         metadata: {
-                            event_description: descParts.join(' · '),
+                            event_description: obsDesc,
                             observation_codes: entry.observations,
                             note: entry.note,
                         },
                     }).catch(err => console.warn('[WO-597] Safety observation stamp failed (non-fatal):', err));
+
+                    // WO-723 FIX (Bug 2): dispatch ppn:session-event for each observation entry
+                    // so it appears immediately in the live timeline (optimistic display).
+                    // Previously only wrote to log_session_timeline_events — never triggered
+                    // the live ledger listener, so entries only appeared after a DB refetch.
+                    window.dispatchEvent(new CustomEvent('ppn:session-event', {
+                        detail: {
+                            sessionId,
+                            type: 'patient_observation',
+                            label: obsDesc,
+                            timestamp: entry.timestamp,
+                        },
+                    }));
                 }
             }
         }
@@ -412,8 +426,10 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
 
                 // WO-B2c: dispatch ppn:session-event so LiveSessionTimeline updates
                 // immediately without waiting for the 60-sec DB poll (FAIL 6 partial).
+                // WO-723 FIX (Bug 2): added sessionId to detail so WO-714 session guard passes correctly.
                 window.dispatchEvent(new CustomEvent('ppn:session-event', {
                     detail: {
+                        sessionId,
                         type: 'safety-and-adverse-event',
                         label: aeDesc,
                         timestamp: aeTimestamp,

@@ -361,17 +361,15 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
             ]);
 
             // 2. Notify LiveSessionTimeline via ppn:dose-registered so it can add an
-            //    optimistic entry immediately (before the next 30-sec DB poll).
-            //    WO-694 BUG-04: pass dosingDesc (rich detail string) as label for additional dose,
-            //    not the bare 'Additional Dose' eventLabel that showed no details in the timeline.
-            const dispatchLabel = isRedose
-                // dosingDesc is built below — capture it first (lazy build via closure).
-                // For initial dose_admin, keep eventLabel (detail already in handleStartSession).
-                ? undefined  // placeholder — set after dosingDesc is computed below
-                : eventLabel;
-            window.dispatchEvent(new CustomEvent('ppn:dose-registered', {
-                detail: { sessionId: journey.sessionId ?? journey.session?.sessionId, type: eventType, label: dispatchLabel ?? eventLabel, elapsedSec: elSec }
-            }));
+            //    optimistic entry immediately.
+            //    WO-723 FIX (Bug 1): For initial dose_admin, dispatch once immediately with eventLabel.
+            //    For additional_dose, skip dispatch here — fire only after dosingDesc is computed below
+            //    so the timeline never shows a blank placeholder entry.
+            if (!isRedose) {
+                window.dispatchEvent(new CustomEvent('ppn:dose-registered', {
+                    detail: { sessionId: journey.sessionId ?? journey.session?.sessionId, type: eventType, label: eventLabel, elapsedSec: elSec }
+                }));
+            }
 
             // 3. Persist to log_session_timeline_events if we have a real session UUID
             if (isRedose) {
@@ -398,8 +396,8 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                         if (parts.length > 1) dosingDesc = parts.join(' · ');
                     } catch { /* localStorage unavailable, keep default */ }
 
-                    // WO-694 BUG-04: re-dispatch with the rich dosingDesc label now that we have it.
-                    // The earlier dispatch above used a placeholder — update the timeline entry.
+                    // WO-723 FIX (Bug 1): Single dispatch — fires here with the rich dosingDesc label,
+                    // replacing the two-dispatch pattern that created a blank + a detailed entry.
                     window.dispatchEvent(new CustomEvent('ppn:dose-registered', {
                         detail: { sessionId: sid, type: eventType, label: dosingDesc, elapsedSec: elSec }
                     }));
