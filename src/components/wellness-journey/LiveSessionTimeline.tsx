@@ -57,8 +57,10 @@ export const EVENT_CONFIG: Record<string, { icon: React.ReactNode, color: string
     // UX Polish: Rescue Protocol button → purple to match button color
     'rescue-protocol': { icon: <Shield className="w-4 h-4" />, color: 'text-purple-400 bg-purple-500/20 border-purple-500/30', symbol: '*', label: '[RESCUE PROTOCOL]' },
     rescue_protocol: { icon: <Shield className="w-4 h-4" />, color: 'text-purple-400 bg-purple-500/20 border-purple-500/30', symbol: '*', label: '[RESCUE PROTOCOL]' },
-    // session_completed is the DB code used by WellnessFormRouter for rescue entries
-    session_completed: { icon: <Shield className="w-4 h-4" />, color: 'text-purple-400 bg-purple-500/20 border-purple-500/30', symbol: '*', label: '[RESCUE PROTOCOL]' },
+    // WO-724 FIX: session_completed is written by the Phase 3 closeout handler — NOT by the rescue protocol.
+    // Previously mapped to [RESCUE PROTOCOL] (wrong), causing the closeout entry to appear as a rescue event.
+    // Now correctly maps to [SESSION CLOSED] with emerald styling (matches the CLOSE event style).
+    session_completed: { icon: <CheckCircle className="w-4 h-4" />, color: 'text-emerald-400 bg-emerald-500/20 border-emerald-500/30', symbol: '✓', label: '[SESSION CLOSED]' },
     // UX Polish: Adverse Event button → red to match button color; description decoded separately
     'safety-and-adverse-event': { icon: <AlertTriangle className="w-4 h-4" />, color: 'text-red-400 bg-red-500/20 border-red-500/30', symbol: '⚠', label: '[ADVERSE EVENT]' },
     OBSERVATION: { icon: <Activity className="w-4 h-4" />, color: 'text-sky-400 bg-sky-500/20 border-sky-500/30', symbol: '○', label: '[OBSERVATION]' },

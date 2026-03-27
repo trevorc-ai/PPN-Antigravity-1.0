@@ -2,11 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { Pill, ChevronDown, ChevronUp, AlertTriangle } from 'lucide-react';
 
 /**
- * WO-691 — MedicationSafetyBanner
+ * WO-691 / WO-724 — MedicationSafetyBanner
  *
  * Displays a collapsible amber banner in Phase 2 (Dosing Session) listing the
  * patient's active concomitant medications, as sourced from Phase 1 and stored
- * in localStorage under 'mock_patient_medications_names'.
+ * in localStorage.
+ *
+ * WO-724 FIX: reads ppn_patient_medications_names (authoritative — written by
+ * Phase 1 StructuredSafetyCheckForm) first, then falls back to
+ * mock_patient_medications_names (legacy DB-hydrated key).
+ * Also listens to ppn:safety-updated (custom event for same-tab Phase 1 saves)
+ * because window.storage does NOT fire within the same tab.
  *
  * Render contract:
  *   - No medications → renders null (silent, no empty state)
@@ -18,18 +24,25 @@ import { Pill, ChevronDown, ChevronUp, AlertTriangle } from 'lucide-react';
  * Accessibility: collapse toggle has aria-label + aria-expanded
  */
 
-const STORAGE_KEY = 'mock_patient_medications_names';
+// WO-724: authoritative key (written by Phase 1 Safety Check)
+const STORAGE_KEY_PRIMARY   = 'ppn_patient_medications_names';
+// WO-724: legacy fallback (DB-hydrated on patient select)
+const STORAGE_KEY_FALLBACK  = 'mock_patient_medications_names';
 
 export const MedicationSafetyBanner: React.FC = () => {
     const [meds, setMeds] = useState<string[]>([]);
     const [expanded, setExpanded] = useState(false);
 
-    // Read from localStorage once on mount. Listens for storage events in case
-    // another tab updates the key (e.g. patient switch in a concurrent tab).
+    // WO-724: Read both localStorage keys — authoritative key first, legacy fallback second.
+    // Listens for:
+    //   • window.storage — fires when ANOTHER tab writes either key
+    //   • ppn:safety-updated — fires when Phase 1 Safety Check saves IN THE SAME TAB
+    //     (window.storage does NOT fire for same-tab writes, so we need this custom event)
     useEffect(() => {
         const read = () => {
             try {
-                const raw = localStorage.getItem(STORAGE_KEY);
+                const raw = localStorage.getItem(STORAGE_KEY_PRIMARY)
+                          || localStorage.getItem(STORAGE_KEY_FALLBACK);
                 if (!raw) { setMeds([]); return; }
                 const parsed = JSON.parse(raw);
                 setMeds(Array.isArray(parsed) ? parsed : []);
@@ -39,7 +52,12 @@ export const MedicationSafetyBanner: React.FC = () => {
         };
         read();
         window.addEventListener('storage', read);
-        return () => window.removeEventListener('storage', read);
+        // WO-724: same-tab Phase 1 save — WellnessFormRouter dispatches this custom event
+        window.addEventListener('ppn:safety-updated', read);
+        return () => {
+            window.removeEventListener('storage', read);
+            window.removeEventListener('ppn:safety-updated', read);
+        };
     }, []);
 
     // Silent: no banner if no medications are recorded for this patient

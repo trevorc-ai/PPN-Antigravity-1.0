@@ -362,13 +362,41 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
 
             // 2. Notify LiveSessionTimeline via ppn:dose-registered so it can add an
             //    optimistic entry immediately.
-            //    WO-723 FIX (Bug 1): For initial dose_admin, dispatch once immediately with eventLabel.
-            //    For additional_dose, skip dispatch here — fire only after dosingDesc is computed below
-            //    so the timeline never shows a blank placeholder entry.
+            //    WO-724 FIX (Bug 3): For the initial dose_admin, build a rich description from
+            //    ppn_dosing_protocol localStorage (same pattern used for additional doses).
+            //    Dispatch with the rich label so the timeline shows "Initial Dose · 10mg · Psilocybin · Oral · T+00:00:00"
+            //    instead of the generic "Dose Admin" placeholder.
             if (!isRedose) {
+                const eH = Math.floor(elSec / 3600).toString().padStart(2, '0');
+                const eM = Math.floor((elSec % 3600) / 60).toString().padStart(2, '0');
+                const eS = Math.floor(elSec % 60).toString().padStart(2, '0');
+                let initialDoseLabel = eventLabel; // fallback
+                try {
+                    const cached = JSON.parse(localStorage.getItem('ppn_dosing_protocol') || '{}');
+                    const parts: string[] = ['Initial Dose'];
+                    if (cached.dosage_amount && cached.dosage_unit)
+                        parts.push(`${cached.dosage_amount}${cached.dosage_unit}`);
+                    else if (cached.dosage_amount)
+                        parts.push(`${cached.dosage_amount}`);
+                    if (cached.substance_name) parts.push(cached.substance_name);
+                    if (cached.route_of_administration) parts.push(cached.route_of_administration);
+                    parts.push(`T+${eH}:${eM}:${eS}`);
+                    if (parts.length > 1) initialDoseLabel = parts.join(' · ');
+                } catch { /* localStorage unavailable, keep fallback */ }
+                const sid = journey.sessionId ?? journey.session?.sessionId;
                 window.dispatchEvent(new CustomEvent('ppn:dose-registered', {
-                    detail: { sessionId: journey.sessionId ?? journey.session?.sessionId, type: eventType, label: eventLabel, elapsedSec: elSec }
+                    detail: { sessionId: sid, type: eventType, label: initialDoseLabel, elapsedSec: elSec }
                 }));
+                // Persist initial dose to DB ledger (same as additional_dose path)
+                const UUID_RE_I = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+                if (sid && UUID_RE_I.test(sid as string)) {
+                    createTimelineEvent({
+                        session_id: sid as string,
+                        event_timestamp: new Date().toISOString(),
+                        event_type_code: 'dose_admin' as any,
+                        metadata: { event_description: initialDoseLabel },
+                    }).catch(err => console.warn('[WO-724] Initial dose timeline write failed:', err));
+                }
             }
 
             // 3. Persist to log_session_timeline_events if we have a real session UUID
