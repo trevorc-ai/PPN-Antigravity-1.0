@@ -12,43 +12,22 @@ description: /analysis-first — Mandatory analysis gate before any analytics or
 
 ## Phase 1 — Live Schema Verification
 
-Before writing any SQL, confirm the following live (run these as SELECT queries in Supabase; paste results before proceeding):
+Before writing any SQL or components, confirm the schema live. **NEVER rely on SCHEMA_SNAPSHOT.md or memory. Always query the live database using the agent tool.**
 
-### Step 1.1 — Confirm target tables exist
+### Step 1.1 — Run the Inspect Tool
 
-```sql
--- Replace 'log_episodes_of_care' with your target table
-SELECT table_name, table_type
-FROM information_schema.tables
-WHERE table_schema = 'public'
-  AND table_name IN ('log_episodes_of_care', 'log_followup_contacts', 'ref_substances')
-ORDER BY table_name;
+Run the following command in your terminal for EACH table you need to interact with:
+```bash
+node .agent/scripts/inspect-table.js <table_name>
 ```
+*Example: `node .agent/scripts/inspect-table.js log_clinical_records`*
 
-**ASSUMED until confirmed with a live result. Do NOT write FK references before running this.**
+### Step 1.2 — Confirm Output
+The script will return the exact columns, data types, nullability, and foreign key constraints for the table.
+- **Verify PKs:** Named PKs (e.g., `substance_id`, `severity_grade_id`) are the norm here — NOT generic `id`. Confirm before writing `REFERENCES`.
+- **Verify FKs:** Guarantee the columns you are joining on actually exist.
 
-### Step 1.2 — Confirm exact column names and types
-
-```sql
-SELECT column_name, data_type, is_nullable
-FROM information_schema.columns
-WHERE table_schema = 'public'
-  AND table_name = 'YOUR_TABLE_NAME'
-ORDER BY ordinal_position;
-```
-
-Named PKs (e.g., `substance_id`, `severity_grade_id`) are the norm here — NOT generic `id`. Confirm before writing `REFERENCES`.
-
-### Step 1.3 — Confirm RLS is active
-
-```sql
-SELECT tablename, rowsecurity
-FROM pg_tables
-WHERE schemaname = 'public'
-  AND tablename = 'YOUR_TABLE_NAME';
-```
-
-Expected: `rowsecurity = true`. If false, flag before proceeding.
+**ASSUMED until confirmed with a live result. Do NOT write SQL or components before running this script.**
 
 ---
 

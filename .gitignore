@@ -55,3 +55,6 @@ public/internal/admin_uploads/database/
 public/internal/admin_uploads/*.sql
 public/internal/admin_uploads/*.md
 public/internal/admin_uploads/PPN-Audit-Report-Blueprint.md
+
+# Agent specific files
+.env.agent
