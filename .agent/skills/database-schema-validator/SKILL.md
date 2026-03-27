@@ -14,43 +14,42 @@ Catch SQL errors **before** they reach the user's database. This skill must be r
 
 **THIS STEP CANNOT BE SKIPPED. THE AUTHORING AGENT MUST NOT WRITE A SINGLE LINE OF SQL UNTIL THIS IS COMPLETE.**
 
-Do NOT rely on any hardcoded table list, any prior session's notes, or any migration file to determine what tables exist. Migrations are intentions — they may never have been executed. Only the live database is truth.
+Do NOT rely on any hardcoded table list, any prior session's notes, `SCHEMA_SNAPSHOT.md`, or any migration file to determine what tables exist. Migrations are intentions — they may never have been executed. Only the live database is truth.
 
 ### Required Action Before Any SQL Is Written:
 
-**Give the user these two queries and ask them to run them in Supabase SQL Editor. Paste the results into the ticket before proceeding.**
+**Run the agent schema inspector tool for each table you plan to reference:**
 
-```sql
--- Query 1: List all live tables in the public schema
-SELECT table_name
-FROM information_schema.tables
-WHERE table_schema = 'public'
-ORDER BY table_name;
-
--- Query 2: If working with a specific table, confirm its columns
-SELECT column_name, data_type, is_nullable, column_default
-FROM information_schema.columns
-WHERE table_schema = 'public'
-  AND table_name = 'YOUR_TABLE_NAME_HERE'
-ORDER BY ordinal_position;
+```bash
+node .agent/scripts/inspect-table.js <table_name>
 ```
 
-**Rule: If the authoring agent cannot confirm a table exists via live query output pasted into the ticket, treat it as non-existent. Period.**
+*Example: `node .agent/scripts/inspect-table.js log_clinical_records`*
 
-### Why the Old Table Map Was Removed:
-A hardcoded table list dated 2026-02-17 was previously here. It was stale. It listed tables that never existed in the live DB (e.g., `ref_medications` was assumed to exist because a migration file referenced it — it was never actually created). This caused destructive migrations to be written against phantom tables.
+This tool connects directly to the live production database via a read-only role and returns exact column names, types, nullability, and all constraints. It is always accurate — unlike any markdown file.
 
-### STOP Check — Paste answer to ALL of these before writing SQL:
+**To list all tables in the public schema**, run:
+```bash
+node .agent/scripts/inspect-table.js --list-all
+```
+*(If `--list-all` is not yet implemented, run the grep below to derive the table list from src/ queries.)*
+
+**Rule: If the authoring agent cannot confirm a table exists via the inspector tool output, treat it as non-existent. Period.**
+
+### Why SCHEMA_SNAPSHOT.md Was Deprecated:
+A static markdown file cannot stay in sync with the live database. It caused agents to write FK references against tables that were never created, or with column names that had changed. The inspector tool replaces it with a live, read-only, token-efficient query.
+
+### STOP Check — Paste output to ALL of these before writing SQL:
 
 ```
-## INSPECTOR Live Schema Pre-Flight (MANDATORY — paste real query output here)
-- [ ] Query 1 run: [PASTE TABLE LIST HERE]
+## INSPECTOR Live Schema Pre-Flight (MANDATORY — paste real inspector output here)
+- [ ] inspect-table.js run for each target table: [paste output]
 - [ ] Table I am modifying/creating confirmed: [TABLE NAME] → EXISTS / DOES NOT EXIST
 - [ ] All FK targets confirmed live (list each one): [TABLE: status]
 - [ ] Column I am adding/modifying confirmed to not already exist: [COLUMN: status]
 ```
 
-**If any FK target does not exist in the live query output: STOP. Create a ticket to build that table first. Do not write the downstream migration.**
+**If any FK target does not exist in the inspector output: STOP. Create a ticket to build that table first. Do not write the downstream migration.**
 
 ---
 
@@ -58,10 +57,10 @@ A hardcoded table list dated 2026-02-17 was previously here. It was stale. It li
 
 ```bash
 # Find all table names the app actually queries in src/
-grep -rn "\.from('" src/ | grep -v ".DS_Store" | sed "s/.*\.from('//;s/').*//" | sort -u
+grep -rn "\.from('" src/ | grep -v ".DS_Store" | sed "s/.*\.from('//;s/').*//g" | sort -u
 ```
 
-This tells you what the app expects to query. Cross-reference with the live query output above. If the app queries a table that doesn't appear in the live list — that is a bug to report, not a table to assume exists.
+This tells you what the app expects to query. Cross-reference with the live inspector output above. If the app queries a table that doesn't appear in the live result — that is a bug to report, not a table to assume exists.to assume exists.
 
 ### ⚠️ Known Schema Traps (Verified 2026-02-19)
 

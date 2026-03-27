@@ -56,32 +56,36 @@ Produce database migration files safely. The #1 rule: **always verify the live s
 
 ## MANDATORY PRE-FLIGHT (Before Writing Any SQL)
 
-### 1. Discover Live Table Names
+> **`SCHEMA_SNAPSHOT.md` has been deleted.** Never rely on static markdown for schema — it drifts out of sync. Use the live inspector tool instead.
+
+### 1. Verify Each Table You Plan to Touch
+
 ```bash
-# Find every table the app actually queries — these are your ground truth
+node .agent/scripts/inspect-table.js <table_name>
+```
+
+*Example: `node .agent/scripts/inspect-table.js log_clinical_records`*
+
+Returns exact columns, types, nullability, and FK constraints from the live production DB via a read-only connection. Always accurate.
+
+### 2. Derive the App's Expected Table List
+```bash
+# Find every table the app actually queries
 grep -rn "\.from('" src/ 2>/dev/null | grep -v ".DS_Store" | \
-  sed "s/.*\.from('//;s/').*//" | sort -u
+  sed "s/.*\.from('//;s/').*//g" | sort -u
 ```
 
-Save this list. Every FK reference in your migration MUST use a name from this list.
-
-### 2. Verify Specific Tables Before Referencing Them
-```bash
-# Before writing: REFERENCES some_table(id)
-# Confirm it exists:
-grep -rn "from('some_table')" src/
-```
-
-**If no result: that table does not exist in the live DB. Do not reference it.**
+Cross-reference with inspector output. If the app queries a table the inspector says doesn't exist, that's a bug to report — not a table to assume exists.
 
 ### 3. Known Table Name Traps in This Codebase
 | What you might assume | Actual live name |
-|----------------------|-----------------|
+|----------------------|------------------|
 | `sites` | `log_sites` |
 | `user_sites` | `log_user_sites` |
 | `clinical_records` | `log_clinical_records` |
 
-**Rule:** When in doubt, grep `src/` first. Never assume.
+**Rule:** When in doubt, run `inspect-table.js` first. Never assume.
+
 
 ---
 
@@ -102,7 +106,7 @@ Run all 6 validation steps before handing off.
 Append the completed checklist (from `database-schema-validator` SKILL) to the WO. Move ticket from `02.5_PRE-BUILD_REVIEW` to `03_BUILD` (if engineering work follows) or surface SQL file to User for execution.
 
 ### Step 5: User Executes Manually
-User runs SQL in Supabase dashboard SQL editor. Docker-first protocol always applies.
+User runs SQL via Docker-first protocol (`supabase migration up --local` to test, then `supabase db push`). Agents NEVER execute SQL.
 
 ---
 
