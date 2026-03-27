@@ -454,25 +454,18 @@ export const SessionPrepView: React.FC<SessionPrepViewProps> = ({
                 </div>
             </div>
         ) : (
-            <div className="flex items-center gap-3 p-4 rounded-2xl bg-slate-900/40 border border-slate-800/40">
-                <div className="flex-1 min-w-0">
-                    <p className="text-[10px] uppercase tracking-widest font-bold text-slate-500 mb-2">Current Medications</p>
-                    <div className="flex flex-wrap gap-1.5">
-                        {patientMeds.map((med, i) => (
-                            <span key={i} className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-800/60 border border-slate-700/50 text-slate-300 text-xs font-semibold">
-                                <Pill className="w-3 h-3 text-slate-500" />{med}
-                            </span>
-                        ))}
-                    </div>
-                </div>
-                {contraindicationResults && (
-                    <div className="flex-shrink-0">
-                        <span className="flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-950/40 border border-emerald-600/40 text-emerald-300 text-sm font-black uppercase tracking-wider">
-                            <CheckCircle2 className="w-5 h-5 text-emerald-400" />
-                            ALL CLEAR — No Contraindications
+            <div className="p-4 rounded-2xl bg-slate-900/40 border border-slate-800/40">
+                <p className="text-[10px] uppercase tracking-widest font-bold text-slate-500 mb-2">Current Medications</p>
+                <div className="flex flex-wrap gap-1.5">
+                    {patientMeds.map((med, i) => (
+                        <span key={i} className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-800/60 border border-slate-700/50 text-slate-300 text-xs font-semibold">
+                            <Pill className="w-3 h-3 text-slate-500" />{med}
                         </span>
-                    </div>
-                )}
+                    ))}
+                    {patientMeds.length === 0 && (
+                        <span className="text-sm text-slate-600 italic">No medications on file</span>
+                    )}
+                </div>
             </div>
         )}
             </>
