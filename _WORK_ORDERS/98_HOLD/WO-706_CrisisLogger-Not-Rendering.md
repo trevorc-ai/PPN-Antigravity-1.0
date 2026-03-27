@@ -1,8 +1,10 @@
 ---
 id: WO-706
 title: "Crisis Logger buttons do not render in live Phase 2 sessions"
-owner: PRODDY
-status: 02_TRIAGE
+owner: BUILDER
+status: 04_BUILD
+unfrozen_at: 2026-03-27
+unfreeze_authorization: "USER explicit approval 2026-03-27 — P0 clinical safety; DosingSessionPhase.tsx and MobileCockpit.tsx now clear"
 authored_by: LEAD (fast-track)
 priority: P0
 created: 2026-03-27
@@ -12,10 +14,12 @@ admin_visibility: no
 admin_section: ""
 pillar_supported: "1 — Safety Surveillance"
 task_type: "bug-fix"
+database_changes: no
 related_tickets:
   - WO-696 (CrisisLogger live wiring — implementation WO that shipped this component)
   - WO-553 (WellnessJourney.tsx — conflict risk if touching same file)
 files:
+  - src/components/wellness-journey/MobileCockpit.tsx
   - src/components/wellness-journey/DosingSessionPhase.tsx
   - src/pages/WellnessJourney.tsx (read-only audit only — may not need to touch)
 ---
@@ -170,3 +174,46 @@ INSPECTOR must run `/phase2-session-regression` before and after.
 - **Data from:** `localStorage` (session mode/UUID fallback), `journey.sessionId` / `journey.session.sessionId` (context props), `ref_safety_event_types` (event type via live ref lookup)
 - **Data to:** `log_red_alerts` (crisis event insert via `CrisisLogger` submit); `log_safety_events` (via `createSessionEvent()`)
 - **Theme:** Tailwind CSS, PPN design system — `DosingSessionPhase.tsx`, `MobileCockpit.tsx`, `CrisisLogger.tsx`
+
+---
+
+## INSPECTOR 03_REVIEW CLEARANCE
+
+### Phase 0: Pre-Build Review
+
+**Fast-pass eligibility:** `database_changes: no` — no SQL/migration files in scope. FAST-PASS eligible.
+
+**UI Standards Pre-Build Gate — DosingSessionPhase.tsx:**
+- CHECK 1 (bare text-xs): ✅ PASS — no bare text-xs in JSX
+- CHECK 2 (low contrast): ✅ PASS
+- CHECK 3 (details/summary): ✅ PASS
+- CHECK 4 (em dash): ✅ PASS — em dashes only in file header comments and console.debug strings, NOT rendered UI
+- CHECK 5 (banned fonts): ✅ PASS
+
+**UI Standards Pre-Build Gate — MobileCockpit.tsx:**
+- CHECK 1 (bare text-xs): ⚠️ PRE-EXISTING — lines 214, 221: `text-xs font-bold uppercase tracking-wider` on icon FAB button labels ("Log Vitals", "Clinical Note"). These are mobile-only icon label micro-text inside `min-h-[64px]` touch targets (pattern is acceptable for mobile icon buttons). **BUILDER MUST:** upgrade to `text-xs md:text-sm` OR add inline comment justifying mobile-only exception.
+- CHECK 2 (low contrast): ✅ PASS
+- CHECK 3 (details/summary): ✅ PASS
+- CHECK 4 (em dash): ✅ PASS
+- CHECK 5 (banned fonts): ✅ PASS
+
+**Files list correction:** `MobileCockpit.tsx` added to `files:` — it is the PRIMARY FIX TARGET per LEAD root cause analysis (CrisisLogger missing entirely from mobile render path). BUILDER must treat it as the first file to modify.
+
+**Freeze status:** Both `DosingSessionPhase.tsx` and `MobileCockpit.tsx` are confirmed UNFROZEN as of 2026-03-27 per USER authorization.
+
+**Pillar Classification Gate:** ✅ PASS — `pillar_supported: "1 — Safety Surveillance"`, `task_type: "bug-fix"` present.
+
+**Analytics Data Source Gate:** N/A — no analytics files in scope.
+
+**Data Completeness Gate:** N/A — no analytical output.
+
+**Network Benchmark Gate:** N/A — no site-vs-network surface.
+
+**⚠️ MANDATORY REGRESSION GATE (Phase 3.5):**
+- Trigger files: `DosingSessionPhase.tsx`, `MobileCockpit.tsx`
+- Required workflow: `/phase2-session-regression` (all 4 scenarios)
+- All scenarios must PASS before `/finalize_feature` runs.
+
+### INSPECTOR 03_REVIEW CLEARANCE: FAST-PASS
+No DB impact detected. Files unfrozen per USER authorization dated 2026-03-27. MobileCockpit.tsx pre-existing text-xs flagged for BUILDER remediation. Cleared for build.
+Signed: INSPECTOR | Date: 2026-03-27

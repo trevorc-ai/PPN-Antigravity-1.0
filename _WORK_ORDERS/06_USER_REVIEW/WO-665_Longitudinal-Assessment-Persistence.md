@@ -81,3 +81,20 @@ Signed: INSPECTOR | Date: 2026-03-26
 - **Data from:** `log_longitudinal_assessments` (most recent row by `session_id`) — fetched in `WellnessFormRouter.tsx`
 - **Data to:** `log_longitudinal_assessments` — PHQ-9, GAD-7, C-SSRS, WHOQOL, PSQI integer score fields
 - **Theme:** Tailwind CSS, PPN design system — `LongitudinalAssessmentForm.tsx`, `WellnessFormRouter.tsx`
+
+## INSPECTOR QA — Phase 2 Audit (2026-03-27)
+
+### Phase 1: Scope & DB Audit
+- [x] Database Freeze Check: PASS — no schema changes; read-path fix only
+- [x] Scope Check: PASS — LongitudinalAssessmentForm.tsx + WellnessFormRouter.tsx
+- [x] Refactor Check: PASS — additive useEffect only; no code reorganization
+
+### Phase 2: UI Standards Enforcement
+- LongitudinalAssessmentForm.tsx: CHECK 1–5 all ✅ PASS
+- WellnessFormRouter.tsx: CHECK 1–5 all ✅ PASS
+
+### Phase 3.5: Regression
+- Trigger: WellnessFormRouter.tsx → /phase3-integration-regression applicable
+- **⚠️ USER VISUAL CONFIRMATION REQUIRED:** Save a longitudinal assessment, re-open the form — all scores must reload pre-populated.
+
+INSPECTOR VERDICT: ✅ APPROVED (pending user visual confirmation) | Date: 2026-03-27

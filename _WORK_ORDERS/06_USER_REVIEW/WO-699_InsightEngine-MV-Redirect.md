@@ -2,9 +2,11 @@
 id: WO-699
 title: "Redirect insightEngine service to read from mv_clinician_work_queue + mv_followup_window_compliance"
 owner: BUILDER
-status: 04_BUILD
+status: 05_QA
 priority: P2
 created: 2026-03-26
+completed_at: 2026-03-27
+builder_notes: "insightEngine.ts MV redirect confirmed complete — ruleFollowUpLoss reads mv_clinician_work_queue, ruleDocumentationDecay reads mv_documentation_completeness + mv_followup_window_compliance, ruleWorseningPatients added, runInsightEngine priority order reflects mv_clinician_work_queue.priority_score DESC. InsightResult type preserved."
 origin: "Intelligence Layer Integration Plan — Part 3 Analytics Streamlining"
 pillar_supported: "1 — Safety Surveillance, 3 — QA and Governance"
 depends_on: "WO-697 (Dashboard KPI wiring should land first so hooks are aligned)"
@@ -49,3 +51,17 @@ Signed: INSPECTOR | Date: 2026-03-26
 - **Data from:** `mv_clinician_work_queue` (capability #1), `mv_followup_window_compliance` (capability #5) — replaces multi-table raw `log_*` stitching
 - **Data to:** No DB writes — `insightEngine.ts` service returns `InsightResult` type for consumer pages (read-only)
 - **Theme:** No UI — TypeScript service (`src/services/insightEngine.ts`); no CSS
+
+## INSPECTOR QA — Phase 2 Audit (2026-03-27)
+
+### Phase 1: Scope & DB Audit
+- [x] Database Freeze Check: PASS — .ts service file; no schema changes; reads existing MVs
+- [x] Scope Check: PASS — insightEngine.ts only
+- [x] Refactor Check: PASS — existing rules refactored to MV reads; InsightResult type preserved; no surface-area expansion
+
+### Phase 2: UI Standards Enforcement — insightEngine.ts
+- CHECK 1–5: ✅ PASS — pure TypeScript service; no JSX. Em dashes in file header comments only.
+
+### Analytics Data Source Gate: ✅ PASS — now reads mv_clinician_work_queue + mv_followup_window_compliance as required.
+
+INSPECTOR VERDICT: ✅ APPROVED | Date: 2026-03-27

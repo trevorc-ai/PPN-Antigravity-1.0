@@ -3,7 +3,7 @@ owner: LEAD
 status: 00_INBOX
 authored_by: PRODDY
 active_sprint: true
-priority: P1
+priority: P0
 pillar_supported: "Pillar 1 — Safety Surveillance"
 database_changes: no
 files:

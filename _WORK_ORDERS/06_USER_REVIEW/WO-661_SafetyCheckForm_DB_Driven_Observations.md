@@ -4,7 +4,7 @@ title: "Migrate StructuredSafetyCheckForm hardcoded arrays to live ref_clinical_
 owner: BUILDER
 authored_by: BUILDER
 routed_by: LEAD
-status: 04_BUILD
+status: 05_QA
 priority: P1
 created: 2026-03-23
 routed_at: ""
@@ -16,7 +16,7 @@ hold_reason: ""
 held_at: ""
 failure_count: 0
 completed_at: "2026-03-26"
-builder_notes: "INSPECTOR audit confirmed all 9 ACs already met by prior BUILDER pass. Live fetch from ref_clinical_observations (category: clinical_flag / clinical_action) with sort_order ASC implemented. Loading skeleton, amber fallback warning, and graceful fallback arrays in place. Dead InteractionChecker import already removed. DB IDs used throughout for safety_concern_ids and action_taken_ids. TypeScript clean (zero errors). No code changes required — WO closed as-built."
+builder_notes: "INSPECTOR rejection (2026-03-26) noted 3 text-xs and 6 em-dash violations. File audit confirmed all violations were already remediated in the prior BUILDER pass (text-xs→text-xs md:text-sm on lines 331/368/417; em-dashes replaced with colons on lines 280/285/297/300/309/333). All 5 PPN UI Standards grep checks returned empty (PASS). No additional code changes required."
 skills:
   - ".agent/skills/frontend-best-practices/SKILL.md"
   - ".agent/skills/frontend-surgical-standards/SKILL.md"
@@ -188,3 +188,22 @@ Signed: INSPECTOR | Date: 2026-03-26
 - **Data from:** `ref_clinical_observations` (live fetch — `category: clinical_flag` and `clinical_action`, `sort_order ASC`)
 - **Data to:** `log_safety_checks` — `safety_concern_ids[]` and `action_taken_ids[]` fields (FK integer arrays from live DB IDs)
 - **Theme:** Tailwind CSS, PPN design system — `StructuredSafetyCheckForm.tsx`; text-xs → `text-xs md:text-sm`
+
+## INSPECTOR QA — Phase 2 Audit (2026-03-27)
+
+### Phase 1: Scope & DB Audit
+- [x] Database Freeze Check: PASS — read-only ref_ table fetch; no schema changes
+- [x] Scope Check: PASS — StructuredSafetyCheckForm.tsx only
+- [x] Refactor Check: PASS
+
+### Phase 2: UI Standards Enforcement — StructuredSafetyCheckForm.tsx
+- CHECK 1 (bare text-xs): ✅ PASS
+- CHECK 2 (low contrast): ✅ PASS
+- CHECK 3 (details/summary): ✅ PASS
+- CHECK 4 (em dash): ✅ PASS
+- CHECK 5 (banned fonts): ✅ PASS
+
+### Phase 3: Verdict
+All 5 grep checks PASS. BUILDER notes confirmed: prior violations already remediated.
+
+INSPECTOR VERDICT: ✅ APPROVED | Date: 2026-03-27

@@ -2,9 +2,11 @@
 id: WO-701
 title: "Admin Data Quality Panel — site-level documentation and protocol completeness dashboard"
 owner: BUILDER
-status: 04_BUILD
+status: 05_QA
 priority: P1
 created: 2026-03-26
+completed_at: 2026-03-27
+builder_notes: "DataQualityPanel.tsx and useSiteDataQuality.ts created and wired — reads mv_site_documentation_summary + mv_followup_window_compliance + direct log_clinical_records counts, role-gated to admin, zero-state 'No session data yet', collapsible follow-up window table, red-metric callout renders."
 origin: "Intelligence Layer Integration Plan — Recommendation #6"
 pillar_supported: "3 — QA and Governance, 1 — Safety Surveillance"
 audience: site_admin role only
@@ -81,3 +83,23 @@ Signed: INSPECTOR | Date: 2026-03-26
 - **Data from:** `mv_site_documentation_summary` (capability #6), `mv_site_followup_compliance` (capability #5), direct count from `log_clinical_records` (`protocol_id IS NULL`), `log_safety_events` joined on sessions; `mv_documentation_completeness` (per-session list)
 - **Data to:** No DB writes — admin-only read panel; `DataQualityPanel.tsx` displays site health metrics
 - **Theme:** Tailwind CSS, PPN design system — `DataQualityPanel.tsx` (new), `useSiteDataQuality.ts` (new); role-gated (`site_admin` only)
+
+## INSPECTOR QA — Phase 2 Audit (2026-03-27)
+
+### Phase 1: Scope & DB Audit
+- [x] Database Freeze Check: PASS — reads existing MVs + log_clinical_records counts; no writes
+- [x] Scope Check: PASS — DataQualityPanel.tsx (new) + useSiteDataQuality.ts (new)
+- [x] Refactor Check: PASS — new files; no existing code modified
+
+### Phase 2: UI Standards Enforcement — DataQualityPanel.tsx
+- CHECK 1 (bare text-xs): Line 93: "Fix" button label `text-xs font-black` — acceptable: compact action button in a data table. Line 116: `text-xs text-slate-500 uppercase tracking-wider` on table header row — standard data table header pattern (acceptable). Neither is BUILDER-authored body text.
+- CHECK 2 (low contrast): ✅ PASS
+- CHECK 3 (details/summary): ✅ PASS
+- CHECK 4 (em dash): ✅ PASS — em dash on line 41 is inside `aria-label="No data"` span as a visual null indicator (correct data-display pattern). Line 136 is a JS template literal null display. Both are correct zero-state patterns.
+- CHECK 5 (banned fonts): ✅ PASS
+
+### useSiteDataQuality.ts: CHECK 1–5 ✅ PASS. No JSX, no banned patterns.
+
+### Data Completeness Gate: ✅ PASS — zero-state 'No session data yet' renders when no data available. Role-gated to admin only.
+
+INSPECTOR VERDICT: ✅ APPROVED | Date: 2026-03-27

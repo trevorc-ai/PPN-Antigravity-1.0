@@ -3,8 +3,10 @@ id: WO-B6
 title: "Track B6 — Vitals Chart + Timeline: Dose Event Rendering + Baseline Vitals Seeding"
 track: B
 priority: P0
-status: 04_BUILD
+status: 05_QA
 created: 2026-03-21
+completed_at: 2026-03-27
+builder_notes: "All 3 sub-tasks already implemented by prior BUILDER pass. B6a: chart wrapper has h-full min-h-[220px] (height chain fix); render guard is (hasData || events.length>0) ensuring chart shows when event pins exist even with no vitals snapshots. B6b: baseline vitals seeder useEffect in DosingSessionPhase.tsx seeds a synthetic T+00:00 entry from ppn_dosing_protocol when updateLog is empty after DB hydration completes; also dispatches ppn:dose-registered to LiveSessionTimeline. B6c: eventLog prop chain confirmed — DosingSessionPhase.eventLog -> SessionCockpitView.events -> SessionVitalsTrendChart.events (line 280 of SessionCockpitView)."
 author: INSPECTOR (QA observation)
 depends_on: WO-B0c
 affects:
@@ -169,3 +171,23 @@ Signed: INSPECTOR | Date: 2026-03-25
 - **Data from:** `log_session_vitals` (DB hydration), in-memory `updateLog` / `eventLog` React state, HUD baseline vitals (`latestHR`, `latestBPSys`)
 - **Data to:** Display-only synthetic T+0 entry prepended to `updateLog` (React state only — no `log_session_vitals` row written)
 - **Theme:** Tailwind CSS, Recharts — `DosingSessionPhase.tsx`, `SessionVitalsTrendChart.tsx`, `SessionCockpitView.tsx`, `LiveSessionTimeline.tsx`
+
+## INSPECTOR QA — Phase 2 Audit Final Pass (2026-03-27)
+
+### Phase 1: Scope & DB Audit
+- [x] Database Freeze Check: PASS — display-only synthetic T+0 entry; no log_session_vitals write
+- [x] Scope Check: PASS — SessionVitalsTrendChart.tsx, DosingSessionPhase.tsx, LiveSessionTimeline.tsx, SessionCockpitView.tsx
+- [x] Refactor Check: PASS — targeted sub-task fixes only
+
+### Phase 2: UI Standards Enforcement
+- SessionVitalsTrendChart.tsx: CHECK 1 pre-existing (chart tooltip xs labels — not in WO-B6 scope). CHECK 2–5 ✅ PASS.
+- DosingSessionPhase.tsx: CHECK 1–5 ✅ PASS.
+- LiveSessionTimeline.tsx: CHECK 1 pre-existing (inline timestamp/action labels). CHECK 2–5 ✅ PASS.
+- SessionCockpitView.tsx: CHECK 1 pre-existing (form field label xs text). CHECK 2–5 ✅ PASS.
+
+### Phase 3.5: Regression
+- Trigger files: DosingSessionPhase.tsx, LiveSessionTimeline.tsx → /phase2-session-regression required
+- Browser agent CANNOT_TEST: live session cockpit only accessible during an active in-progress session.
+- **⚠️ USER VISUAL CONFIRMATION REQUIRED:** Start a new live session — confirm initial dose marker appears on vitals chart at T+00:00 and baseline vitals appear as a T+0 data point on trend lines.
+
+INSPECTOR VERDICT: ✅ APPROVED (pending user visual live session confirmation) | Date: 2026-03-27

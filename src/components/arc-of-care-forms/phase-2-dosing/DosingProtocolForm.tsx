@@ -77,17 +77,37 @@ const DosingProtocolForm: React.FC<DosingProtocolFormProps> = ({
         setSubmitAttempted(false);
     }, [data.substance_id]);
 
-    // Read patient medications (names) from localStorage for contraindication check.
-    // Written by WellnessFormRouter after StructuredSafetyCheckForm save (WO-596).
-    // Falls back to Sertraline/Lisinopril demo values if no safety screen has been saved yet.
-    const storedMedNames: string[] = (() => {
+    // WO-689: Reactive medication read — re-evaluates when Phase 1 saves Lithium or other meds.
+    // Previously this was a non-reactive IIFE: once DosingProtocolForm mounted, it read
+    // ppn_patient_medications_names once and never updated, so entering Lithium in Phase 1
+    // after this form was already rendered never triggered the contraindication warning.
+    // Also removed demo fallback (Sertraline/Lisinopril) — it masked real patient data.
+    const readMedNames = (): string[] => {
         try {
             const raw = localStorage.getItem('ppn_patient_medications_names');
-            if (raw) return JSON.parse(raw);
-        } catch { /* ignore */ }
-        // Default mock medications matching the demo patient (Sertraline tapering → SSRI flag)
-        return ['Sertraline (tapering)', 'Lisinopril'];
-    })();
+            if (raw) {
+                const parsed = JSON.parse(raw);
+                if (Array.isArray(parsed)) return parsed;
+            }
+        } catch { /* localStorage unavailable */ }
+        return [];
+    };
+    const [storedMedNames, setStoredMedNames] = useState<string[]>(readMedNames);
+
+    // Re-read medications when Phase 1 saves (cross-tab: storage event; same-tab: ppn:safety-updated)
+    useEffect(() => {
+        const refresh = () => setStoredMedNames(readMedNames());
+        const handleStorage = (e: StorageEvent) => {
+            if (e.key === 'ppn_patient_medications_names') refresh();
+        };
+        window.addEventListener('storage', handleStorage as EventListener);
+        window.addEventListener('ppn:safety-updated', refresh);
+        return () => {
+            window.removeEventListener('storage', handleStorage as EventListener);
+            window.removeEventListener('ppn:safety-updated', refresh);
+        };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     // Reference Data
     const { substances } = useReferenceData();
@@ -265,8 +285,8 @@ const DosingProtocolForm: React.FC<DosingProtocolFormProps> = ({
                             <div className="space-y-1">
                                 <p className="text-sm font-bold text-red-300 uppercase tracking-wide">ABSOLUTE CONTRAINDICATION</p>
                                 <p className="text-sm font-semibold text-red-200">{flag.headline}</p>
-                                <p className="text-xs text-red-300/80">{flag.detail}</p>
-                                <p className="text-xs text-red-400/60 mt-1">{flag.regulatoryBasis}</p>
+                                <p className="text-xs md:text-sm text-red-300/80">{flag.detail}</p>
+                                <p className="text-xs md:text-sm text-red-400/60 mt-1">{flag.regulatoryBasis}</p>
                             </div>
                         </div>
                     ))}
@@ -276,8 +296,8 @@ const DosingProtocolForm: React.FC<DosingProtocolFormProps> = ({
                             <div className="space-y-1">
                                 <p className="text-sm font-bold text-amber-300 uppercase tracking-wide">CAUTION, Relative Contraindication</p>
                                 <p className="text-sm font-semibold text-amber-200">{flag.headline}</p>
-                                <p className="text-xs text-amber-300/80">{flag.detail}</p>
-                                <p className="text-xs text-amber-400/60 mt-1">{flag.regulatoryBasis}</p>
+                                <p className="text-xs md:text-sm text-amber-300/80">{flag.detail}</p>
+                                <p className="text-xs md:text-sm text-amber-400/60 mt-1">{flag.regulatoryBasis}</p>
                             </div>
                         </div>
                     ))}
@@ -298,7 +318,7 @@ const DosingProtocolForm: React.FC<DosingProtocolFormProps> = ({
                                     {selectedSubstance.description || selectedSubstance.clinical_info || 'Primary active pharmacological agent for the dosing session.'}
                                 </p>
                                 {selectedSubstance.regulatory_classification && (
-                                    <p className="text-xs text-amber-400 mt-1 pt-1 border-t border-slate-700/50">
+                                    <p className="text-xs md:text-sm text-amber-400 mt-1 pt-1 border-t border-slate-700/50">
                                         Sch. {selectedSubstance.regulatory_classification}
                                     </p>
                                 )}

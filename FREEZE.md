@@ -48,8 +48,8 @@ src/components/wellness-journey/WorkflowCards.tsx
 src/components/wellness-journey/index.ts
 
 # ── Phase 2 — Dosing Session (frozen 2026-03-11) ────────────────────────────
-src/components/wellness-journey/DosingSessionPhase.tsx
-src/components/arc-of-care-forms/phase-2-dosing/DosingProtocolForm.tsx
+# ✅ DosingSessionPhase.tsx — UNFROZEN 2026-03-27 (USER authorized: WO-689, WO-690, WO-706 P0 clinical safety)
+# ✅ DosingProtocolForm.tsx — UNFROZEN 2026-03-27 (USER authorized: WO-689 drug interaction fix)
 src/components/arc-of-care-forms/phase-2-dosing/RescueProtocolForm.tsx
 src/components/arc-of-care-forms/phase-2-dosing/SafetyAndAdverseEventForm.tsx
 src/components/arc-of-care-forms/phase-2-dosing/SessionObservationsForm.tsx

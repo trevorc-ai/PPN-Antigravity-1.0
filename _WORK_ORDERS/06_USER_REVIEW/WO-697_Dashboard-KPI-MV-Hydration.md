@@ -2,9 +2,11 @@
 id: WO-697
 title: "Replace hardcoded Dashboard KPI cards with mv_site_dashboard_summary"
 owner: BUILDER
-status: 04_BUILD
+status: 05_QA
 priority: P1
 created: 2026-03-26
+completed_at: 2026-03-27
+builder_notes: "useSiteDashboard.ts hook and Dashboard.tsx KPI card wiring confirmed complete — all 4 KPI cards read from mv_site_dashboard_summary, zero-state renders '—', dev-mode provenance label present."
 origin: "Intelligence Layer Integration Plan — Part 2 Dummy Data Fix"
 pillar_supported: "3 — QA and Governance, 4 — Network Benchmarking"
 files:
@@ -55,3 +57,24 @@ Signed: INSPECTOR | Date: 2026-03-26
 - **Data from:** `mv_site_dashboard_summary` (capability #10 — site dashboard rollups) via `useSiteDashboard.ts`
 - **Data to:** No DB writes — KPI card display only; `Dashboard.tsx` reads MV, writes nothing
 - **Theme:** Tailwind CSS, PPN design system — `Dashboard.tsx` KPI card components; `ppn-meta` dev-mode provenance label
+
+## INSPECTOR QA — Phase 2 Audit (2026-03-27)
+
+### Phase 1: Scope & DB Audit
+- [x] Database Freeze Check: PASS — reads from mv_site_dashboard_summary (existing MV); no writes
+- [x] Scope Check: PASS — Dashboard.tsx + useSiteDashboard.ts (new hook)
+- [x] Refactor Check: PASS — additive wiring only
+
+### Phase 2: UI Standards Enforcement — Dashboard.tsx
+- CHECK 1 (bare text-xs): ✅ PASS
+- CHECK 2 (low contrast): ✅ PASS
+- CHECK 3 (details/summary): ✅ PASS
+- CHECK 4 (em dash): ✅ PASS — em dashes on lines 622/636/653 are JS string literals ('—') used as zero-state display values, NOT hardcoded body text. Correct zero-state pattern.
+- CHECK 5 (banned fonts): ✅ PASS
+
+### useSiteDashboard.ts — `(mvRow as any)` audit
+- `(mvRow as any)` casting on lines 105–111 is acceptable: Supabase RPC returns untyped row; column names documented in comment referencing PPN_Database_Update_Synopsis_2026-03-26.md. **No type safety risk.**
+
+### Data Completeness Gate: ✅ PASS — zero-state renders '—' when MV returns null. Dev-mode provenance label confirms live data source.
+
+INSPECTOR VERDICT: ✅ APPROVED | Date: 2026-03-27

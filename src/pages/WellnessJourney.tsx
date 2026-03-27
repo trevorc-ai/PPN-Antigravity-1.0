@@ -191,12 +191,17 @@ const WellnessJourneyInternal: React.FC = () => {
     // and any accidental click breaks the deep-link flow.
     const [showPatientModal, setShowPatientModal] = useState<boolean>(() => {
         try {
-            // WO-B1: Skip modal if patientUuid is in the URL (carried from ProtocolDetail)
             const hash = window.location.hash;
             const hashQuery = hash.includes('?') ? hash.split('?')[1] : window.location.search;
             const UUID_RE_LOCAL = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+            // WO-B1: Skip modal if patientUuid is in the URL (carried from ProtocolDetail)
             const patientUuidFromUrl = new URLSearchParams(hashQuery).get('patientUuid');
             if (patientUuidFromUrl && UUID_RE_LOCAL.test(patientUuidFromUrl)) return false;
+
+            // WO-718: Skip modal if activePatientUuid is already set in context (sidebar / any in-app nav)
+            // DB-first: the auto-load useEffect will resolve phase from DB — no modal needed.
+            if (activePatientUuid && UUID_RE_LOCAL.test(activePatientUuid)) return false;
 
             // Hash router: URL is /#/wellness-journey?sessionId=...
             const search = window.location.hash.includes('?')
@@ -240,9 +245,11 @@ const WellnessJourneyInternal: React.FC = () => {
     // takes priority. If there is a stored active session, that takes priority too.
     useEffect(() => {
         if (!activePatientUuid) return;
-        // Don't override an already-loaded patient session (stored session or sessionId deep-link)
-        const stored = readStoredSession();
-        if (stored?.patientUuid === activePatientUuid) return; // already loaded
+        // WO-718 DB-First Fix: removed stale localStorage early-exit.
+        // Previously: `if (stored?.patientUuid === activePatientUuid) return` caused the DB
+        // re-query to be skipped when localStorage had a stale entry for the same UUID,
+        // resulting in wrong phase state on sidebar / back-button navigation paths.
+        // DB is always authoritative — always re-query when activePatientUuid changes.
         const hash = window.location.hash;
         const hashQuery = hash.includes('?') ? hash.split('?')[1] : window.location.search;
         const sessionIdInUrl = new URLSearchParams(hashQuery).get('sessionId');

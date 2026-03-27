@@ -96,3 +96,25 @@ Signed: INSPECTOR | Date: 2026-03-26
 - **Data from:** `mv_outcome_deltas_by_timepoint` (PHQ9, GAD7 deltas — MV-first); `log_baseline_assessments` / `log_longitudinal_assessments` (PCL5 fallback — not in MV)
 - **Data to:** No DB writes — hook returns computed `OutcomeScore` interface for consumer components (read-only)
 - **Theme:** No UI — TypeScript hook (`src/hooks/useOutcomeScoring.ts`); no CSS
+
+## INSPECTOR QA — Phase 2 Audit (2026-03-27)
+
+### Phase 1: Scope & DB Audit
+- [x] Database Freeze Check: PASS — new hook reads from existing mv_outcome_deltas_by_timepoint + log_ tables; no schema changes
+- [x] Scope Check: PASS — new file src/hooks/useOutcomeScoring.ts only
+- [x] Refactor Check: PASS — new file, no existing code changed
+
+### Phase 2: UI Standards Enforcement — useOutcomeScoring.ts
+- CHECK 1 (bare text-xs): ✅ PASS — .ts hook; no JSX
+- CHECK 2 (low contrast): ✅ PASS
+- CHECK 3 (details/summary): ✅ PASS
+- CHECK 4 (em dash): ✅ PASS — em dashes in file header comments only
+- CHECK 5 (banned fonts): ✅ PASS
+
+### Phase 3: Verdict
+Pure hook — no visible UI. No regression trigger (no existing pages wired yet). PASS.
+
+### Data Completeness Gate: N/A — hook is consumed by callers, not rendered directly.
+### Clinical disclaimer note: Any component rendering response/remission output from this hook MUST add `"Algorithm-derived — verify with clinical judgment"` per Phase 0 gate.
+
+INSPECTOR VERDICT: ✅ APPROVED | Date: 2026-03-27
