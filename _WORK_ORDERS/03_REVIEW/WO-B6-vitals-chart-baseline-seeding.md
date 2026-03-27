@@ -164,3 +164,8 @@ No DB impact detected. Cleared for build.
 - All scenarios must PASS before `/finalize_feature` runs.
 
 Signed: INSPECTOR | Date: 2026-03-25
+
+---
+- **Data from:** `log_session_vitals` (DB hydration), in-memory `updateLog` / `eventLog` React state, HUD baseline vitals (`latestHR`, `latestBPSys`)
+- **Data to:** Display-only synthetic T+0 entry prepended to `updateLog` (React state only — no `log_session_vitals` row written)
+- **Theme:** Tailwind CSS, Recharts — `DosingSessionPhase.tsx`, `SessionVitalsTrendChart.tsx`, `SessionCockpitView.tsx`, `LiveSessionTimeline.tsx`

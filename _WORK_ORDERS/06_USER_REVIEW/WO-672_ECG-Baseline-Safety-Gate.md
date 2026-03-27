@@ -138,3 +138,8 @@ An Ibogaine practitioner needs to log a baseline ECG with QTc before Phase 2 beg
 
 **Pre-clearance condition:** Move to 04_BUILD immediately when a WIP slot opens. No further INSPECTOR review needed at that point — this clearance is valid for the current sprint.
 
+
+---
+- **Data from:** `log_clinical_records.qtc_baseline_ms` (migration 082 — additive column); live intra-session QTc readings from practitioner input
+- **Data to:** `log_clinical_records` — `qtc_baseline_ms` field; `QTIntervalTracker.tsx` 4-tier alert state (display-only computed from threshold constants)
+- **Theme:** Tailwind CSS, PPN design system — `QTIntervalTracker.tsx`; `ibogaineCardiacThresholds.ts` constants; Phase 2 live monitoring panel

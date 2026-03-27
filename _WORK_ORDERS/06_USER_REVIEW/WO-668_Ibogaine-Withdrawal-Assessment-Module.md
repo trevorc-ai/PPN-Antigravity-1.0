@@ -134,3 +134,8 @@ An Ibogaine practitioner treating OUD or AUD needs to select and administer whic
 
 **Pre-clearance condition:** Move to 04_BUILD immediately when a WIP slot opens. No further INSPECTOR review needed at that point — this clearance is valid for the current sprint.
 
+
+---
+- **Data from:** `ref_ibogaine_assessment_types` (COWS/SOWS/BAWS/ASI instrument definitions); phase 1 session context (substance type = ibogaine gate)
+- **Data to:** `log_ibogaine_withdrawal_assessments` (migration 083) — structured integer scores, `timing` enum (pre/post), `assessment_type_id` FK
+- **Theme:** Tailwind CSS, PPN design system — `IbogaineWithdrawalAssessmentForm.tsx`; opt-in card pattern, Phase 1 intake flow

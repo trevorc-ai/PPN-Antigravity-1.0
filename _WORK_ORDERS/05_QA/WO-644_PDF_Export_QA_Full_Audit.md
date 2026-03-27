@@ -178,3 +178,8 @@ Grouped by WO-643 sub-task order:
   reference and will be standardized in a future dedicated sprint.
 - Group B services (`pdfGenerator.ts`, `narrativeGenerator.ts`, etc.) may output CSV or TXT.
   INSPECTOR should document the actual output format and flag any that should be upgraded to PDF.
+
+---
+- **Data from:** Various PDF pages via `?sessionId=` URL params; `log_clinical_records`, `log_session_vitals`, `log_safety_events` (content accuracy check); `src/services/` jsPDF generators
+- **Data to:** No DB writes — QA audit and print output only (PDF/TXT file saved via `window.print()` or jsPDF)
+- **Theme:** Vanilla CSS print styles — `@page { size: letter; }`, `.no-print`, `page-break-after: always`; Inter font; no Tailwind in print layer

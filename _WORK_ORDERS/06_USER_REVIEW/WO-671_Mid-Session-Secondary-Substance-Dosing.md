@@ -143,3 +143,9 @@ An Ibogaine practitioner needs to log each dose in a multi-dose session (test do
 
 **Rationale:** A practitioner's real-time dosing calculation is a clinical event. Storing the snapshot at time-of-dose provides a permanent, auditable record of the safety calculation as it existed during the session — superior to recalculating retroactively from dose_mg / weight. The LEAD architecture note that said "do NOT store" is hereby superseded by this decision. Migration 085 is cleared for execution as written.
 
+
+---
+- **Data from:** Phase 1 weight entry (patient weight kg from intake record); practitioner input (dose mg, substance type, route); `log_dose_events` (sequential dose reads for cumulative total)
+- **Data to:** `log_dose_events` (migration 085) — `cumulative_mg_kg`, `session_weight_kg`, `dose_sequence` fields; `IbogaineDosingCalculator.tsx` multi-dose log rows
+- **Theme:** Tailwind CSS, PPN design system — `IbogaineDosingCalculator.tsx`; Phase 2 live session panel; real-time cumulative mg/kg display
+

@@ -1,6 +1,6 @@
 ---
 owner: LEAD
-status: 00_INBOX
+status: 02_TRIAGE
 authored_by: PRODDY
 active_sprint: false
 priority: P2
@@ -119,3 +119,8 @@ An Ibogaine practitioner needs to administer and log an MSE and cognitive screen
 5. Should post-session cognitive delta feed into Global Benchmark layer as an outcome metric?
 
 **Routing:** 00_INBOX → 02_TRIAGE (USER decision required on 5 open questions before routing to 03_REVIEW)
+
+---
+- **Data from:** `ref_ibogaine_assessment_types` (SLUMS/MSE instrument definitions), future custom instrument definitions
+- **Data to:** New `log_ibogaine_cognitive_assessments` table (pending migration) — integer score + `instrument_type` field
+- **Theme:** Tailwind CSS, PPN design system — structured dropdown forms, Phase 1 intake card pattern

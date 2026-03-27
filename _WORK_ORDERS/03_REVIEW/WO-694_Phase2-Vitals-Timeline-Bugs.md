@@ -127,3 +127,8 @@ No DB impact detected. Cleared for build.
 - No commit without both runs passing.
 
 Signed: INSPECTOR | Date: 2026-03-25
+
+---
+- **Data from:** `log_session_vitals` (chart data), `log_flow_events` via `getTimelineEvents()` (timeline), in-memory `updateLog` / `eventLog` React state
+- **Data to:** Read-only bug fix — no new DB writes; all existing write paths unchanged
+- **Theme:** Tailwind CSS, Recharts — `SessionVitalsTrendChart.tsx`, `LiveSessionTimeline.tsx`, `DosingSessionPhase.tsx`

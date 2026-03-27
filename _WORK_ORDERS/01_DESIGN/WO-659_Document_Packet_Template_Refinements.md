@@ -96,3 +96,8 @@ After user review and approval of the HIPAA packet in its refined form, extract 
 - No growth_order_ref required — internal tooling asset, not public-facing in itself (packet URL is public but this ticket is structural plumbing)
 
 **Routing:** 00_INBOX → 01_DESIGN (DESIGNER starts immediately)
+
+---
+- **Data from:** Local static HTML files (`public/internal/`), hardcoded production URL string
+- **Data to:** No DB writes — pure static document packet (HTML/CSS/print layout output)
+- **Theme:** Vanilla CSS (print-first), `@page { size: letter; }`, PPN brand (no Tailwind)

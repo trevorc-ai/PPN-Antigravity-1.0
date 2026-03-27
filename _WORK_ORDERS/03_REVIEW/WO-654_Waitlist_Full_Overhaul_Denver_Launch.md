@@ -154,3 +154,8 @@ database_changes: no
 Sub-ticket E (waitlist count query) must also confirm RLS allows anonymous SELECT — if not, `database_changes: yes` may be required and a migration WO must be created.
 
 Once LEAD adds the three fields, re-route directly to 03_REVIEW. INSPECTOR will fast-pass (no DB impact confirmed for Sub-tickets A–D) on next review.
+
+---
+- **Data from:** `log_waitlist` (count query for social proof, Sub-E); `public/video/` static bundle (demo video); local state (signup form)
+- **Data to:** `log_waitlist` (new signup insert); Resend edge function (operator notification email)
+- **Theme:** Tailwind CSS, PPN design system — `Waitlist.tsx`, `PartnerDemo.tsx` (new); dark background `#070b14`

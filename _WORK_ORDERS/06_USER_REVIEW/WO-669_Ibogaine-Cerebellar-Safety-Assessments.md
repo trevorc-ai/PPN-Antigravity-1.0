@@ -132,3 +132,8 @@ An Ibogaine practitioner needs to administer and document SARA, FTN, and HKS cer
 
 **Pre-clearance condition:** Move to 04_BUILD immediately when a WIP slot opens. No further INSPECTOR review needed at that point — this clearance is valid for the current sprint.
 
+
+---
+- **Data from:** Pre-session safety check context (ibogaine session gate); no reference table read — values are structured ordinal/boolean inputs
+- **Data to:** `log_ibogaine_cerebellar_assessments` (migration 084) — SARA integer (0–40), FTN/HKS boolean, `ataxia_grade` ordinal (0–3), `timing` enum (pre/post)
+- **Theme:** Tailwind CSS, PPN design system — `IbogaineCerebellarAssessmentForm.tsx`; opt-in card pattern, Phase 1 intake flow
