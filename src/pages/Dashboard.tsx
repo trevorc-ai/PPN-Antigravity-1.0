@@ -859,10 +859,10 @@ export default function Dashboard() {
 
       {/* ══════════════════════════════════════════════════════════════════
           MOBILE STICKY SEARCH BAR (bottom, replaces floating Log CTA)
-          Visible only on screens smaller than md breakpoint.
+          Visible only on mobile (< md breakpoint). Hidden on tablet+.
       ══════════════════════════════════════════════════════════════════ */}
       <div
-        className="lg:hidden fixed left-0 right-0 z-[45] px-4"
+        className="md:hidden fixed left-0 right-0 z-[45] px-4"
         style={{ bottom: 'calc(68px + env(safe-area-inset-bottom, 0px))' }}
       >
         {/* Backdrop blur panel */}
