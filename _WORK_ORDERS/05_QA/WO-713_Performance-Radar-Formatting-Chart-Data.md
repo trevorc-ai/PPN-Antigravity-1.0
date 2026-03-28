@@ -59,3 +59,20 @@ Formatting and chart data on Performance Radar needs improvement.
 **Date:** 2026-03-27
 **Verdict:** FAST-PASS — no database changes, files list defined, pillar confirmed.
 **BUILDER start condition:** Cleared. WO-as-Plan exemption applies. Start coding immediately.
+
+---
+
+## INSPECTOR QA Hold -- 2026-03-27
+
+**Reviewed by:** INSPECTOR | **Date:** 2026-03-27
+
+**Situation:** `src/components/analytics/ClinicPerformanceRadar.tsx` was committed in commit `611d533`, so BUILDER did work on this file. However, NO BUILDER Walkthrough block was appended to this ticket.
+
+**Preliminary grep results:**
+- CHECK 1 (text-xs): PASS.
+- CHECK 4 (em dash): PASS.
+- CHECK 3 (details/summary): PASS.
+- CHECK 5 (banned fonts): PASS.
+
+**Action Required:** BUILDER must append walkthrough confirming: suppression banner was slimmed to inline, duplicate label removed, aspect ratio fix applied, zero-state handling added, `// Source: mv_site_*` comments added. Provide 5-check self-cert then re-surface to `05_QA`.
+

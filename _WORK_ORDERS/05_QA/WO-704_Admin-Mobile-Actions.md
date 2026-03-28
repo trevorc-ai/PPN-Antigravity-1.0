@@ -42,3 +42,21 @@ User-provided screenshot confirms the hamburger menu is present (top-right) and 
 **Date:** 2026-03-27
 **Verdict:** FAST-PASS — no database changes, files list defined, pillar confirmed.
 **BUILDER start condition:** Cleared. WO-as-Plan exemption applies. Start coding immediately.
+
+---
+
+## INSPECTOR QA Hold -- 2026-03-27
+
+**Reviewed by:** INSPECTOR | **Date:** 2026-03-27
+
+**Situation:** `src/pages/admin/AdminDashboard.tsx` was committed in commit `611d533` alongside other WO work, so BUILDER did work on this file. However, NO BUILDER Walkthrough block was appended to this ticket before it was placed in `05_QA`.
+
+**INSPECTOR cannot complete QA without BUILDER's walkthrough.** INSPECTOR needs to know:
+1. Exactly which lines were changed in `AdminDashboard.tsx`
+2. Which actions (Approve, Resend, Delete) were surfaced and how
+3. The 5-check PPN UI Standards self-certification results
+
+**Action Required:** BUILDER must append a walkthrough block to this ticket with exact diff summary and 5-check results, then re-surface to `05_QA`. INSPECTOR will complete QA at that time.
+
+**Files to 5-check when walkthrough is present:** `src/pages/admin/AdminDashboard.tsx`
+

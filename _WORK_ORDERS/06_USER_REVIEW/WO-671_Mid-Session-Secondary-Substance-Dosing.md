@@ -149,3 +149,29 @@ An Ibogaine practitioner needs to log each dose in a multi-dose session (test do
 - **Data to:** `log_dose_events` (migration 085) — `cumulative_mg_kg`, `session_weight_kg`, `dose_sequence` fields; `IbogaineDosingCalculator.tsx` multi-dose log rows
 - **Theme:** Tailwind CSS, PPN design system — `IbogaineDosingCalculator.tsx`; Phase 2 live session panel; real-time cumulative mg/kg display
 
+---
+
+## ⚠️ INSPECTOR DB SAFETY ANNOTATION — 2026-03-27
+
+**Source:** SESSION_HANDOFF.md Canonical Database Truths (verified 2026-03-27)
+
+**`log_dose_events` is writable at the database level.** Migration 085 adds columns to an existing, functioning table. However, the write path must satisfy the minimum payload contract or the INSERT will fail silently (app-level issue, not DB block).
+
+### Minimum Payload Contract — `log_dose_events`
+Before USER approves this WO, verify `IbogaineDosingCalculator.tsx` sends **all 7 of these fields** on every dose INSERT:
+
+| Field | Notes |
+|---|---|
+| `session_id` | Active session UUID from context |
+| `patient_uuid` | Canonical patient key from `log_patient_site_links` |
+| `substance_id` | FK to `ref_medications` — Ibogaine HCL / TPA must exist in that table |
+| `event_type_id` | FK to event type reference table — verify column name via inspector |
+| `substance_form_id` | FK to form reference table (IV/IM/PO/Sublingual) |
+| `dose_mg` | Numeric, from practitioner input |
+| `weight_kg` | From Phase 1 intake — confirm field name before build |
+
+### Pre-Approval Verification Step
+```bash
+node .agent/scripts/inspect-table.js log_dose_events
+```
+Confirm migration 085 columns (`cumulative_mg_kg`, `session_weight_kg`, `dose_sequence`) are present in the live table. If absent — migration 085 has not been executed and the component will fail silently on those fields.

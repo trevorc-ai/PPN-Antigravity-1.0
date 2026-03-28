@@ -75,3 +75,20 @@ Remove `shrink-0 w-[85vw] snap-center` from the card wrapper — cards should fi
 **Date:** 2026-03-27
 **Verdict:** FAST-PASS — no database changes, files list defined, pillar confirmed.
 **BUILDER start condition:** Cleared. WO-as-Plan exemption applies. Start coding immediately.
+
+---
+
+## INSPECTOR QA Hold -- 2026-03-27
+
+**Reviewed by:** INSPECTOR | **Date:** 2026-03-27
+
+**Situation:** `src/pages/Analytics.tsx` and `src/components/analytics/ClinicPerformanceRadar.tsx` were committed in commit `611d533`, so BUILDER did work on these files. However, NO BUILDER Walkthrough block was appended to this ticket.
+
+**INSPECTOR preliminary check results (run from commit state):**
+- `Analytics.tsx` CHECK 1: One `text-xs` hit at line 200 -- `hidden md:block` (hidden on mobile, visible only at md+). This is acceptable.
+- CHECK 4 (em dash): PASS. CHECK 3 (details/summary): PASS. CHECK 5 (banned fonts): PASS.
+- `md:min-w-[600px]` (line 240) -- tablet+ only, mobile has no constraint. PASS.
+- KPI grid: `grid grid-cols-2 gap-3 lg:grid-cols-4` confirmed at line 155. Correct 2x2 mobile pattern. PASS.
+
+**Action Required:** BUILDER must append walkthrough confirming what was actually changed vs. what was pre-existing, and provide 5-check self-certification for every modified line. INSPECTOR will then issue formal Phase 2 verdict and move to 06_USER_REVIEW.
+

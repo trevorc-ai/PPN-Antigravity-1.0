@@ -54,3 +54,22 @@ No schema change required. `protocol_id` column already exists in `log_clinical_
 - **Data from:** `ProtocolConfiguratorModal.tsx` — selected `protocol_id` passed via `DosingProtocolForm` save handler; `log_clinical_records` existing session row (UPDATE target)
 - **Data to:** `log_clinical_records.protocol_id` field — non-null FK written on DosingProtocol form save (via `updateDosingProtocol()` in `clinicalLog.ts`)
 - **Theme:** No visual UI changes — write-path wiring only; `clinicalLog.ts` service + `WellnessFormRouter.tsx`
+
+---
+
+## ⚠️ INSPECTOR DB SAFETY ANNOTATION — 2026-03-27
+
+**Source:** SESSION_HANDOFF.md Canonical Database Truths (verified 2026-03-27)
+
+### Pre-Build Verification Step
+```bash
+node .agent/scripts/inspect-table.js log_clinical_records
+```
+Confirm `protocol_id` column exists in the live table before writing any code. The WO states it already exists — verify this is true in production before building.
+
+### Legacy Field Warning — `patient_link_code_hash`
+The existing `createClinicalSession()` payload (lines 181–187) includes `patient_link_code_hash`. Per SESSION_HANDOFF canonical truths (2026-03-27):
+
+> **`log_clinical_records.patient_link_code_hash` is a legacy PT-code snapshot field. It is NOT a SHA-256 hash. Do NOT rename, drop, modify, or hash this field in place.** Treat it as read-only. An additive replacement plan is pending.
+
+BUILDER must not touch `patient_link_code_hash` in any way as part of this WO. The fix is additive only: add `protocol_id` to the UPDATE payload. Do not refactor the surrounding code.

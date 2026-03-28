@@ -2,7 +2,8 @@
 id: WO-706
 title: "Crisis Logger buttons do not render in live Phase 2 sessions"
 owner: BUILDER
-status: 04_BUILD
+status: 98_HOLD
+hold_reason: "BLOCKED on WO-729. DO NOT BUILD until PRODDY delivers a new minimal CrisisLogger UI design and USER approves it. Building the rendering fix against the current layout-breaking CrisisLogger component is wasted work — the component itself is being redesigned."
 unfrozen_at: 2026-03-27
 unfreeze_authorization: "USER explicit approval 2026-03-27 — P0 clinical safety; DosingSessionPhase.tsx and MobileCockpit.tsx now clear"
 authored_by: LEAD (fast-track)
@@ -15,8 +16,10 @@ admin_section: ""
 pillar_supported: "1 — Safety Surveillance"
 task_type: "bug-fix"
 database_changes: no
+blocked_by: "WO-729 (CrisisLogger-Minimal-UI-Redesign-Proposal) — rendering fix is only meaningful once the component being rendered is the correct minimal design"
 related_tickets:
-  - WO-696 (CrisisLogger live wiring — implementation WO that shipped this component)
+  - WO-696 (held — previous wiring WO rejected, replaced by WO-729)
+  - WO-729 (new — PRODDY minimal UI redesign, must complete first)
   - WO-553 (WellnessJourney.tsx — conflict risk if touching same file)
 files:
   - src/components/wellness-journey/MobileCockpit.tsx
