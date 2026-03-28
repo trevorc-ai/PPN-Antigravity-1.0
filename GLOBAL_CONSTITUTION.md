@@ -16,20 +16,23 @@ This document supersedes all other instructions. All agents MUST abide by these 
     machine identifiers, and Stripe external IDs.
     No free-text (TEXT/VARCHAR) clinical narrative columns — ever.
 
-*   **USER IS THE SOLE DATABASE OPERATOR:**
-    Agents may NOT write or execute ANY SQL that modifies database
-    structure or data. This includes:
-      - DDL: CREATE TABLE, ALTER TABLE, DROP TABLE/COLUMN, CREATE POLICY
-      - DML: INSERT, UPDATE, DELETE via SQL
-      - Migration files (.sql) — agents do NOT author these
-    Agents that output raw SQL to the chat for USER review are permitted.
-    Agents that create .sql files or attempt to execute them are in violation.
+*   **USER IS THE SOLE DATABASE EXECUTOR:**
+    Agents MAY author `.sql` migration files in `supabase/migrations/` for USER review.
+    Agents may NOT execute ANY SQL that modifies database structure or data. This includes:
+      - Direct execution via Supabase CLI: `supabase db push` → FORBIDDEN
+      - DDL executed directly: CREATE TABLE, ALTER TABLE, DROP TABLE/COLUMN, CREATE POLICY → FORBIDDEN
+      - DML executed directly: INSERT, UPDATE, DELETE via SQL → FORBIDDEN
+      - Any Supabase MCP tool that writes to the DB → FORBIDDEN
+    The USER runs all migrations manually via the Supabase Studio SQL Editor.
+    When a migration is needed, the agent creates the `.sql` file and presents it for USER review.
+    The USER executes it, pastes the result, and the agent verifies.
 
-*   **Agent DB Permissions (READ + APP-LAYER WRITE ONLY):**
+*   **Agent DB Permissions (READ + APP-LAYER WRITE + SQL AUTHORING ONLY):**
     - SELECT queries (diagnostics, audits, verification) → ALLOWED
     - INSERT/UPDATE via React/Supabase client (application code) → BUILDER ALLOWED
-    - Any SQL file creation → FORBIDDEN
-    - Any Supabase MCP or direct DB connection → FORBIDDEN
+    - Authoring `.sql` migration files for USER review → ALLOWED
+    - Executing any `.sql` file or running `supabase db push` → FORBIDDEN
+    - Any Supabase MCP or direct DB connection that modifies data → FORBIDDEN
 
 *   **Additive Schema Policy (USER-enforced):**
     The USER manually applies all schema changes via the Supabase SQL Editor.
@@ -53,12 +56,15 @@ This document supersedes all other instructions. All agents MUST abide by these 
     that join 2+ raw `log_*` tables when an equivalent `v_*`/`mv_*` exists.
     Added: 2026-03-26 per Intelligence Layer Integration Plan. USER-authorized.
 
+*   **Live Schema Verification (Mandatory):** Before any DB-touching work, verify the live schema: `node .agent/scripts/inspect-table.js <table_name>`. Working from memory, prior notes, or any snapshot file is a violation. Full protocol: `database-schema-validator` skill.
+
 *   **RLS is Mandatory:** Row Level Security must be ON for every public table.
     All application writes are site-scoped via log_user_sites.
 
 
 ## 3. ⚙️ THE SILENT CONVEYOR BELT WORKFLOW (ALL AGENTS)
 [CONTEXT: We operate on a silent, file-based Kanban system.]
+*   **Session Start (Mandatory):** Read `SESSION_HANDOFF.md` FIRST — before any Work Order, plan, or line of code. An agent that cannot confirm it read SESSION_HANDOFF.md is in violation.
 *   **Artifact-First:** Write code only after a `.md` plan or `.sql` schema is documented and approved.
 *   **Silent Handoffs:** Do not tag other agents in the chat. When your task is complete, update the `owner` and `status` in the ticket's YAML frontmatter.
 *   **Execute the Handoff Script:** Run `./handoff.sh [filepath] [next_folder] [next_agent]` in the terminal to move the file and log your status. Silently terminate your turn immediately after.
@@ -149,6 +155,7 @@ Agents: the "how" lives in skills and workflows, not here. Reference at the mome
 - **Analytical layer rules** (`log_`/`ref_`/`v_`/`mv_`, suppression, mock data sunset): `migration-manager` skill, `frontend-best-practices` §6
 - **No-reopening and no-fake-certainty discipline:** `proddy-protocol`, `inspector-qa` Phase 0
 - **Pillar classification gate:** `inspector-qa` Phase 0, WO template `pillar_supported` field
+
 
 ---
 *Section 6 added 2026-03-25 per INSPECTOR SQL-Layers alignment audit. Amendment requires USER authorization.*

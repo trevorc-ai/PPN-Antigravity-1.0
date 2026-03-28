@@ -4,6 +4,9 @@
 .env.staging
 .env.*.local
 
+# Build artifacts & caches
+.vite/
+
 # Logs
 logs
 *.log
@@ -58,3 +61,4 @@ public/internal/admin_uploads/PPN-Audit-Report-Blueprint.md
 
 # Agent specific files
 .env.agent
+node_modules
